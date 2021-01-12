@@ -1,0 +1,9 @@
+{
+  "description": "Gets the description for the current or target org.  Output inclides your access token, client Id, connected status, org ID, instance URL, username, and alias, if applicable.  Use --verbose to include the SFDX auth URL.  Including --verbose displays the sfdxAuthUrl property only if you authenticated to the org using auth:web:login (not auth:jwt:grant)",
+  "examples": [
+    "sfdx force:org:display",
+    "sfdx force:org:display -u me@my.org",
+    "sfdx force:org:display -u TestOrg1 --json",
+    "sfdx force:org:display -u TestOrg1 --json > tmp/MyOrgDesc.json"
+  ]
+}
