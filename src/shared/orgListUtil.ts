@@ -5,17 +5,16 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, join } from 'path';
-import * as BBPromise from 'bluebird';
-import * as _ from 'lodash';
 import * as moment from 'moment';
 
 import { Org, AuthInfo, fs, sfdc, ConfigAggregator, Global, AuthFields, Logger } from '@salesforce/core';
 import { Dictionary, JsonMap } from '@salesforce/ts-types';
 import { Record } from 'jsforce';
-import Alias = require('../core/alias');
+import { omit } from '@salesforce/kit/lib';
+import { getAliasByUsername } from './utils';
 
 export interface ExtendedAuthFields extends AuthFields {
-  lastUsed: Date;
+  lastUsed?: Date;
   orgName?: string;
   edition?: string;
   signupUsername?: string;
@@ -25,9 +24,9 @@ export interface ExtendedAuthFields extends AuthFields {
   status?: string;
   isDefaultUsername?: boolean;
   isDefaultDevHubUsername?: boolean;
-  createdBy: string;
-  createdDate: string;
-  attributes: object;
+  createdBy?: string;
+  createdDate?: string;
+  attributes?: object;
 }
 
 type OrgGroups = {
@@ -50,9 +49,9 @@ type ExtendedScratchOrgInfo = ScratchOrgInfo & {
 };
 
 export class OrgListUtil {
-  static logger;
+  private static logger;
 
-  static _accum: OrgGroups = {
+  private static accum: OrgGroups = {
     nonScratchOrgs: [],
     activeScratchOrgs: [],
     expiredScratchOrgs: [],
@@ -60,7 +59,7 @@ export class OrgListUtil {
     totalScratchOrgs: [],
   };
 
-  public static async retrieveLogger() {
+  public static async retrieveLogger(): Promise<Logger> {
     if (!OrgListUtil.logger) {
       OrgListUtil.logger = await Logger.child('OrgListUtil');
     }
@@ -89,20 +88,20 @@ export class OrgListUtil {
       return map;
     }, {});
 
-    const orgs = await this._groupOrgs(contents, this._accum, excludeProperties);
+    const orgs = await this.groupOrgs(contents, this.accum, excludeProperties);
 
     /** Retrieve scratch org info for scratch orgs that do not have exp date in their auth files */
     await Promise.all(
       orgs.queryExpirationDate.map(async (fields) => {
         if (fields.devHubUsername) {
           try {
-            const devHugOrg = await Org.create({ aliasOrUsername: fields.devHubUsername });
+            const devHubOrg = await Org.create({ aliasOrUsername: fields.devHubUsername });
             const authInfo = authInfos[fields.username];
             if (authInfo) {
-              await this.retrieveScratchOrgExpDate(devHugOrg, sfdc.trimTo15(fields.orgId), authInfo);
+              await this.retrieveScratchOrgExpDate(devHubOrg, sfdc.trimTo15(fields.orgId), authInfo);
             }
           } catch (err) {
-            // Throwing an error will cause the comand to exit with the error. We just want the exp date information of all orgs.
+            // Throwing an error will cause the command to exit with the error. We just want the exp date information of all orgs.
           }
         }
       })
@@ -111,7 +110,7 @@ export class OrgListUtil {
     const allScratchOrgs = orgs.activeScratchOrgs.concat(orgs.expiredScratchOrgs);
     orgs.totalScratchOrgs = allScratchOrgs;
 
-    /** Ensure addtional fields have been added to the scratchOrg info */
+    /** Ensure additional fields have been added to the scratchOrg info */
     if (flags.verbose || flags.json) {
       const orgIdsToQuery: Dictionary<string[]> = {};
       const orgsToQuery = flags.all ? orgs.totalScratchOrgs : orgs.activeScratchOrgs;
@@ -131,7 +130,9 @@ export class OrgListUtil {
             return data;
           })
         )
-      ).reduce((list, contents) => [...list, ...contents], []);
+      )
+        // eslint-disable-next-line no-shadow
+        .reduce((list, contents) => [...list, ...contents], []);
 
       const resultOrgInfo = await this.reduceScratchOrgInfo(updatedContents, orgsToQuery);
       if (flags.all) {
@@ -143,13 +144,10 @@ export class OrgListUtil {
 
     if (flags.skipconnectionstatus) {
       return orgs;
-    } else {
-      await BBPromise.map(orgs.nonScratchOrgs, (fields: ExtendedAuthFields) => {
-        // attempt to get the connection status of the devhub
-        return this.determineDevHubConnStatus(fields);
-      });
-      return orgs;
     }
+    await Promise.all(orgs.nonScratchOrgs.map((fields) => this.determineDevHubConnStatus(fields)));
+
+    return orgs;
   }
 
   /**
@@ -157,7 +155,7 @@ export class OrgListUtil {
    *
    * @param fileNames All the filenames in the global hidden folder
    */
-  static async readAuthFiles(fileNames: string[]): Promise<AuthInfo[]> {
+  public static async readAuthFiles(fileNames: string[]): Promise<AuthInfo[]> {
     const allAuths: AuthInfo[] = await Promise.all(
       fileNames.map(async (fileName) => {
         try {
@@ -178,7 +176,7 @@ export class OrgListUtil {
    *
    * @returns {BBPromise.<array>}
    */
-  static async determineDevHubConnStatus(fields: ExtendedAuthFields) {
+  public static async determineDevHubConnStatus(fields: ExtendedAuthFields): Promise<void> {
     try {
       const org = await Org.create({ aliasOrUsername: fields.username });
 
@@ -209,40 +207,44 @@ export class OrgListUtil {
    * @param {string[]} excludeProperties - properties to exclude from the grouped configs ex. ['refreshToken', 'clientSecret']
    * @private
    */
-  static async _groupOrgs(authInfos: AuthInfo[], _accum: OrgGroups, excludeProperties?: string[]): Promise<OrgGroups> {
+  public static async groupOrgs(
+    authInfos: AuthInfo[],
+    accum: OrgGroups,
+    excludeProperties?: string[]
+  ): Promise<OrgGroups> {
     const config = (await ConfigAggregator.create()).getConfig();
 
     for (const authInfo of authInfos) {
       const fields = authInfo.getFields();
-      const currentValue = OrgListUtil._removeRestrictedInfoFromConfig(fields, excludeProperties) as ExtendedAuthFields;
+      const currentValue = OrgListUtil.removeRestrictedInfoFromConfig(fields, excludeProperties) as ExtendedAuthFields;
 
-      currentValue.alias = await Alias.byValue(fields.username);
+      currentValue.alias = await getAliasByUsername(fields.username);
       currentValue.lastUsed = fs.statSync(join(Global.DIR, `${fields.username}.json`)).atime;
 
       this.identifyDefaultOrgs(currentValue, config);
       if (currentValue.devHubUsername) {
         if (!currentValue.expirationDate) {
-          _accum['queryExpirationDate'].push(currentValue);
-        } else if (OrgListUtil._identifyActiveOrgs(currentValue.expirationDate)) {
+          accum['queryExpirationDate'].push(currentValue);
+        } else if (OrgListUtil.identifyActiveOrgs(currentValue.expirationDate)) {
           currentValue.status = 'Active';
           currentValue.isExpired = false;
-          _accum['activeScratchOrgs'].push(currentValue);
+          accum['activeScratchOrgs'].push(currentValue);
         } else {
           currentValue.status = 'Expired';
           currentValue.isExpired = true;
-          _accum['expiredScratchOrgs'].push(currentValue);
+          accum['expiredScratchOrgs'].push(currentValue);
         }
       } else {
-        _accum['nonScratchOrgs'].push(currentValue);
+        accum['nonScratchOrgs'].push(currentValue);
       }
     }
-    return _accum;
+    return accum;
   }
 
-  static async retrieveScratchOrgExpDate(devHub: Org, orgId: string, authInfo: AuthInfo) {
-    const _fields = ['ExpirationDate'];
+  public static async retrieveScratchOrgExpDate(devHub: Org, orgId: string, authInfo: AuthInfo): Promise<void> {
+    const fields = ['ExpirationDate'];
     const conn = devHub.getConnection();
-    const object = await conn.sobject('ScratchOrgInfo').find<ScratchOrgInfo>({ ScratchOrg: orgId }, _fields);
+    const object = await conn.sobject('ScratchOrgInfo').find<ScratchOrgInfo>({ ScratchOrg: orgId }, fields);
 
     if (object.length > 0) {
       // There should only be one.
@@ -250,27 +252,31 @@ export class OrgListUtil {
     }
   }
 
-  static async writeFieldsToAuthFile(scratchOrgInfo: ScratchOrgInfo, authInfo: AuthInfo, excludeProperties?: string[]) {
+  public static async writeFieldsToAuthFile(
+    scratchOrgInfo: ScratchOrgInfo,
+    authInfo: AuthInfo,
+    excludeProperties?: string[]
+  ): Promise<void> {
     let authInfoFields = authInfo.getFields() as ExtendedAuthFields;
 
     if (!authInfoFields['ExpirationDate']) {
       await authInfo.save({ expirationDate: scratchOrgInfo.ExpirationDate });
 
-      authInfoFields = OrgListUtil._removeRestrictedInfoFromConfig(
+      authInfoFields = OrgListUtil.removeRestrictedInfoFromConfig(
         authInfoFields,
         excludeProperties
       ) as ExtendedAuthFields;
-      authInfoFields.alias = await Alias.byValue(authInfoFields.username);
+      authInfoFields.alias = await getAliasByUsername(authInfoFields.username);
       authInfoFields.lastUsed = fs.statSync(join(Global.DIR, `${authInfoFields.username}.json`)).atime;
 
-      if (this._identifyActiveOrgs(authInfoFields.expirationDate)) {
+      if (this.identifyActiveOrgs(authInfoFields.expirationDate)) {
         authInfoFields['status'] = 'Active';
         authInfoFields.isExpired = false;
-        this._accum.activeScratchOrgs.push(authInfoFields);
+        this.accum.activeScratchOrgs.push(authInfoFields);
       } else {
         authInfoFields['status'] = 'Expired';
         authInfoFields.isExpired = true;
-        this._accum.expiredScratchOrgs.push(authInfoFields);
+        this.accum.expiredScratchOrgs.push(authInfoFields);
       }
     }
   }
@@ -282,8 +288,11 @@ export class OrgListUtil {
    * @param {string[]} properties - properties to exclude ex ['refreshToken', 'clientSecret']
    * @returns the config less the sensitive information.
    */
-  static _removeRestrictedInfoFromConfig(config: AuthFields, properties = ['refreshToken', 'clientSecret']) {
-    return _.omit(config, properties);
+  public static removeRestrictedInfoFromConfig(
+    config: AuthFields,
+    properties = ['refreshToken', 'clientSecret']
+  ): AuthFields {
+    return omit(config, properties);
   }
 
   /**
@@ -291,34 +300,37 @@ export class OrgListUtil {
    *
    * @param expirationDate
    */
-  static _identifyActiveOrgs(expirationDate) {
+  public static identifyActiveOrgs(expirationDate): boolean {
     return moment(expirationDate).isAfter(moment());
   }
 
   /** Identify the default orgs */
-  private static identifyDefaultOrgs(orgInfo: ExtendedAuthFields, config: JsonMap) {
-    const defaultUsername = config.defaultusername;
-    const defaultDevhubUsername = config.defaultdevhubusername;
-
-    if (orgInfo.username === defaultUsername || orgInfo.alias === defaultUsername) {
+  public static identifyDefaultOrgs(orgInfo: ExtendedAuthFields, config: JsonMap): void {
+    if (
+      config.defaultusername &&
+      (orgInfo.username === config.defaultusername || orgInfo.alias === config.defaultusername)
+    ) {
       orgInfo.isDefaultUsername = true;
-    } else if (orgInfo.username === defaultDevhubUsername || orgInfo.alias === defaultDevhubUsername) {
+    } else if (
+      config.defaultdevhubusername &&
+      (orgInfo.username === config.defaultdevhubusername || orgInfo.alias === config.defaultdevhubusername)
+    ) {
       orgInfo.isDefaultDevHubUsername = true;
     }
   }
 
-  static async retrieveScratchOrgInfoFromDevHub(
+  public static async retrieveScratchOrgInfoFromDevHub(
     username: string,
     orgIdsToQuery: string[]
   ): Promise<Array<Record<ExtendedScratchOrgInfo>>> {
-    const _fields = ['OrgName', 'CreatedBy.Username', 'CreatedDate', 'Edition', 'SignupUsername'];
+    const fields = ['OrgName', 'CreatedBy.Username', 'CreatedDate', 'Edition', 'SignupUsername'];
 
     try {
       const devHubOrg = await Org.create({ aliasOrUsername: username });
       const conn = devHubOrg.getConnection();
       const data = await conn
         .sobject('ScratchOrgInfo')
-        .find<ExtendedScratchOrgInfo>({ ScratchOrg: { $in: orgIdsToQuery } }, _fields);
+        .find<ExtendedScratchOrgInfo>({ ScratchOrg: { $in: orgIdsToQuery } }, fields);
       data.map((org) => {
         org.devHubOrgId = devHubOrg.getOrgId();
         /** For orgs that are not dev hubs, we need not return a connectedStatus */
@@ -331,10 +343,10 @@ export class OrgListUtil {
     }
   }
 
-  static async reduceScratchOrgInfo(
+  public static async reduceScratchOrgInfo(
     updatedContents: Array<Record<ExtendedScratchOrgInfo>>,
     orgs: ExtendedAuthFields[]
-  ) {
+  ): Promise<ExtendedAuthFields[]> {
     /** Reduce the information to key value pairs with signupUsername as key */
     const contentMap = updatedContents.reduce((map, scratchOrgInfo) => {
       if (scratchOrgInfo) {

@@ -42,3 +42,8 @@ export interface ScratchOrgFields {
   namespace?: string;
   snapshot?: string;
 }
+
+export interface OrgListFields {
+  isDefaultUsername?: boolean;
+  isDefaultDevHubUsername?: boolean;
+}

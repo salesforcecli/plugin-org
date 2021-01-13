@@ -26,3 +26,12 @@ export const getStyledValue = (key, value): string => {
   }
   return value;
 };
+
+export const getStyledObject = (objectToStyle: object): object => {
+  for (const key of Object.keys(styledProperties)) {
+    if (Reflect.has(objectToStyle, key)) {
+      objectToStyle[key] = getStyledValue(key, objectToStyle[key]);
+    }
+  }
+  return objectToStyle;
+};
