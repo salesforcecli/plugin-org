@@ -47,12 +47,11 @@ export class OrgDisplayCommand extends SfdxCommand {
       username: fields.username,
       clientId: fields.clientId,
       password: fields.password,
-      snapshot: fields.snapshot,
       ...scratchOrgInfo,
 
       // properties with more complex logic
       connectedStatus: isScratchOrg ? undefined : await this.getConnectedStatusForNonScratchOrg(),
-      sfdxAuthUrl: this.flags.verbose ? authInfo.getSfdxAuthUrl() : undefined,
+      sfdxAuthUrl: this.flags.verbose && fields.refreshToken ? authInfo.getSfdxAuthUrl() : undefined,
       alias: await getAliasByUsername(fields.username),
     };
     if (!this.flags.json) {
@@ -69,7 +68,7 @@ export class OrgDisplayCommand extends SfdxCommand {
       ],
     };
     const tableRows = Object.keys(result)
-      .filter((key) => result[key] !== null) // some values won't exist
+      .filter((key) => result[key] !== undefined && result[key] !== null) // some values won't exist
       .sort() // this command always alphabetizes the table rows
       .map((key) => ({
         key: camelCaseToTitleCase(key),
@@ -84,15 +83,13 @@ export class OrgDisplayCommand extends SfdxCommand {
     // get connection to dev hub org
     const hubOrg = await this.org.getDevHubOrg();
     // query.  TODO: prefer to use core.Connection.singleRecordQuery if it exists.
-    const result = (
-      await hubOrg
-        .getConnection()
-        .query<ScratchOrgInfoSObject>(
-          `SELECT CreatedDate,Edition,Status,ExpirationDate,Namespace,OrgName,Owner.Username FROM ScratchOrgInfo WHERE ScratchOrg='${sfdc.trimTo15(
-            orgId
-          )}'`
-        )
-    ).records[0];
+    const result = await hubOrg
+      .getConnection()
+      .singleRecordQuery<ScratchOrgInfoSObject>(
+        `SELECT CreatedDate,Edition,Status,ExpirationDate,Namespace,OrgName,Owner.Username FROM ScratchOrgInfo WHERE ScratchOrg='${sfdc.trimTo15(
+          orgId
+        )}'`
+      );
 
     return {
       expirationDate: result.ExpirationDate,
