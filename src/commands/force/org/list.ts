@@ -8,7 +8,7 @@ import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
 import { AuthInfo, ConfigAggregator, ConfigInfo, Connection, Org, SfdxError, Messages } from '@salesforce/core';
 import { sortBy } from '@salesforce/kit';
 import { Table } from 'cli-ux/lib';
-import { ExtendedAuthFields, OrgListUtil } from '../../../shared/orgListUtil';
+import { ExtendedAuthFields, OrgListUtil, identifyActiveOrgByStatus } from '../../../shared/orgListUtil';
 import { getStyledObject } from '../../../shared/orgHighlighter';
 
 Messages.importMessagesDirectory(__dirname);
@@ -51,16 +51,11 @@ export class OrgListCommand extends SfdxCommand {
       }
     }
 
-    const sortFunction = (orgDetails): ExtendedAuthFields[] => {
-      this.extractDefaultOrgStatus(orgDetails);
-      return [orgDetails.alias, orgDetails.username];
-    };
     const metaConfigs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, this.flags);
     const groupedSortedOrgs = {
-      nonScratchOrgs: sortBy(metaConfigs.nonScratchOrgs, sortFunction),
-      expiredScratchOrgs: sortBy(metaConfigs.expiredScratchOrgs, sortFunction),
-      activeScratchOrgs: sortBy(metaConfigs.activeScratchOrgs, sortFunction),
-      totalScratchOrgs: sortBy(metaConfigs.totalScratchOrgs),
+      nonScratchOrgs: sortBy(metaConfigs.nonScratchOrgs, this.sortFunction),
+      scratchOrgs: sortBy(metaConfigs.scratchOrgs, this.sortFunction),
+      expiredScratchOrgs: metaConfigs.scratchOrgs.filter(identifyActiveOrgByStatus), // TODO refactor
     };
 
     if (this.flags.clean && groupedSortedOrgs.expiredScratchOrgs.length > 0) {
@@ -73,7 +68,9 @@ export class OrgListCommand extends SfdxCommand {
 
     const result = {
       nonScratchOrgs: groupedSortedOrgs.nonScratchOrgs,
-      scratchOrgs: this.flags.all ? groupedSortedOrgs.totalScratchOrgs : groupedSortedOrgs.activeScratchOrgs,
+      scratchOrgs: this.flags.all
+        ? groupedSortedOrgs.scratchOrgs
+        : groupedSortedOrgs.scratchOrgs.filter(identifyActiveOrgByStatus),
     };
 
     this.ux.styledHeader('Orgs');
@@ -91,26 +88,27 @@ export class OrgListCommand extends SfdxCommand {
       return;
     }
 
-    for (const fields of scratchOrgs) {
-      try {
-        const authInfo = await AuthInfo.create({ username: fields.username });
-        const connection = await Connection.create({
-          authInfo,
-          configAggregator: ({
-            // Force an api version to prevent connection check with the server for expired orgs.
-            // tslint:disable-next-line: no-object-literal-type-assertion
-            getInfo: () => (({ value: '47.0' } as unknown) as ConfigInfo),
-          } as unknown) as ConfigAggregator,
-        });
-        const org = await Org.create({ aliasOrUsername: fields.username, connection });
-        await org.remove();
-      } catch (e) {
-        this.logger.debug(`Error cleaning org ${fields.username}: ${e.message as string}`);
-      }
-    }
+    await Promise.all(
+      scratchOrgs.map(async (fields) => {
+        try {
+          const authInfo = await AuthInfo.create({ username: fields.username });
+          const connection = await Connection.create({
+            authInfo,
+            configAggregator: ({
+              // Force an api version to prevent connection check with the server for expired orgs.
+              getInfo: () => (({ value: '47.0' } as unknown) as ConfigInfo),
+            } as unknown) as ConfigAggregator,
+          });
+          const org = await Org.create({ aliasOrUsername: fields.username, connection });
+          await org.remove();
+        } catch (e) {
+          this.logger.debug(`Error cleaning org ${fields.username}: ${e.message as string}`);
+        }
+      })
+    );
   }
 
-  protected printOrgTable(data, skipconnectionstatus): void {
+  protected printOrgTable(nonScratchOrgs: ExtendedAuthFields[], skipconnectionstatus: boolean): void {
     // default columns for the non-scratch org list
     const nonScratchOrgColumns = [
       { key: 'defaultMarker', label: '' },
@@ -123,9 +121,9 @@ export class OrgListCommand extends SfdxCommand {
       nonScratchOrgColumns.push({ key: 'connectedStatus', label: 'CONNECTED STATUS' });
     }
 
-    if (data.length) {
+    if (nonScratchOrgs.length) {
       this.ux.table(
-        data.map((row) => getStyledObject(row)),
+        nonScratchOrgs.map((row) => getStyledObject(row)),
         { columns: nonScratchOrgColumns }
       );
     } else {
@@ -133,13 +131,13 @@ export class OrgListCommand extends SfdxCommand {
     }
   }
 
-  private printScratchOrgTable(data): void {
-    if (data.length === 0) {
+  private printScratchOrgTable(scratchOrgs: ExtendedAuthFields[]): void {
+    if (scratchOrgs.length === 0) {
       this.ux.log(messages.getMessage('noActiveScratchOrgs'));
     } else {
       // One or more rows are available.
       this.ux.table(
-        data.map((row) => getStyledObject(row)),
+        scratchOrgs.map((row) => getStyledObject(row)),
         { columns: this.getScratchOrgColumnData() }
       );
     }
@@ -180,4 +178,9 @@ export class OrgListCommand extends SfdxCommand {
     // scratch org expiration date should be on the end.
     return scratchOrgColumns.concat([{ key: 'expirationDate', label: 'EXPIRATION DATE' }]);
   }
+
+  private sortFunction = (orgDetails): ExtendedAuthFields[] => {
+    this.extractDefaultOrgStatus(orgDetails);
+    return [orgDetails.alias, orgDetails.username];
+  };
 }

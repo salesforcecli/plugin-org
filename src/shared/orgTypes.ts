@@ -20,15 +20,17 @@ export interface OrgDisplayReturn extends Partial<ScratchOrgFields> {
 }
 
 export interface ScratchOrgInfoSObject {
+  Id: string;
   CreatedDate: string;
   Status: string;
   ExpirationDate: string;
-  Owner: {
+  CreatedBy: {
     Username: string;
   };
   Edition: string;
   Namespace?: string;
   OrgName?: string;
+  SignupUsername: string;
 }
 
 export interface ScratchOrgFields {

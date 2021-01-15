@@ -4,7 +4,6 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
 import chalk from 'chalk';
 
 const styledProperties = {
@@ -28,10 +27,11 @@ export const getStyledValue = (key, value): string => {
 };
 
 export const getStyledObject = (objectToStyle: object): object => {
+  const clonedObject = { ...objectToStyle };
   for (const key of Object.keys(styledProperties)) {
-    if (Reflect.has(objectToStyle, key)) {
-      objectToStyle[key] = getStyledValue(key, objectToStyle[key]);
+    if (Reflect.has(clonedObject, key)) {
+      clonedObject[key] = getStyledValue(key, clonedObject[key]);
     }
   }
-  return objectToStyle;
+  return clonedObject;
 };

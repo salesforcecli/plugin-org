@@ -1,5 +1,5 @@
 {
-  "name": "@salesforce/plugin-template",
+  "name": "@salesforce/plugin-org",
   "description": "A template repository for sfdx plugins",
   "version": "1.0.0",
   "author": "Salesforce",
@@ -7,7 +7,8 @@
   "dependencies": {
     "@oclif/config": "^1",
     "@salesforce/command": "^3.0.3",
-    "@salesforce/core": "^2.15.4",
+    "@salesforce/core": "^2.16.0",
+    "moment": "^2.29.1",
     "tslib": "^1"
   },
   "devDependencies": {
@@ -21,6 +22,7 @@
     "@typescript-eslint/eslint-plugin": "^2.30.0",
     "@typescript-eslint/parser": "^2.30.0",
     "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
     "cz-conventional-changelog": "^3.2.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.11.0",
@@ -55,7 +57,7 @@
     "/messages",
     "/oclif.manifest.json"
   ],
-  "homepage": "https://github.com/salesforcecli/plugin-template",
+  "homepage": "https://github.com/salesforcecli/plugin-org",
   "keywords": [
     "force",
     "salesforce",
@@ -78,7 +80,7 @@
       }
     }
   },
-  "repository": "salesforcecli/plugin-template",
+  "repository": "salesforcecli/plugin-org",
   "scripts": {
     "build": "sf-build",
     "clean": "sf-clean",
@@ -91,7 +93,7 @@
     "postpack": "shx rm -f oclif.manifest.json",
     "posttest": "yarn lint && yarn test:deprecation-policy && yarn test:command-reference",
     "test:deprecation-policy": "./bin/run snapshot:compare",
-    "test:command-reference": "./bin/run commandreference:generate -p @salesforce/plugin-template --erroronwarnings",
+    "test:command-reference": "./bin/run commandreference:generate -p @salesforce/plugin-org --erroronwarnings",
     "prepack": "sf-build",
     "prepare": "sf-install",
     "pretest": "sf-compile-test",

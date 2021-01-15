@@ -9,9 +9,10 @@ import * as os from 'os';
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
 import { Aliases, AuthInfo, Messages, sfdc } from '@salesforce/core';
 
-import { OrgDisplayReturn, ScratchOrgFields, ScratchOrgInfoSObject } from '../../../shared/orgTypes';
+import { OrgDisplayReturn, ScratchOrgFields } from '../../../shared/orgTypes';
 import { getAliasByUsername, camelCaseToTitleCase } from '../../../shared/utils';
 import { getStyledValue } from '../../../shared/orgHighlighter';
+import { OrgListUtil } from '../../../shared/orgListUtil';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'display');
@@ -26,13 +27,15 @@ export class OrgDisplayCommand extends SfdxCommand {
   };
 
   public async run(): Promise<OrgDisplayReturn> {
-    // TODO: what is this command supposed to log?  Go through existing code
+    // TODO: what is this command supposed to log for debug?  Go through existing code
     // translate to alias if necessary
     const username = (await Aliases.fetch(this.flags.targetusername)) ?? this.flags.targetusername;
     const authInfo = await AuthInfo.create({ username });
     const fields = authInfo.getFields(true);
 
     // TODO: is there a better way to determine scratchiness?
+    // ex: I received credentials to a scratch org from someone and connected to it via web auth or storeUrl.
+    // Or are we only concerned with "scratch orgs managed by this local CLI" and treat everything else differently ?
     const isScratchOrg = fields.devHubUsername;
     const scratchOrgInfo = isScratchOrg ? await this.getScratchOrgInformation(fields.orgId) : {};
 
@@ -50,7 +53,9 @@ export class OrgDisplayCommand extends SfdxCommand {
       ...scratchOrgInfo,
 
       // properties with more complex logic
-      connectedStatus: isScratchOrg ? undefined : await this.getConnectedStatusForNonScratchOrg(),
+      connectedStatus: isScratchOrg
+        ? undefined
+        : await OrgListUtil.determineConnectedStatusForNonScratchOrg(fields.username),
       sfdxAuthUrl: this.flags.verbose && fields.refreshToken ? authInfo.getSfdxAuthUrl() : undefined,
       alias: await getAliasByUsername(fields.username),
     };
@@ -80,36 +85,18 @@ export class OrgDisplayCommand extends SfdxCommand {
   }
 
   private async getScratchOrgInformation(orgId: string): Promise<ScratchOrgFields> {
-    // get connection to dev hub org
     const hubOrg = await this.org.getDevHubOrg();
-    // query.  TODO: prefer to use core.Connection.singleRecordQuery if it exists.
-    const result = await hubOrg
-      .getConnection()
-      .singleRecordQuery<ScratchOrgInfoSObject>(
-        `SELECT CreatedDate,Edition,Status,ExpirationDate,Namespace,OrgName,Owner.Username FROM ScratchOrgInfo WHERE ScratchOrg='${sfdc.trimTo15(
-          orgId
-        )}'`
-      );
-
+    const result = (
+      await OrgListUtil.retrieveScratchOrgInfoFromDevHub(hubOrg.getUsername(), [sfdc.trimTo15(orgId)])
+    )[0];
     return {
-      expirationDate: result.ExpirationDate,
       status: result.Status,
-      createdBy: result.Owner.Username,
+      expirationDate: result.ExpirationDate,
+      createdBy: result.CreatedBy.Username,
       edition: result.Edition || undefined, // null for snapshot orgs, possibly others.  Marking it undefined keeps it out of json output
       namespace: result.Namespace || undefined, // https://github.com/forcedotcom/cli/issues/422
       orgName: result.OrgName,
       createdDate: result.CreatedDate,
     };
-  }
-
-  private async getConnectedStatusForNonScratchOrg(): Promise<string> {
-    try {
-      await this.org.refreshAuth();
-      return 'Connected';
-    } catch (error) {
-      this.logger.trace(`error refreshing auth for org: ${this.org.getUsername()}`);
-      this.logger.trace(error);
-      return error['code'] || error.message;
-    }
   }
 }
