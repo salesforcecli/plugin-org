@@ -1,7 +1,12 @@
 [
   {
-    "command": "hello:org",
+    "command": "force:org:display",
     "plugin": "@salesforce/plugin-org",
-    "flags": ["apiversion", "force", "json", "loglevel", "name", "targetdevhubusername", "targetusername"]
+    "flags": ["apiversion", "json", "loglevel", "targetdevhubusername", "targetusername", "verbose"]
+  },
+  {
+    "command": "force:org:list",
+    "plugin": "@salesforce/plugin-org",
+    "flags": ["all", "clean", "json", "loglevel", "noprompt", "skipconnectionstatus", "verbose"]
   }
 ]

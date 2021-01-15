@@ -75,8 +75,15 @@
       "@salesforce/plugin-command-reference"
     ],
     "topics": {
-      "hello": {
-        "description": "Commands to say hello."
+      "force": {
+        "description": "tools for the Salesforce developer",
+        "longDescription": "Commands to develop on the Salesforce Platform.",
+        "subtopics": {
+          "org": {
+            "description": "manage your orgs",
+            "longDescription": "Use the org commands to manage the orgs you use with Salesforce CLI. Create and delete scratch orgs, list your created and authorized orgs, and open orgs in your browser."
+          }
+        }
       }
     }
   },
