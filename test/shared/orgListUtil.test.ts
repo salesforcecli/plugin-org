@@ -151,7 +151,6 @@ describe('orgListUtil tests', () => {
   });
 
   describe('groupOrgs', () => {
-    let accum;
     let contents;
 
     beforeEach(() => {
@@ -171,10 +170,6 @@ describe('orgListUtil tests', () => {
           };
         },
       });
-      accum = {
-        nonScratchOrgs: [],
-        scratchOrgs: [],
-      };
     });
 
     afterEach(async () => {
@@ -183,7 +178,7 @@ describe('orgListUtil tests', () => {
 
     it('ensure the auth infos are categorized into scratchOrgs, nonScratchOrgs', async () => {
       contents = await OrgListUtil.readAuthFiles(['gaz@foo.org']);
-      const orgs = await OrgListUtil.groupOrgs(contents, accum);
+      const orgs = await OrgListUtil.groupOrgs(contents);
       expect(orgs.scratchOrgs.length).to.equal(2);
       expect(orgs.scratchOrgs[0]).to.haveOwnProperty('username').to.equal('gaz@foo.org');
       expect(orgs.nonScratchOrgs.length).to.equal(1);
@@ -191,7 +186,7 @@ describe('orgListUtil tests', () => {
 
     it('should omit sensitive information and catergorise active and non-active scracth orgs', async () => {
       const authInfos = await OrgListUtil.readAuthFiles(['gaz@foo.org']);
-      const orgs = await OrgListUtil.groupOrgs(authInfos, accum);
+      const orgs = await OrgListUtil.groupOrgs(authInfos);
       expect(orgs.scratchOrgs[0]).to.not.haveOwnProperty('clientSecret');
       expect(orgs.scratchOrgs[1]).to.not.haveOwnProperty('clientSecret');
       expect(orgs.scratchOrgs[0]).to.not.haveOwnProperty('refreshToken');
