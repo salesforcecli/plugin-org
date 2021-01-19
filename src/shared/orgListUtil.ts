@@ -5,7 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, join } from 'path';
-import * as moment from 'moment';
 
 import { Org, AuthInfo, fs, sfdc, ConfigAggregator, Global, AuthFields, Logger } from '@salesforce/core';
 import { Dictionary, JsonMap } from '@salesforce/ts-types';
@@ -41,11 +40,6 @@ type ExtendedScratchOrgInfo = ScratchOrgInfoSObject & {
 export class OrgListUtil {
   private static logger;
 
-  private static accum: OrgGroups = {
-    nonScratchOrgs: [],
-    scratchOrgs: [],
-  };
-
   public static async retrieveLogger(): Promise<Logger> {
     if (!OrgListUtil.logger) {
       OrgListUtil.logger = await Logger.child('OrgListUtil');
@@ -67,7 +61,7 @@ export class OrgListUtil {
     excludeProperties?: string[]
   ): Promise<OrgGroups> {
     const contents: AuthInfo[] = await this.readAuthFiles(userFilenames);
-    const orgs = await this.groupOrgs(contents, this.accum, excludeProperties);
+    const orgs = await this.groupOrgs(contents, excludeProperties);
 
     // parallelize two very independent operations
     const [nonScratchOrgs, scratchOrgs] = await Promise.all([
@@ -82,7 +76,7 @@ export class OrgListUtil {
         })
       ),
 
-      this.processScratchOrgs(orgs.scratchOrgs, flags.all),
+      this.processScratchOrgs(orgs.scratchOrgs),
     ]);
 
     return {
@@ -91,10 +85,7 @@ export class OrgListUtil {
     };
   }
 
-  public static async processScratchOrgs(
-    scratchOrgs: ExtendedAuthFields[],
-    includeExpired: boolean
-  ): Promise<ExtendedAuthFields[]> {
+  public static async processScratchOrgs(scratchOrgs: ExtendedAuthFields[]): Promise<ExtendedAuthFields[]> {
     // organize by DevHub to reduce queries
     const orgIdsGroupedByDevHub: Dictionary<string[]> = {};
     scratchOrgs.forEach((fields) => {
@@ -113,9 +104,7 @@ export class OrgListUtil {
       )
     ).reduce((accumulator, iterator) => [...accumulator, ...iterator], []);
 
-    const resultOrgInfo = await this.reduceScratchOrgInfo(updatedContents, scratchOrgs);
-    if (includeExpired) return resultOrgInfo;
-    return resultOrgInfo.filter((org) => org.status === 'Active');
+    return this.reduceScratchOrgInfo(updatedContents, scratchOrgs);
   }
 
   /**
@@ -136,7 +125,8 @@ export class OrgListUtil {
         }
       })
     );
-    return allAuths.filter((authInfo) => !!authInfo);
+    // AuthInfos that have a userId are from user create, not an "org-level" auth.  Omit them
+    return allAuths.filter((authInfo) => !!authInfo && !authInfo.getFields().userId);
   }
 
   /**
@@ -147,11 +137,11 @@ export class OrgListUtil {
    * @param {string[]} excludeProperties - properties to exclude from the grouped configs ex. ['refreshToken', 'clientSecret']
    * @private
    */
-  public static async groupOrgs(
-    authInfos: AuthInfo[],
-    accum: OrgGroups,
-    excludeProperties?: string[]
-  ): Promise<OrgGroups> {
+  public static async groupOrgs(authInfos: AuthInfo[], excludeProperties?: string[]): Promise<OrgGroups> {
+    const output: OrgGroups = {
+      scratchOrgs: [],
+      nonScratchOrgs: [],
+    };
     const config = (await ConfigAggregator.create()).getConfig();
 
     for (const authInfo of authInfos) {
@@ -170,12 +160,12 @@ export class OrgListUtil {
 
       this.identifyDefaultOrgs(currentValue, config);
       if (currentValue.devHubUsername) {
-        accum.scratchOrgs.push(currentValue);
+        output.scratchOrgs.push(currentValue);
       } else {
-        accum.nonScratchOrgs.push(currentValue);
+        output.nonScratchOrgs.push(currentValue);
       }
     }
-    return accum;
+    return output;
   }
 
   /**
@@ -190,15 +180,6 @@ export class OrgListUtil {
     properties = ['refreshToken', 'clientSecret']
   ): AuthFields {
     return omit(config, properties);
-  }
-
-  /**
-   * Helper to identify active orgs based on the expiration data.
-   *
-   * @param expirationDate
-   */
-  public static identifyActiveOrgsByDate(expirationDate): boolean {
-    return moment(expirationDate).isAfter(moment());
   }
 
   /** Identify the default orgs */
@@ -301,14 +282,13 @@ export class OrgListUtil {
   /**
    * retrieves the connection info of an nonscratch org
    *
+   * @param username The username used when the org was authenticated
    * @returns {Promise.<string>}
    */
   public static async determineConnectedStatusForNonScratchOrg(username: string): Promise<string> {
     try {
       const org = await Org.create({ aliasOrUsername: username });
 
-      // Do the query for orgs without a devHubUsername attribute. In some cases scratch org auth
-      // files may not have a devHubUsername property; but that's ok. We will discover it before this.
       if (org.getField(Org.Fields.DEV_HUB_USERNAME)) {
         return;
       }
