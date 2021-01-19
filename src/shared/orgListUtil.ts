@@ -52,7 +52,7 @@ export class OrgListUtil {
       Promise.all(
         orgs.nonScratchOrgs.map(async (fields) => {
           if (flags.skipconnectionstatus) {
-            fields.connectedStatus = fields.connectedStatus || 'Unknown';
+            fields.connectedStatus = fields.connectedStatus ?? 'Unknown';
           } else {
             fields.connectedStatus = await this.determineConnectedStatusForNonScratchOrg(fields.username);
           }
@@ -262,7 +262,7 @@ export class OrgListUtil {
         const logger = await OrgListUtil.retrieveLogger();
         logger.trace(`error refreshing auth for org: ${org.getUsername()}`);
         logger.trace(error);
-        return error['code'] || error.message;
+        return error['code'] ?? error.message;
       }
     } catch (e) {
       return 'Unknown';

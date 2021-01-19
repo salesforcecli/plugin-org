@@ -27,7 +27,6 @@ export class OrgDisplayCommand extends SfdxCommand {
   };
 
   public async run(): Promise<OrgDisplayReturn> {
-    // TODO: what is this command supposed to log for debug?  Go through existing code
     // translate to alias if necessary
     const username = (await Aliases.fetch(this.flags.targetusername)) ?? this.flags.targetusername;
     const authInfo = await AuthInfo.create({ username });
@@ -90,8 +89,8 @@ export class OrgDisplayCommand extends SfdxCommand {
       status: result.Status,
       expirationDate: result.ExpirationDate,
       createdBy: result.CreatedBy.Username,
-      edition: result.Edition || undefined, // null for snapshot orgs, possibly others.  Marking it undefined keeps it out of json output
-      namespace: result.Namespace || undefined, // may be null on server
+      edition: result.Edition ?? undefined, // null for snapshot orgs, possibly others.  Marking it undefined keeps it out of json output
+      namespace: result.Namespace ?? undefined, // may be null on server
       orgName: result.OrgName,
       createdDate: result.CreatedDate,
     };
