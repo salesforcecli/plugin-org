@@ -32,6 +32,7 @@ export class OrgListCommand extends SfdxCommand {
     noprompt: flags.boolean({
       char: 'p',
       description: messages.getMessage('noPrompt'),
+      dependsOn: ['clean'],
     }),
     skipconnectionstatus: flags.boolean({
       description: messages.getMessage('skipConnectionStatus'),

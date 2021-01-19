@@ -9,7 +9,7 @@ IF YOU WANT TO CHANGE THIS CONTENT, CONTACT juliet.shackell@salesforce.com FOR D
 
 -->
     <title><ph id="topic-title"><codeph otherprops="nolang">force:org:display</codeph></ph></title>
-    <shortdesc><ph id="shortdesc">Gets the description for the current or target org.  Output inclides your access token, client Id, connected status, org ID, instance URL, username, and alias, if applicable.  Use --verbose to include the SFDX auth URL.  Including --verbose displays the sfdxAuthUrl property only if you authenticated to the org using auth:web:login (not auth:jwt:grant).</ph></shortdesc>
+    <shortdesc><ph id="shortdesc">Gets the description for the current or target org.  Output includes your access token, client Id, connected status, org ID, instance URL, username, and alias, if applicable.  Use --verbose to include the SFDX auth URL.  Including --verbose displays the sfdxAuthUrl property only if you authenticated to the org using auth:web:login (not auth:jwt:grant).</ph></shortdesc>
     <prolog>
         <metadata>
             <othermeta content="reference" name="topic_type"/>

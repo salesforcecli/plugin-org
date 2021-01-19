@@ -65,9 +65,6 @@ describe('org:display', () => {
         ...baseAuthInfo,
         ...AuthInfoModifications,
       }),
-      // getConnectionOptions: () => ({ accessToken: baseAuthInfo.accessToken }),
-      // isJwt: () => false,
-      // isOauth: () => true,
       getSfdxAuthUrl: () => {
         if (AuthInfoModifications.refreshToken) {
           return fakeAuthUrl;

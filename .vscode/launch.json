@@ -38,8 +38,7 @@
         "NODE_ENV": "development",
         "SFDX_ENV": "development"
       },
-      // "sourceMaps": true,
-      // "smartStep": true,
+      "smartStep": true,
       "internalConsoleOptions": "openOnSessionStart",
       "preLaunchTask": "Compile"
     }

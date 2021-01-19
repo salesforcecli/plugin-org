@@ -44,8 +44,8 @@ export class OrgListUtil {
     userFilenames: string[],
     flags
   ): Promise<OrgGroups> {
-    const contents: AuthInfo[] = await this.readAuthFiles(userFilenames);
-    const orgs = await this.groupOrgs(contents);
+    const contents: AuthInfo[] = await OrgListUtil.readAuthFiles(userFilenames);
+    const orgs = await OrgListUtil.groupOrgs(contents);
 
     // parallelize two very independent operations
     const [nonScratchOrgs, scratchOrgs] = await Promise.all([
@@ -54,13 +54,13 @@ export class OrgListUtil {
           if (flags.skipconnectionstatus) {
             fields.connectedStatus = fields.connectedStatus ?? 'Unknown';
           } else {
-            fields.connectedStatus = await this.determineConnectedStatusForNonScratchOrg(fields.username);
+            fields.connectedStatus = await OrgListUtil.determineConnectedStatusForNonScratchOrg(fields.username);
           }
           return fields;
         })
       ),
 
-      this.processScratchOrgs(orgs.scratchOrgs),
+      OrgListUtil.processScratchOrgs(orgs.scratchOrgs),
     ]);
 
     return {
@@ -83,12 +83,12 @@ export class OrgListUtil {
     const updatedContents = (
       await Promise.all(
         Object.entries(orgIdsGroupedByDevHub).map(async ([devHubUsername, orgIds]) =>
-          this.retrieveScratchOrgInfoFromDevHub(devHubUsername, orgIds)
+          OrgListUtil.retrieveScratchOrgInfoFromDevHub(devHubUsername, orgIds)
         )
       )
     ).reduce((accumulator, iterator) => [...accumulator, ...iterator], []);
 
-    return this.reduceScratchOrgInfo(updatedContents, scratchOrgs);
+    return OrgListUtil.reduceScratchOrgInfo(updatedContents, scratchOrgs);
   }
 
   /**
@@ -139,7 +139,7 @@ export class OrgListUtil {
       currentValue.alias = alias;
       currentValue.lastUsed = lastUsed.atime;
 
-      this.identifyDefaultOrgs(currentValue, config);
+      OrgListUtil.identifyDefaultOrgs(currentValue, config);
       if (currentValue.devHubUsername) {
         output.scratchOrgs.push(currentValue);
       } else {
@@ -204,6 +204,8 @@ export class OrgListUtil {
         devHubOrgId: devHubOrg.getOrgId(),
       }));
     } catch (err) {
+      const logger = await OrgListUtil.retrieveLogger();
+      logger.warn(`Error querying ${devHubUsername} for ${orgIdsToQuery.length} orgIds`);
       return [];
     }
   }

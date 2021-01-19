@@ -88,7 +88,7 @@ export class OrgDisplayCommand extends SfdxCommand {
     return {
       status: result.Status,
       expirationDate: result.ExpirationDate,
-      createdBy: result.CreatedBy.Username,
+      createdBy: result.CreatedBy?.Username,
       edition: result.Edition ?? undefined, // null for snapshot orgs, possibly others.  Marking it undefined keeps it out of json output
       namespace: result.Namespace ?? undefined, // may be null on server
       orgName: result.OrgName,
