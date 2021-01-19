@@ -8,41 +8,19 @@ import { $$, expect, test } from '@salesforce/command/lib/test';
 
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
+import cli from 'cli-ux';
 
 chai.use(chaiAsPromised);
 
-// import * as BBPromise from 'bluebird';
-import {
-  AuthInfo,
-  // Connection
-} from '@salesforce/core';
-import { stubMethod } from '@salesforce/ts-sinon';
-// import * as cliTestHelper from '../../cliTestHelper';
+import { AuthInfo, Connection, Org } from '@salesforce/core';
+import { stubMethod, stubInterface } from '@salesforce/ts-sinon';
 
-// import * as Force from '../../../lib/core/force';
 import OrgListMock = require('../../../shared/orgListMock');
-// import * as TestWorkspace from '../../TestWorkspace';
 import { OrgListUtil } from '../../../../src/shared/orgListUtil';
-
-// let workspace;
-// let sandbox: sinon.SinonSandbox;
-
-// class ListCommand extends OrgListCommand {
-//   private _ux = { styledHeader: () => {}, table: () => {}, log: () => {}, prompt: () => {}, warn: () => {} };
-//   public get ux() {
-//     return this._ux as any;
-//   }
-//   public printOrgTable(data) {
-//     return super.printOrgTable(data, this.flags.skipconnectionstatus);
-//   }
-// }
-
-// const listCommand = new ListCommand(null, null);
 
 describe('org_list', () => {
   beforeEach(async () => {
     stubMethod($$.SANDBOX, AuthInfo, 'listAllAuthFiles');
-    // stubMethod($$.SANDBOX, Connection.prototype, 'describeData').resolves({});
   });
   afterEach(() => {
     $$.SANDBOX.restore();
@@ -80,39 +58,35 @@ describe('org_list', () => {
       });
   });
 
-  // describe('all option', () => {
-  //   it('all not set -- only active orgs', async () => {
-  //     OrgListMock.retrieveAuthInfo(sandbox);
-  //     listCommand.flags = { json: true };
-  //     const data = await listCommand.run();
-  //     chai.expect(data.scratchOrgs[0]).to.have.ownProperty('SignupUsername').to.equal('gaz@foo.org');
-  //     chai.expect(data.scratchOrgs.length).to.equal(2);
-  //     chai.expect(data.scratchOrgs.every((element) => element.status.includes('Active'))).to.be.true;
-  //   });
+  describe('scratch org cleaning', () => {
+    const spies = new Map();
+    afterEach(() => spies.clear());
 
-  //   it('all set --all orgs', async () => {
-  //     OrgListMock.retrieveAuthInfo(sandbox);
-  //     listCommand.flags = { all: true };
-  //     const data = await listCommand.run();
-  //     chai.expect(data.nonScratchOrgs.length).to.equal(1);
-  //     chai.expect(
-  //       data.scratchOrgs.every((element) => {
-  //         element.status === 'Active';
-  //       })
-  //     ).to.be.false;
-  //   });
+    beforeEach(() => {
+      $$.SANDBOX.stub(OrgListUtil, 'readLocallyValidatedMetaConfigsGroupedByOrgType').resolves(OrgListMock.AUTH_INFO);
+      const authInfoStub = stubInterface<AuthInfo>($$.SANDBOX, {
+        getConnectionOptions: () => ({}),
+      });
+      stubMethod($$.SANDBOX, Connection, 'create').resolves({});
+      stubMethod($$.SANDBOX, AuthInfo, 'create').resolves(async () => authInfoStub);
+      stubMethod($$.SANDBOX, Org, 'create').resolves(Org.prototype);
+      spies.set('orgRemove', stubMethod($$.SANDBOX, Org.prototype, 'remove').resolves());
+    });
 
-  //   it('clean expired', async () => {
-  //     const stub = sandbox.stub().resolves({});
-  //     stubMethod(sandbox, AuthInfo, 'create').callsFake(async () => ({
-  //       getConnectionOptions: () => ({}),
-  //     }));
-  //     stubMethod(sandbox, Org, 'create').callsFake(async () => ({
-  //       remove: stub,
-  //     }));
-  //     await listCommand.cleanScratchOrgs(OrgListMock.AUTH_INFO['expiredScratchOrgs']);
+    test
+      .stub(cli, 'confirm', () => async () => false)
+      .stdout()
+      .command(['force:org:list', '--json', '--clean'])
+      .it('not cleaned after confirmation false', async () => {
+        expect(spies.get('orgRemove').callCount).to.equal(0);
+      });
 
-  //     chai.expect(stub.called).to.be.true;
-  //   });
-  // });
+    test
+      .stub(cli, 'confirm', () => async () => true)
+      .stdout()
+      .command(['force:org:list', '--json', '--clean'])
+      .it('cleaned after confirmation true', async () => {
+        expect(spies.get('orgRemove').callCount).to.equal(2); // there are 2 expired scratch orgs
+      });
+  });
 });

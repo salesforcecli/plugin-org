@@ -15,17 +15,17 @@ import { getAliasByUsername } from './utils';
 import { ScratchOrgInfoSObject } from './orgTypes';
 export interface ExtendedAuthFields extends AuthFields {
   lastUsed?: Date;
-  orgName?: string;
-  edition?: string;
+  orgName?: string; // covered in ScratchOrgField
+  edition?: string; // covered in ScratchOrgField
   signupUsername?: string;
   devHubOrgId?: string;
   isExpired?: boolean;
-  connectedStatus?: string;
-  status?: string;
+  connectedStatus?: string; // covered
+  status?: string; // covered in ScratchOrgField
   isDefaultUsername?: boolean;
   isDefaultDevHubUsername?: boolean;
-  createdBy?: string;
-  createdDate?: string;
+  createdBy?: string; // covered in ScratchOrgField
+  createdDate?: string; // covered in ScratchOrgField
   attributes?: object;
 }
 
@@ -67,14 +67,6 @@ export class OrgListUtil {
     excludeProperties?: string[]
   ): Promise<OrgGroups> {
     const contents: AuthInfo[] = await this.readAuthFiles(userFilenames);
-
-    // const authInfos: Dictionary<AuthInfo> = contents.reduce((map, content) => {
-    //   if (content) {
-    //     map[content.getUsername()] = content;
-    //   }
-    //   return map;
-    // }, {});
-
     const orgs = await this.groupOrgs(contents, this.accum, excludeProperties);
 
     // parallelize two very independent operations
@@ -92,19 +84,6 @@ export class OrgListUtil {
 
       this.processScratchOrgs(orgs.scratchOrgs, flags.all),
     ]);
-
-    // const nonScratchOrgs = await Promise.all(
-    //   orgs.nonScratchOrgs.map(async (fields) => {
-    //     if (flags.skipconnectionstatus) {
-    //       fields.connectedStatus = fields.connectedStatus || 'Unknown';
-    //       return fields;
-    //     }
-    //     fields.connectedStatus = await this.determineConnectedStatusForNonScratchOrg(fields.username);
-    //     return fields;
-    //   })
-    // );
-
-    // const scratchOrgs = await this.processScratchOrgs(orgs.scratchOrgs, flags.all);
 
     return {
       nonScratchOrgs,
@@ -279,9 +258,13 @@ export class OrgListUtil {
       return map;
     }, {});
 
+    // const orgsForLocalUpdate = [];
+
     for (const scratchOrgInfo of orgs) {
       const updatedOrgInfo = contentMap[scratchOrgInfo.username];
       if (updatedOrgInfo) {
+        // if the org has changed, mark it for local write.  After the update, we'll write orgs that changed
+        // const shouldWrite = scratchOrgInfo.expirationDate !== updatedOrgInfo.ExpirationDate;
         scratchOrgInfo.signupUsername = updatedOrgInfo.SignupUsername;
         scratchOrgInfo.createdBy = updatedOrgInfo.CreatedBy.Username;
         scratchOrgInfo.createdDate = updatedOrgInfo.CreatedDate;
@@ -289,13 +272,29 @@ export class OrgListUtil {
         scratchOrgInfo.attributes = updatedOrgInfo.attributes;
         scratchOrgInfo.orgName = updatedOrgInfo.OrgName;
         scratchOrgInfo.edition = updatedOrgInfo.Edition;
+
         scratchOrgInfo.status = updatedOrgInfo.Status;
         scratchOrgInfo.expirationDate = updatedOrgInfo.ExpirationDate;
+
+        // if (shouldWrite) {
+        //   orgsForLocalUpdate.push(scratchOrgInfo);
+        // }
       } else {
         const logger = await OrgListUtil.retrieveLogger();
         logger.warn(`Can't find ${scratchOrgInfo.username} in the updated contents`);
       }
     }
+
+    // // write the orgs that changed expiration dates?
+    // Promise.all(
+    //   orgsForLocalUpdate.map(async (org) => {
+    //     const auth = await AuthInfo.create({ username: org.username });
+    //     auth.save({
+    //       ...auth.getFields(),
+    //       expirationDate: org.expirateionDate,
+    //     });
+    //   })
+    // );
     return orgs;
   }
 

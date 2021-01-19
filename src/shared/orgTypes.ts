@@ -19,10 +19,11 @@ export interface OrgDisplayReturn extends Partial<ScratchOrgFields> {
   sfdxAuthUrl?: string;
 }
 
+// developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_objects_scratchorginfo.htm
 export interface ScratchOrgInfoSObject {
   Id: string;
   CreatedDate: string;
-  Status: string;
+  Status: 'New' | 'Deleted' | 'Active' | 'Error';
   ExpirationDate: string;
   CreatedBy: {
     Username: string;

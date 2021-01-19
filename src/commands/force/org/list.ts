@@ -55,7 +55,7 @@ export class OrgListCommand extends SfdxCommand {
     const groupedSortedOrgs = {
       nonScratchOrgs: sortBy(metaConfigs.nonScratchOrgs, this.sortFunction),
       scratchOrgs: sortBy(metaConfigs.scratchOrgs, this.sortFunction),
-      expiredScratchOrgs: metaConfigs.scratchOrgs.filter(identifyActiveOrgByStatus), // TODO refactor
+      expiredScratchOrgs: metaConfigs.scratchOrgs.filter(identifyActiveOrgByStatus),
     };
 
     if (this.flags.clean && groupedSortedOrgs.expiredScratchOrgs.length > 0) {
@@ -144,7 +144,6 @@ export class OrgListCommand extends SfdxCommand {
   }
 
   private extractDefaultOrgStatus(val): void {
-    // I'll use the sort function as a decorator so I can eliminate the need to loop.
     if (val.isDefaultDevHubUsername) {
       val.defaultMarker = '(D)';
     } else if (val.isDefaultUsername) {

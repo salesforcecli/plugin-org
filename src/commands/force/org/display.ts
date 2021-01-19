@@ -33,9 +33,6 @@ export class OrgDisplayCommand extends SfdxCommand {
     const authInfo = await AuthInfo.create({ username });
     const fields = authInfo.getFields(true);
 
-    // TODO: is there a better way to determine scratchiness?
-    // ex: I received credentials to a scratch org from someone and connected to it via web auth or storeUrl.
-    // Or are we only concerned with "scratch orgs managed by this local CLI" and treat everything else differently ?
     const isScratchOrg = fields.devHubUsername;
     const scratchOrgInfo = isScratchOrg ? await this.getScratchOrgInformation(fields.orgId) : {};
 
@@ -94,7 +91,7 @@ export class OrgDisplayCommand extends SfdxCommand {
       expirationDate: result.ExpirationDate,
       createdBy: result.CreatedBy.Username,
       edition: result.Edition || undefined, // null for snapshot orgs, possibly others.  Marking it undefined keeps it out of json output
-      namespace: result.Namespace || undefined, // https://github.com/forcedotcom/cli/issues/422
+      namespace: result.Namespace || undefined, // may be null on server
       orgName: result.OrgName,
       createdDate: result.CreatedDate,
     };
