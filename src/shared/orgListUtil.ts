@@ -11,22 +11,7 @@ import { Dictionary, JsonMap } from '@salesforce/ts-types';
 import { Record } from 'jsforce';
 import { omit } from '@salesforce/kit/lib';
 import { getAliasByUsername } from './utils';
-import { ScratchOrgInfoSObject } from './orgTypes';
-export interface ExtendedAuthFields extends AuthFields {
-  lastUsed?: Date;
-  orgName?: string; // covered in ScratchOrgField
-  edition?: string; // covered in ScratchOrgField
-  signupUsername?: string;
-  devHubOrgId?: string;
-  isExpired?: boolean;
-  connectedStatus?: string; // covered
-  status?: string; // covered in ScratchOrgField
-  isDefaultUsername?: boolean;
-  isDefaultDevHubUsername?: boolean;
-  createdBy?: string; // covered in ScratchOrgField
-  createdDate?: string; // covered in ScratchOrgField
-  attributes?: object;
-}
+import { ScratchOrgInfoSObject, ExtendedAuthFields } from './orgTypes';
 
 type OrgGroups = {
   nonScratchOrgs: ExtendedAuthFields[];

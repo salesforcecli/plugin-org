@@ -8,8 +8,9 @@ import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
 import { AuthInfo, ConfigAggregator, ConfigInfo, Connection, Org, SfdxError, Messages } from '@salesforce/core';
 import { sortBy } from '@salesforce/kit';
 import { Table } from 'cli-ux/lib';
-import { ExtendedAuthFields, OrgListUtil, identifyActiveOrgByStatus } from '../../../shared/orgListUtil';
+import { OrgListUtil, identifyActiveOrgByStatus } from '../../../shared/orgListUtil';
 import { getStyledObject } from '../../../shared/orgHighlighter';
+import { ExtendedAuthFields } from '../../../shared/orgTypes';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'list');
