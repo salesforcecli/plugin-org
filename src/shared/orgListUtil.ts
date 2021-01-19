@@ -42,11 +42,10 @@ export class OrgListUtil {
    */
   public static async readLocallyValidatedMetaConfigsGroupedByOrgType(
     userFilenames: string[],
-    flags,
-    excludeProperties?: string[]
+    flags
   ): Promise<OrgGroups> {
     const contents: AuthInfo[] = await this.readAuthFiles(userFilenames);
-    const orgs = await this.groupOrgs(contents, excludeProperties);
+    const orgs = await this.groupOrgs(contents);
 
     // parallelize two very independent operations
     const [nonScratchOrgs, scratchOrgs] = await Promise.all([
@@ -122,7 +121,7 @@ export class OrgListUtil {
    * @param {string[]} excludeProperties - properties to exclude from the grouped configs ex. ['refreshToken', 'clientSecret']
    * @private
    */
-  public static async groupOrgs(authInfos: AuthInfo[], excludeProperties?: string[]): Promise<OrgGroups> {
+  public static async groupOrgs(authInfos: AuthInfo[]): Promise<OrgGroups> {
     const output: OrgGroups = {
       scratchOrgs: [],
       nonScratchOrgs: [],
@@ -130,10 +129,7 @@ export class OrgListUtil {
     const config = (await ConfigAggregator.create()).getConfig();
 
     for (const authInfo of authInfos) {
-      const currentValue = OrgListUtil.removeRestrictedInfoFromConfig(
-        authInfo.getFields(),
-        excludeProperties
-      ) as ExtendedAuthFields;
+      const currentValue = OrgListUtil.removeRestrictedInfoFromConfig(authInfo.getFields()) as ExtendedAuthFields;
 
       const [alias, lastUsed] = await Promise.all([
         getAliasByUsername(currentValue.username),
