@@ -55,7 +55,7 @@ export class OrgListCommand extends SfdxCommand {
     const groupedSortedOrgs = {
       nonScratchOrgs: sortBy(metaConfigs.nonScratchOrgs, this.sortFunction),
       scratchOrgs: sortBy(metaConfigs.scratchOrgs, this.sortFunction),
-      expiredScratchOrgs: metaConfigs.scratchOrgs.filter(identifyActiveOrgByStatus),
+      expiredScratchOrgs: metaConfigs.scratchOrgs.filter((org) => !identifyActiveOrgByStatus(org)),
     };
 
     if (this.flags.clean && groupedSortedOrgs.expiredScratchOrgs.length > 0) {
