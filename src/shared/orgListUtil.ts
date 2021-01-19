@@ -231,7 +231,7 @@ export class OrgListUtil {
     updatedContents: Array<Record<ExtendedScratchOrgInfo>>,
     orgs: ExtendedAuthFields[]
   ): Promise<ExtendedAuthFields[]> {
-    /** Reduce the information to key value pairs with signupUsername as key */
+    // Reduce the information to key value pairs with signupUsername as key
     const contentMap = updatedContents.reduce((map, scratchOrgInfo) => {
       if (scratchOrgInfo) {
         map[scratchOrgInfo.SignupUsername] = scratchOrgInfo;
@@ -239,13 +239,9 @@ export class OrgListUtil {
       return map;
     }, {});
 
-    // const orgsForLocalUpdate = [];
-
     for (const scratchOrgInfo of orgs) {
       const updatedOrgInfo = contentMap[scratchOrgInfo.username];
       if (updatedOrgInfo) {
-        // if the org has changed, mark it for local write.  After the update, we'll write orgs that changed
-        // const shouldWrite = scratchOrgInfo.expirationDate !== updatedOrgInfo.ExpirationDate;
         scratchOrgInfo.signupUsername = updatedOrgInfo.SignupUsername;
         scratchOrgInfo.createdBy = updatedOrgInfo.CreatedBy.Username;
         scratchOrgInfo.createdDate = updatedOrgInfo.CreatedDate;
@@ -253,29 +249,14 @@ export class OrgListUtil {
         scratchOrgInfo.attributes = updatedOrgInfo.attributes;
         scratchOrgInfo.orgName = updatedOrgInfo.OrgName;
         scratchOrgInfo.edition = updatedOrgInfo.Edition;
-
         scratchOrgInfo.status = updatedOrgInfo.Status;
         scratchOrgInfo.expirationDate = updatedOrgInfo.ExpirationDate;
-
-        // if (shouldWrite) {
-        //   orgsForLocalUpdate.push(scratchOrgInfo);
-        // }
       } else {
         const logger = await OrgListUtil.retrieveLogger();
         logger.warn(`Can't find ${scratchOrgInfo.username} in the updated contents`);
       }
     }
 
-    // // write the orgs that changed expiration dates?
-    // Promise.all(
-    //   orgsForLocalUpdate.map(async (org) => {
-    //     const auth = await AuthInfo.create({ username: org.username });
-    //     auth.save({
-    //       ...auth.getFields(),
-    //       expirationDate: org.expirateionDate,
-    //     });
-    //   })
-    // );
     return orgs;
   }
 
