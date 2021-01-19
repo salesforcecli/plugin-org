@@ -37,8 +37,8 @@ export class OrgListUtil {
    * { nonScratchOrgs: [{}], scratchOrgs: [{}] }
    * the scratchOrgInfo query.
    *
-   * @param {string[]|null} excludeProperties - properties to exclude from the configs defaults. ['refreshToken', 'clientSecret']. Specify null to include all properties.
    * @param {string[]|null} userFilenames- an array of strings that are validated against the server.
+   * @param {object} flags - the result of this.flags on an sfdx command
    */
   public static async readLocallyValidatedMetaConfigsGroupedByOrgType(
     userFilenames: string[],
