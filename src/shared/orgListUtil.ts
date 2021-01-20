@@ -76,16 +76,12 @@ export class OrgListUtil {
    * @returns the same scratch org list, but with updated information from the server.
    */
   public static async processScratchOrgs(scratchOrgs: ExtendedAuthFields[]): Promise<ExtendedAuthFields[]> {
-    // organize by DevHub to reduce queries
-    const orgIdsGroupedByDevHub: Dictionary<string[]> = {};
-    scratchOrgs.forEach((fields) => {
-      if (fields.devHubUsername) {
-        if (!orgIdsGroupedByDevHub[fields.devHubUsername]) {
-          orgIdsGroupedByDevHub[fields.devHubUsername] = [];
-        }
-        orgIdsGroupedByDevHub[fields.devHubUsername].push(sfdc.trimTo15(fields.orgId));
-      }
-    });
+    const orgIdsGroupedByDevHub = scratchOrgs
+      .filter((fields) => fields.devHubUsername)
+      .reduce((accum: Dictionary<string[]>, fields) => {
+        accum[fields.devHubUsername] = [...(accum[fields.devHubUsername] ?? []), sfdc.trimTo15(fields.orgId)];
+        return accum;
+      }, {});
     const updatedContents = (
       await Promise.all(
         Object.entries(orgIdsGroupedByDevHub).map(async ([devHubUsername, orgIds]) =>
