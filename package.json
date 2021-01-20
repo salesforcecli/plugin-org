@@ -76,8 +76,7 @@
     ],
     "topics": {
       "force": {
-        "description": "tools for the Salesforce developer",
-        "longDescription": "Commands to develop on the Salesforce Platform.",
+        "external": true,
         "subtopics": {
           "org": {
             "description": "manage your orgs",
