@@ -69,6 +69,12 @@ export class OrgListUtil {
     };
   }
 
+  /**
+   * Organizes the scratchOrgs by DevHub to optimize calls to retrieveScratchOrgInfoFromDevHub(), then calls reduceScratchOrgInfo()
+   *
+   * @param {ExtendedAuthFields[]} scratchOrgs- an array of strings that are validated against the server.
+   * @returns the same scratch org list, but with updated information from the server.
+   */
   public static async processScratchOrgs(scratchOrgs: ExtendedAuthFields[]): Promise<ExtendedAuthFields[]> {
     // organize by DevHub to reduce queries
     const orgIdsGroupedByDevHub: Dictionary<string[]> = {};
