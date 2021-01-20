@@ -1,5 +1,5 @@
 {
-  "description": "Lists all orgs that the Salesforce CLI has created or authenticated to.",
+  "description": "lists all orgs that the Salesforce CLI has created or authenticated to",
   "examples": [
     "sfdx force:org:list",
     "sfdx force:org:list --verbose --json",
