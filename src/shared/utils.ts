@@ -8,13 +8,8 @@ import { Aliases } from '@salesforce/core';
 
 export const getAliasByUsername = async (username: string): Promise<string> => {
   const alias = await Aliases.create(Aliases.getDefaultOptions());
-  const aliasContent = alias.getContents().orgs;
-  if (aliasContent) {
-    for (const aliasedName of Object.keys(aliasContent)) {
-      if (aliasContent[aliasedName] === username) return aliasedName;
-    }
-  }
-  return undefined;
+  const keys = alias.getKeysByValue(username);
+  return keys?.length ? keys[0] : undefined;
 };
 
 export const camelCaseToTitleCase = (text: string): string => {

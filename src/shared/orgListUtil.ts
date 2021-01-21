@@ -132,7 +132,6 @@ export class OrgListUtil {
 
     for (const authInfo of authInfos) {
       const currentValue = OrgListUtil.removeRestrictedInfoFromConfig(authInfo.getFields()) as ExtendedAuthFields;
-
       const [alias, lastUsed] = await Promise.all([
         getAliasByUsername(currentValue.username),
         fs.stat(join(Global.DIR, `${currentValue.username}.json`)),

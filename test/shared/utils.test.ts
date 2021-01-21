@@ -13,12 +13,11 @@ describe('getAliasByUsername', () => {
   beforeEach(async () => {
     stubMethod($$.SANDBOX, Aliases, 'create').resolves(Aliases.prototype);
     stubMethod($$.SANDBOX, Aliases, 'getDefaultOptions').returns({});
-    stubMethod($$.SANDBOX, Aliases.prototype, 'getContents').returns({
-      orgs: {
-        alias1: 'username1',
-        alias2: 'username2',
-      },
-    });
+    stubMethod($$.SANDBOX, Aliases.prototype, 'getKeysByValue')
+      .withArgs('username1')
+      .returns(['alias1'])
+      .withArgs('username2')
+      .returns(['alias2', 'alias2b']);
   });
   afterEach(() => {
     $$.SANDBOX.restore();
@@ -26,8 +25,12 @@ describe('getAliasByUsername', () => {
 
   it('returns alias for a username that exists', async () => {
     expect(await getAliasByUsername('username1')).to.equal('alias1');
+  });
+
+  it('returns first alias for a username that has multiple aliases', async () => {
     expect(await getAliasByUsername('username2')).to.equal('alias2');
   });
+
   it('returns undefined when no matching username is found', async () => {
     expect(await getAliasByUsername('username3')).to.be.undefined;
   });
