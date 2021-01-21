@@ -7,7 +7,7 @@
   "dependencies": {
     "@oclif/config": "^1",
     "@salesforce/command": "^3.0.3",
-    "@salesforce/core": "^2.16.0",
+    "@salesforce/core": "^2.16.3",
     "tslib": "^1"
   },
   "devDependencies": {
