@@ -267,8 +267,11 @@ export class OrgListUtil {
         logger.trace(error);
         return error['code'] ?? error.message;
       }
-    } catch (e) {
-      return 'Unknown';
+    } catch (error) {
+      const logger = await OrgListUtil.retrieveLogger();
+      logger.trace(`error refreshing auth for org: ${username}`);
+      logger.trace(error);
+      return error['code'] ?? error.message ?? 'Unknown';
     }
   }
 }
