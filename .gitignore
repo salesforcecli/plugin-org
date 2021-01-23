@@ -23,6 +23,7 @@ coverage
 
 # generated docs
 docs
+tmp
 
 # -- CLEAN ALL
 node_modules

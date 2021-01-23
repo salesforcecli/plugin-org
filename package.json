@@ -1,5 +1,5 @@
 {
-  "name": "@salesforce/plugin-template",
+  "name": "@salesforce/plugin-org",
   "description": "A template repository for sfdx plugins",
   "version": "1.0.0",
   "author": "Salesforce",
@@ -7,7 +7,7 @@
   "dependencies": {
     "@oclif/config": "^1",
     "@salesforce/command": "^3.0.3",
-    "@salesforce/core": "^2.15.4",
+    "@salesforce/core": "^2.16.3",
     "tslib": "^1"
   },
   "devDependencies": {
@@ -21,6 +21,7 @@
     "@typescript-eslint/eslint-plugin": "^2.30.0",
     "@typescript-eslint/parser": "^2.30.0",
     "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
     "cz-conventional-changelog": "^3.2.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.11.0",
@@ -34,6 +35,7 @@
     "husky": "^4.2.5",
     "lint-staged": "^10.2.2",
     "mocha": "^7.2.0",
+    "moment": "^2.29.1",
     "nyc": "^15.1.0",
     "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1",
@@ -55,7 +57,7 @@
     "/messages",
     "/oclif.manifest.json"
   ],
-  "homepage": "https://github.com/salesforcecli/plugin-template",
+  "homepage": "https://github.com/salesforcecli/plugin-org",
   "keywords": [
     "force",
     "salesforce",
@@ -73,12 +75,18 @@
       "@salesforce/plugin-command-reference"
     ],
     "topics": {
-      "hello": {
-        "description": "Commands to say hello."
+      "force": {
+        "external": true,
+        "subtopics": {
+          "org": {
+            "description": "manage your orgs",
+            "longDescription": "Use the org commands to manage the orgs you use with Salesforce CLI. Create and delete scratch orgs, list your created and authorized orgs, and open orgs in your browser."
+          }
+        }
       }
     }
   },
-  "repository": "salesforcecli/plugin-template",
+  "repository": "salesforcecli/plugin-org",
   "scripts": {
     "build": "sf-build",
     "clean": "sf-clean",
@@ -91,7 +99,7 @@
     "postpack": "shx rm -f oclif.manifest.json",
     "posttest": "yarn lint && yarn test:deprecation-policy && yarn test:command-reference",
     "test:deprecation-policy": "./bin/run snapshot:compare",
-    "test:command-reference": "./bin/run commandreference:generate -p @salesforce/plugin-template --erroronwarnings",
+    "test:command-reference": "./bin/run commandreference:generate -p @salesforce/plugin-org --erroronwarnings",
     "prepack": "sf-build",
     "prepare": "sf-install",
     "pretest": "sf-compile-test",
