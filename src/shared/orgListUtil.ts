@@ -235,6 +235,9 @@ export class OrgListUtil {
         scratchOrgInfo.edition = updatedOrgInfo.Edition;
         scratchOrgInfo.status = updatedOrgInfo.Status;
         scratchOrgInfo.expirationDate = updatedOrgInfo.ExpirationDate;
+        scratchOrgInfo.isExpired = updatedOrgInfo.Status === 'Deleted';
+        // the old toolbelt code always said Unknown.  I'd love to get rid of it.
+        scratchOrgInfo.connectedStatus = 'Unknown';
       } else {
         const logger = await OrgListUtil.retrieveLogger();
         logger.warn(`Can't find ${scratchOrgInfo.username} in the updated contents`);
