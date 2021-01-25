@@ -1,3 +1,7 @@
+[![NPM](https://img.shields.io/npm/v/@salesforce/plugin-org.svg)](https://www.npmjs.com/package/@salesforce/plugin-org)
+[![CircleCI](https://circleci.com/gh/salesforcecli/plugin-org.svg?style=svg&circle-token=2377ca31221869e9d13448313620486da80e595f)](https://circleci.com/gh/salesforcecli/plugin-org)
+[![codecov](https://codecov.io/gh/salesforcecli/plugin-org/branch/main/graph/badge.svg)](https://codecov.io/gh/salesforcecli/plugin-org)
+
 # plugin-org
 
 Commands for working with Salesforce orgs. As the Salesforce CLI is transitioning commands owned by various teams to open source, it may not represent all of the `org` commands.
