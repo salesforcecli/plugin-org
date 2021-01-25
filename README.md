@@ -1,8 +1,6 @@
-# plugin-&lt;REPLACE ME&gt;
+# plugin-org
 
-Change above to <REPLACE_ME> before finalizing
-
-&lt;REPLACE ME DESCRIPTION START&gt;
+Commands for working with orgs
 
 This repository provides a template for creating a plugin for the Salesforce CLI. To convert this template to a working plugin:
 
@@ -33,7 +31,7 @@ We always recommend using the latest version of these commands bundled with the 
 ## Install
 
 ```bash
-sfdx plugins:install <REPLACE_ME>@x.y.z
+sfdx plugins:install @salesforce/plugin-org
 ```
 
 ## Issues
@@ -65,7 +63,7 @@ To build the plugin locally, make sure to have yarn installed and run the follow
 
 ```bash
 # Clone the repository
-git clone git@github.com:salesforcecli/plugin-<REPLACE_ME>
+git clone git@github.com:salesforcecli/plugin-org
 
 # Install the dependencies and compile
 yarn install
@@ -76,7 +74,7 @@ To use your plugin, run using the local `./bin/run` or `./bin/run.cmd` file.
 
 ```bash
 # Run using local run file.
-./bin/run <REPLACE_ME>
+./bin/run force:org:list
 ```
 
 There should be no differences when running via the Salesforce CLI or using the local run file. However, it can be useful to link the plugin to do some additional testing or run your commands from anywhere on your machine.
@@ -92,21 +90,19 @@ sfdx plugins
 
 <!-- commands -->
 
-- [`sfdx hello:org [-n <string>] [-f] [-v <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-helloorg--n-string--f--v-string--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
+- [`sfdx force:org:display [-v <string>] [-u <string>] [--apiversion <string>] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-forceorgdisplay--v-string--u-string---apiversion-string---verbose---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
+- [`sfdx force:org:list [--all] [-p --clean] [--skipconnectionstatus] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-forceorglist---all--p---clean---skipconnectionstatus---verbose---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
 
-## `sfdx hello:org [-n <string>] [-f] [-v <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
+## `sfdx force:org:display [-v <string>] [-u <string>] [--apiversion <string>] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
-print a greeting and your org IDs
+get the description for the current or target org.
 
 ```
 USAGE
-  $ sfdx hello:org [-n <string>] [-f] [-v <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  $ sfdx force:org:display [-v <string>] [-u <string>] [--apiversion <string>] [--verbose] [--json] [--loglevel
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -f, --force                                                                       example boolean flag
-  -n, --name=name                                                                   name to print
-
   -u, --targetusername=targetusername                                               username or alias for the target
                                                                                     org; overrides default target org
 
@@ -121,13 +117,56 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for
                                                                                     this command invocation
 
-EXAMPLES
-  $ sfdx hello:org --targetusername myOrg@example.com --targetdevhubusername devhub@org.com
-     Hello world! This is org: MyOrg and I will be around until Tue Mar 20 2018!
-     My hub org id is: 00Dxx000000001234
+  --verbose                                                                         emit additional command output to
+                                                                                    stdout
 
-  $ sfdx hello:org --name myname --targetusername myOrg@example.com
-     Hello myname! This is org: MyOrg and I will be around until Tue Mar 20 2018!
+DESCRIPTION
+  Output includes your access token, client Id, connected status, org ID, instance URL, username, and alias, if
+  applicable.
+  Use --verbose to include the SFDX auth URL.
+  Including --verbose displays the sfdxAuthUrl property only if you authenticated to the org using auth:web:login (not
+  auth:jwt:grant)
+
+EXAMPLES
+  sfdx force:org:display
+  sfdx force:org:display -u me@my.org
+  sfdx force:org:display -u TestOrg1 --json
+  sfdx force:org:display -u TestOrg1 --json > tmp/MyOrgDesc.json
 ```
+
+_See code: [src/commands/force/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/v1.1.1/src/commands/force/org/display.ts)_
+
+## `sfdx force:org:list [--all] [-p --clean] [--skipconnectionstatus] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
+
+list all orgs that the Salesforce CLI has created or authenticated to
+
+```
+USAGE
+  $ sfdx force:org:list [--all] [-p --clean] [--skipconnectionstatus] [--verbose] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -p, --noprompt                                                                    Do not prompt for confirmation.
+
+  --all                                                                             Lists all authenticated orgs,
+                                                                                    including expired, deleted, and
+                                                                                    unknown-status scratch orgs.
+
+  --clean                                                                           Remove all local org authorizations
+                                                                                    for deleted or expired orgs.
+
+  --json                                                                            format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for
+                                                                                    this command invocation
+
+  --skipconnectionstatus                                                            Skips retrieving the connection
+                                                                                    status of non-scratch orgs
+
+  --verbose                                                                         Lists more information about each
+                                                                                    org.
+```
+
+_See code: [src/commands/force/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/v1.1.1/src/commands/force/org/list.ts)_
 
 <!-- commandsstop -->
