@@ -124,11 +124,11 @@ EXAMPLES
   sfdx force:org:display -u TestOrg1 --json > tmp/MyOrgDesc.json
 ```
 
-_See code: [src/commands/force/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/v1.1.1/src/commands/force/org/display.ts)_
+_See code: [src/commands/force/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/v1.1.0/src/commands/force/org/display.ts)_
 
 ## `sfdx force:org:list [--all] [-p --clean] [--skipconnectionstatus] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
-list all orgs that the Salesforce CLI has created or authenticated to
+list all orgs you’ve created or authenticated to
 
 ```
 USAGE
@@ -136,27 +136,26 @@ USAGE
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -p, --noprompt                                                                    Do not prompt for confirmation.
+  -p, --noprompt                                                                    do not prompt for confirmation
 
-  --all                                                                             Lists all authenticated orgs,
-                                                                                    including expired, deleted, and
-                                                                                    unknown-status scratch orgs.
+  --all                                                                             include expired, deleted, and
+                                                                                    unknown-status scratch orgs
 
-  --clean                                                                           Remove all local org authorizations
-                                                                                    for deleted or expired orgs.
+  --clean                                                                           remove all local org authorizations
+                                                                                    for non-active orgs
 
   --json                                                                            format output as json
 
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for
                                                                                     this command invocation
 
-  --skipconnectionstatus                                                            Skips retrieving the connection
+  --skipconnectionstatus                                                            skips retrieving the connection
                                                                                     status of non-scratch orgs
 
-  --verbose                                                                         Lists more information about each
-                                                                                    org.
+  --verbose                                                                         list more information about each
+                                                                                    org'
 ```
 
-_See code: [src/commands/force/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/v1.1.1/src/commands/force/org/list.ts)_
+_See code: [src/commands/force/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/v1.1.0/src/commands/force/org/list.ts)_
 
 <!-- commandsstop -->
