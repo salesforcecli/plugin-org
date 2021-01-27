@@ -59,7 +59,7 @@ describe('open commands', () => {
 
     test
       .stdout()
-      .command(['force:org:open', '--json', '--targetusername', username, '--urlonly', '--path', '/lightning/whatever'])
+      .command(['force:org:open', '--json', '--targetusername', username, '--urlonly', '--path', testPath])
       .it('org with a url is built correctly', (ctx) => {
         const response = JSON.parse(ctx.stdout);
         expect(response.status).to.equal(0);
