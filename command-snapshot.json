@@ -12,6 +12,6 @@
   {
     "command": "force:org:open",
     "plugin": "@salesforce/plugin-org",
-    "flags": ["path", "urlonly", "json", "loglevel", "noprompt"]
+    "flags": ["path", "urlonly", "json", "loglevel", "targetusername", "apiversion"]
   }
 ]

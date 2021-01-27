@@ -6,7 +6,6 @@
  */
 import { EOL } from 'os';
 import { URL } from 'url';
-import * as open from 'open';
 
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
 import {
@@ -17,6 +16,7 @@ import {
   // sfdc
 } from '@salesforce/core';
 import { Env, toNumber, Duration } from '@salesforce/kit';
+import { openUrl } from '../../../shared/utils';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
@@ -49,7 +49,7 @@ export class OrgOpenCommand extends SfdxCommand {
 
     if (isSFDXContainerMode()) {
       // instruct the user that they need to paste the URL into the browser
-      this.ux.styledHeader(messages.getMessage('Action Required!'));
+      this.ux.styledHeader('Action Required!');
       this.ux.log(messages.getMessage('containerAction', [orgId, url]));
       return output;
     }
@@ -61,7 +61,7 @@ export class OrgOpenCommand extends SfdxCommand {
     }
     // we actually need to open the org
     await this.checkLightningDomain(url);
-    await open(url, { wait: false });
+    await openUrl(url);
     return output;
   }
 

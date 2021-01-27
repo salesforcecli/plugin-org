@@ -5,9 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { $$, expect, test } from '@salesforce/command/lib/test';
-import { Org } from '@salesforce/core';
+import { Org, MyDomainResolver } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
-import * as open from 'open';
+import * as utils from '../../../../src/shared/utils';
 
 const returnedJsonMatches = (response: object) => {
   expect(response).to.have.property('url');
@@ -29,6 +29,7 @@ describe('open commands', () => {
     stubMethod($$.SANDBOX, Org.prototype, 'getConnection').returns({
       accessToken: 'testAccessToken',
     });
+    stubMethod($$.SANDBOX, utils, 'openUrl').resolves();
   });
 
   describe('url generation', () => {
@@ -63,32 +64,70 @@ describe('open commands', () => {
   });
 
   describe('domain resolution', () => {
+    const spies = new Map();
+    afterEach(() => spies.clear());
+
+    beforeEach(() => {
+      stubMethod($$.SANDBOX, MyDomainResolver, 'create').resolves(MyDomainResolver.prototype);
+      spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
+    });
     it('does not wait for domains on internal urls');
 
     test
       .do(() => {
         process.env.SFDX_CONTAINER_MODE = 'true';
       })
+      .finally(() => {
+        delete process.env.SFDX_CONTAINER_MODE;
+      })
       .stdout()
-      .command([
-        'force:org:open',
-        '--json',
-        '--targetusername',
-        'test@test.org',
-        '--urlonly',
-        '--path',
-        '/lightning/whatever',
-      ])
-      .it('does not wait for domains in container mode', (ctx) => {
+      .command(['force:org:open', '--json', '--targetusername', 'test@test.org', '--path', '/lightning/whatever'])
+      .it('does not wait for domains in container mode, even without urlonly', (ctx) => {
         const response = JSON.parse(ctx.stdout);
         expect(response.status).to.equal(0);
         expect(returnedJsonMatches(response.result)).to.be.true;
         expect(response.result.url.endsWith(encodeURIComponent('/lightning/whatever'))).to.be.true;
+        expect(spies.get('resolver').callCount).to.equal(0);
       });
 
-    it('does not wait for domains when timeouts are zero');
-    it('retries domains that need time to resolve');
-    it('handles domain timeouts');
+    test
+      .do(() => {
+        process.env.SFDX_DOMAIN_RETRY = '0';
+      })
+      .finally(() => {
+        delete process.env.SFDX_DOMAIN_RETRY;
+      })
+      .stdout()
+      .command(['force:org:open', '--json', '--targetusername', 'test@test.org', '--path', '/lightning/whatever'])
+      .it('does not wait for domains when timeouts are zero, even without urlonly', (ctx) => {
+        const response = JSON.parse(ctx.stdout);
+        expect(response.status).to.equal(0);
+        expect(returnedJsonMatches(response.result)).to.be.true;
+        expect(response.result.url.endsWith(encodeURIComponent('/lightning/whatever'))).to.be.true;
+        expect(spies.get('resolver').callCount).to.equal(0);
+      });
+
+    test
+      .stdout()
+      .command(['force:org:open', '--json', '--targetusername', 'test@test.org', '--path', '/lightning/whatever'])
+      .it('waits on domains that need time to resolve', (ctx) => {
+        const response = JSON.parse(ctx.stdout);
+        expect(response.status).to.equal(0);
+        expect(returnedJsonMatches(response.result)).to.be.true;
+        expect(response.result.url.endsWith(encodeURIComponent('/lightning/whatever'))).to.be.true;
+        expect(spies.get('resolver').callCount).to.equal(1);
+      });
+
+    test
+      .stdout()
+      .command(['force:org:open', '--json', '--targetusername', 'test@test.org', '--path', '/lightning/whatever'])
+      .it('handles domain timeouts', (ctx) => {
+        const response = JSON.parse(ctx.stdout);
+        expect(response.status).to.equal(0);
+        expect(returnedJsonMatches(response.result)).to.be.true;
+        expect(response.result.url.endsWith(encodeURIComponent('/lightning/whatever'))).to.be.true;
+        expect(spies.get('resolver').callCount).to.equal(1);
+      });
   });
 
   it('calls open when urlonly is not present');
