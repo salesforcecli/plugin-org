@@ -6,8 +6,8 @@
     "sfdx force:org:open -u MyTestOrg1",
     "sfdx force:org:open -r -p lightning"
   ],
-  "cliPath": "Navigation URL path (not including domain).",
-  "urlonly": "Displays a navigation URL, but doesn’t launch your browser.",
+  "cliPath": "navigation URL path",
+  "urlonly": "display navigation URL, but don’t launch browser",
   "containerAction": "You are in a headless environment. To access the org %s, open this URL in a browser:\n\n%s",
   "humanSuccess": "Access org %s as user %s with the following URL: %s",
   "domainWaiting": "Waiting to resolve the Lightning Experience-enabled custom domain...",
