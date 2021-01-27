@@ -14,8 +14,6 @@ import { openUrl } from '../../../shared/utils';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
-
-const isSFDXContainerMode = (): boolean => (new Env().getString('SFDX_CONTAINER_MODE') ? true : false);
 export class OrgOpenCommand extends SfdxCommand {
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessage('examples').split(EOL);
@@ -24,7 +22,7 @@ export class OrgOpenCommand extends SfdxCommand {
     path: flags.string({
       char: 'p',
       description: messages.getMessage('cliPath'),
-      default: '/lightning/setup',
+      default: '%2Flightning%2Fsetup',
       env: 'FORCE_OPEN_URL',
       parse: (input) => encodeURIComponent(decodeURIComponent(input)),
     }),
@@ -41,7 +39,7 @@ export class OrgOpenCommand extends SfdxCommand {
     const username = this.org.getUsername();
     const output = { orgId, url, username };
 
-    if (isSFDXContainerMode()) {
+    if (new Env().getString('SFDX_CONTAINER_MODE') ? true : false) {
       // instruct the user that they need to paste the URL into the browser
       this.ux.styledHeader('Action Required!');
       this.ux.log(messages.getMessage('containerAction', [orgId, url]));

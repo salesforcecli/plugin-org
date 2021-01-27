@@ -5,68 +5,120 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { $$, expect, test } from '@salesforce/command/lib/test';
-import { Org, MyDomainResolver } from '@salesforce/core';
+import { Org, MyDomainResolver, Messages } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
 import * as utils from '../../../../src/shared/utils';
 
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
+
+const orgId = '000000000000000';
+const username = 'test@test.org';
+const testPath = '/lightning/whatever';
+const testInstance = 'https://cs1.my.salesforce.com';
+const accessToken = 'testAccessToken';
+
+const expectedUrl = `${testInstance}/secur/frontdoor.jsp?sid=${accessToken}&retURL=${encodeURIComponent(testPath)}`;
+
 const testJsonStructure = (response: object) => {
   expect(response).to.have.property('url');
-  expect(response).to.have.property('username');
-  expect(response).to.have.property('orgId');
+  expect(response).to.have.property('username').equal(username);
+  expect(response).to.have.property('orgId').equal(orgId);
   return true;
 };
 
 describe('open commands', () => {
+  const spies = new Map();
+  afterEach(() => spies.clear());
+
   beforeEach(async function () {
     $$.SANDBOX.restore();
     stubMethod($$.SANDBOX, Org, 'create').resolves(Org.prototype);
-    stubMethod($$.SANDBOX, Org.prototype, 'getField')
-      .withArgs(Org.Fields.INSTANCE_URL)
-      .returns('https://cs1.my.salesforce.com');
+    stubMethod($$.SANDBOX, Org.prototype, 'getField').withArgs(Org.Fields.INSTANCE_URL).returns(testInstance);
     stubMethod($$.SANDBOX, Org.prototype, 'refreshAuth').resolves({});
-    stubMethod($$.SANDBOX, Org.prototype, 'getOrgId').returns('testOrgId');
-    stubMethod($$.SANDBOX, Org.prototype, 'getUsername').returns('test@test.org');
+    stubMethod($$.SANDBOX, Org.prototype, 'getOrgId').returns(orgId);
+    stubMethod($$.SANDBOX, Org.prototype, 'getUsername').returns(username);
     stubMethod($$.SANDBOX, Org.prototype, 'getConnection').returns({
-      accessToken: 'testAccessToken',
+      accessToken,
     });
-    stubMethod($$.SANDBOX, utils, 'openUrl').resolves();
+    spies.set('open', stubMethod($$.SANDBOX, utils, 'openUrl').resolves());
   });
 
   describe('url generation', () => {
     test
       .stdout()
-      .command(['force:org:open', '--json', '--targetusername', 'test@test.org', '--urlonly'])
+      .command(['force:org:open', '--json', '--targetusername', username, '--urlonly'])
       .it('org without a url defaults to proper default', (ctx) => {
         const response = JSON.parse(ctx.stdout);
         expect(response.status).to.equal(0);
         expect(testJsonStructure(response.result)).to.be.true;
+        expect(response.result.url).to.equal(
+          `${testInstance}/secur/frontdoor.jsp?sid=${accessToken}&retURL=${encodeURIComponent('/lightning/setup')}`
+        );
       });
 
     test
       .stdout()
-      .command([
-        'force:org:open',
-        '--json',
-        '--targetusername',
-        'test@test.org',
-        '--urlonly',
-        '--path',
-        '/lightning/whatever',
-      ])
+      .command(['force:org:open', '--json', '--targetusername', username, '--urlonly', '--path', '/lightning/whatever'])
       .it('org with a url is built correctly', (ctx) => {
         const response = JSON.parse(ctx.stdout);
         expect(response.status).to.equal(0);
         expect(testJsonStructure(response.result)).to.be.true;
-        expect(response.result.url.endsWith(encodeURIComponent('/lightning/whatever'))).to.be.true;
+        expect(response.result.url).to.equal(expectedUrl);
       });
 
-    it('returns proper url when instanceUrl has trailing slash');
+    test
+      .do(() => {
+        process.env.FORCE_OPEN_URL = testPath;
+      })
+      .finally(() => {
+        delete process.env.FORCE_OPEN_URL;
+      })
+      .stdout()
+      .command(['force:org:open', '--json', '--targetusername', username, '--urlonly'])
+      .it('can read url from env', (ctx) => {
+        const response = JSON.parse(ctx.stdout);
+        expect(response.status).to.equal(0);
+        expect(testJsonStructure(response.result)).to.be.true;
+        expect(response.result.url).to.equal(expectedUrl);
+      });
   });
 
-  describe('domain resolution', () => {
-    const spies = new Map();
-    afterEach(() => spies.clear());
+  describe('domain resolution, with callout', () => {
+    beforeEach(() => {
+      stubMethod($$.SANDBOX, MyDomainResolver, 'create').resolves(MyDomainResolver.prototype);
+    });
+    test
+      .do(() => {
+        spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
+      })
+      .stdout()
+      .command(['force:org:open', '--json', '--targetusername', username, '--path', testPath])
+      .it('waits on domains that need time to resolve', (ctx) => {
+        const response = JSON.parse(ctx.stdout);
+        expect(response.status).to.equal(0);
+        expect(testJsonStructure(response.result)).to.be.true;
+        expect(response.result.url).to.equal(expectedUrl);
 
+        expect(spies.get('resolver').callCount).to.equal(1);
+      });
+
+    test
+      .do(() => {
+        spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').rejects());
+      })
+      .stdout()
+      .command(['force:org:open', '--json', '--targetusername', username, '--path', testPath])
+      .it('handles domain timeouts', (ctx) => {
+        const response = JSON.parse(ctx.stdout);
+        expect(spies.get('resolver').callCount).to.equal(1);
+        expect(spies.get('open').callCount).to.equal(0);
+        expect(response.status).to.equal(1);
+        expect(response.message).to.equal(messages.getMessage('domainTimeoutError'));
+      });
+  });
+
+  describe('domain resolution, no callout', () => {
     beforeEach(() => {
       stubMethod($$.SANDBOX, MyDomainResolver, 'create').resolves(MyDomainResolver.prototype);
       spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
@@ -81,12 +133,13 @@ describe('open commands', () => {
         delete process.env.SFDX_CONTAINER_MODE;
       })
       .stdout()
-      .command(['force:org:open', '--json', '--targetusername', 'test@test.org', '--path', '/lightning/whatever'])
+      .command(['force:org:open', '--json', '--targetusername', username, '--path', testPath])
       .it('does not wait for domains in container mode, even without urlonly', (ctx) => {
         const response = JSON.parse(ctx.stdout);
         expect(response.status).to.equal(0);
         expect(testJsonStructure(response.result)).to.be.true;
-        expect(response.result.url.endsWith(encodeURIComponent('/lightning/whatever'))).to.be.true;
+        expect(response.result.url).to.equal(expectedUrl);
+
         expect(spies.get('resolver').callCount).to.equal(0);
       });
 
@@ -98,37 +151,26 @@ describe('open commands', () => {
         delete process.env.SFDX_DOMAIN_RETRY;
       })
       .stdout()
-      .command(['force:org:open', '--json', '--targetusername', 'test@test.org', '--path', '/lightning/whatever'])
+      .command(['force:org:open', '--json', '--targetusername', username, '--path', testPath])
       .it('does not wait for domains when timeouts are zero, even without urlonly', (ctx) => {
         const response = JSON.parse(ctx.stdout);
         expect(response.status).to.equal(0);
         expect(testJsonStructure(response.result)).to.be.true;
-        expect(response.result.url.endsWith(encodeURIComponent('/lightning/whatever'))).to.be.true;
         expect(spies.get('resolver').callCount).to.equal(0);
-      });
-
-    test
-      .stdout()
-      .command(['force:org:open', '--json', '--targetusername', 'test@test.org', '--path', '/lightning/whatever'])
-      .it('waits on domains that need time to resolve', (ctx) => {
-        const response = JSON.parse(ctx.stdout);
-        expect(response.status).to.equal(0);
-        expect(testJsonStructure(response.result)).to.be.true;
-        expect(response.result.url.endsWith(encodeURIComponent('/lightning/whatever'))).to.be.true;
-        expect(spies.get('resolver').callCount).to.equal(1);
-      });
-
-    test
-      .stdout()
-      .command(['force:org:open', '--json', '--targetusername', 'test@test.org', '--path', '/lightning/whatever'])
-      .it('handles domain timeouts', (ctx) => {
-        const response = JSON.parse(ctx.stdout);
-        expect(response.status).to.equal(0);
-        expect(testJsonStructure(response.result)).to.be.true;
-        expect(response.result.url.endsWith(encodeURIComponent('/lightning/whatever'))).to.be.true;
-        expect(spies.get('resolver').callCount).to.equal(1);
       });
   });
 
-  it('calls open when urlonly is not present');
+  describe('human output', () => {
+    test
+      .do(() => {
+        spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
+      })
+      .stdout()
+      .command(['force:org:open', '--targetusername', username, '--path', testPath])
+      .it('calls open and outputs proper success message', (ctx) => {
+        expect(ctx.stdout).to.include(messages.getMessage('humanSuccess', [orgId, username, expectedUrl]));
+        expect(spies.get('resolver').callCount).to.equal(1);
+        expect(spies.get('open').callCount).to.equal(1);
+      });
+  });
 });
