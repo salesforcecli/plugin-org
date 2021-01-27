@@ -9,14 +9,19 @@ import { URL } from 'url';
 import * as open from 'open';
 
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
-import { Messages, Org, MyDomainResolver, SfdxError, sfdc } from '@salesforce/core';
+import {
+  Messages,
+  Org,
+  MyDomainResolver,
+  SfdxError,
+  // sfdc
+} from '@salesforce/core';
 import { Env, toNumber, Duration } from '@salesforce/kit';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
 
 const isSFDXContainerMode = (): boolean => (new Env().getString('SFDX_CONTAINER_MODE') ? true : false);
-
 export class OrgOpenCommand extends SfdxCommand {
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessage('examples').split(EOL);
@@ -47,13 +52,14 @@ export class OrgOpenCommand extends SfdxCommand {
       this.ux.styledHeader(messages.getMessage('Action Required!'));
       this.ux.log(messages.getMessage('containerAction', [orgId, url]));
       return output;
-    } else {
-      this.ux.log(messages.getMessage('humanSuccess', [orgId, username, url]));
     }
+
+    this.ux.log(messages.getMessage('humanSuccess', [orgId, username, url]));
+
     if (this.flags.urlonly) {
       return output;
     }
-    // we're in not
+    // we actually need to open the org
     await this.checkLightningDomain(url);
     await open(url, { wait: false });
     return output;
@@ -72,7 +78,8 @@ export class OrgOpenCommand extends SfdxCommand {
   private async checkLightningDomain(url: string): Promise<void> {
     const domain = `https://${/https?:\/\/([^.]*)/.exec(url)[1]}.lightning.force.com`;
     const timeout = new Duration(toNumber(new Env().getString('SFDX_DOMAIN_RETRY', '240')), Duration.Unit.SECONDS);
-    if (sfdc.isInternalUrl(domain) || timeout.seconds === 0) {
+    // if (sfdc.isInternalUrl(domain) || timeout.seconds === 0) {
+    if (false || timeout.seconds === 0) {
       return;
     }
 
