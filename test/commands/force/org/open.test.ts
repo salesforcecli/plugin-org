@@ -9,7 +9,7 @@ import { Org, MyDomainResolver } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
 import * as utils from '../../../../src/shared/utils';
 
-const returnedJsonMatches = (response: object) => {
+const testJsonStructure = (response: object) => {
   expect(response).to.have.property('url');
   expect(response).to.have.property('username');
   expect(response).to.have.property('orgId');
@@ -39,7 +39,7 @@ describe('open commands', () => {
       .it('org without a url defaults to proper default', (ctx) => {
         const response = JSON.parse(ctx.stdout);
         expect(response.status).to.equal(0);
-        expect(returnedJsonMatches(response.result)).to.be.true;
+        expect(testJsonStructure(response.result)).to.be.true;
       });
 
     test
@@ -56,7 +56,7 @@ describe('open commands', () => {
       .it('org with a url is built correctly', (ctx) => {
         const response = JSON.parse(ctx.stdout);
         expect(response.status).to.equal(0);
-        expect(returnedJsonMatches(response.result)).to.be.true;
+        expect(testJsonStructure(response.result)).to.be.true;
         expect(response.result.url.endsWith(encodeURIComponent('/lightning/whatever'))).to.be.true;
       });
 
@@ -85,7 +85,7 @@ describe('open commands', () => {
       .it('does not wait for domains in container mode, even without urlonly', (ctx) => {
         const response = JSON.parse(ctx.stdout);
         expect(response.status).to.equal(0);
-        expect(returnedJsonMatches(response.result)).to.be.true;
+        expect(testJsonStructure(response.result)).to.be.true;
         expect(response.result.url.endsWith(encodeURIComponent('/lightning/whatever'))).to.be.true;
         expect(spies.get('resolver').callCount).to.equal(0);
       });
@@ -102,7 +102,7 @@ describe('open commands', () => {
       .it('does not wait for domains when timeouts are zero, even without urlonly', (ctx) => {
         const response = JSON.parse(ctx.stdout);
         expect(response.status).to.equal(0);
-        expect(returnedJsonMatches(response.result)).to.be.true;
+        expect(testJsonStructure(response.result)).to.be.true;
         expect(response.result.url.endsWith(encodeURIComponent('/lightning/whatever'))).to.be.true;
         expect(spies.get('resolver').callCount).to.equal(0);
       });
@@ -113,7 +113,7 @@ describe('open commands', () => {
       .it('waits on domains that need time to resolve', (ctx) => {
         const response = JSON.parse(ctx.stdout);
         expect(response.status).to.equal(0);
-        expect(returnedJsonMatches(response.result)).to.be.true;
+        expect(testJsonStructure(response.result)).to.be.true;
         expect(response.result.url.endsWith(encodeURIComponent('/lightning/whatever'))).to.be.true;
         expect(spies.get('resolver').callCount).to.equal(1);
       });
@@ -124,7 +124,7 @@ describe('open commands', () => {
       .it('handles domain timeouts', (ctx) => {
         const response = JSON.parse(ctx.stdout);
         expect(response.status).to.equal(0);
-        expect(returnedJsonMatches(response.result)).to.be.true;
+        expect(testJsonStructure(response.result)).to.be.true;
         expect(response.result.url.endsWith(encodeURIComponent('/lightning/whatever'))).to.be.true;
         expect(spies.get('resolver').callCount).to.equal(1);
       });
