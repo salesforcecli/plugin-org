@@ -1,16 +1,16 @@
 {
-  "description": "list all orgs that the Salesforce CLI has created or authenticated to",
+  "description": "list all orgs you’ve created or authenticated to",
   "examples": [
     "sfdx force:org:list",
     "sfdx force:org:list --verbose --json",
     "sfdx force:org:list --verbose --json > tmp/MyOrgList.json"
   ],
 
-  "verbose": "Lists more information about each org.",
-  "all": "Lists all authenticated orgs, including expired, deleted, and unknown-status scratch orgs.",
-  "clean": "Remove all local org authorizations for deleted or expired orgs.",
-  "noPrompt": "Do not prompt for confirmation.",
-  "skipConnectionStatus": "Skips retrieving the connection status of non-scratch orgs",
+  "verbose": "list more information about each org'",
+  "all": "include expired, deleted, and unknown-status scratch orgs",
+  "clean": "remove all local org authorizations for non-active orgs",
+  "noPrompt": "do not prompt for confirmation",
+  "skipConnectionStatus": "skips retrieving the connection status of non-scratch orgs",
 
   "prompt": "Found (%s) org configurations to delete. Are you sure (yes/no)?",
   "noActiveScratchOrgs": "No active scratch orgs found. Specify --all to see all scratch orgs",
