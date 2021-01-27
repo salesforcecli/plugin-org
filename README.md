@@ -85,7 +85,7 @@ sfdx plugins
 
 ## `sfdx force:org:display [-v <string>] [-u <string>] [--apiversion <string>] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
-get the description for the current or target org.
+get the description for the current or target org
 
 ```
 USAGE
