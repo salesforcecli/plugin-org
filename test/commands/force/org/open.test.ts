@@ -172,5 +172,17 @@ describe('open commands', () => {
         expect(spies.get('resolver').callCount).to.equal(1);
         expect(spies.get('open').callCount).to.equal(1);
       });
+
+    test
+      .do(() => {
+        spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').rejects());
+      })
+      .stderr()
+      .command(['force:org:open', '--targetusername', username, '--path', testPath])
+      .it('throws on dns fail', (ctx) => {
+        expect(ctx.stderr).to.contain(messages.getMessage('domainTimeoutError'));
+        expect(spies.get('resolver').callCount).to.equal(1);
+        expect(spies.get('open').callCount).to.equal(0);
+      });
   });
 });
