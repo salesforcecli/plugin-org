@@ -5,7 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { $$, expect, test } from '@salesforce/command/lib/test';
-
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 import cli from 'cli-ux';
