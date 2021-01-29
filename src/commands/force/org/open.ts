@@ -69,7 +69,7 @@ export class OrgOpenCommand extends SfdxCommand {
   private async checkLightningDomain(url: string): Promise<void> {
     const domain = `https://${/https?:\/\/([^.]*)/.exec(url)[1]}.lightning.force.com`;
     const timeout = new Duration(new Env().getNumber('SFDX_DOMAIN_RETRY', 240), Duration.Unit.SECONDS);
-    if (sfdc.isInternalUrl(domain) || timeout.seconds === 0) {
+    if (sfdc.isInternalUrl(url) || timeout.seconds === 0) {
       return;
     }
 
