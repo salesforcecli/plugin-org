@@ -9,7 +9,7 @@ import { URL } from 'url';
 
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
 import { Messages, Org, MyDomainResolver, SfdxError, sfdc } from '@salesforce/core';
-import { Env, toNumber, Duration } from '@salesforce/kit';
+import { Env, Duration } from '@salesforce/kit';
 import { openUrl } from '../../../shared/utils';
 
 Messages.importMessagesDirectory(__dirname);
@@ -39,7 +39,7 @@ export class OrgOpenCommand extends SfdxCommand {
     const username = this.org.getUsername();
     const output = { orgId, url, username };
 
-    if (new Env().getString('SFDX_CONTAINER_MODE') ? true : false) {
+    if (new Env().getBoolean('SFDX_CONTAINER_MODE')) {
       // instruct the user that they need to paste the URL into the browser
       this.ux.styledHeader('Action Required!');
       this.ux.log(messages.getMessage('containerAction', [orgId, url]));
@@ -62,14 +62,13 @@ export class OrgOpenCommand extends SfdxCommand {
     const conn = this.org.getConnection();
     const accessToken = conn.accessToken;
     const instanceUrl = this.org.getField(Org.Fields.INSTANCE_URL) as string;
-    const instanceUrlClean = instanceUrl.endsWith('/') ? instanceUrl.substr(0, instanceUrl.length) : instanceUrl;
-
+    const instanceUrlClean = instanceUrl.replace(/\/$/, '');
     return `${instanceUrlClean}/secur/frontdoor.jsp?sid=${accessToken}`;
   }
 
   private async checkLightningDomain(url: string): Promise<void> {
     const domain = `https://${/https?:\/\/([^.]*)/.exec(url)[1]}.lightning.force.com`;
-    const timeout = new Duration(toNumber(new Env().getString('SFDX_DOMAIN_RETRY', '240')), Duration.Unit.SECONDS);
+    const timeout = new Duration(new Env().getNumber('SFDX_DOMAIN_RETRY', 240), Duration.Unit.SECONDS);
     if (sfdc.isInternalUrl(domain) || timeout.seconds === 0) {
       return;
     }

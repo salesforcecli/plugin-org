@@ -22,5 +22,5 @@ export const camelCaseToTitleCase = (text: string): string => {
 };
 
 export const openUrl = async (url: string): Promise<ChildProcess> => {
-  return open(url, { wait: false });
+  return open(url);
 };
