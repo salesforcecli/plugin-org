@@ -1,5 +1,5 @@
 # -- CLEAN
-
+tmp/
 # use yarn by default, so ignore npm
 package-lock.json
 
@@ -23,7 +23,11 @@ coverage
 
 # generated docs
 docs
-tmp
+
+# ignore sfdx-trust files
+*.tgz
+*.sig
+package.json.bak.
 
 # -- CLEAN ALL
 node_modules
