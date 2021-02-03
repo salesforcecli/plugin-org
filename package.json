@@ -1,7 +1,7 @@
 {
   "name": "@salesforce/plugin-org",
   "description": "A template repository for sfdx plugins",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "author": "Salesforce",
   "bugs": "https://github.com/forcedotcom/cli/issues",
   "dependencies": {
@@ -92,7 +92,7 @@
   "scripts": {
     "build": "sf-build",
     "clean": "sf-clean",
-    "clean-all": "sf-clean all",
+    "clean-all": "-clean all",
     "clean:lib": "shx rm -rf lib && shx rm -rf coverage && shx rm -rf .nyc_output && shx rm -f oclif.manifest.json",
     "compile": "sf-compile",
     "docs": "sf-docs",
