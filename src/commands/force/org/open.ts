@@ -22,7 +22,6 @@ export class OrgOpenCommand extends SfdxCommand {
     path: flags.string({
       char: 'p',
       description: messages.getMessage('cliPath'),
-      default: '%2Flightning%2Fsetup',
       env: 'FORCE_OPEN_URL',
       parse: (input) => encodeURIComponent(decodeURIComponent(input)),
     }),
@@ -34,7 +33,7 @@ export class OrgOpenCommand extends SfdxCommand {
 
   public async run(): Promise<OrgOpenOutput> {
     const frontDoorUrl = await this.buildFrontdoorUrl();
-    const url = `${frontDoorUrl}&retURL=${this.flags.path as string}`;
+    const url = this.flags.path ? `${frontDoorUrl}&retURL=${this.flags.path as string}` : frontDoorUrl;
     const orgId = this.org.getOrgId();
     const username = this.org.getUsername();
     const output = { orgId, url, username };

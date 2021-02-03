@@ -17,8 +17,8 @@ const username = 'test@test.org';
 const testPath = '/lightning/whatever';
 const testInstance = 'https://cs1.my.salesforce.com';
 const accessToken = 'testAccessToken';
-
-const expectedUrl = `${testInstance}/secur/frontdoor.jsp?sid=${accessToken}&retURL=${encodeURIComponent(testPath)}`;
+const expectedDefaultUrl = `${testInstance}/secur/frontdoor.jsp?sid=${accessToken}`;
+const expectedUrl = `${expectedDefaultUrl}&retURL=${encodeURIComponent(testPath)}`;
 
 const testJsonStructure = (response: object) => {
   expect(response).to.have.property('url');
@@ -52,9 +52,7 @@ describe('open commands', () => {
         const response = JSON.parse(ctx.stdout);
         expect(response.status).to.equal(0);
         expect(testJsonStructure(response.result)).to.be.true;
-        expect(response.result.url).to.equal(
-          `${testInstance}/secur/frontdoor.jsp?sid=${accessToken}&retURL=${encodeURIComponent('/lightning/setup')}`
-        );
+        expect(response.result.url).to.equal(expectedDefaultUrl);
       });
 
     test
