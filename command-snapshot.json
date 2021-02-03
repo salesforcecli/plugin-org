@@ -8,5 +8,10 @@
     "command": "force:org:list",
     "plugin": "@salesforce/plugin-org",
     "flags": ["all", "clean", "json", "loglevel", "noprompt", "skipconnectionstatus", "verbose"]
+  },
+  {
+    "command": "force:org:open",
+    "plugin": "@salesforce/plugin-org",
+    "flags": ["path", "urlonly", "json", "loglevel", "targetusername", "apiversion"]
   }
 ]

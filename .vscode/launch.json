@@ -36,7 +36,8 @@
       "args": ["--inspect", "--no-timeouts", "--colors", "${file}"],
       "env": {
         "NODE_ENV": "development",
-        "SFDX_ENV": "development"
+        "SFDX_ENV": "development",
+        "OCLIF_TS_NODE": "0"
       },
       "smartStep": true,
       "internalConsoleOptions": "openOnSessionStart",
