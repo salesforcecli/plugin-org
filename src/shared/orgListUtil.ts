@@ -131,7 +131,7 @@ export class OrgListUtil {
     const config = (await ConfigAggregator.create()).getConfig();
 
     for (const authInfo of authInfos) {
-      const currentValue = OrgListUtil.removeRestrictedInfoFromConfig(authInfo.getFields()) as ExtendedAuthFields;
+      const currentValue = OrgListUtil.removeRestrictedInfoFromConfig(authInfo.getFields(true)) as ExtendedAuthFields;
       const [alias, lastUsed] = await Promise.all([
         getAliasByUsername(currentValue.username),
         fs.stat(join(Global.DIR, `${currentValue.username}.json`)),
