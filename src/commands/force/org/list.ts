@@ -43,7 +43,8 @@ export class OrgListCommand extends SfdxCommand {
     let fileNames: string[] = [];
     try {
       fileNames = await AuthInfo.listAllAuthFiles();
-    } catch (error) {
+    } catch (err) {
+      const error = err as SfdxError;
       if (error.name === 'NoAuthInfoFound') {
         throw new SfdxError(messages.getMessage('noOrgsFound'), 'noOrgsFound', [
           messages.getMessage('noOrgsFoundAction'),
@@ -104,7 +105,8 @@ export class OrgListCommand extends SfdxCommand {
           const org = await Org.create({ aliasOrUsername: fields.username, connection });
           await org.remove();
         } catch (e) {
-          this.logger.debug(`Error cleaning org ${fields.username}: ${e.message as string}`);
+          const err = e as SfdxError;
+          this.logger.debug(`Error cleaning org ${fields.username}: ${err.message}`);
         }
       })
     );
@@ -145,7 +147,7 @@ export class OrgListCommand extends SfdxCommand {
     }
   }
 
-  private extractDefaultOrgStatus(val): void {
+  private extractDefaultOrgStatus(val: ExtendedAuthFields): void {
     if (val.isDefaultDevHubUsername) {
       val.defaultMarker = '(D)';
     } else if (val.isDefaultUsername) {
@@ -180,7 +182,7 @@ export class OrgListCommand extends SfdxCommand {
     return scratchOrgColumns.concat([{ key: 'expirationDate', label: 'EXPIRATION DATE' }]);
   }
 
-  private sortFunction = (orgDetails): ExtendedAuthFields[] => {
+  private sortFunction = (orgDetails: ExtendedAuthFields): string[] => {
     this.extractDefaultOrgStatus(orgDetails);
     return [orgDetails.alias, orgDetails.username];
   };

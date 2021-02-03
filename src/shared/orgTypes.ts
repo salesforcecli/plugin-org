@@ -6,6 +6,7 @@
  */
 
 import { AuthFields } from '@salesforce/core';
+import { Dictionary } from '@salesforce/ts-types';
 
 export interface OrgDisplayReturn extends Partial<ScratchOrgFields> {
   username: string;
@@ -27,7 +28,7 @@ export interface ExtendedAuthFields extends AuthFields, OrgListFields, Partial<S
   devHubOrgId?: string;
   isExpired?: boolean;
   connectedStatus?: string;
-  attributes?: object;
+  attributes?: Dictionary<unknown>;
 }
 
 // developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_objects_scratchorginfo.htm
@@ -61,4 +62,5 @@ export interface ScratchOrgFields {
 export interface OrgListFields {
   isDefaultUsername?: boolean;
   isDefaultDevHubUsername?: boolean;
+  defaultMarker?: '(D)' | '(U)';
 }

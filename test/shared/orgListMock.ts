@@ -46,15 +46,15 @@ SERVER_DATA.set(TEST_USERS[3], {
 });
 
 class OrgListMock {
-  public static get devHubUsername() {
+  public static get devHubUsername(): string {
     return 'foo@example.com';
   }
 
-  public static get testUsers() {
+  public static get testUsers(): string[] {
     return TEST_USERS;
   }
 
-  public static get serverData() {
+  public static get serverData(): Map<string, Record<string, unknown>> {
     return SERVER_DATA;
   }
 
