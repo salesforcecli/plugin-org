@@ -20,7 +20,7 @@ const accessToken = 'testAccessToken';
 const expectedDefaultUrl = `${testInstance}/secur/frontdoor.jsp?sid=${accessToken}`;
 const expectedUrl = `${expectedDefaultUrl}&retURL=${encodeURIComponent(testPath)}`;
 
-const testJsonStructure = (response: object) => {
+const testJsonStructure = (response: Record<string, unknown>) => {
   expect(response).to.have.property('url');
   expect(response).to.have.property('username').equal(username);
   expect(response).to.have.property('orgId').equal(orgId);

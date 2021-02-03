@@ -6,7 +6,7 @@
  */
 import { basename, join } from 'path';
 
-import { Org, AuthInfo, fs, sfdc, ConfigAggregator, Global, AuthFields, Logger } from '@salesforce/core';
+import { Org, AuthInfo, fs, sfdc, ConfigAggregator, Global, AuthFields, Logger, SfdxError } from '@salesforce/core';
 import { Dictionary, JsonMap } from '@salesforce/ts-types';
 import { Record } from 'jsforce';
 import { omit } from '@salesforce/kit/lib';
@@ -20,10 +20,11 @@ type OrgGroups = {
 
 type ExtendedScratchOrgInfo = ScratchOrgInfoSObject & {
   devHubOrgId: string;
+  attributes: Dictionary<string>;
 };
 
 export class OrgListUtil {
-  private static logger;
+  private static logger: Logger;
 
   public static async retrieveLogger(): Promise<Logger> {
     if (!OrgListUtil.logger) {
@@ -42,7 +43,7 @@ export class OrgListUtil {
    */
   public static async readLocallyValidatedMetaConfigsGroupedByOrgType(
     userFilenames: string[],
-    flags
+    flags: Dictionary<string | boolean>
   ): Promise<OrgGroups> {
     const contents: AuthInfo[] = await OrgListUtil.readAuthFiles(userFilenames);
     const orgs = await OrgListUtil.groupOrgs(contents);
@@ -104,7 +105,8 @@ export class OrgListUtil {
         try {
           const orgUsername = basename(fileName, '.json');
           return AuthInfo.create({ username: orgUsername });
-        } catch (err) {
+        } catch (error) {
+          const err = error as SfdxError;
           const logger = await OrgListUtil.retrieveLogger();
           logger.warn(`Problem reading file: ${fileName} skipping`);
           logger.warn(err.message);
@@ -216,7 +218,7 @@ export class OrgListUtil {
     orgs: ExtendedAuthFields[]
   ): Promise<ExtendedAuthFields[]> {
     // Reduce the information to key value pairs with signupUsername as key
-    const contentMap = updatedContents.reduce((map, scratchOrgInfo) => {
+    const contentMap: Dictionary<ExtendedScratchOrgInfo> = updatedContents.reduce((map, scratchOrgInfo) => {
       if (scratchOrgInfo) {
         map[scratchOrgInfo.SignupUsername] = scratchOrgInfo;
       }
@@ -264,17 +266,19 @@ export class OrgListUtil {
       try {
         await org.refreshAuth();
         return 'Connected';
-      } catch (error) {
+      } catch (err) {
+        const error = err as SfdxError;
         const logger = await OrgListUtil.retrieveLogger();
         logger.trace(`error refreshing auth for org: ${org.getUsername()}`);
         logger.trace(error);
-        return error['code'] ?? error.message;
+        return error.code ?? error.message;
       }
-    } catch (error) {
+    } catch (err) {
+      const error = err as SfdxError;
       const logger = await OrgListUtil.retrieveLogger();
       logger.trace(`error refreshing auth for org: ${username}`);
       logger.trace(error);
-      return error['code'] ?? error.message ?? 'Unknown';
+      return error.code ?? error.message ?? 'Unknown';
     }
   }
 }
