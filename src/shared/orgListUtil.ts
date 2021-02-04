@@ -133,7 +133,15 @@ export class OrgListUtil {
     const config = (await ConfigAggregator.create()).getConfig();
 
     for (const authInfo of authInfos) {
-      const currentValue = OrgListUtil.removeRestrictedInfoFromConfig(authInfo.getFields()) as ExtendedAuthFields;
+      let currentValue: ExtendedAuthFields;
+      try {
+        currentValue = OrgListUtil.removeRestrictedInfoFromConfig(authInfo.getFields(true));
+      } catch (error) {
+        const logger = await OrgListUtil.retrieveLogger();
+        logger.warn(`Error decrypting ${authInfo.getUsername()}`);
+        currentValue = OrgListUtil.removeRestrictedInfoFromConfig(authInfo.getFields());
+      }
+
       const [alias, lastUsed] = await Promise.all([
         getAliasByUsername(currentValue.username),
         fs.stat(join(Global.DIR, `${currentValue.username}.json`)),
