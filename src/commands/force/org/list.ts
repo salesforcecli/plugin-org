@@ -108,7 +108,7 @@ export class OrgListCommand extends SfdxCommand {
           const err = e as SfdxError;
           this.logger.debug(`Error cleaning org ${fields.username}: ${err.message}`);
           this.ux.warn(
-            `Unable to clean org with username ${fields.username}.  You can run 'sfdx force:org:delete -u ${fields.username} to remove it`
+            `Unable to clean org with username ${fields.username}.  You can run sfdx force:org:delete -u ${fields.username} to remove it`
           );
         }
       })
