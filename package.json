@@ -104,7 +104,7 @@
     "prepare": "sf-install",
     "pretest": "sf-compile-test",
     "test": "sf-test",
-    "test:command-reference": "./bin/run commandreference:generate --erroronwarnings -p org",
+    "test:command-reference": "./bin/run commandreference:generate --erroronwarnings",
     "test:deprecation-policy": "./bin/run snapshot:compare",
     "version": "oclif-dev readme && git add README.md"
   },
