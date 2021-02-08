@@ -18,5 +18,5 @@
   "noOrgsFound": "No orgs can be found.",
   "noOrgsFoundAction": "Use one of the auth commands or force:org:create to add or create a scratch org.",
 
-  "scratchOrgRemoveConnectedStatusProperty": "Starting in API version 52, the JSON output of this command no longer returns the property connectedStatus for scratch orgs"
+  "scratchOrgRemoveConnectedStatusProperty": "Starting in API version 52, the JSON output of this command no longer returns the property connectedStatus for scratch orgs."
 }
