@@ -16,5 +16,7 @@
   "noActiveScratchOrgs": "No active scratch orgs found. Specify --all to see all scratch orgs",
   "deleteOrgs": "You have %s expired or deleted local scratch org authorizations. To remove authorizations for inactive orgs, run force:org:list --clean.",
   "noOrgsFound": "No orgs can be found.",
-  "noOrgsFoundAction": "Use one of the commands in force:auth or force:org:create to add or create new scratch orgs."
+  "noOrgsFoundAction": "Use one of the commands in force:auth or force:org:create to add or create new scratch orgs.",
+
+  "scratchOrgRemoveConnectedStatusProperty": "The property connectedStatus will no longer be returned for scratch orgs in the JSON output of this command starting in version 52."
 }
