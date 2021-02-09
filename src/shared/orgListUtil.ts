@@ -52,9 +52,7 @@ export class OrgListUtil {
     const [nonScratchOrgs, scratchOrgs] = await Promise.all([
       Promise.all(
         orgs.nonScratchOrgs.map(async (fields) => {
-          if (flags.skipconnectionstatus) {
-            fields.connectedStatus = fields.connectedStatus ?? 'Unknown';
-          } else {
+          if (!flags.skipconnectionstatus) {
             fields.connectedStatus = await OrgListUtil.determineConnectedStatusForNonScratchOrg(fields.username);
           }
           return fields;
