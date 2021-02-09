@@ -7,7 +7,7 @@
 
 import * as os from 'os';
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
-import { Aliases, AuthInfo, Messages, sfdc } from '@salesforce/core';
+import { AuthInfo, Messages, sfdc } from '@salesforce/core';
 
 import { OrgDisplayReturn, ScratchOrgFields } from '../../../shared/orgTypes';
 import { getAliasByUsername, camelCaseToTitleCase } from '../../../shared/utils';
@@ -28,8 +28,7 @@ export class OrgDisplayCommand extends SfdxCommand {
 
   public async run(): Promise<OrgDisplayReturn> {
     // translate to alias if necessary
-    const username = (await Aliases.fetch(this.org.getUsername())) ?? this.org.getUsername();
-    const authInfo = await AuthInfo.create({ username });
+    const authInfo = await AuthInfo.create({ username: this.org.getUsername() });
     const fields = authInfo.getFields(true);
 
     const isScratchOrg = fields.devHubUsername;
