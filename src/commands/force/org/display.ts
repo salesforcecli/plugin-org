@@ -28,10 +28,7 @@ export class OrgDisplayCommand extends SfdxCommand {
 
   public async run(): Promise<OrgDisplayReturn> {
     // translate to alias if necessary
-    const username =
-      (await Aliases.fetch(this.flags.targetusername)) ??
-      (this.flags.targetusername as string) ??
-      this.org.getUsername();
+    const username = (await Aliases.fetch(this.org.getUsername())) ?? this.org.getUsername();
     const authInfo = await AuthInfo.create({ username });
     const fields = authInfo.getFields(true);
 
