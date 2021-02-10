@@ -111,7 +111,8 @@ describe('orgListUtil tests', () => {
 
     it('skipconnectionstatus', async () => {
       const flags = { skipconnectionstatus: true };
-      await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
+      const files = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
+      expect(files.nonScratchOrgs.every((nonScratchOrg) => nonScratchOrg.connectedStatus === undefined));
       expect(readAuthFilesStub.calledOnce).to.be.true;
       expect(groupOrgsStub.calledOnce).to.be.true;
       expect(aliasListStub.calledOnce).to.be.false;
