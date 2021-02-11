@@ -6,7 +6,7 @@
  */
 import { $$, expect } from '@salesforce/command/lib/test';
 
-import { AuthInfo, ConfigAggregator, fs, Aliases } from '@salesforce/core';
+import { AuthInfo, ConfigAggregator, fs, Aliases, Org } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { OrgListUtil } from '../../src/shared/orgListUtil';
 import * as utils from '../../src/shared/utils';
@@ -59,8 +59,6 @@ const fileNames = ['gaz@foo.org', 'test@org.com'];
 
 describe('orgListUtil tests', () => {
   const spies = new Map();
-  let readAuthFilesStub: sinon.SinonStub;
-  let groupOrgsStub: sinon.SinonStub;
   let aliasListStub: sinon.SinonStub;
   let determineConnectedStatusForNonScratchOrg: sinon.SinonStub;
   let retrieveScratchOrgInfoFromDevHubStub: sinon.SinonStub;
@@ -69,30 +67,34 @@ describe('orgListUtil tests', () => {
     afterEach(() => spies.clear());
 
     beforeEach(() => {
-      readAuthFilesStub = stubMethod($$.SANDBOX, OrgListUtil, 'readAuthFiles').resolves([
-        orgAuthConfig,
-        expiredAuthConfig,
-        devHubConfig,
-      ]);
+      $$.SANDBOX.stub(AuthInfo, 'create');
 
-      groupOrgsStub = stubMethod($$.SANDBOX, OrgListUtil, 'groupOrgs').resolves({
-        nonScratchOrgs: [devHubConfigFields],
-        scratchOrgs: [orgAuthConfigFields, expiredAuthConfigFields],
-      });
+      stubMethod($$.SANDBOX, OrgListUtil, 'readAuthFiles').resolves([orgAuthConfig, expiredAuthConfig, devHubConfig]);
       aliasListStub = stubMethod($$.SANDBOX, Aliases, 'fetch').resolves();
       determineConnectedStatusForNonScratchOrg = stubMethod(
         $$.SANDBOX,
         OrgListUtil,
         'determineConnectedStatusForNonScratchOrg'
-      ).resolves({});
+      ).resolves('Connected');
       retrieveScratchOrgInfoFromDevHubStub = stubMethod(
         $$.SANDBOX,
         OrgListUtil,
         'retrieveScratchOrgInfoFromDevHub'
       ).resolves([]);
       spies.set('reduceScratchOrgInfo', $$.SANDBOX.spy(OrgListUtil, 'reduceScratchOrgInfo'));
+      stubMethod($$.SANDBOX, ConfigAggregator, 'create').resolves({
+        getConfig: () => {
+          return {
+            defaultusername: orgAuthConfigFields.username,
+            defaultdevhubusername: devHubConfigFields.username,
+          };
+        },
+      });
 
       $$.SANDBOX.stub(fs, 'readFileSync');
+      stubMethod($$.SANDBOX, fs, 'stat').resolves({ atime: 'test' });
+
+      $$.SANDBOX.stub(utils, 'getAliasByUsername').withArgs('gaz@foo.org').resolves('gaz');
     });
 
     afterEach(async () => {
@@ -101,9 +103,12 @@ describe('orgListUtil tests', () => {
 
     it('readLocallyValidatedMetaConfigsGroupedByOrgType', async () => {
       const flags = {};
-      await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
-      expect(readAuthFilesStub.calledOnce).to.be.true;
-      expect(groupOrgsStub.calledOnce).to.be.true;
+      const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
+      expect(orgs.nonScratchOrgs.every((nonScratchOrg) => nonScratchOrg.connectedStatus !== undefined)).to.be.true;
+      expect(orgs.scratchOrgs.length).to.equal(2);
+      expect(orgs.scratchOrgs[0]).to.haveOwnProperty('username').to.equal('gaz@foo.org');
+      expect(orgs.nonScratchOrgs.length).to.equal(1);
+
       expect(aliasListStub.calledOnce).to.be.false;
       expect(determineConnectedStatusForNonScratchOrg.calledOnce).to.be.true;
       expect(retrieveScratchOrgInfoFromDevHubStub.calledOnce).to.be.true;
@@ -111,11 +116,20 @@ describe('orgListUtil tests', () => {
 
     it('skipconnectionstatus', async () => {
       const flags = { skipconnectionstatus: true };
-      await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
-      expect(readAuthFilesStub.calledOnce).to.be.true;
-      expect(groupOrgsStub.calledOnce).to.be.true;
+      const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
+      expect(orgs.nonScratchOrgs.every((nonScratchOrg) => nonScratchOrg.connectedStatus === undefined)).to.be.true;
       expect(aliasListStub.calledOnce).to.be.false;
-      expect(determineConnectedStatusForNonScratchOrg.calledOnce).to.be.false;
+      expect(determineConnectedStatusForNonScratchOrg.called).to.be.false;
+    });
+
+    it('should omit sensitive information and catergorise active and non-active scracth orgs', async () => {
+      const flags = {};
+      const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
+
+      expect(orgs.scratchOrgs[0]).to.not.haveOwnProperty('clientSecret');
+      expect(orgs.scratchOrgs[1]).to.not.haveOwnProperty('clientSecret');
+      expect(orgs.scratchOrgs[0]).to.not.haveOwnProperty('refreshToken');
+      expect(orgs.scratchOrgs[1]).to.not.haveOwnProperty('refreshToken');
     });
 
     it('should execute queries to check for org information if --verbose is used', async () => {
@@ -147,50 +161,40 @@ describe('orgListUtil tests', () => {
       expect(retrieveScratchOrgInfoFromDevHubStub.calledOnce).to.be.true;
       expect(spies.get('reduceScratchOrgInfo').calledOnce).to.be.true;
       expect(orgGroups.scratchOrgs[0].signupUsername).to.equal(orgAuthConfigFields.username);
-    });
-  });
-
-  describe('groupOrgs', () => {
-    let contents;
-
-    beforeEach(() => {
-      $$.SANDBOX.stub(AuthInfo, 'create');
-      $$.SANDBOX.stub(utils, 'getAliasByUsername').withArgs('gaz@foo.org').resolves('gaz');
-      readAuthFilesStub = stubMethod($$.SANDBOX, OrgListUtil, 'readAuthFiles').resolves([
-        orgAuthConfig,
-        expiredAuthConfig,
-        devHubConfig,
+      // current default on every scratch org, warning in v51, deprecation in v52
+      expect(orgGroups.scratchOrgs[0].connectedStatus).to.equal('Unknown');
+      expect(orgGroups.scratchOrgs[0]).to.include.keys([
+        'signupUsername',
+        'createdBy',
+        'createdDate',
+        'devHubOrgId',
+        'orgName',
+        'edition',
+        'status',
+        'expirationDate',
+        'isExpired',
       ]);
-      stubMethod($$.SANDBOX, fs, 'stat').resolves({ atime: 'test' });
-      stubMethod($$.SANDBOX, ConfigAggregator, 'create').resolves({
-        getConfig: () => {
-          return {
-            defaultusername: orgAuthConfigFields.username,
-            defaultdevhubusername: devHubConfigFields.username,
-          };
-        },
-      });
     });
 
-    afterEach(async () => {
-      $$.SANDBOX.restore();
+    it('handles connection errors for non-scratch orgs', async () => {
+      determineConnectedStatusForNonScratchOrg.restore();
+      stubMethod($$.SANDBOX, Org, 'create').returns(Org.prototype);
+      stubMethod($$.SANDBOX, Org.prototype, 'getField').returns(undefined);
+      stubMethod($$.SANDBOX, Org.prototype, 'getUsername').returns(devHubConfigFields.username);
+      stubMethod($$.SANDBOX, Org.prototype, 'refreshAuth').rejects({ message: 'bad auth' });
+
+      const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, {});
+      expect(orgGroups.nonScratchOrgs).to.have.length(1);
+      expect(orgGroups.nonScratchOrgs[0].connectedStatus).to.equal('bad auth');
     });
 
-    it('ensure the auth infos are categorized into scratchOrgs, nonScratchOrgs', async () => {
-      contents = await OrgListUtil.readAuthFiles(['gaz@foo.org']);
-      const orgs = await OrgListUtil.groupOrgs(contents);
-      expect(orgs.scratchOrgs.length).to.equal(2);
-      expect(orgs.scratchOrgs[0]).to.haveOwnProperty('username').to.equal('gaz@foo.org');
-      expect(orgs.nonScratchOrgs.length).to.equal(1);
-    });
+    it('handles auth file problems for non-scratch orgs', async () => {
+      determineConnectedStatusForNonScratchOrg.restore();
+      stubMethod($$.SANDBOX, Org, 'create').rejects({ message: 'bad file' });
 
-    it('should omit sensitive information and catergorise active and non-active scracth orgs', async () => {
-      const authInfos = await OrgListUtil.readAuthFiles(['gaz@foo.org']);
-      const orgs = await OrgListUtil.groupOrgs(authInfos);
-      expect(orgs.scratchOrgs[0]).to.not.haveOwnProperty('clientSecret');
-      expect(orgs.scratchOrgs[1]).to.not.haveOwnProperty('clientSecret');
-      expect(orgs.scratchOrgs[0]).to.not.haveOwnProperty('refreshToken');
-      expect(orgs.scratchOrgs[1]).to.not.haveOwnProperty('refreshToken');
+      const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, {});
+      expect(orgGroups.nonScratchOrgs).to.have.length(1);
+      expect(orgGroups.nonScratchOrgs[0].connectedStatus).to.equal('bad file');
     });
   });
 });
