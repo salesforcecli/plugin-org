@@ -55,7 +55,7 @@ export class OrgListUtil {
           if (!flags.skipconnectionstatus) {
             // skip completely if we're skipping the connection
             fields.connectedStatus = await OrgListUtil.determineConnectedStatusForNonScratchOrg(fields.username);
-            if (!fields.isDevHub) {
+            if (!fields.isDevHub && fields.connectedStatus === 'Connected') {
               // activating DevHub setting is irreversible so don't waste time checking any org we already know is a hub
               fields.isDevHub = await OrgListUtil.checkNonScratchOrgIsDevHub(fields.username);
             }
