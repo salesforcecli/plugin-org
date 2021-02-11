@@ -46,8 +46,9 @@ const orgAuthConfig = {
 
 const devHubConfigFields = {
   username: 'foo@example.com',
-  isDevHub: true,
+  isDevHub: false, // we want to simulate updating this as part of the flow
 };
+
 const devHubConfig = {
   getFields: () => devHubConfigFields,
   getConnectionOptions: () => ({ accessToken: '00D!XX' }),
@@ -62,6 +63,7 @@ describe('orgListUtil tests', () => {
   let aliasListStub: sinon.SinonStub;
   let determineConnectedStatusForNonScratchOrg: sinon.SinonStub;
   let retrieveScratchOrgInfoFromDevHubStub: sinon.SinonStub;
+  let checkNonScratchOrgIsDevHub: sinon.SinonStub;
 
   describe('readLocallyValidatedMetaConfigsGroupedByOrgType', () => {
     afterEach(() => spies.clear());
@@ -81,6 +83,8 @@ describe('orgListUtil tests', () => {
         OrgListUtil,
         'retrieveScratchOrgInfoFromDevHub'
       ).resolves([]);
+      checkNonScratchOrgIsDevHub = stubMethod($$.SANDBOX, OrgListUtil, 'checkNonScratchOrgIsDevHub').resolves(true);
+
       spies.set('reduceScratchOrgInfo', $$.SANDBOX.spy(OrgListUtil, 'reduceScratchOrgInfo'));
       stubMethod($$.SANDBOX, ConfigAggregator, 'create').resolves({
         getConfig: () => {
@@ -109,6 +113,10 @@ describe('orgListUtil tests', () => {
       expect(orgs.scratchOrgs[0]).to.haveOwnProperty('username').to.equal('gaz@foo.org');
       expect(orgs.nonScratchOrgs.length).to.equal(1);
 
+      // devhub is updated to be true
+      expect(checkNonScratchOrgIsDevHub.called).to.be.true;
+      expect(orgs.nonScratchOrgs[0].isDevHub).to.be.true;
+
       expect(aliasListStub.calledOnce).to.be.false;
       expect(determineConnectedStatusForNonScratchOrg.calledOnce).to.be.true;
       expect(retrieveScratchOrgInfoFromDevHubStub.calledOnce).to.be.true;
@@ -117,7 +125,14 @@ describe('orgListUtil tests', () => {
     it('skipconnectionstatus', async () => {
       const flags = { skipconnectionstatus: true };
       const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
+
+      // we didn't check the status, so the hub is still not known to be a devhub
+      expect(orgs.nonScratchOrgs[0].isDevHub).to.be.false;
+      expect(checkNonScratchOrgIsDevHub.called).to.be.false;
+
       expect(orgs.nonScratchOrgs.every((nonScratchOrg) => nonScratchOrg.connectedStatus === undefined)).to.be.true;
+
+      expect(aliasListStub.calledOnce).to.be.false;
       expect(aliasListStub.calledOnce).to.be.false;
       expect(determineConnectedStatusForNonScratchOrg.called).to.be.false;
     });
@@ -186,6 +201,7 @@ describe('orgListUtil tests', () => {
       const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, {});
       expect(orgGroups.nonScratchOrgs).to.have.length(1);
       expect(orgGroups.nonScratchOrgs[0].connectedStatus).to.equal('bad auth');
+      expect(checkNonScratchOrgIsDevHub.called).to.be.false;
     });
 
     it('handles auth file problems for non-scratch orgs', async () => {
@@ -195,6 +211,7 @@ describe('orgListUtil tests', () => {
       const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, {});
       expect(orgGroups.nonScratchOrgs).to.have.length(1);
       expect(orgGroups.nonScratchOrgs[0].connectedStatus).to.equal('bad file');
+      expect(checkNonScratchOrgIsDevHub.called).to.be.false;
     });
   });
 });
