@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/salesforcecli/plugin-org/compare/v1.2.0...v1.3.0) (2021-02-16)
+
+
+### Features
+
+* uses default username ([5654f9e](https://github.com/salesforcecli/plugin-org/commit/5654f9e9fd26a421054b6f200a65e56f85e69975))
+
+
+### Bug Fixes
+
+* org:display default username ([bc815da](https://github.com/salesforcecli/plugin-org/commit/bc815da15b3c0a6e910a4b1752ad39489cabc7c9))
+
 ## [1.2.0](https://github.com/salesforcecli/plugin-org/compare/v1.1.3...v1.2.0) (2021-02-16)
 
 
