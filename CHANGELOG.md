@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.1](https://github.com/salesforcecli/plugin-org/compare/v1.3.0...v1.3.1) (2021-02-16)
+
+
+### Bug Fixes
+
+* no connectStatus json ([5704c3f](https://github.com/salesforcecli/plugin-org/commit/5704c3f973f0936709347bdfb9acadcf2fd3c90a))
+* no json connectedStatus on skipconnection ([7889c4b](https://github.com/salesforcecli/plugin-org/commit/7889c4ba5110b84357f8ec1f33f81acf51f33a82))
+* org:list updates devhub status ([df45fd9](https://github.com/salesforcecli/plugin-org/commit/df45fd9f3a39d106066d3ccf6450eda38313c152))
+
 ## [1.3.0](https://github.com/salesforcecli/plugin-org/compare/v1.2.0...v1.3.0) (2021-02-16)
 
 
