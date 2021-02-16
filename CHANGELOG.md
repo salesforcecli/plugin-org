@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/salesforcecli/plugin-org/compare/v1.1.3...v1.2.0) (2021-02-16)
+
+
+### Features
+
+* add deprecation warning ([64f0f72](https://github.com/salesforcecli/plugin-org/commit/64f0f72f0d4794ae076c71a731552103dc437a49))
+
 ### [1.1.3](https://github.com/salesforcecli/plugin-org/compare/v1.1.2...v1.1.3) (2021-02-04)
 
 
