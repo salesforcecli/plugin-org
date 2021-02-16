@@ -52,10 +52,13 @@ export class OrgListUtil {
     const [nonScratchOrgs, scratchOrgs] = await Promise.all([
       Promise.all(
         orgs.nonScratchOrgs.map(async (fields) => {
-          if (flags.skipconnectionstatus) {
-            fields.connectedStatus = fields.connectedStatus ?? 'Unknown';
-          } else {
+          if (!flags.skipconnectionstatus) {
+            // skip completely if we're skipping the connection
             fields.connectedStatus = await OrgListUtil.determineConnectedStatusForNonScratchOrg(fields.username);
+            if (!fields.isDevHub && fields.connectedStatus === 'Connected') {
+              // activating DevHub setting is irreversible so don't waste time checking any org we already know is a hub
+              fields.isDevHub = await OrgListUtil.checkNonScratchOrgIsDevHub(fields.username);
+            }
           }
           return fields;
         })
@@ -255,6 +258,23 @@ export class OrgListUtil {
     }
 
     return orgs;
+  }
+
+  /**
+   * Asks the org if it's a devHub.  Because the dev hub setting can't be deactivated, only ask orgs that aren't already stored as hubs.
+   * This has a number of side effects, including updating the AuthInfo files and
+   *
+   * @param username org to check for devHub status
+   * @returns {Promise.<boolean>}
+   */
+  public static async checkNonScratchOrgIsDevHub(username: string): Promise<boolean> {
+    try {
+      const org = await Org.create({ aliasOrUsername: username });
+      // true forces a server check instead of relying on AuthInfo file cache
+      return org.determineIfDevHubOrg(true);
+    } catch {
+      return false;
+    }
   }
 
   /**
