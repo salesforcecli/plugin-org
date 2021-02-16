@@ -48,7 +48,11 @@ describe('org:display', () => {
 
   beforeEach(async function () {
     $$.SANDBOX.restore();
-    stubMethod($$.SANDBOX, Aliases, 'fetch').withArgs('nonscratchalias').resolves('nonscratch@test.com');
+    stubMethod($$.SANDBOX, Aliases, 'fetch')
+      .withArgs('nonscratchalias')
+      .resolves('nonscratch@test.com')
+      .withArgs('scratchAlias')
+      .resolves('scratch@test.com');
     stubMethod($$.SANDBOX, utils, 'getAliasByUsername')
       .withArgs('nonscratch@test.com')
       .resolves('nonscratchalias')
@@ -203,6 +207,8 @@ describe('org:display', () => {
         devHubUsername: devHub.username,
       });
       stubMethod($$.SANDBOX, Org, 'create').resolves(Org.prototype);
+      stubMethod($$.SANDBOX, Org.prototype, 'getUsername').returns('scratch@test.com');
+
       stubMethod($$.SANDBOX, Org.prototype, 'getOrgId').resolves(devHub.id);
       stubMethod($$.SANDBOX, Org.prototype, 'getDevHubOrg').resolves({
         getUsername: () => devHub.username,
@@ -227,7 +233,6 @@ describe('org:display', () => {
     .stdout()
     .command(['force:org:display', '--targetusername', 'scratch@test.com', '--json'])
     .it('queries server for scratch org info', (ctx) => {
-      // console.log(ctx.stdout);
       const result = JSON.parse(ctx.stdout).result;
       expect(result).to.not.be.undefined;
       expect(result.status).to.equal('Active');
