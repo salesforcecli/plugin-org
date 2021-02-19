@@ -27,6 +27,13 @@ export class OrgDisplayCommand extends SfdxCommand {
   };
 
   public async run(): Promise<OrgDisplayReturn> {
+    try {
+      // the auth file might have a stale access token.  We want to refresh it before getting the fields
+      await this.org.refreshAuth();
+    } catch (error) {
+      // even if this fails, we want to display the information we can read from the auth file
+      this.ux.warn('unable to refresh auth for org');
+    }
     // translate to alias if necessary
     const authInfo = await AuthInfo.create({ username: this.org.getUsername() });
     const fields = authInfo.getFields(true);
