@@ -1,4 +1,6 @@
 [![NPM](https://img.shields.io/npm/v/@salesforce/plugin-org.svg)](https://www.npmjs.com/package/@salesforce/plugin-org)
+
+[![NPM](https://img.shields.io/npm/v/@salesforce/plugin-org.svg?label=@salesforce/plugin-org)](https://www.npmjs.com/package/@salesforce/plugin-org) [![CircleCI](https://circleci.com/gh/salesforcecli/plugin-org/tree/main.svg?style=shield)](https://circleci.com/gh/salesforcecli/plugin-org/tree/main) [![Downloads/week](https://img.shields.io/npm/dw/@salesforce/plugin-org.svg)](https://npmjs.org/package/@salesforce/plugin-org) [![License](https://img.shields.io/badge/License-BSD%203--Clause-brightgreen.svg)](https://raw.githubusercontent.com/salesforcecli/plugin-org/main/LICENSE.txt)
 [![CircleCI](https://circleci.com/gh/salesforcecli/plugin-org.svg?style=svg&circle-token=2377ca31221869e9d13448313620486da80e595f)](https://circleci.com/gh/salesforcecli/plugin-org)
 [![codecov](https://codecov.io/gh/salesforcecli/plugin-org/branch/main/graph/badge.svg)](https://codecov.io/gh/salesforcecli/plugin-org)
 
