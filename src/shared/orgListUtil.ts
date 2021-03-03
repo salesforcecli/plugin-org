@@ -64,7 +64,7 @@ export class OrgListUtil {
         })
       ),
 
-      OrgListUtil.processScratchOrgs(orgs.scratchOrgs),
+      await OrgListUtil.processScratchOrgs(orgs.scratchOrgs),
     ]);
 
     return {
@@ -88,13 +88,13 @@ export class OrgListUtil {
       }, {});
     const updatedContents = (
       await Promise.all(
-        Object.entries(orgIdsGroupedByDevHub).map(async ([devHubUsername, orgIds]) =>
-          OrgListUtil.retrieveScratchOrgInfoFromDevHub(devHubUsername, orgIds)
+        Object.entries(orgIdsGroupedByDevHub).map(
+          async ([devHubUsername, orgIds]) => await OrgListUtil.retrieveScratchOrgInfoFromDevHub(devHubUsername, orgIds)
         )
       )
     ).reduce((accumulator, iterator) => [...accumulator, ...iterator], []);
 
-    return OrgListUtil.reduceScratchOrgInfo(updatedContents, scratchOrgs);
+    return await OrgListUtil.reduceScratchOrgInfo(updatedContents, scratchOrgs);
   }
 
   /**
@@ -271,7 +271,7 @@ export class OrgListUtil {
     try {
       const org = await Org.create({ aliasOrUsername: username });
       // true forces a server check instead of relying on AuthInfo file cache
-      return org.determineIfDevHubOrg(true);
+      return await org.determineIfDevHubOrg(true);
     } catch {
       return false;
     }
