@@ -77,25 +77,22 @@ sfdx plugins
 ## Commands
 
 <!-- commands -->
+* [`sfdx force:org:display [-u <string>] [--apiversion <string>] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-forceorgdisplay--u-string---apiversion-string---verbose---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
+* [`sfdx force:org:list [--all] [-p --clean] [--skipconnectionstatus] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-forceorglist---all--p---clean---skipconnectionstatus---verbose---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
+* [`sfdx force:org:open [-p <string>] [-r] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-forceorgopen--p-string--r--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
 
-- [`sfdx force:org:display [-v <string>] [-u <string>] [--apiversion <string>] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-forceorgdisplay--v-string--u-string---apiversion-string---verbose---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
-- [`sfdx force:org:list [--all] [-p --clean] [--skipconnectionstatus] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-forceorglist---all--p---clean---skipconnectionstatus---verbose---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
-
-## `sfdx force:org:display [-v <string>] [-u <string>] [--apiversion <string>] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
+## `sfdx force:org:display [-u <string>] [--apiversion <string>] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
 get the description for the current or target org
 
 ```
 USAGE
-  $ sfdx force:org:display [-v <string>] [-u <string>] [--apiversion <string>] [--verbose] [--json] [--loglevel
+  $ sfdx force:org:display [-u <string>] [--apiversion <string>] [--verbose] [--json] [--loglevel 
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
   -u, --targetusername=targetusername                                               username or alias for the target
                                                                                     org; overrides default target org
-
-  -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub
-                                                                                    org; overrides default dev hub org
 
   --apiversion=apiversion                                                           override the api version used for
                                                                                     api requests made by this command
@@ -109,10 +106,10 @@ OPTIONS
                                                                                     stdout
 
 DESCRIPTION
-  Output includes your access token, client Id, connected status, org ID, instance URL, username, and alias, if
+  Output includes your access token, client Id, connected status, org ID, instance URL, username, and alias, if 
   applicable.
   Use --verbose to include the SFDX auth URL.
-  Including --verbose displays the sfdxAuthUrl property only if you authenticated to the org using auth:web:login (not
+  Including --verbose displays the sfdxAuthUrl property only if you authenticated to the org using auth:web:login (not 
   auth:jwt:grant)
 
 EXAMPLES
@@ -122,7 +119,7 @@ EXAMPLES
   sfdx force:org:display -u TestOrg1 --json > tmp/MyOrgDesc.json
 ```
 
-_See code: [src/commands/force/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/v1.1.0/src/commands/force/org/display.ts)_
+_See code: [src/commands/force/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/v1.3.2/src/commands/force/org/display.ts)_
 
 ## `sfdx force:org:list [--all] [-p --clean] [--skipconnectionstatus] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
@@ -130,7 +127,7 @@ list all orgs you’ve created or authenticated to
 
 ```
 USAGE
-  $ sfdx force:org:list [--all] [-p --clean] [--skipconnectionstatus] [--verbose] [--json] [--loglevel
+  $ sfdx force:org:list [--all] [-p --clean] [--skipconnectionstatus] [--verbose] [--json] [--loglevel 
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
@@ -154,6 +151,46 @@ OPTIONS
                                                                                     org'
 ```
 
-_See code: [src/commands/force/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/v1.1.0/src/commands/force/org/list.ts)_
+_See code: [src/commands/force/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/v1.3.2/src/commands/force/org/list.ts)_
 
+## `sfdx force:org:open [-p <string>] [-r] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
+
+open your default scratch org, or another org that you specify,
+
+```
+USAGE
+  $ sfdx force:org:open [-p <string>] [-r] [-u <string>] [--apiversion <string>] [--json] [--loglevel 
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -p, --path=path                                                                   navigation URL path
+
+  -r, --urlonly                                                                     display navigation URL, but don’t
+                                                                                    launch browser
+
+  -u, --targetusername=targetusername                                               username or alias for the target
+                                                                                    org; overrides default target org
+
+  --apiversion=apiversion                                                           override the api version used for
+                                                                                    api requests made by this command
+
+  --json                                                                            format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for
+                                                                                    this command invocation
+
+DESCRIPTION
+  To open a specific page, specify the portion of the URL after "yourInstance.salesforce.com/" as --path.
+  For example, specify "--path lightning" to open Lightning Experience, or specify "--path /apex/YourPage" to open a 
+  Visualforce page.
+  To generate a URL but not launch your browser, specify --urlonly
+
+EXAMPLES
+  sfdx force:org:open
+  sfdx force:org:open -u me@my.org
+  sfdx force:org:open -u MyTestOrg1
+  sfdx force:org:open -r -p lightning
+```
+
+_See code: [src/commands/force/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/v1.3.2/src/commands/force/org/open.ts)_
 <!-- commandsstop -->
