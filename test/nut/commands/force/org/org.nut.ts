@@ -36,7 +36,7 @@ describe('Org Command NUT', function async() {
       defaultUsername = getString(session.setup[0], 'result.username');
       defaultUserOrgId = getString(session.setup[0], 'result.orgId');
       aliasedUsername = getString(session.setup[1], 'result.username');
-      aliasUserOrgId = getString(session.setup[2], 'result.orgId');
+      aliasUserOrgId = getString(session.setup[1], 'result.orgId');
     }
   });
 
@@ -129,7 +129,7 @@ describe('Org Command NUT', function async() {
       expect(aliasUserLine).to.include('anAlias');
     });
   });
-  describe.skip('Org Display', () => {
+  describe('Org Display', () => {
     it('should display org information for default username', async () => {
       const result = execCmd('force:org:display --json');
       expect(result.shellOutput.code).to.be.equal(
@@ -181,7 +181,7 @@ describe('Org Command NUT', function async() {
   });
   describe('Org Open', () => {
     it('should produce the URL for an org in json', async () => {
-      const result = execCmd('force:org:open -u dh@salesforce.com --urlonly --json');
+      const result = execCmd(`force:org:open -u ${defaultUsername} --urlonly --json`);
       expect(result.shellOutput.code).to.be.equal(
         0,
         concatString(result.shellOutput.stdout, result.shellOutput.stderr)
@@ -191,7 +191,7 @@ describe('Org Command NUT', function async() {
       expect(jsonResult).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
     });
     it('should produce the URL with given path for an org in json', async () => {
-      const result = execCmd('force:org:open -u dh@salesforce.com --urlonly --path "foobarbaz" --json');
+      const result = execCmd(`force:org:open -u ${aliasedUsername} --urlonly --path "foo/bar/baz" --json`);
       expect(result.shellOutput.code).to.be.equal(
         0,
         concatString(result.shellOutput.stdout, result.shellOutput.stderr)
@@ -199,7 +199,7 @@ describe('Org Command NUT', function async() {
       const jsonResult = asDictionary(get(result, 'jsonOutput.result'));
       expect(jsonResult).to.be.ok;
       expect(jsonResult).to.include({ orgId: aliasUserOrgId, username: aliasedUsername });
-      expect(jsonResult).to.property('url').to.include('retUrl=foo/bar/baz');
+      expect(jsonResult).to.property('url').to.include('retURL=foo%2Fbar%2Fbaz');
     });
   });
 });
