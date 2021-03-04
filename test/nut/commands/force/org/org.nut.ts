@@ -70,12 +70,15 @@ describe('Org Command NUT', function async() {
       expect(scratchOrgs.map((org) => asDictionary(org)).find((org) => org.username === aliasedUsername)).to.include({
         alias: 'anAlias',
       });
-      expect(nonScratchOrgs).to.include({
-        username: process.env.TESTKIT_HUB_USERNAME,
-        defaultMarker: '(D)',
-        isDevHub: true,
-        connectedStatus: 'Connected',
-      });
+      expect(nonScratchOrgs).to.include(
+        {
+          username: process.env.TESTKIT_HUB_USERNAME,
+          defaultMarker: '(D)',
+          isDevHub: true,
+          connectedStatus: 'Connected',
+        },
+        JSON.stringify(nonScratchOrgs)
+      );
     });
     it('should list orgs - skipconnectionstatus', () => {
       const result = execCmd('force:org:list --skipconnectionstatus --json');
@@ -85,11 +88,14 @@ describe('Org Command NUT', function async() {
       );
       const listResult = asDictionary(get(result, 'jsonOutput.result'));
       const nonScratchOrgs = asDictionary(listResult.nonScratchOrgs[0]);
-      expect(nonScratchOrgs).to.include({
-        username: process.env.TESTKIT_HUB_USERNAME,
-        defaultMarker: '(D)',
-        isDevHub: true,
-      });
+      expect(nonScratchOrgs).to.include(
+        {
+          username: process.env.TESTKIT_HUB_USERNAME,
+          defaultMarker: '(D)',
+          isDevHub: true,
+        },
+        JSON.stringify(nonScratchOrgs)
+      );
     });
     it('should list orgs in a human readable form', () => {
       const result = execCmd('force:org:list');
