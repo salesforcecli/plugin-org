@@ -10,15 +10,36 @@ import * as querystring from 'querystring';
 import { expect } from '@salesforce/command/lib/test';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { execCmd } from '@salesforce/cli-plugins-testkit';
-import { Duration } from '@salesforce/kit';
-import { asDictionary, AnyJson, get, getString, isArray } from '@salesforce/ts-types';
+import { asDictionary, AnyJson, Dictionary, getString, isArray } from '@salesforce/ts-types';
 
-const concatString = (a: string, b: string): string => a + b;
+const verifyHumanResults = (
+  lines: string[],
+  defaultUsername: string,
+  aliasedUsername: string,
+  verbose = false
+): void => {
+  expect(lines.length).to.have.greaterThan(0);
+  const devHubLine = lines.find((line) => line.includes(process.env.TESTKIT_HUB_USERNAME));
+  expect(devHubLine).to.be.ok;
+  expect(devHubLine).to.include('(D)');
+  expect(devHubLine).to.include('Connected');
+  const defaultUserLine = lines.find((line) => line.includes(defaultUsername));
+  expect(defaultUserLine).to.be.ok;
+  expect(defaultUserLine).to.include('(U)');
+  const aliasUserLine = lines.find((line) => line.includes(aliasedUsername));
+  expect(aliasUserLine).to.be.ok;
+  expect(aliasUserLine).to.include('anAlias');
+  // verbose mode should display sractch org Id and dev hub org Id
+  if (verbose) {
+    expect(defaultUserLine.match(/00D/g)).to.have.lengthOf(2);
+    expect(aliasUserLine.match(/00D/g)).to.have.lengthOf(2);
+  } else {
+    expect(defaultUserLine.match(/00D/g)).to.have.lengthOf(1);
+    expect(aliasUserLine.match(/00D/g)).to.have.lengthOf(1);
+  }
+};
 
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-
-describe('Org Command NUT', function async() {
-  this.timeout(Duration.minutes(10).milliseconds);
+describe('Org Command NUT', () => {
   let session: TestSession;
   let defaultUsername: string;
   let aliasedUsername: string;
@@ -47,12 +68,7 @@ describe('Org Command NUT', function async() {
 
   describe('List Orgs', () => {
     it('should list all orgs', () => {
-      const result = execCmd('force:org:list --json');
-      expect(result.shellOutput.code).to.be.equal(
-        0,
-        concatString(result.shellOutput.stdout, result.shellOutput.stderr)
-      );
-      const listResult = asDictionary(get(result, 'jsonOutput.result'));
+      const listResult = execCmd<Dictionary>('force:org:list --json', { ensureExitCode: 0 }).jsonOutput.result;
       expect(listResult).to.have.property('nonScratchOrgs');
       expect(listResult.nonScratchOrgs).to.have.length(1);
       expect(listResult).to.have.property('scratchOrgs');
@@ -81,12 +97,8 @@ describe('Org Command NUT', function async() {
       );
     });
     it('should list orgs - skipconnectionstatus', () => {
-      const result = execCmd('force:org:list --skipconnectionstatus --json');
-      expect(result.shellOutput.code).to.be.equal(
-        0,
-        concatString(result.shellOutput.stdout, result.shellOutput.stderr)
-      );
-      const listResult = asDictionary(get(result, 'jsonOutput.result'));
+      const listResult = execCmd<Dictionary>('force:org:list --skipconnectionstatus --json', { ensureExitCode: 0 })
+        .jsonOutput.result;
       const nonScratchOrgs = asDictionary(listResult.nonScratchOrgs[0]);
       expect(nonScratchOrgs).to.include(
         {
@@ -98,89 +110,42 @@ describe('Org Command NUT', function async() {
       );
     });
     it('should list orgs in a human readable form', () => {
-      const result = execCmd('force:org:list');
-      expect(result.shellOutput.code).to.be.equal(
-        0,
-        concatString(result.shellOutput.stdout, result.shellOutput.stderr)
-      );
-      const lines = result.shellOutput.stdout.split(os.EOL);
-      expect(lines.length).to.have.greaterThan(0);
-      const devHubLine = lines.find((line) => line.includes(process.env.TESTKIT_HUB_USERNAME));
-      expect(devHubLine).to.be.ok;
-      expect(devHubLine).to.include('(D)');
-      expect(devHubLine).to.include('Connected');
-      const defaultUserLine = lines.find((line) => line.includes(defaultUsername));
-      expect(defaultUserLine).to.be.ok;
-      expect(defaultUserLine).to.include('(U)');
-      const aliasUserLine = lines.find((line) => line.includes(aliasedUsername));
-      expect(aliasUserLine).to.be.ok;
-      expect(aliasUserLine).to.include('anAlias');
+      const lines = execCmd('force:org:list', { ensureExitCode: 0 }).shellOutput.stdout.split(os.EOL);
+      verifyHumanResults(lines, defaultUsername, aliasedUsername);
     });
     it('should list additional information with --verbose', () => {
-      const result = execCmd('force:org:list --verbose');
-      expect(result.shellOutput.code).to.be.equal(
-        0,
-        concatString(result.shellOutput.stdout, result.shellOutput.stderr)
-      );
-      const lines = result.shellOutput.stdout.split(os.EOL);
-      expect(lines.length).to.have.greaterThan(0);
-      const devHubLine = lines.find((line) => line.includes(process.env.TESTKIT_HUB_USERNAME));
-      expect(devHubLine).to.be.ok;
-      expect(devHubLine).to.include('(D)');
-      expect(devHubLine).to.include('Connected');
-      const defaultUserLine = lines.find((line) => line.includes(defaultUsername));
-      expect(defaultUserLine).to.be.ok;
-      expect(defaultUserLine).to.include('(U)');
-      const aliasUserLine = lines.find((line) => line.includes(aliasedUsername));
-      expect(aliasUserLine).to.be.ok;
-      expect(aliasUserLine).to.include('anAlias');
+      const lines = execCmd('force:org:list --verbose', { ensureExitCode: 0 }).shellOutput.stdout.split(os.EOL);
+      verifyHumanResults(lines, defaultUsername, aliasedUsername, true);
     });
   });
   describe('Org Display', () => {
     it('should display org information for default username', () => {
-      const result = execCmd('force:org:display --json');
-      expect(result.shellOutput.code).to.be.equal(
-        0,
-        concatString(result.shellOutput.stdout, result.shellOutput.stderr)
-      );
-      const jsonResult = asDictionary(get(result, 'jsonOutput.result'));
-      expect(jsonResult).to.be.ok;
-      expect(jsonResult).to.include({
+      const result = execCmd<Dictionary>('force:org:display --json', { ensureExitCode: 0 }).jsonOutput.result;
+      expect(result).to.be.ok;
+      expect(result).to.include({
         devHubId: process.env.TESTKIT_HUB_USERNAME,
         username: defaultUsername,
       });
     });
     it('should display scratch org information for alias', () => {
-      const result = execCmd(`force:org:display -u ${aliasedUsername} --json`);
-      expect(result.shellOutput.code).to.be.equal(
-        0,
-        concatString(result.shellOutput.stdout, result.shellOutput.stderr)
-      );
-      const jsonResult = asDictionary(get(result, 'jsonOutput.result'));
-      expect(jsonResult).to.be.ok;
-      expect(jsonResult).to.include({
+      const result = execCmd<Dictionary>(`force:org:display -u ${aliasedUsername} --json`, { ensureExitCode: 0 })
+        .jsonOutput.result;
+      expect(result).to.be.ok;
+      expect(result).to.include({
         devHubId: process.env.TESTKIT_HUB_USERNAME,
         username: aliasedUsername,
       });
     });
     it('should display human readable org information for default username', () => {
-      const result = execCmd('force:org:display');
-      expect(result.shellOutput.code).to.be.equal(
-        0,
-        concatString(result.shellOutput.stdout, result.shellOutput.stderr)
-      );
-      const lines = result.shellOutput.stdout.split(os.EOL);
+      const lines = execCmd<Dictionary>('force:org:display', { ensureExitCode: 0 }).shellOutput.stdout.split(os.EOL);
       expect(lines.length).to.have.greaterThan(0);
       const usernameLine = lines.find((line) => line.includes('Username'));
       expect(usernameLine).to.include(defaultUsername);
     });
     it('should display human readable scratch org information for alias', () => {
-      const result = execCmd(`force:org:display -u ${aliasedUsername}`);
-      expect(result.shellOutput.code).to.be.equal(
-        0,
-        concatString(result.shellOutput.stdout, result.shellOutput.stderr)
+      const lines = execCmd(`force:org:display -u ${aliasedUsername}`, { ensureExitCode: 0 }).shellOutput.stdout.split(
+        os.EOL
       );
-      const lines = result.shellOutput.stdout.split(os.EOL);
       expect(lines.length).to.have.greaterThan(0);
       const usernameLine = lines.find((line) => line.includes('Username'));
       expect(usernameLine).to.include(aliasedUsername);
@@ -188,25 +153,18 @@ describe('Org Command NUT', function async() {
   });
   describe('Org Open', () => {
     it('should produce the URL for an org in json', () => {
-      const result = execCmd(`force:org:open -u ${defaultUsername} --urlonly --json`);
-      expect(result.shellOutput.code).to.be.equal(
-        0,
-        concatString(result.shellOutput.stdout, result.shellOutput.stderr)
-      );
-      const jsonResult = asDictionary(get(result, 'jsonOutput.result'));
-      expect(jsonResult).to.be.ok;
-      expect(jsonResult).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
+      const result = execCmd<Dictionary>(`force:org:open -u ${defaultUsername} --urlonly --json`, { ensureExitCode: 0 })
+        .jsonOutput.result;
+      expect(result).to.be.ok;
+      expect(result).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
     });
     it('should produce the URL with given path for an org in json', () => {
-      const result = execCmd(`force:org:open -u ${aliasedUsername} --urlonly --path "foo/bar/baz" --json`);
-      expect(result.shellOutput.code).to.be.equal(
-        0,
-        concatString(result.shellOutput.stdout, result.shellOutput.stderr)
-      );
-      const jsonResult = asDictionary(get(result, 'jsonOutput.result'));
-      expect(jsonResult).to.be.ok;
-      expect(jsonResult).to.include({ orgId: aliasUserOrgId, username: aliasedUsername });
-      expect(jsonResult)
+      const result = execCmd(`force:org:open -u ${aliasedUsername} --urlonly --path "foo/bar/baz" --json`, {
+        ensureExitCode: 0,
+      }).jsonOutput.result;
+      expect(result).to.be.ok;
+      expect(result).to.include({ orgId: aliasUserOrgId, username: aliasedUsername });
+      expect(result)
         .to.property('url')
         .to.include(`retURL=${querystring.escape('foo/bar/baz')}`);
     });
