@@ -33,11 +33,11 @@ const verifyHumanResults = (
   expect(aliasUserLine).to.include('anAlias');
   // verbose mode should display sractch org Id and dev hub org Id
   if (verbose) {
-    expect(defaultUserLine.match(/00D/g)).to.have.lengthOf(2);
-    expect(aliasUserLine.match(/00D/g)).to.have.lengthOf(2);
+    expect(defaultUserLine.match(/00D/g)).to.have.lengthOf(2, defaultUserLine);
+    expect(aliasUserLine.match(/00D/g)).to.have.lengthOf(2, aliasUserLine);
   } else {
-    expect(defaultUserLine.match(/00D/g)).to.have.lengthOf(1);
-    expect(aliasUserLine.match(/00D/g)).to.have.lengthOf(1);
+    expect(defaultUserLine.match(/00D/g)).to.have.lengthOf(1, defaultUserLine);
+    expect(aliasUserLine.match(/00D/g)).to.have.lengthOf(1, aliasUserLine);
   }
 };
 
