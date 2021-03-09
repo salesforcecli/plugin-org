@@ -5,7 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as os from 'os';
 import * as querystring from 'querystring';
 import { expect } from '@salesforce/command/lib/test';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
@@ -110,12 +109,12 @@ describe('Org Command NUT', () => {
       );
     });
     it('should list orgs in a human readable form', () => {
-      const lines = (execCmd('force:org:list', { ensureExitCode: 0 }).shellOutput.stdout as string).split(os.EOL);
+      const lines = (execCmd('force:org:list', { ensureExitCode: 0 }).shellOutput.stdout as string).split('\n');
       verifyHumanResults(lines, defaultUsername, aliasedUsername);
     });
     it('should list additional information with --verbose', () => {
       const lines = (execCmd('force:org:list --verbose', { ensureExitCode: 0 }).shellOutput.stdout as string).split(
-        os.EOL
+        '\n'
       );
       verifyHumanResults(lines, defaultUsername, aliasedUsername, true);
     });
@@ -140,14 +139,14 @@ describe('Org Command NUT', () => {
     });
     it('should display human readable org information for default username', () => {
       const lines = (execCmd<Dictionary>('force:org:display', { ensureExitCode: 0 }).shellOutput
-        .stdout as string).split(os.EOL);
+        .stdout as string).split('\n');
       expect(lines.length).to.have.greaterThan(0);
       const usernameLine = lines.find((line) => line.includes('Username'));
       expect(usernameLine).to.include(defaultUsername);
     });
     it('should display human readable scratch org information for alias', () => {
       const lines = (execCmd(`force:org:display -u ${aliasedUsername}`, { ensureExitCode: 0 }).shellOutput
-        .stdout as string).split(os.EOL);
+        .stdout as string).split('\n');
       expect(lines.length).to.have.greaterThan(0);
       const usernameLine = lines.find((line) => line.includes('Username'));
       expect(usernameLine).to.include(aliasedUsername);
