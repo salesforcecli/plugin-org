@@ -12,6 +12,8 @@ import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { execCmd } from '@salesforce/cli-plugins-testkit';
 import { asDictionary, AnyJson, Dictionary, getString, isArray } from '@salesforce/ts-types';
 
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+
 const verifyHumanResults = (
   lines: string[],
   defaultUsername: string,
