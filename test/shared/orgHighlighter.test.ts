@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { expect } from '@salesforce/command/lib/test';
-import chalk from 'chalk';
+import * as chalk from 'chalk';
 import { getStyledObject, getStyledValue } from '../../src/shared/orgHighlighter';
 
 describe('highlights value from key-value pair', () => {

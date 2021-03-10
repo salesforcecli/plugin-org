@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import chalk from 'chalk';
+import chalk = require('chalk');
 import { ExtendedAuthFields } from './orgTypes';
 
 /* eslint-disable @typescript-eslint/no-unsafe-return */
