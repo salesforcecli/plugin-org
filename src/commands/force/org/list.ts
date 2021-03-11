@@ -17,7 +17,7 @@ const messages = Messages.loadMessages('@salesforce/plugin-org', 'list');
 
 export class OrgListCommand extends SfdxCommand {
   public static readonly description = messages.getMessage('description');
-
+  public static readonly examples = messages.getMessage('examples').split(EOL);
   public static readonly requiresProject = false;
   public static readonly flagsConfig: FlagsConfig = {
     verbose: flags.builtin({
