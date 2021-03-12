@@ -119,7 +119,7 @@ EXAMPLES
   sfdx force:org:display -u TestOrg1 --json > tmp/MyOrgDesc.json
 ```
 
-_See code: [src/commands/force/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/v1.3.2/src/commands/force/org/display.ts)_
+_See code: [src/commands/force/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/v1.3.3/src/commands/force/org/display.ts)_
 
 ## `sfdx force:org:list [--all] [-p --clean] [--skipconnectionstatus] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
@@ -144,18 +144,23 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for
                                                                                     this command invocation
 
-  --skipconnectionstatus                                                            skips retrieving the connection
+  --skipconnectionstatus                                                            skip retrieving the connection
                                                                                     status of non-scratch orgs
 
   --verbose                                                                         list more information about each
                                                                                     org'
+
+EXAMPLES
+  sfdx force:org:list
+  sfdx force:org:list --verbose --json
+  sfdx force:org:list --verbose --json > tmp/MyOrgList.json
 ```
 
-_See code: [src/commands/force/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/v1.3.2/src/commands/force/org/list.ts)_
+_See code: [src/commands/force/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/v1.3.3/src/commands/force/org/list.ts)_
 
 ## `sfdx force:org:open [-p <string>] [-r] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
-open your default scratch org, or another org that you specify,
+open your default scratch org, or another specified org
 
 ```
 USAGE
@@ -183,7 +188,7 @@ DESCRIPTION
   To open a specific page, specify the portion of the URL after "yourInstance.salesforce.com/" as --path.
   For example, specify "--path lightning" to open Lightning Experience, or specify "--path /apex/YourPage" to open a 
   Visualforce page.
-  To generate a URL but not launch your browser, specify --urlonly
+  To generate a URL but not launch it in your browser, specify --urlonly.
 
 EXAMPLES
   sfdx force:org:open
@@ -192,5 +197,5 @@ EXAMPLES
   sfdx force:org:open -r -p lightning
 ```
 
-_See code: [src/commands/force/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/v1.3.2/src/commands/force/org/open.ts)_
+_See code: [src/commands/force/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/v1.3.3/src/commands/force/org/open.ts)_
 <!-- commandsstop -->

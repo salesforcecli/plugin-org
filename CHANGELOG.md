@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.4](https://github.com/salesforcecli/plugin-org/compare/v1.3.3...v1.3.4) (2021-03-12)
+
+
+### Bug Fixes
+
+* clean up a few messages ([3cee3a2](https://github.com/salesforcecli/plugin-org/commit/3cee3a2d71c95b2c37f2fb7c664c0f1a8faad39f))
+* shane's suggestion ([0f03592](https://github.com/salesforcecli/plugin-org/commit/0f0359274ca218ac8d6044c9f6282fe85c480d82))
+
 ### [1.3.3](https://github.com/salesforcecli/plugin-org/compare/v1.3.2...v1.3.3) (2021-03-03)
 
 
