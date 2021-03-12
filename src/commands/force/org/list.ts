@@ -4,6 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { EOL } from 'os';
+
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
 import { AuthInfo, ConfigAggregator, ConfigInfo, Connection, Org, SfdxError, Messages } from '@salesforce/core';
 import { sortBy } from '@salesforce/kit';
@@ -17,7 +19,7 @@ const messages = Messages.loadMessages('@salesforce/plugin-org', 'list');
 
 export class OrgListCommand extends SfdxCommand {
   public static readonly description = messages.getMessage('description');
-
+  public static readonly examples = messages.getMessage('examples').split(EOL);
   public static readonly requiresProject = false;
   public static readonly flagsConfig: FlagsConfig = {
     verbose: flags.builtin({

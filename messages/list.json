@@ -10,7 +10,7 @@
   "all": "include expired, deleted, and unknown-status scratch orgs",
   "clean": "remove all local org authorizations for non-active orgs",
   "noPrompt": "do not prompt for confirmation",
-  "skipConnectionStatus": "skips retrieving the connection status of non-scratch orgs",
+  "skipConnectionStatus": "skip retrieving the connection status of non-scratch orgs",
 
   "prompt": "Found (%s) org configurations to delete. Are you sure (yes/no)?",
   "noActiveScratchOrgs": "No active scratch orgs found. Specify --all to see all scratch orgs",
