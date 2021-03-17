@@ -34,6 +34,18 @@ workflows:
           filters:
             branches:
               only: main
+      - release-management/release-package:
+          name: pre-release branch package
+          sign: true
+          requires:
+            - node-latest
+            - nuts-on-linux
+            - nuts-on-windows
+            - node-12
+          prerelease: true
+          filters:
+            branches:
+              ignore: main
   test-ts-update:
     triggers:
       - schedule:
