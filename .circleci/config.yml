@@ -36,6 +36,7 @@ workflows:
               only: main
       - release-management/release-package:
           name: pre-release branch package
+          tag: ''
           sign: true
           requires:
             - node-latest
