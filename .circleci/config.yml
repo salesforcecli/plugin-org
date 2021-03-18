@@ -35,7 +35,7 @@ workflows:
             branches:
               only: main
       - release-management/release-package:
-          name: pre-release branch package
+          name: pre-release branch package (no tag)
           tag: ''
           sign: true
           requires:
