@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/salesforcecli/plugin-org/compare/v1.4.0...v1.5.0) (2021-03-18)
+
+
+### Features
+
+* test with empty tag on branches ([10a7aa1](https://github.com/salesforcecli/plugin-org/commit/10a7aa18ca0ce4005b0918de1189fb07d9639ac5))
+* test with no tag again ([5b21808](https://github.com/salesforcecli/plugin-org/commit/5b218083c58882ca3a2db34d3e0d78c6ae2830a2))
+
 ## [1.4.0](https://github.com/salesforcecli/plugin-org/compare/v1.3.3...v1.4.0) (2021-03-17)
 
 
