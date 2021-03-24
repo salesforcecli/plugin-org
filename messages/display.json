@@ -6,6 +6,6 @@
     "sfdx force:org:display -u TestOrg1 --json",
     "sfdx force:org:display -u TestOrg1 --json > tmp/MyOrgDesc.json"
   ],
-  "noScratchOrgInfoError": "No information for scratch org with ID %s found in Dev Hub %s",
-  "noScratchOrgInfoAction": "Check that the DevHub is accessible and the ScratchOrgInfo record exists and try again"
+  "noScratchOrgInfoError": "No information for scratch org with ID %s found in Dev Hub %s.",
+  "noScratchOrgInfoAction": "First check that you can access your Dev Hub. Then check that the ScratchOrgInfo standard object in your Dev Hub contains a record for your scratch org. In Setup, navigate to the Dev Hub page and click the Scratch Org Infos tab. If you find your scratch org, try again."
 }
