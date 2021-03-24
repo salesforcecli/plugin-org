@@ -103,7 +103,7 @@ export class OrgDisplayCommand extends SfdxCommand {
       };
     }
     throw new SfdxError(
-      `no information for org with ID ${sfdc.trimTo15(orgId)} found in Dev Hub ${hubOrg.getUsername()}`
+      `No information for scratch org with ID ${sfdc.trimTo15(orgId)} found in Dev Hub ${hubOrg.getUsername()}`
     );
   }
 }
