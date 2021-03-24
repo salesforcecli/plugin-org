@@ -7,7 +7,7 @@
 
 import * as os from 'os';
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
-import { AuthInfo, Messages, sfdc } from '@salesforce/core';
+import { AuthInfo, Messages, sfdc, SfdxError } from '@salesforce/core';
 
 import { OrgDisplayReturn, ScratchOrgFields } from '../../../shared/orgTypes';
 import { getAliasByUsername, camelCaseToTitleCase } from '../../../shared/utils';
@@ -90,14 +90,20 @@ export class OrgDisplayCommand extends SfdxCommand {
     const result = (
       await OrgListUtil.retrieveScratchOrgInfoFromDevHub(hubOrg.getUsername(), [sfdc.trimTo15(orgId)])
     )[0];
-    return {
-      status: result.Status,
-      expirationDate: result.ExpirationDate,
-      createdBy: result.CreatedBy?.Username,
-      edition: result.Edition ?? undefined, // null for snapshot orgs, possibly others.  Marking it undefined keeps it out of json output
-      namespace: result.Namespace ?? undefined, // may be null on server
-      orgName: result.OrgName,
-      createdDate: result.CreatedDate,
-    };
+
+    if (result) {
+      return {
+        status: result.Status,
+        expirationDate: result.ExpirationDate,
+        createdBy: result.CreatedBy?.Username,
+        edition: result.Edition ?? undefined, // null for snapshot orgs, possibly others.  Marking it undefined keeps it out of json output
+        namespace: result.Namespace ?? undefined, // may be null on server
+        orgName: result.OrgName,
+        createdDate: result.CreatedDate,
+      };
+    }
+    throw new SfdxError(
+      `no information for org with ID ${sfdc.trimTo15(orgId)} found in Dev Hub ${hubOrg.getUsername()}`
+    );
   }
 }
