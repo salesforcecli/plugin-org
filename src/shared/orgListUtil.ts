@@ -103,11 +103,34 @@ export class OrgListUtil {
    * @param fileNames All the filenames in the global hidden folder
    */
   public static async readAuthFiles(fileNames: string[]): Promise<AuthInfo[]> {
+    const orgFileNames = (await fs.readdir(Global.DIR)).filter((filename) => filename.match(/^00D.{15}\.json$/g));
+
     const allAuths: AuthInfo[] = await Promise.all(
       fileNames.map(async (fileName) => {
         try {
           const orgUsername = basename(fileName, '.json');
-          return AuthInfo.create({ username: orgUsername });
+          const auth = await AuthInfo.create({ username: orgUsername });
+
+          const userId = auth?.getFields().userId;
+
+          // no userid?  Definitely an org primary user
+          if (!userId) {
+            return auth;
+          }
+          const orgId = auth.getFields().orgId;
+
+          const orgFileName = `${orgId}.json`;
+          // if userId, it could be created from password:generate command.  If <orgId>.json doesn't exist, it's also not a secondary user auth file
+          if (orgId && !orgFileNames.includes(orgFileName)) {
+            return auth;
+          }
+          // Theory: within <orgId>.json, if the userId is the first entry, that's the primary username.
+          if (orgFileNames.includes(orgFileName)) {
+            const usernames = ((await fs.readJson(join(Global.DIR, orgFileName))) as { usernames: string[] }).usernames;
+            if (usernames && usernames[0] === auth.getFields().username) {
+              return auth;
+            }
+          }
         } catch (error) {
           const err = error as SfdxError;
           const logger = await OrgListUtil.retrieveLogger();
@@ -116,8 +139,7 @@ export class OrgListUtil {
         }
       })
     );
-    // AuthInfos that have a userId are from user create, not an "org-level" auth.  Omit them
-    return allAuths.filter((authInfo) => !!authInfo && !authInfo.getFields().userId);
+    return allAuths.filter((auth) => !!auth);
   }
 
   /**

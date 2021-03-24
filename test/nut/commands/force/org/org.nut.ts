@@ -44,8 +44,8 @@ describe('Org Command NUT', () => {
   let aliasedUsername: string;
   let defaultUserOrgId: string;
   let aliasUserOrgId: string;
-  before(() => {
-    session = TestSession.create({
+  before(async () => {
+    session = await TestSession.create({
       project: { name: 'forceOrgList' },
       setupCommands: [
         'sfdx force:org:create -f config/project-scratch-def.json --setdefaultusername --wait 10',
