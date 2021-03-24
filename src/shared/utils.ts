@@ -14,13 +14,6 @@ export const getAliasByUsername = async (username: string): Promise<string> => {
   return keys?.length ? keys[0] : undefined;
 };
 
-export const camelCaseToTitleCase = (text: string): string => {
-  return text
-    .replace(/(^\w|\s\w)/g, (m) => m.toUpperCase())
-    .replace(/([A-Z][a-z]+)/g, ' $1')
-    .trim();
-};
-
 export const openUrl = async (url: string): Promise<ChildProcess> => {
   return open(url);
 };
