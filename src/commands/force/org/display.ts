@@ -103,9 +103,9 @@ export class OrgDisplayCommand extends SfdxCommand {
       };
     }
     throw new SfdxError(
-      `No information for scratch org with ID ${sfdc.trimTo15(orgId)} found in Dev Hub ${hubOrg.getUsername()}`,
+      messages.getMessage('noScratchOrgInfoError', [sfdc.trimTo15(orgId), hubOrg.getUsername()]),
       'NoScratchInfo',
-      ['Check that the DevHub is accessible and the ScratchOrgInfo record exists and try again']
+      [messages.getMessage('noScratchOrgInfoAction')]
     );
   }
 }
