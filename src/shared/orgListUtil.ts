@@ -126,7 +126,7 @@ export class OrgListUtil {
           }
           // Theory: within <orgId>.json, if the userId is the first entry, that's the primary username.
           if (orgFileNames.includes(orgFileName)) {
-            const usernames = (await fs.readJson(join(Global.DIR, orgFileName))) as { usernames: string[] };
+            const usernames = ((await fs.readJson(join(Global.DIR, orgFileName))) as { usernames: string[] }).usernames;
             if (usernames && usernames[0] && usernames[0] === auth.getFields().username) {
               return auth;
             }

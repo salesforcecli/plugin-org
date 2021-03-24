@@ -214,4 +214,74 @@ describe('orgListUtil tests', () => {
       expect(checkNonScratchOrgIsDevHub.called).to.be.false;
     });
   });
+
+  describe('auth file reading tests', () => {
+    // mock reading 2 org files
+    beforeEach(() => {
+      stubMethod($$.SANDBOX, fs, 'readdir').resolves(['00D000000000000001.json', '00D000000000000002.json']);
+    });
+
+    afterEach(async () => {
+      $$.SANDBOX.restore();
+    });
+
+    it('will return an org with userId without an org file', async () => {
+      stubMethod($$.SANDBOX, AuthInfo, 'create').resolves({
+        getFields: () => ({ ...orgAuthConfigFields, userId: '005xxxxxxxxxxxxx', orgId: '00D000000000000003' }),
+        getConnectionOptions: () => ({ accessToken: orgAuthConfigFields.accessToken }),
+        isJwt: () => false,
+        isOauth: () => false,
+        getUsername: () => orgAuthConfigFields.username,
+      });
+      const authFiles = await OrgListUtil.readAuthFiles([`${orgAuthConfigFields.username}.json`]);
+      expect(authFiles.length).to.equal(1);
+      expect(authFiles[0].getFields()).to.have.property('username').equals(orgAuthConfigFields.username);
+    });
+
+    it('will return an org with userId with an org file where the userid is primary', async () => {
+      stubMethod($$.SANDBOX, AuthInfo, 'create').resolves({
+        getFields: () => ({ ...orgAuthConfigFields, userId: '005xxxxxxxxxxxxx', orgId: '00D000000000000001' }),
+        getConnectionOptions: () => ({ accessToken: orgAuthConfigFields.accessToken }),
+        isJwt: () => false,
+        isOauth: () => false,
+        getUsername: () => orgAuthConfigFields.username,
+      });
+      stubMethod($$.SANDBOX, fs, 'readJson').resolves({
+        usernames: [orgAuthConfigFields.username, 'secondary@user.test'],
+      });
+      const authFiles = await OrgListUtil.readAuthFiles([`${orgAuthConfigFields.username}.json`]);
+      expect(authFiles.length).to.equal(1);
+      expect(authFiles[0].getFields()).to.have.property('username').equals(orgAuthConfigFields.username);
+    });
+
+    it('will NOT return an org with userId with an org file where the userid is NOT listed', async () => {
+      stubMethod($$.SANDBOX, AuthInfo, 'create').resolves({
+        getFields: () => ({ ...orgAuthConfigFields, userId: '005xxxxxxxxxxxxx', orgId: '00D000000000000001' }),
+        getConnectionOptions: () => ({ accessToken: orgAuthConfigFields.accessToken }),
+        isJwt: () => false,
+        isOauth: () => false,
+        getUsername: () => orgAuthConfigFields.username,
+      });
+      stubMethod($$.SANDBOX, fs, 'readJson').resolves({
+        usernames: ['secondary@user.test'],
+      });
+      const authFiles = await OrgListUtil.readAuthFiles([`${orgAuthConfigFields.username}.json`]);
+      expect(authFiles.length).to.equal(0);
+    });
+
+    it('will NOT return an org with userId with an org file where the userid is listed but not first', async () => {
+      stubMethod($$.SANDBOX, AuthInfo, 'create').resolves({
+        getFields: () => ({ ...orgAuthConfigFields, userId: '005xxxxxxxxxxxxx', orgId: '00D000000000000001' }),
+        getConnectionOptions: () => ({ accessToken: orgAuthConfigFields.accessToken }),
+        isJwt: () => false,
+        isOauth: () => false,
+        getUsername: () => orgAuthConfigFields.username,
+      });
+      stubMethod($$.SANDBOX, fs, 'readJson').resolves({
+        usernames: ['secondary@user.test', orgAuthConfigFields.username],
+      });
+      const authFiles = await OrgListUtil.readAuthFiles([`${orgAuthConfigFields.username}.json`]);
+      expect(authFiles.length).to.equal(0);
+    });
+  });
 });
