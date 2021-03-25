@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/salesforcecli/plugin-org/compare/v1.3.3...v1.6.0) (2021-03-25)
+
+
+### Bug Fixes
+
+* clean up a few messages ([3cee3a2](https://github.com/salesforcecli/plugin-org/commit/3cee3a2d71c95b2c37f2fb7c664c0f1a8faad39f))
+* error handling for no scratch org info from the hub ([d536bad](https://github.com/salesforcecli/plugin-org/commit/d536badb53580a73603bc9125a49029f5962cbbe))
+* list command shows orgs that have userId ([b26a656](https://github.com/salesforcecli/plugin-org/commit/b26a656185bd84b182be29fc401231698644b499))
+* shane's suggestion ([0f03592](https://github.com/salesforcecli/plugin-org/commit/0f0359274ca218ac8d6044c9f6282fe85c480d82))
+
 ### [1.3.3](https://github.com/salesforcecli/plugin-org/compare/v1.3.2...v1.3.3) (2021-03-03)
 
 
