@@ -8,9 +8,10 @@
 import * as os from 'os';
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
 import { AuthInfo, Messages, sfdc, SfdxError } from '@salesforce/core';
+import { camelCaseToTitleCase } from '@salesforce/kit';
 
 import { OrgDisplayReturn, ScratchOrgFields } from '../../../shared/orgTypes';
-import { getAliasByUsername, camelCaseToTitleCase } from '../../../shared/utils';
+import { getAliasByUsername } from '../../../shared/utils';
 import { getStyledValue } from '../../../shared/orgHighlighter';
 import { OrgListUtil } from '../../../shared/orgListUtil';
 

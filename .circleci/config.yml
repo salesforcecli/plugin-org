@@ -50,6 +50,7 @@ workflows:
           filters:
             branches:
               only: main
+          context: CLI_CTC
   test-ts-update:
     triggers:
       - schedule:
