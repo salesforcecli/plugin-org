@@ -10,27 +10,37 @@ workflows:
             branches:
               ignore: main
       - release-management/test-package:
-          name: node-latest
-          node_version: latest
           upload-coverage: true
+          matrix:
+            parameters:
+              os:
+                - linux
+                - windows
+              node_version:
+                - latest
+                - lts
+                - maintenance
+            exclude:
+              - os: windows
+                node_version: lts
+              - os: windows
+                node_version: maintenance
       - release-management/test-nut:
           name: nuts-on-linux
           sfdx_version: latest
           requires:
-            - node-latest
+            - release-management/test-package
       - release-management/test-nut:
           name: nuts-on-windows
           sfdx_version: latest
           os: windows
           requires:
-            - node-latest
-      - release-management/test-package:
-          name: node-12
+            - release-management/test-package
       - release-management/release-package:
           sign: true
           github-release: true
           requires:
-            - node-latest
+            - release-management/test-package
           filters:
             branches:
               only: main
@@ -45,3 +55,4 @@ workflows:
                 - main
     jobs:
       - release-management/test-ts-update
+
