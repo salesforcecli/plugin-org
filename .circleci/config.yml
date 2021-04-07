@@ -1,82 +1,6 @@
 version: 2.1
 orbs:
   release-management: salesforce/npm-release-management@4
-workflows:
-  version: 2
-  test-and-release:
-    jobs:
-      - release-management/validate-pr:
-          filters:
-            branches:
-              ignore: main
-      - release-management/test-package:
-          upload-coverage: true
-          matrix:
-            parameters:
-              os:
-                - linux
-                - windows
-              node_version:
-                - latest
-                - lts
-                - maintenance
-            exclude:
-              - os: windows
-                node_version: lts
-              - os: windows
-                node_version: maintenance
-      - release-management/test-nut:
-          name: nuts-on-linux
-          sfdx_version: latest
-          requires:
-            - release-management/test-package
-        release-management/release-package:
-          sign: true
-          github-release: true
-          requires:
-            - release-management/test-package
-          filters:
-            branches:
-              only: main
-      - release-management/test-nut:
-          name: nuts-on-windows
-          sfdx_version: latest
-          os: windows
-          requires:
-            - release-management/test-package
-      - release-management/release-package:
-          sign: true
-          github-release: true
-          requires:
-            - release-management/test-package
-          filters:
-            branches:
-              only: main
-          context: CLI_CTC
-    when: << pipeline.parameters.run-auto-workflows >>
-  test-ts-update:
-    triggers:
-      - schedule:
-          cron: 0 0 * * *
-          filters:
-            branches:
-              only:
-                - main
-    jobs:
-      - release-management/test-ts-update
-  just-nuts:
-    when: << pipeline.parameters.run-just-nuts >>
-    jobs:
-      - release-management/test-nut:
-          name: just-nuts-<< matrix.os >>
-          sfdx_version: << pipeline.parameters.sfdx_version >>
-          sfdx_executable_path: sfdx
-          repo_tag: << pipeline.parameters.repo_tag >>
-          matrix:
-            parameters:
-              os:
-                - linux
-                - windows
 parameters:
   run-auto-workflows:
     description: >
@@ -108,3 +32,71 @@ parameters:
     description: 'The tag of the module repo to checkout, '''' defaults to branch/PR'
     default: ''
     type: string
+workflows:
+  version: 2
+  test-and-release:
+    when: << pipeline.parameters.run-auto-workflows >>
+    jobs:
+      - release-management/validate-pr:
+          filters:
+            branches:
+              ignore: main
+      - release-management/test-package:
+          upload-coverage: true
+          matrix:
+            parameters:
+              os:
+                - linux
+                - windows
+              node_version:
+                - latest
+                - lts
+                - maintenance
+            exclude:
+              - os: windows
+                node_version: lts
+              - os: windows
+                node_version: maintenance
+      - release-management/test-nut:
+          name: nuts-on-linux
+          sfdx_version: latest
+          requires:
+            - release-management/test-package
+      - release-management/test-nut:
+          name: nuts-on-windows
+          sfdx_version: latest
+          os: windows
+          requires:
+            - release-management/test-package
+      - release-management/release-package:
+          sign: true
+          github-release: true
+          requires:
+            - release-management/test-package
+          filters:
+            branches:
+              only: main
+          context: CLI_CTC
+  test-ts-update:
+    triggers:
+      - schedule:
+          cron: 0 0 * * *
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - release-management/test-ts-update
+  just-nuts:
+    when: << pipeline.parameters.run-just-nuts >>
+    jobs:
+      - release-management/test-nut:
+          name: just-nuts-<< matrix.os >>
+          sfdx_version: << pipeline.parameters.sfdx_version >>
+          sfdx_executable_path: sfdx
+          repo_tag: << pipeline.parameters.repo_tag >>
+          matrix:
+            parameters:
+              os:
+                - linux
+                - windows
