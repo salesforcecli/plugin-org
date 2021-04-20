@@ -119,7 +119,7 @@ EXAMPLES
   sfdx force:org:display -u TestOrg1 --json > tmp/MyOrgDesc.json
 ```
 
-_See code: [src/commands/force/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/v1.6.1/src/commands/force/org/display.ts)_
+_See code: [src/commands/force/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/v1.6.2/src/commands/force/org/display.ts)_
 
 ## `sfdx force:org:list [--all] [-p --clean] [--skipconnectionstatus] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
@@ -156,7 +156,7 @@ EXAMPLES
   sfdx force:org:list --verbose --json > tmp/MyOrgList.json
 ```
 
-_See code: [src/commands/force/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/v1.6.1/src/commands/force/org/list.ts)_
+_See code: [src/commands/force/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/v1.6.2/src/commands/force/org/list.ts)_
 
 ## `sfdx force:org:open [-p <string>] [-r] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
@@ -197,5 +197,5 @@ EXAMPLES
   sfdx force:org:open -r -p lightning
 ```
 
-_See code: [src/commands/force/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/v1.6.1/src/commands/force/org/open.ts)_
+_See code: [src/commands/force/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/v1.6.2/src/commands/force/org/open.ts)_
 <!-- commandsstop -->
