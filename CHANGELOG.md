@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.4](https://github.com/salesforcecli/plugin-org/compare/v1.6.3...v1.6.4) (2021-04-23)
+
+
+### Bug Fixes
+
+* force release of 1.6.4 ([50ee064](https://github.com/salesforcecli/plugin-org/commit/50ee064e73f4473c3b0830e5371d30dd09f88085))
+
 ### [1.6.3](https://github.com/salesforcecli/plugin-org/compare/v1.6.2...v1.6.3) (2021-04-20)
 
 
