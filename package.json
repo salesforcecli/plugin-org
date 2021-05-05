@@ -9,7 +9,7 @@
     "@salesforce/command": "^3.0.3",
     "@salesforce/core": "^2.17.0",
     "@salesforce/kit": "^1.4.5",
-    "open": "8.0.2",
+    "open": "8.0.7",
     "tslib": "^2"
   },
   "devDependencies": {
