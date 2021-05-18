@@ -2,38 +2,16 @@
   {
     "command": "force:org:display",
     "plugin": "@salesforce/plugin-org",
-    "flags": [
-      "apiversion",
-      "json",
-      "loglevel",
-      "targetusername",
-      "verbose"
-    ]
+    "flags": ["apiversion", "json", "loglevel", "targetusername", "verbose"]
   },
   {
     "command": "force:org:list",
     "plugin": "@salesforce/plugin-org",
-    "flags": [
-      "all",
-      "clean",
-      "json",
-      "loglevel",
-      "noprompt",
-      "skipconnectionstatus",
-      "verbose"
-    ]
+    "flags": ["all", "clean", "json", "loglevel", "noprompt", "skipconnectionstatus", "verbose"]
   },
   {
     "command": "force:org:open",
     "plugin": "@salesforce/plugin-org",
-    "flags": [
-      "path",
-      "urlonly",
-      "json",
-      "loglevel",
-      "targetusername",
-      "apiversion",
-      "browser"
-    ]
+    "flags": ["path", "urlonly", "json", "loglevel", "targetusername", "apiversion", "browser"]
   }
 ]
