@@ -19,6 +19,10 @@ export class OrgOpenCommand extends SfdxCommand {
   public static readonly examples = messages.getMessage('examples').split(EOL);
   public static readonly requiresUsername = true;
   public static readonly flagsConfig: FlagsConfig = {
+    browser: flags.string({
+      char: 'b',
+      description: messages.getMessage('browser'),
+    }),
     path: flags.string({
       char: 'p',
       description: messages.getMessage('cliPath'),
@@ -50,9 +54,10 @@ export class OrgOpenCommand extends SfdxCommand {
     if (this.flags.urlonly) {
       return output;
     }
+    const openArgs = this.flags.browser ? { app: { name: this.flags.browser as string } } : {};
     // we actually need to open the org
     await this.checkLightningDomain(url);
-    await openUrl(url);
+    await openUrl(url, openArgs);
     return output;
   }
 
