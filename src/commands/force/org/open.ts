@@ -10,7 +10,7 @@ import { URL } from 'url';
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
 import { Messages, Org, MyDomainResolver, SfdxError, sfdc } from '@salesforce/core';
 import { Env, Duration } from '@salesforce/kit';
-import { openUrl } from '../../../shared/utils';
+import { createOpenOptions, openUrl } from '../../../shared/utils';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
@@ -54,10 +54,10 @@ export class OrgOpenCommand extends SfdxCommand {
     if (this.flags.urlonly) {
       return output;
     }
-    const openArgs = this.flags.browser ? { app: { name: this.flags.browser as string } } : {};
+    const openOptions = this.flags.browser ? createOpenOptions(this.flags.browser) : {};
     // we actually need to open the org
     await this.checkLightningDomain(url);
-    await openUrl(url, openArgs);
+    await openUrl(url, openOptions);
     return output;
   }
 
