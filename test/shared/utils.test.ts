@@ -28,7 +28,7 @@ describe('getAliasByUsername', () => {
   });
 
   it('returns first alias for a username that has multiple aliases', async () => {
-    expect(await getAliasByUsername('username2')).to.equal('alias2');
+    expect(await getAliasByUsername('username2')).to.equal('alias2b');
   });
 
   it('returns undefined when no matching username is found', async () => {
