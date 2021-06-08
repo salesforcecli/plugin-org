@@ -100,10 +100,10 @@ export class OrgListCommand extends SfdxCommand {
           const authInfo = await AuthInfo.create({ username: fields.username });
           const connection = await Connection.create({
             authInfo,
-            configAggregator: ({
+            configAggregator: {
               // Force an api version to prevent connection check with the server for expired orgs.
-              getInfo: () => (({ value: '47.0' } as unknown) as ConfigInfo),
-            } as unknown) as ConfigAggregator,
+              getInfo: () => ({ value: '47.0' } as unknown as ConfigInfo),
+            } as unknown as ConfigAggregator,
           });
           const org = await Org.create({ aliasOrUsername: fields.username, connection });
           await org.remove();
