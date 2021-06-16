@@ -138,15 +138,17 @@ describe('Org Command NUT', () => {
       });
     });
     it('should display human readable org information for default username', () => {
-      const lines = (execCmd<Dictionary>('force:org:display', { ensureExitCode: 0 }).shellOutput
-        .stdout as string).split('\n');
+      const lines = (
+        execCmd<Dictionary>('force:org:display', { ensureExitCode: 0 }).shellOutput.stdout as string
+      ).split('\n');
       expect(lines.length).to.have.greaterThan(0);
       const usernameLine = lines.find((line) => line.includes('Username'));
       expect(usernameLine).to.include(defaultUsername);
     });
     it('should display human readable scratch org information for alias', () => {
-      const lines = (execCmd(`force:org:display -u ${aliasedUsername}`, { ensureExitCode: 0 }).shellOutput
-        .stdout as string).split('\n');
+      const lines = (
+        execCmd(`force:org:display -u ${aliasedUsername}`, { ensureExitCode: 0 }).shellOutput.stdout as string
+      ).split('\n');
       expect(lines.length).to.have.greaterThan(0);
       const usernameLine = lines.find((line) => line.includes('Username'));
       expect(usernameLine).to.include(aliasedUsername);
