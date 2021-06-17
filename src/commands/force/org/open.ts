@@ -54,7 +54,13 @@ export class OrgOpenCommand extends SfdxCommand {
     if (this.flags.urlonly) {
       return output;
     }
+
     const openOptions = this.flags.browser ? createOpenOptions(this.flags.browser) : {};
+    if (!openOptions) {
+      this.ux.error(messages.getMessage('UnsupportedBrowserError'));
+      return output;
+    }
+
     // we actually need to open the org
     await this.checkLightningDomain(url);
     await openUrl(url, openOptions);

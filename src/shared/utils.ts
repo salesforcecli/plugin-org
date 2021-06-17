@@ -14,15 +14,11 @@ export const getAliasByUsername = async (username: string): Promise<string> => {
   return keys?.length ? keys[0] : undefined;
 };
 
-export const createOpenOptions = (browser: string): open.Options => {
-  switch (browser.toLowerCase()) {
-    case 'chrome':
-    case 'edge':
-    case 'firefox':
-      return { app: { name: open.apps[browser.toLowerCase()] as open.AppName } };
-    default:
-      // Support this so as not to break if 'open' adds more support.
-      return { app: { name: browser } };
+export const createOpenOptions = (browser: string): open.Options | null => {
+  if (open.apps[browser.toLowerCase()]) {
+    return { app: { name: open.apps[browser.toLowerCase()] as open.AppName } };
+  } else {
+    return null;
   }
 };
 

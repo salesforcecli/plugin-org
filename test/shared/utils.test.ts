@@ -7,7 +7,6 @@
 import { $$, expect } from '@salesforce/command/lib/test';
 import { Aliases } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
-import open = require('open');
 import { createOpenOptions, getAliasByUsername } from '../../src/shared/utils';
 
 const duffBrowser = 'duff';
@@ -41,9 +40,9 @@ describe('getAliasByUsername', () => {
 
 describe('createOpenOptions', () => {
   it('returns options for known browser string', async () => {
-    expect(createOpenOptions('FIREFOX')).to.eql({ app: { name: open.apps.firefox } });
+    expect(createOpenOptions('FIREFOX')).to.not.eql(null);
   });
-  it('returns options for unknown browser string', async () => {
-    expect(createOpenOptions(duffBrowser)).to.eql({ app: { name: duffBrowser } });
+  it('returns null options for unknown browser string', async () => {
+    expect(createOpenOptions(duffBrowser)).to.eql(null);
   });
 });

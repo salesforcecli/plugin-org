@@ -20,7 +20,6 @@ const testBrowser = 'firefox';
 const accessToken = 'testAccessToken';
 const expectedDefaultUrl = `${testInstance}/secur/frontdoor.jsp?sid=${accessToken}`;
 const expectedUrl = `${expectedDefaultUrl}&retURL=${encodeURIComponent(testPath)}`;
-const expectedOpenArgs = { app: { name: testBrowser } };
 
 const testJsonStructure = (response: Record<string, unknown>) => {
   expect(response).to.have.property('url');
@@ -208,7 +207,18 @@ describe('open commands', () => {
       .it('calls open with a browser argument', () => {
         expect(spies.get('resolver').callCount).to.equal(1);
         expect(spies.get('open').callCount).to.equal(1);
-        expect(spies.get('open').args[0][1]).to.eql(expectedOpenArgs);
+        expect(spies.get('open').args[0][1]).to.not.eql({});
+      });
+
+    test
+      .do(() => {
+        spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
+      })
+      .stdout()
+      .command(['force:org:open', '--targetusername', username, '--path', testPath, '-b', 'duff'])
+      .it('does not call open as passed unknown browser name', () => {
+        expect(spies.get('resolver').callCount).to.equal(0);
+        expect(spies.get('open').callCount).to.equal(0);
       });
   });
 });
