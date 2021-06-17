@@ -11,7 +11,8 @@ import * as open from 'open';
 export const getAliasByUsername = async (username: string): Promise<string> => {
   const alias = await Aliases.create(Aliases.getDefaultOptions());
   const keys = alias.getKeysByValue(username);
-  return keys?.length ? keys[0] : undefined;
+  // use the most recently added alias for that username
+  return keys?.length ? keys[keys.length - 1] : undefined;
 };
 
 export const createOpenOptions = (browser: string): open.Options | null => {
