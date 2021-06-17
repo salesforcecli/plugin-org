@@ -809,6 +809,20 @@
     "@types/minimatch" "*"
     "@types/node" "*"
 
+"@types/graceful-fs@^4.1.5":
+  version "4.1.5"
+  resolved "https://registry.yarnpkg.com/@types/graceful-fs/-/graceful-fs-4.1.5.tgz#21ffba0d98da4350db64891f92a9e5db3cdb4e15"
+  integrity sha512-anKkLmZZ+xm4p8JWBf4hElkM4XR+EZeA2M9BAkkTldmcyDY4mbdIJnRghDJH3Ov5ooY7/UAoENtmdMSkaAd7Cw==
+  dependencies:
+    "@types/node" "*"
+
+"@types/jsforce@^1.9.29":
+  version "1.9.29"
+  resolved "https://registry.yarnpkg.com/@types/jsforce/-/jsforce-1.9.29.tgz#aeebb21d55706c5232e08f066a241349f743e507"
+  integrity sha512-wG26GTIeRzBQ1GjeOfaM/ZVEP+/m1NpX0KUd/W3QGs8GvHAU6Am1nqm8F7zQDYEJ3p0PssNNbdhqdxJGcQsbxQ==
+  dependencies:
+    "@types/node" "*"
+
 "@types/json-schema@^7.0.7":
   version "7.0.7"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.7.tgz#98a993516c859eb0d5c4c8f098317a9ea68db9ad"
