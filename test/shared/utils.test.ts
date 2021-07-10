@@ -7,7 +7,9 @@
 import { $$, expect } from '@salesforce/command/lib/test';
 import { Aliases } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
-import { getAliasByUsername } from '../../src/shared/utils';
+import { createOpenOptions, getAliasByUsername } from '../../src/shared/utils';
+
+const duffBrowser = 'duff';
 
 describe('getAliasByUsername', () => {
   beforeEach(async () => {
@@ -33,5 +35,14 @@ describe('getAliasByUsername', () => {
 
   it('returns undefined when no matching username is found', async () => {
     expect(await getAliasByUsername('username3')).to.be.undefined;
+  });
+});
+
+describe('createOpenOptions', () => {
+  it('returns options for known browser string', async () => {
+    expect(createOpenOptions('FIREFOX')).to.not.eql(null);
+  });
+  it('returns null options for unknown browser string', async () => {
+    expect(createOpenOptions(duffBrowser)).to.eql(null);
   });
 });
