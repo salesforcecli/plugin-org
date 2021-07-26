@@ -5,11 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { EOL } from 'os';
-import { URL } from 'url';
 
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
-import { Messages, Org, MyDomainResolver, SfdxError, sfdc } from '@salesforce/core';
-import { Env, Duration } from '@salesforce/kit';
+import { Messages, Org, checkLightningDomain, SfdxError } from '@salesforce/core';
+import { Duration, Env } from '@salesforce/kit';
 import { openUrl } from '../../../shared/utils';
 
 Messages.importMessagesDirectory(__dirname);
@@ -51,7 +50,17 @@ export class OrgOpenCommand extends SfdxCommand {
       return output;
     }
     // we actually need to open the org
-    await this.checkLightningDomain(url);
+    try {
+      this.ux.startSpinner(messages.getMessage('domainWaiting'));
+      await checkLightningDomain(url);
+    } catch (err) {
+      const domain = `https://${/https?:\/\/([^.]*)/.exec(url)[1]}.lightning.force.com`;
+      const timeout = new Duration(new Env().getNumber('SFDX_DOMAIN_RETRY', 240), Duration.Unit.SECONDS);
+      this.logger.debug(`Did not find IP for ${domain} after ${timeout.seconds} seconds`);
+      throw new SfdxError(messages.getMessage('domainTimeoutError'), 'domainTimeoutError', [
+        messages.getMessage('domainTimeoutAction'),
+      ]);
+    }
     await openUrl(url);
     return output;
   }
@@ -63,32 +72,6 @@ export class OrgOpenCommand extends SfdxCommand {
     const instanceUrl = this.org.getField(Org.Fields.INSTANCE_URL) as string;
     const instanceUrlClean = instanceUrl.replace(/\/$/, '');
     return `${instanceUrlClean}/secur/frontdoor.jsp?sid=${accessToken}`;
-  }
-
-  private async checkLightningDomain(url: string): Promise<void> {
-    const domain = `https://${/https?:\/\/([^.]*)/.exec(url)[1]}.lightning.force.com`;
-    const timeout = new Duration(new Env().getNumber('SFDX_DOMAIN_RETRY', 240), Duration.Unit.SECONDS);
-    if (sfdc.isInternalUrl(url) || timeout.seconds === 0) {
-      return;
-    }
-
-    const resolver = await MyDomainResolver.create({
-      url: new URL(domain),
-      timeout,
-      frequency: new Duration(1, Duration.Unit.SECONDS),
-    });
-    this.ux.startSpinner(messages.getMessage('domainWaiting'));
-
-    try {
-      const ip = await resolver.resolve();
-      this.logger.debug(`Found IP ${ip} for ${domain}`);
-      return;
-    } catch (error) {
-      this.logger.debug(`Did not find IP for ${domain} after ${timeout.seconds} seconds`);
-      throw new SfdxError(messages.getMessage('domainTimeoutError'), 'domainTimeoutError', [
-        messages.getMessage('domainTimeoutAction'),
-      ]);
-    }
   }
 }
 
