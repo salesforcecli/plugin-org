@@ -7,6 +7,7 @@
 import { $$, expect, test } from '@salesforce/command/lib/test';
 import { Org, MyDomainResolver, Messages } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
+// import { SfdxError } from '../../../../../sfdx-core/lib/sfdxError';
 import * as utils from '../../../../src/shared/utils';
 
 Messages.importMessagesDirectory(__dirname);
@@ -103,7 +104,10 @@ describe('open commands', () => {
 
     test
       .do(() => {
-        spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').rejects());
+        spies.set(
+          'resolver',
+          stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').throws({ message: 'timeout' })
+        );
       })
       .stdout()
       .command(['force:org:open', '--json', '--targetusername', username, '--path', testPath])
@@ -173,7 +177,10 @@ describe('open commands', () => {
 
     test
       .do(() => {
-        spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').rejects());
+        spies.set(
+          'resolver',
+          stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').throws({ message: 'timeout' })
+        );
       })
       .stderr()
       .command(['force:org:open', '--targetusername', username, '--path', testPath])
