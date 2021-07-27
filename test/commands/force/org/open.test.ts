@@ -7,7 +7,6 @@
 import { $$, expect, test } from '@salesforce/command/lib/test';
 import { Org, MyDomainResolver, Messages } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
-// import { SfdxError } from '../../../../../sfdx-core/lib/sfdxError';
 import * as utils from '../../../../src/shared/utils';
 
 Messages.importMessagesDirectory(__dirname);

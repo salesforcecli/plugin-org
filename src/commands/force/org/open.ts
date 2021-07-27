@@ -7,7 +7,7 @@
 import { EOL } from 'os';
 
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
-import { Messages, Org, checkLightningDomain, SfdxError } from '@salesforce/core';
+import { Messages, Org, SfdcUrl, SfdxError } from '@salesforce/core';
 import { Duration, Env } from '@salesforce/kit';
 import { openUrl } from '../../../shared/utils';
 
@@ -52,10 +52,11 @@ export class OrgOpenCommand extends SfdxCommand {
     // we actually need to open the org
     try {
       this.ux.startSpinner(messages.getMessage('domainWaiting'));
-      await checkLightningDomain(url);
+      const sfdcUrl = new SfdcUrl(url);
+      await sfdcUrl.checkLightningDomain();
     } catch (err) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,  @typescript-eslint/no-unsafe-call
-      if (err.message && err.message.includes('timeout')) {
+      if (err.message?.includes('timeout')) {
         const domain = `https://${/https?:\/\/([^.]*)/.exec(url)[1]}.lightning.force.com`;
         const timeout = new Duration(new Env().getNumber('SFDX_DOMAIN_RETRY', 240), Duration.Unit.SECONDS);
         this.logger.debug(`Did not find IP for ${domain} after ${timeout.seconds} seconds`);
