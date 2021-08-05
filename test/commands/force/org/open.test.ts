@@ -103,7 +103,10 @@ describe('open commands', () => {
 
     test
       .do(() => {
-        spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').rejects());
+        spies.set(
+          'resolver',
+          stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').throws({ message: 'timeout' })
+        );
       })
       .stdout()
       .command(['force:org:open', '--json', '--targetusername', username, '--path', testPath])
@@ -173,7 +176,10 @@ describe('open commands', () => {
 
     test
       .do(() => {
-        spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').rejects());
+        spies.set(
+          'resolver',
+          stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').throws({ message: 'timeout' })
+        );
       })
       .stderr()
       .command(['force:org:open', '--targetusername', username, '--path', testPath])
