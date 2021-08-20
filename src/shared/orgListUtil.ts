@@ -271,6 +271,7 @@ export class OrgListUtil {
         scratchOrgInfo.status = updatedOrgInfo.Status;
         scratchOrgInfo.expirationDate = updatedOrgInfo.ExpirationDate;
         scratchOrgInfo.isExpired = updatedOrgInfo.Status === 'Deleted';
+        scratchOrgInfo.namespace = updatedOrgInfo.Namespace;
         // the old toolbelt code always said Unknown.  I'd love to get rid of it.
         scratchOrgInfo.connectedStatus = 'Unknown';
       } else {
