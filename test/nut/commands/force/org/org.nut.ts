@@ -81,9 +81,11 @@ describe('Org Command NUT', () => {
       expect(scratchOrgs.map((org) => asDictionary(org)).find((org) => org.username === defaultUsername)).to.include({
         defaultMarker: '(U)',
         isDefaultUsername: true,
+        namespace: null,
       });
       expect(scratchOrgs.map((org) => asDictionary(org)).find((org) => org.username === aliasedUsername)).to.include({
         alias: 'anAlias',
+        namespace: null,
       });
       expect(nonScratchOrgs).to.include(
         {
