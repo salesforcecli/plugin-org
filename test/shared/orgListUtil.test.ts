@@ -176,8 +176,6 @@ describe('orgListUtil tests', () => {
       expect(retrieveScratchOrgInfoFromDevHubStub.calledOnce).to.be.true;
       expect(spies.get('reduceScratchOrgInfo').calledOnce).to.be.true;
       expect(orgGroups.scratchOrgs[0].signupUsername).to.equal(orgAuthConfigFields.username);
-      // current default on every scratch org, warning in v51, deprecation in v52
-      expect(orgGroups.scratchOrgs[0].connectedStatus).to.equal('Unknown');
       expect(orgGroups.scratchOrgs[0]).to.include.keys([
         'signupUsername',
         'createdBy',
