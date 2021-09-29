@@ -41,6 +41,7 @@ export class OrgOpenCommand extends SfdxCommand {
 
     this.ux.log('');
     this.ux.warn(sharedMessages.getMessage('SecurityWarning'));
+    this.ux.log('');
 
     if (new Env().getBoolean('SFDX_CONTAINER_MODE')) {
       // instruct the user that they need to paste the URL into the browser

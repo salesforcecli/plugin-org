@@ -70,6 +70,7 @@ export class OrgDisplayCommand extends SfdxCommand {
   private print(result: OrgDisplayReturn): void {
     this.ux.log('');
     this.ux.warn(sharedMessages.getMessage('SecurityWarning'));
+    this.ux.log('');
     const columns = {
       columns: [
         { key: 'key', label: 'KEY' },
