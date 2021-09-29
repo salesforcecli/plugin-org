@@ -13,6 +13,8 @@ import { openUrl } from '../../../shared/utils';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
+const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
+
 export class OrgOpenCommand extends SfdxCommand {
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessage('examples').split(EOL);
@@ -36,6 +38,9 @@ export class OrgOpenCommand extends SfdxCommand {
     const orgId = this.org.getOrgId();
     const username = this.org.getUsername();
     const output = { orgId, url, username };
+
+    this.ux.warn(sharedMessages.getMessage('SecurityWarning'));
+    this.ux.log('');
 
     if (new Env().getBoolean('SFDX_CONTAINER_MODE')) {
       // instruct the user that they need to paste the URL into the browser

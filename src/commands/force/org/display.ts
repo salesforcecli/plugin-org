@@ -17,7 +17,7 @@ import { OrgListUtil } from '../../../shared/orgListUtil';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'display');
-
+const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
 export class OrgDisplayCommand extends SfdxCommand {
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessage('examples').split(os.EOL);
@@ -68,6 +68,8 @@ export class OrgDisplayCommand extends SfdxCommand {
   }
 
   private print(result: OrgDisplayReturn): void {
+    this.ux.warn(sharedMessages.getMessage('SecurityWarning'));
+    this.ux.log('');
     const columns = {
       columns: [
         { key: 'key', label: 'KEY' },
