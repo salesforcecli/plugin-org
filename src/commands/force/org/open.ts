@@ -39,7 +39,6 @@ export class OrgOpenCommand extends SfdxCommand {
     const username = this.org.getUsername();
     const output = { orgId, url, username };
 
-    this.ux.log('');
     this.ux.warn(sharedMessages.getMessage('SecurityWarning'));
     this.ux.log('');
 
