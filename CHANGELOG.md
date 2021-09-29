@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/salesforcecli/plugin-org/compare/v1.7.0...v1.8.0) (2021-09-29)
+
+
+### Features
+
+* security warnings for display/open ([b2599be](https://github.com/salesforcecli/plugin-org/commit/b2599bed02bccf72b8b6a8766334caa41b5603a4))
+
 ## [1.7.0](https://github.com/salesforcecli/plugin-org/compare/v1.6.9...v1.7.0) (2021-08-20)
 
 
