@@ -77,7 +77,6 @@ export class OrgListCommand extends SfdxCommand {
         ? groupedSortedOrgs.scratchOrgs
         : groupedSortedOrgs.scratchOrgs.filter(identifyActiveOrgByStatus),
     };
-    this.ux.warn(messages.getMessage('scratchOrgRemoveConnectedStatusProperty'));
     this.ux.styledHeader('Orgs');
 
     this.printOrgTable(result.nonScratchOrgs, this.flags.skipconnectionstatus);
