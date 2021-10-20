@@ -5,7 +5,7 @@
     "sfdx force:org:list --verbose --json",
     "sfdx force:org:list --verbose --json > tmp/MyOrgList.json"
   ],
-  "verbose": "list more information about each org'",
+  "verbose": "list more information about each org",
   "all": "include expired, deleted, and unknown-status scratch orgs",
   "clean": "remove all local org authorizations for non-active orgs",
   "noPrompt": "do not prompt for confirmation",
