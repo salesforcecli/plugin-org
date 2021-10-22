@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://github.com/salesforcecli/plugin-org/compare/v1.8.4...v1.9.0) (2021-10-22)
+
+
+### Features
+
+* support targeting browser in "open" command ([c06442b](https://github.com/salesforcecli/plugin-org/commit/c06442b9f42641d535674b0f258f2c6039d5370b))
+
 ### [1.8.4](https://github.com/salesforcecli/plugin-org/compare/v1.8.3...v1.8.4) (2021-10-20)
 
 
