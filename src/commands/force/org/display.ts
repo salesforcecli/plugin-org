@@ -61,6 +61,8 @@ export class OrgDisplayCommand extends SfdxCommand {
       sfdxAuthUrl: this.flags.verbose && fields.refreshToken ? authInfo.getSfdxAuthUrl() : undefined,
       alias: await getAliasByUsername(fields.username),
     };
+    this.ux.warn(sharedMessages.getMessage('SecurityWarning'));
+
     if (!this.flags.json) {
       this.print(returnValue);
     }
@@ -68,7 +70,6 @@ export class OrgDisplayCommand extends SfdxCommand {
   }
 
   private print(result: OrgDisplayReturn): void {
-    this.ux.warn(sharedMessages.getMessage('SecurityWarning'));
     this.ux.log('');
     const columns = {
       columns: [
