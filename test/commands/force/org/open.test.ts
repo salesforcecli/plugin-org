@@ -16,6 +16,7 @@ const orgId = '000000000000000';
 const username = 'test@test.org';
 const testPath = '/lightning/whatever';
 const testInstance = 'https://cs1.my.salesforce.com';
+const testBrowser = 'firefox';
 const accessToken = 'testAccessToken';
 const expectedDefaultUrl = `${testInstance}/secur/frontdoor.jsp?sid=${accessToken}`;
 const expectedUrl = `${expectedDefaultUrl}&retURL=${encodeURIComponent(testPath)}`;
@@ -186,6 +187,43 @@ describe('open commands', () => {
       .it('throws on dns fail', (ctx) => {
         expect(ctx.stderr).to.contain(messages.getMessage('domainTimeoutError'));
         expect(spies.get('resolver').callCount).to.equal(1);
+        expect(spies.get('open').callCount).to.equal(0);
+      });
+  });
+
+  describe('browser argument', () => {
+    test
+      .do(() => {
+        spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
+      })
+      .stdout()
+      .command(['force:org:open', '--targetusername', username, '--path', testPath])
+      .it('calls open with no browser argument', () => {
+        expect(spies.get('resolver').callCount).to.equal(1);
+        expect(spies.get('open').callCount).to.equal(1);
+        expect(spies.get('open').args[0][1]).to.eql({});
+      });
+
+    test
+      .do(() => {
+        spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
+      })
+      .stdout()
+      .command(['force:org:open', '--targetusername', username, '--path', testPath, '-b', testBrowser])
+      .it('calls open with a browser argument', () => {
+        expect(spies.get('resolver').callCount).to.equal(1);
+        expect(spies.get('open').callCount).to.equal(1);
+        expect(spies.get('open').args[0][1]).to.not.eql({});
+      });
+
+    test
+      .do(() => {
+        spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
+      })
+      .stdout()
+      .command(['force:org:open', '--targetusername', username, '--path', testPath, '-b', 'duff'])
+      .it('does not call open as passed unknown browser name', () => {
+        expect(spies.get('resolver').callCount).to.equal(0);
         expect(spies.get('open').callCount).to.equal(0);
       });
   });

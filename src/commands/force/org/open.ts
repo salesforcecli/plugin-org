@@ -9,6 +9,7 @@ import { EOL } from 'os';
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
 import { Messages, Org, SfdcUrl, SfdxError } from '@salesforce/core';
 import { Duration, Env } from '@salesforce/kit';
+import open = require('open');
 import { openUrl } from '../../../shared/utils';
 
 Messages.importMessagesDirectory(__dirname);
@@ -20,6 +21,12 @@ export class OrgOpenCommand extends SfdxCommand {
   public static readonly examples = messages.getMessage('examples').split(EOL);
   public static readonly requiresUsername = true;
   public static readonly flagsConfig: FlagsConfig = {
+    browser: flags.string({
+      char: 'b',
+      description: messages.getMessage('browser'),
+      options: ['chrome', 'edge', 'firefox'], // These are ones supported by "open" package
+      exclusive: ['urlonly'],
+    }),
     path: flags.string({
       char: 'p',
       description: messages.getMessage('cliPath'),
@@ -71,7 +78,12 @@ export class OrgOpenCommand extends SfdxCommand {
       }
       throw SfdxError.wrap(err);
     }
-    await openUrl(url);
+
+    const openOptions = this.flags.browser
+      ? { app: { name: open.apps[this.flags.browser as string] as open.AppName } }
+      : {};
+
+    await openUrl(url, openOptions);
     return output;
   }
 
