@@ -48,4 +48,8 @@ describe('Delete Orgs', () => {
     expect(result).to.be.ok;
     expect(result).to.deep.equal({ orgId: aliasUserOrgId, username: aliasedUsername });
   });
+
+  describe.skip('sandbox', () => {
+    // TODO: figure out how to test sandboxes in NUTs
+  });
 });

@@ -32,60 +32,41 @@ export class Delete extends SfdxCommand {
   public org!: Org;
 
   public async run(): Promise<DeleteResult> {
+    const username = this.org.getUsername();
+    const orgId = this.org.getOrgId();
+    // read the config file for the org to be deleted, if it has a PROD_ORG_USERNAME entry, it's a sandbox
     const isSandbox = !!(await this.org.getSandboxOrgConfigField(SandboxOrgConfig.Fields.PROD_ORG_USERNAME));
-    const orgType = isSandbox ? 'sandbox' : 'scratch';
     // we either need permission to proceed without a prompt OR get the user to confirm
     if (
       this.flags.noprompt ||
-      (await this.ux.confirm(messages.getMessage('confirmDelete', [orgType, this.org.getUsername()])))
+      (await this.ux.confirm(messages.getMessage('confirmDelete', [isSandbox ? 'sandbox' : 'scratch', username])))
     ) {
-      return isSandbox ? this.deleteSandbox() : this.deleteScratchOrg();
-    }
-  }
+      let alreadyDeleted = false;
+      let successMessageKey = 'commandSandboxSuccess';
+      try {
+        // will determine if it's a scratch org or sandbox and will delete from the appropriate parent org (DevHub or Production)
+        await this.org.delete();
+      } catch (e) {
+        const err = e as Error;
+        if (err.name === 'attemptingToDeleteExpiredOrDeleted') {
+          alreadyDeleted = true;
+        } else if (err.name === 'sandboxProcessNotFoundByOrgId') {
+          successMessageKey = 'sandboxConfigOnlySuccess';
+        } else {
+          throw err;
+        }
+      }
 
-  private async deleteSandbox(): Promise<DeleteResult> {
-    let successMessageKey = 'commandSandboxSuccess';
-    const result = { orgId: this.org.getOrgId(), username: this.org.getUsername() };
-    this.logger.debug('Delete started for sandbox org %s ', this.org.getUsername());
-    try {
-      await this.org.deleteSandbox(this.org.getOrgId());
-      this.logger.debug('Sandbox org %s successfully marked for deletion', this.org.getUsername());
-    } catch (e) {
-      const err = e as Error;
-      if (err.name === 'sandboxProcessNotFoundByOrgId') {
-        successMessageKey = 'sandboxConfigOnlySuccess';
+      if (isSandbox) {
+        this.ux.log(messages.getMessage(successMessageKey, [username]));
       } else {
-        throw err;
+        this.ux.log(
+          messages.getMessage(alreadyDeleted ? 'deleteOrgConfigOnlyCommandSuccess' : 'deleteOrgCommandSuccess', [
+            username,
+          ])
+        );
       }
     }
-    this.logger.debug('Sandbox org config %s has been successfully deleted', this.org.getUsername());
-    this.ux.log(messages.getMessage(successMessageKey, [this.org.getUsername()]));
-    return result;
-  }
-
-  private async deleteScratchOrg(): Promise<DeleteResult> {
-    let alreadyDeleted = false;
-    try {
-      await this.org.deleteScratchOrg(this.hubOrg);
-    } catch (e) {
-      const err = e as Error;
-      if (err.name === 'attemptingToDeleteExpiredOrDeleted') {
-        alreadyDeleted = true;
-      } else {
-        // Includes the "insufficientAccessToDelete" error.
-        throw err;
-      }
-    }
-
-    this.ux.log(
-      messages.getMessage(alreadyDeleted ? 'deleteOrgConfigOnlyCommandSuccess' : 'deleteOrgCommandSuccess', [
-        this.org.getUsername(),
-      ])
-    );
-
-    return {
-      orgId: this.org.getOrgId(),
-      username: this.org.getUsername(),
-    };
+    return { username, orgId };
   }
 }

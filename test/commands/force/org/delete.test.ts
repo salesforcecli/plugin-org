@@ -57,7 +57,7 @@ describe('org:delete', () => {
     stubMethod(sandbox, cmd, 'assignOrg').callsFake(() => {
       const orgStubOptions = {
         getSandboxOrgConfigField: () => {},
-        deleteScratchOrg: () => {},
+        delete: () => {},
         getUsername: () => username,
         getOrgId: () => orgId,
       };
@@ -67,7 +67,7 @@ describe('org:delete', () => {
       }
 
       if (options.deleteScratchOrg) {
-        orgStubOptions.deleteScratchOrg = () => {
+        orgStubOptions.delete = () => {
           const e = new Error();
           e.name = options.deleteScratchOrg;
           throw e;
@@ -85,145 +85,54 @@ describe('org:delete', () => {
 
   beforeEach(() => {});
 
-  describe('org:delete scratch orgs', () => {
-    it('will prompt before attempting to delete', async () => {
-      await runDeleteCommand([]);
-      expect(uxConfirmStub.calledOnce).to.equal(true);
-      expect(uxConfirmStub.firstCall.args[0]).to.equal(messages.getMessage('confirmDelete', ['scratch', username]));
-    });
+  it('will prompt before attempting to delete', async () => {
+    const res = await runDeleteCommand([]);
+    expect(uxConfirmStub.calledOnce).to.equal(true);
+    expect(uxConfirmStub.firstCall.args[0]).to.equal(messages.getMessage('confirmDelete', ['scratch', username]));
+    expect(res).to.deep.equal({ orgId, username });
+  });
 
-    it('will determine sandbox vs scratch org', async () => {
-      await runDeleteCommand([], { isSandbox: true });
-      expect(uxConfirmStub.calledOnce).to.equal(true);
-      expect(uxConfirmStub.firstCall.args[0]).to.equal(messages.getMessage('confirmDelete', ['sandbox', username]));
-    });
+  it('will determine sandbox vs scratch org and delete sandbox', async () => {
+    const res = await runDeleteCommand([], { isSandbox: true });
+    expect(uxConfirmStub.calledOnce).to.equal(true);
+    expect(uxConfirmStub.firstCall.args[0]).to.equal(messages.getMessage('confirmDelete', ['sandbox', username]));
+    expect(res).to.deep.equal({ orgId, username });
+  });
 
-    it('will NOT prompt before attempting to delete when flag is provided', async () => {
-      const res = await runDeleteCommand(['--noprompt']);
-      expect(uxConfirmStub.called).to.equal(false);
-      expect(res).to.deep.equal({ orgId, username });
-    });
+  it('will NOT prompt before deleting scratch org when flag is provided', async () => {
+    const res = await runDeleteCommand(['--noprompt']);
+    expect(uxConfirmStub.called).to.equal(false);
+    expect(uxLogStub.callCount).to.equal(1);
+    expect(uxLogStub.firstCall.args[0]).to.equal(messages.getMessage('deleteOrgCommandSuccess', [username]));
+    expect(res).to.deep.equal({ orgId, username });
+  });
 
-    it('will catch the attemptingToDeleteExpiredOrDeleted and wrap correctly', async () => {
-      const res = await runDeleteCommand(['--noprompt'], { deleteScratchOrg: 'attemptingToDeleteExpiredOrDeleted' });
-      expect(uxConfirmStub.called).to.equal(false);
-      expect(res).to.deep.equal({ orgId, username });
+  it('will NOT prompt before deleting sandbox when flag is provided', async () => {
+    const res = await runDeleteCommand(['--noprompt'], { isSandbox: true });
+    expect(uxConfirmStub.called).to.equal(false);
+    expect(uxLogStub.callCount).to.equal(1);
+    expect(uxLogStub.firstCall.args[0]).to.equal(messages.getMessage('commandSandboxSuccess', [username]));
+    expect(res).to.deep.equal({ orgId, username });
+  });
 
-      expect(uxLogStub.firstCall.args[0]).to.equal(
-        messages.getMessage('deleteOrgConfigOnlyCommandSuccess', [username])
-      );
+  it('will catch the attemptingToDeleteExpiredOrDeleted and wrap correctly', async () => {
+    const res = await runDeleteCommand(['--noprompt'], { deleteScratchOrg: 'attemptingToDeleteExpiredOrDeleted' });
+    expect(uxConfirmStub.called).to.equal(false);
+    expect(res).to.deep.equal({ orgId, username });
+    expect(uxLogStub.firstCall.args[0]).to.equal(messages.getMessage('deleteOrgConfigOnlyCommandSuccess', [username]));
+  });
+
+  it('will catch the sandboxProcessNotFoundByOrgId and wrap correctly', async () => {
+    const res = await runDeleteCommand(['--noprompt'], {
+      deleteScratchOrg: 'sandboxProcessNotFoundByOrgId',
+      isSandbox: true,
     });
+    expect(uxConfirmStub.called).to.equal(false);
+    expect(res).to.deep.equal({ orgId, username });
+    expect(uxLogStub.firstCall.args[0]).to.equal(messages.getMessage('sandboxConfigOnlySuccess', [username]));
   });
 
   afterEach(() => {
     sandbox.restore();
   });
-
-  // describe('delete sandbox', () => {
-  //   it('sandbox delete success', async () => {
-  //     sandbox.stub(Org, 'create').callsFake(() => prodOrg);
-  //     orgDeleteCommand.flags = { targetusername: sbUser, noprompt: true };
-  //     orgDeleteCommand.org = {
-  //       getOrgId: () => sandboxOrgId,
-  //       getUsername: () => sbUser,
-  //       getSandboxOrgConfigField: () => prodUser,
-  //       remove: () => Promise.resolve(),
-  //     };
-  //     const spy = sinon.spy(orgDeleteCommand.org, 'remove');
-  //     await orgDeleteCommand.run();
-  //     expect(prodSandboxOrgMock.deleteSandbox.callCount).to.equal(1);
-  //     expect(prodOrg.getOrgId.callCount).to.equal(0);
-  //     expect(spy.called).to.be.true;
-  //   });
-  //
-  //   // eslint-disable-next-line @typescript-eslint/require-await
-  //   it('prod org user auth not found', async () => {
-  //     sandbox.stub(Org, 'create').callsFake(() => {
-  //       throw new Error('No org configuration found for name');
-  //     });
-  //     orgDeleteCommand.flags = { targetusername: sbUser, noprompt: true };
-  //     orgDeleteCommand.org = {
-  //       getOrgId: () => sandboxOrgId,
-  //       getUsername: () => sbUser,
-  //       getSandboxOrgConfigField: () => prodUser,
-  //       remove: () => Promise.resolve(),
-  //     };
-  //     expect(orgDeleteCommand.run()).to.be.rejectedWith(
-  //       Error,
-  //       new RegExp('No org configuration found for name'),
-  //       'should have thrown a Prod Org User not found error'
-  //     );
-  //   });
-  //
-  //   it('sandbox delete no SandboxProcess', async () => {
-  //     sandbox.stub(Org, 'create').callsFake(() => prodOrg);
-  //     orgDeleteCommand.flags = { targetusername: sbUser, noprompt: true };
-  //     orgDeleteCommand.org = {
-  //       getOrgId: () => sandboxOrgId,
-  //       getUsername: () => sbUser,
-  //       getSandboxOrgConfigField: () => prodUser,
-  //       remove: () => Promise.resolve(),
-  //     };
-  //     const spy = sinon.spy(orgDeleteCommand.org, 'remove');
-  //     prodSandboxOrgMock.deleteSandbox.throws(
-  //       new SfdxError('Attempting to delete an already deleted org', 'sandboxProcessNotFoundByOrgId')
-  //     );
-  //     await orgDeleteCommand.run();
-  //     expect(prodSandboxOrgMock.deleteSandbox.callCount).to.equal(1);
-  //     expect(prodOrg.getOrgId.callCount).to.equal(0);
-  //     expect(spy.called).to.be.true;
-  //   });
-  //
-  //   // eslint-disable-next-line @typescript-eslint/require-await
-  //   it('sandbox delete some failure', async () => {
-  //     sandbox.stub(Org, 'create').callsFake(() => prodOrg);
-  //     orgDeleteCommand.flags = { targetusername: sbUser, noprompt: true };
-  //     orgDeleteCommand.org = {
-  //       getOrgId: () => sandboxOrgId,
-  //       getUsername: () => sbUser,
-  //       getSandboxOrgConfigField: () => prodUser,
-  //       remove: () => Promise.resolve(),
-  //     };
-  //     prodSandboxOrgMock.deleteSandbox.throws(new SfdxError('Something went wrong', 'someFailure'));
-  //     expect(orgDeleteCommand.run()).to.be.rejectedWith(
-  //       Error,
-  //       new RegExp('Something went wrong'),
-  //       'should have thrown an exception'
-  //     );
-  //   });
-  //
-  //   // it('sandbox delete success with prompt', async () => {
-  //   //   sandbox.stub(Org, 'create').callsFake(() => prodOrg);
-  //   //   sandbox.stub(heroku, 'prompt').callsFake(() => BBPromise.resolve('y'));
-  //   //   orgDeleteCommand.flags = { targetusername: sbUser };
-  //   //   orgDeleteCommand.org = {
-  //   //     getOrgId: () => sandboxOrgId,
-  //   //     getUsername: () => sbUser,
-  //   //     getSandboxOrgConfigField: () => prodUser,
-  //   //     remove: () => Promise.resolve(),
-  //   //   };
-  //   //   const spy = sinon.spy(orgDeleteCommand.org, 'remove');
-  //   //   await orgDeleteCommand.run();
-  //   //   expect(prodSandboxOrgMock.deleteSandbox.callCount).to.equal(1);
-  //   //   expect(prodOrg.getOrgId.callCount).to.equal(0);
-  //   //   expect(spy.called).to.be.true;
-  //   // });
-  //
-  //   it('sandbox prompt no', async () => {
-  //     sandbox.stub(Org, 'create').callsFake(() => prodOrg);
-  //     sandbox.stub(heroku, 'prompt').callsFake(() => BBPromise.resolve('n'));
-  //     orgDeleteCommand.flags = { targetusername: sbUser };
-  //     orgDeleteCommand.org = {
-  //       getOrgId: () => sandboxOrgId,
-  //       getUsername: () => sbUser,
-  //       getSandboxOrgConfigField: () => prodUser,
-  //       remove: () => Promise.resolve(),
-  //     };
-  //     const spy = sinon.spy(orgDeleteCommand.org, 'remove');
-  //     await orgDeleteCommand.run();
-  //     expect(prodSandboxOrgMock.deleteSandbox.callCount).to.equal(0);
-  //     expect(prodOrg.getOrgId.callCount).to.equal(0);
-  //     expect(spy.called).to.be.false;
-  //   });
-  // });
 });
