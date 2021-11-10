@@ -44,9 +44,9 @@ export class Delete extends SfdxCommand {
         // will determine if it's a scratch org or sandbox and will delete from the appropriate parent org (DevHub or Production)
         await this.org.delete();
       } catch (e) {
-        if (e instanceof Error && e.name === 'attemptingToDeleteExpiredOrDeleted') {
+        if (e instanceof Error && e.name === 'ScratchOrgNotFound') {
           alreadyDeleted = true;
-        } else if (e instanceof Error && e.name === 'sandboxProcessNotFoundByOrgId') {
+        } else if (e instanceof Error && e.name === 'SandboxNotFound') {
           successMessageKey = 'sandboxConfigOnlySuccess';
         } else {
           throw e;
