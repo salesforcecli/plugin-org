@@ -83,8 +83,6 @@ describe('org:delete', () => {
     return cmd.runIt();
   };
 
-  beforeEach(() => {});
-
   it('will prompt before attempting to delete', async () => {
     const res = await runDeleteCommand([]);
     expect(uxConfirmStub.calledOnce).to.equal(true);
