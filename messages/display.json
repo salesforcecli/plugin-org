@@ -1,5 +1,5 @@
 {
-  "description": "get the description for the current or target org\nOutput includes your access token, client Id, connected status, org ID, instance URL, username, and alias, if applicable.\nUse --verbose to include the SFDX auth URL.\nIncluding --verbose displays the sfdxAuthUrl property only if you authenticated to the org using auth:web:login (not auth:jwt:grant)",
+  "description": "get the description for the current or target org\nOutput includes your access token, client Id, connected status, org ID, instance URL, username, and alias, if applicable.\nUse --verbose to include the SFDX auth URL. WARNING: The SFDX auth URL contains sensitive information, such as a refresh token that can be used to access an org. Be careful when using this parameter.\nIncluding --verbose displays the sfdxAuthUrl property only if you authenticated to the org using auth:web:login (not auth:jwt:grant)",
   "examples": [
     "sfdx force:org:display",
     "sfdx force:org:display -u me@my.org",
