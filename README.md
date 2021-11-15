@@ -88,7 +88,7 @@ get the description for the current or target org
 ```
 get the description for the current or target org
 Output includes your access token, client Id, connected status, org ID, instance URL, username, and alias, if applicable.
-Use --verbose to include the SFDX auth URL.
+Use --verbose to include the SFDX auth URL. WARNING: The SFDX auth URL contains sensitive information, such as a refresh token that can be used to access an org. Don't share or distribute this URL or token.
 Including --verbose displays the sfdxAuthUrl property only if you authenticated to the org using auth:web:login (not auth:jwt:grant)
 
 USAGE
@@ -113,7 +113,8 @@ OPTIONS
 DESCRIPTION
   Output includes your access token, client Id, connected status, org ID, instance URL, username, and alias, if 
   applicable.
-  Use --verbose to include the SFDX auth URL.
+  Use --verbose to include the SFDX auth URL. WARNING: The SFDX auth URL contains sensitive information, such as a 
+  refresh token that can be used to access an org. Don't share or distribute this URL or token.
   Including --verbose displays the sfdxAuthUrl property only if you authenticated to the org using auth:web:login (not 
   auth:jwt:grant)
 
@@ -124,7 +125,7 @@ EXAMPLES
   sfdx force:org:display -u TestOrg1 --json > tmp/MyOrgDesc.json
 ```
 
-_See code: [src/commands/force/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/v1.8.4/src/commands/force/org/display.ts)_
+_See code: [src/commands/force/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/v1.9.0/src/commands/force/org/display.ts)_
 
 ## `sfdx force:org:list [--all] [-p --clean] [--skipconnectionstatus] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
@@ -162,7 +163,7 @@ EXAMPLES
   sfdx force:org:list --verbose --json > tmp/MyOrgList.json
 ```
 
-_See code: [src/commands/force/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/v1.8.4/src/commands/force/org/list.ts)_
+_See code: [src/commands/force/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/v1.9.0/src/commands/force/org/list.ts)_
 
 ## `sfdx force:org:open [-b <string> | -r] [-p <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
@@ -213,5 +214,5 @@ EXAMPLES
   sfdx force:org:open -u me@my.org -b firefox
 ```
 
-_See code: [src/commands/force/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/v1.8.4/src/commands/force/org/open.ts)_
+_See code: [src/commands/force/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/v1.9.0/src/commands/force/org/open.ts)_
 <!-- commandsstop -->

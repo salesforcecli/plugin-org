@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.1](https://github.com/salesforcecli/plugin-org/compare/v1.9.0...v1.9.1) (2021-11-15)
+
+
+### Bug Fixes
+
+* add warning about using --verbose.. ([5bd1511](https://github.com/salesforcecli/plugin-org/commit/5bd151136806b7f3a7056cf5c3a4bdc09a1b0d35))
+
 ## [1.9.0](https://github.com/salesforcecli/plugin-org/compare/v1.8.4...v1.9.0) (2021-10-22)
 
 
