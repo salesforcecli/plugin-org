@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.2](https://github.com/salesforcecli/plugin-org/compare/v1.9.1...v1.9.2) (2021-11-18)
+
+
+### Bug Fixes
+
+* update domain URL to be more secure ([769ddd8](https://github.com/salesforcecli/plugin-org/commit/769ddd8184d43a3e974f539378b8e10768b29eef))
+
 ### [1.9.1](https://github.com/salesforcecli/plugin-org/compare/v1.9.0...v1.9.1) (2021-11-15)
 
 
