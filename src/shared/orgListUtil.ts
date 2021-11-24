@@ -320,14 +320,14 @@ export class OrgListUtil {
         const logger = await OrgListUtil.retrieveLogger();
         logger.trace(`error refreshing auth for org: ${org.getUsername()}`);
         logger.trace(error);
-        return error.code ?? error.message;
+        return (error.code as string) ?? error.message;
       }
     } catch (err) {
       const error = err as SfdxError;
       const logger = await OrgListUtil.retrieveLogger();
       logger.trace(`error refreshing auth for org: ${username}`);
       logger.trace(error);
-      return error.code ?? error.message ?? 'Unknown';
+      return (error.code as string) ?? error.message ?? 'Unknown';
     }
   }
 }
