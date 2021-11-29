@@ -6,8 +6,7 @@
  */
 import * as os from 'os';
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
-import { Messages, Org } from '@salesforce/core';
-import { SandboxOrgConfig } from '@salesforce/core/lib/config/sandboxOrgConfig';
+import { Messages } from '@salesforce/core';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete');
@@ -28,14 +27,12 @@ export class Delete extends SfdxCommand {
       description: messages.getMessage('flags.noprompt'),
     }),
   };
-  // because of requiresUsername
-  public org!: Org;
 
   public async run(): Promise<DeleteResult> {
     const username = this.org.getUsername();
     const orgId = this.org.getOrgId();
+    const isSandbox = await this.org.isSandbox();
     // read the config file for the org to be deleted, if it has a PROD_ORG_USERNAME entry, it's a sandbox
-    const isSandbox = !!(await this.org.getSandboxOrgConfigField(SandboxOrgConfig.Fields.PROD_ORG_USERNAME));
     // we either need permission to proceed without a prompt OR get the user to confirm
     if (
       this.flags.noprompt ||
@@ -47,25 +44,22 @@ export class Delete extends SfdxCommand {
         // will determine if it's a scratch org or sandbox and will delete from the appropriate parent org (DevHub or Production)
         await this.org.delete();
       } catch (e) {
-        const err = e as Error;
-        if (err.name === 'attemptingToDeleteExpiredOrDeleted') {
+        if (e instanceof Error && e.name === 'ScratchOrgNotFound') {
           alreadyDeleted = true;
-        } else if (err.name === 'sandboxProcessNotFoundByOrgId') {
+        } else if (e instanceof Error && e.name === 'SandboxNotFound') {
           successMessageKey = 'sandboxConfigOnlySuccess';
         } else {
-          throw err;
+          throw e;
         }
       }
 
-      if (isSandbox) {
-        this.ux.log(messages.getMessage(successMessageKey, [username]));
-      } else {
-        this.ux.log(
-          messages.getMessage(alreadyDeleted ? 'deleteOrgConfigOnlyCommandSuccess' : 'deleteOrgCommandSuccess', [
-            username,
-          ])
-        );
-      }
+      this.ux.log(
+        isSandbox
+          ? messages.getMessage(successMessageKey, [username])
+          : messages.getMessage(alreadyDeleted ? 'deleteOrgConfigOnlyCommandSuccess' : 'deleteOrgCommandSuccess', [
+              username,
+            ])
+      );
     }
     return { username, orgId };
   }

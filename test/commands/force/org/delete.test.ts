@@ -18,7 +18,6 @@ const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete');
 describe('org:delete', () => {
   const sandbox = sinon.createSandbox();
   const username = 'scratch-test@salesforce.com';
-  const sandboxUsername = 'sandbox-test@salesforce.com';
   const orgId = '00D54000000KDltEAG';
   const oclifConfigStub = fromStub(stubInterface<IConfig>(sandbox));
 
@@ -60,11 +59,8 @@ describe('org:delete', () => {
         delete: () => {},
         getUsername: () => username,
         getOrgId: () => orgId,
+        isSandbox: () => options.isSandbox,
       };
-
-      if (options.isSandbox) {
-        orgStubOptions.getSandboxOrgConfigField = () => sandboxUsername;
-      }
 
       if (options.deleteScratchOrg) {
         orgStubOptions.delete = () => {
@@ -82,8 +78,6 @@ describe('org:delete', () => {
 
     return cmd.runIt();
   };
-
-  beforeEach(() => {});
 
   it('will prompt before attempting to delete', async () => {
     const res = await runDeleteCommand([]);
@@ -115,16 +109,16 @@ describe('org:delete', () => {
     expect(res).to.deep.equal({ orgId, username });
   });
 
-  it('will catch the attemptingToDeleteExpiredOrDeleted and wrap correctly', async () => {
-    const res = await runDeleteCommand(['--noprompt'], { deleteScratchOrg: 'attemptingToDeleteExpiredOrDeleted' });
+  it('will catch the ScratchOrgNotFound and wrap correctly', async () => {
+    const res = await runDeleteCommand(['--noprompt'], { deleteScratchOrg: 'ScratchOrgNotFound' });
     expect(uxConfirmStub.called).to.equal(false);
     expect(res).to.deep.equal({ orgId, username });
     expect(uxLogStub.firstCall.args[0]).to.equal(messages.getMessage('deleteOrgConfigOnlyCommandSuccess', [username]));
   });
 
-  it('will catch the sandboxProcessNotFoundByOrgId and wrap correctly', async () => {
+  it('will catch the SandboxNotFound and wrap correctly', async () => {
     const res = await runDeleteCommand(['--noprompt'], {
-      deleteScratchOrg: 'sandboxProcessNotFoundByOrgId',
+      deleteScratchOrg: 'SandboxNotFound',
       isSandbox: true,
     });
     expect(uxConfirmStub.called).to.equal(false);
