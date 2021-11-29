@@ -33,6 +33,15 @@ describe('Delete Orgs', () => {
     }
   });
 
+  after(async () => {
+    try {
+      await session?.clean();
+    } catch (e) {
+      // do nothing, session?.clean() will try to remove files already removed by the org:delete and throw an error
+      // it will also unwrap other stubbed methods
+    }
+  });
+
   it('delete scratch orgs via config', () => {
     const result = execCmd('force:org:delete --noprompt --json', {
       ensureExitCode: 0,
