@@ -660,17 +660,17 @@
     chalk "^2.4.2"
     cli-ux "^4.9.3"
 
-"@salesforce/core@^2.2.0", "@salesforce/core@^2.23.4", "@salesforce/core@^2.24.0", "@salesforce/core@^2.28.0", "@salesforce/core@^2.28.2":
-  version "2.28.2"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-2.28.2.tgz#02fed89297c8d373d7c0784390abbc0791599268"
-  integrity sha512-ohKNx4v1QL5LMESavn9Bs0ZNA4cw3IGL+dOvP601SphKPCOMiDfZYzfqhtET4R4uTAnJKvtUsuyvQUwL2479jg==
+"@salesforce/core@^2.2.0", "@salesforce/core@^2.23.4", "@salesforce/core@^2.24.0", "@salesforce/core@^2.28.0", "@salesforce/core@^2.30.0":
+  version "2.30.0"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-2.30.0.tgz#0cf52378d87f18a55d438a492fd13b4579f01105"
+  integrity sha512-Uh1XCEL9qnf7mBuKrKTzK3TIXlkZn+ZQyYOGW0taa2uanVu6BrVHC+2E689RFr/9vK6zv1NsJklg6B3zguekVw==
   dependencies:
     "@salesforce/bunyan" "^2.0.0"
     "@salesforce/kit" "^1.5.0"
     "@salesforce/schemas" "^1.0.1"
     "@salesforce/ts-types" "^1.5.13"
     "@types/graceful-fs" "^4.1.5"
-    "@types/jsforce" "^1.9.29"
+    "@types/jsforce" "^1.9.35"
     "@types/mkdirp" "^1.0.1"
     debug "^3.1.0"
     graceful-fs "^4.2.4"
@@ -678,6 +678,7 @@
     jsforce "^1.10.1"
     jsonwebtoken "8.5.0"
     mkdirp "1.0.4"
+    semver "^7.3.5"
     sfdx-faye "^1.0.9"
     ts-retry-promise "^0.6.0"
 
@@ -883,7 +884,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/jsforce@^1.9.29":
+"@types/jsforce@^1.9.35":
   version "1.9.35"
   resolved "https://registry.npmjs.org/@types/jsforce/-/jsforce-1.9.35.tgz#abda87c796910d286420b07a97382c782b576ca8"
   integrity sha512-GEb1iMAK8raElbBbozR7aVEuMl47jrPYLNkeh+3h2vLJIG21uQ/kOk4kPgMiMFwCmgfX4/tPDugnjb7qrMav4A==
