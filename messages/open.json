@@ -1,5 +1,5 @@
 {
-  "description": "open your default scratch org, or another specified org\nTo open a specific page, specify the portion of the URL after \"yourInstance.salesforce.com/\" as --path.\nFor example, specify \"--path lightning\" to open Lightning Experience, or specify \"--path /apex/YourPage\" to open a Visualforce page.\nTo generate a URL but not launch it in your browser, specify --urlonly.\nTo open in a specific browser, use the --browser parameter. Supported browsers are \"chrome\", \"edge\", and \"firefox\". If you don't specify --browser, the org opens in your default browser.",
+  "description": "open your default scratch org, or another specified org\nTo open a specific page, specify the portion of the URL after \"https://MyDomainName.my.salesforce.com/\" as --path.\nFor example, specify \"--path lightning\" to open Lightning Experience, or specify \"--path /apex/YourPage\" to open a Visualforce page.\nTo generate a URL but not launch it in your browser, specify --urlonly.\nTo open in a specific browser, use the --browser parameter. Supported browsers are \"chrome\", \"edge\", and \"firefox\". If you don't specify --browser, the org opens in your default browser.",
   "examples": [
     "sfdx force:org:open",
     "sfdx force:org:open -u me@my.org",
