@@ -2,72 +2,69 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [1.9.2](https://github.com/salesforcecli/plugin-org/compare/v1.9.1...v1.9.2) (2021-11-18)
-
-
-### Bug Fixes
-
-* update domain URL to be more secure ([769ddd8](https://github.com/salesforcecli/plugin-org/commit/769ddd8184d43a3e974f539378b8e10768b29eef))
-
-### [1.9.1](https://github.com/salesforcecli/plugin-org/compare/v1.9.0...v1.9.1) (2021-11-15)
-
-
-### Bug Fixes
-
-* add warning about using --verbose.. ([5bd1511](https://github.com/salesforcecli/plugin-org/commit/5bd151136806b7f3a7056cf5c3a4bdc09a1b0d35))
-
-## [1.9.0](https://github.com/salesforcecli/plugin-org/compare/v1.8.4...v1.9.0) (2021-10-22)
-
+## [1.10.0](https://github.com/salesforcecli/plugin-org/compare/v1.9.2...v1.10.0) (2021-11-30)
 
 ### Features
 
-* support targeting browser in "open" command ([c06442b](https://github.com/salesforcecli/plugin-org/commit/c06442b9f42641d535674b0f258f2c6039d5370b))
+- do not display url for basic org:open ([b20ac79](https://github.com/salesforcecli/plugin-org/commit/b20ac7901bd44a680ac32c0e17ae4398ef97b9ce))
+
+### [1.9.2](https://github.com/salesforcecli/plugin-org/compare/v1.9.1...v1.9.2) (2021-11-18)
+
+### Bug Fixes
+
+- update domain URL to be more secure ([769ddd8](https://github.com/salesforcecli/plugin-org/commit/769ddd8184d43a3e974f539378b8e10768b29eef))
+
+### [1.9.1](https://github.com/salesforcecli/plugin-org/compare/v1.9.0...v1.9.1) (2021-11-15)
+
+### Bug Fixes
+
+- add warning about using --verbose.. ([5bd1511](https://github.com/salesforcecli/plugin-org/commit/5bd151136806b7f3a7056cf5c3a4bdc09a1b0d35))
+
+## [1.9.0](https://github.com/salesforcecli/plugin-org/compare/v1.8.4...v1.9.0) (2021-10-22)
+
+### Features
+
+- support targeting browser in "open" command ([c06442b](https://github.com/salesforcecli/plugin-org/commit/c06442b9f42641d535674b0f258f2c6039d5370b))
 
 ### [1.8.4](https://github.com/salesforcecli/plugin-org/compare/v1.8.3...v1.8.4) (2021-10-20)
 
-
 ### Bug Fixes
 
-* remove extraneous single quote ([62269a2](https://github.com/salesforcecli/plugin-org/commit/62269a24d2d0f3cdcd1277882e2ea51e41cb617e))
+- remove extraneous single quote ([62269a2](https://github.com/salesforcecli/plugin-org/commit/62269a24d2d0f3cdcd1277882e2ea51e41cb617e))
 
 ### [1.8.3](https://github.com/salesforcecli/plugin-org/compare/v1.8.2...v1.8.3) (2021-10-13)
 
-
 ### Bug Fixes
 
-* warnings for json, too ([e4d5cf1](https://github.com/salesforcecli/plugin-org/commit/e4d5cf15451f6b4ed36279191655dcbba4e80b51))
+- warnings for json, too ([e4d5cf1](https://github.com/salesforcecli/plugin-org/commit/e4d5cf15451f6b4ed36279191655dcbba4e80b51))
 
 ### [1.8.2](https://github.com/salesforcecli/plugin-org/compare/v1.8.1...v1.8.2) (2021-10-12)
 
 ### [1.8.1](https://github.com/salesforcecli/plugin-org/compare/v1.8.0...v1.8.1) (2021-10-06)
 
-
 ### Bug Fixes
 
-* update deps ([254039c](https://github.com/salesforcecli/plugin-org/commit/254039c59bbb88a85fe32d0c705a58d808d330df))
+- update deps ([254039c](https://github.com/salesforcecli/plugin-org/commit/254039c59bbb88a85fe32d0c705a58d808d330df))
 
 ## [1.8.0](https://github.com/salesforcecli/plugin-org/compare/v1.7.0...v1.8.0) (2021-09-29)
 
-
 ### Features
 
-* security warnings for display/open ([b2599be](https://github.com/salesforcecli/plugin-org/commit/b2599bed02bccf72b8b6a8766334caa41b5603a4))
+- security warnings for display/open ([b2599be](https://github.com/salesforcecli/plugin-org/commit/b2599bed02bccf72b8b6a8766334caa41b5603a4))
 
 ## [1.7.0](https://github.com/salesforcecli/plugin-org/compare/v1.6.9...v1.7.0) (2021-08-20)
 
-
 ### Features
 
-* namespace on orgList ([b1d2c61](https://github.com/salesforcecli/plugin-org/commit/b1d2c616fac9b182f2483685e0fd46fd96a28259))
+- namespace on orgList ([b1d2c61](https://github.com/salesforcecli/plugin-org/commit/b1d2c616fac9b182f2483685e0fd46fd96a28259))
 
 ### [1.6.9](https://github.com/salesforcecli/plugin-org/compare/v1.6.7...v1.6.9) (2021-08-05)
 
 ### [1.6.7](https://github.com/salesforcecli/plugin-org/compare/v1.6.6...v1.6.7) (2021-06-15)
 
-
 ### Bug Fixes
 
-* use most recent alias ([0ab922a](https://github.com/salesforcecli/plugin-org/commit/0ab922a96cab70f64bdc5e4d104b007a34def1b0))
+- use most recent alias ([0ab922a](https://github.com/salesforcecli/plugin-org/commit/0ab922a96cab70f64bdc5e4d104b007a34def1b0))
 
 ### [1.6.6](https://github.com/salesforcecli/plugin-org/compare/v1.6.5...v1.6.6) (2021-05-10)
 
@@ -75,94 +72,82 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [1.6.4](https://github.com/salesforcecli/plugin-org/compare/v1.6.3...v1.6.4) (2021-04-23)
 
-
 ### Bug Fixes
 
-* force release of 1.6.4 ([50ee064](https://github.com/salesforcecli/plugin-org/commit/50ee064e73f4473c3b0830e5371d30dd09f88085))
+- force release of 1.6.4 ([50ee064](https://github.com/salesforcecli/plugin-org/commit/50ee064e73f4473c3b0830e5371d30dd09f88085))
 
 ### [1.6.3](https://github.com/salesforcecli/plugin-org/compare/v1.6.2...v1.6.3) (2021-04-20)
 
-
 ### Bug Fixes
 
-* add missing message ([40d1cca](https://github.com/salesforcecli/plugin-org/commit/40d1ccad42a961d4452f77262b28e87351534b82))
+- add missing message ([40d1cca](https://github.com/salesforcecli/plugin-org/commit/40d1ccad42a961d4452f77262b28e87351534b82))
 
 ### [1.6.2](https://github.com/salesforcecli/plugin-org/compare/v1.6.1...v1.6.2) (2021-04-06)
 
-
 ### Bug Fixes
 
-* leif .yml merge [skip-validate-pr] ([dd28564](https://github.com/salesforcecli/plugin-org/commit/dd28564f4ae1095ad9f2304a33804ad49f1e6b82))
-* leif .yml merge [skip-validate-pr] ([217473e](https://github.com/salesforcecli/plugin-org/commit/217473e1ddb03dd0a606b0f859322c6d3eeb5421))
+- leif .yml merge [skip-validate-pr] ([dd28564](https://github.com/salesforcecli/plugin-org/commit/dd28564f4ae1095ad9f2304a33804ad49f1e6b82))
+- leif .yml merge [skip-validate-pr] ([217473e](https://github.com/salesforcecli/plugin-org/commit/217473e1ddb03dd0a606b0f859322c6d3eeb5421))
 
 ### [1.6.1](https://github.com/salesforcecli/plugin-org/compare/v1.6.0...v1.6.1) (2021-03-30)
 
 ## [1.6.0](https://github.com/salesforcecli/plugin-org/compare/v1.3.3...v1.6.0) (2021-03-25)
 
-
 ### Bug Fixes
 
-* clean up a few messages ([3cee3a2](https://github.com/salesforcecli/plugin-org/commit/3cee3a2d71c95b2c37f2fb7c664c0f1a8faad39f))
-* error handling for no scratch org info from the hub ([d536bad](https://github.com/salesforcecli/plugin-org/commit/d536badb53580a73603bc9125a49029f5962cbbe))
-* list command shows orgs that have userId ([b26a656](https://github.com/salesforcecli/plugin-org/commit/b26a656185bd84b182be29fc401231698644b499))
-* shane's suggestion ([0f03592](https://github.com/salesforcecli/plugin-org/commit/0f0359274ca218ac8d6044c9f6282fe85c480d82))
+- clean up a few messages ([3cee3a2](https://github.com/salesforcecli/plugin-org/commit/3cee3a2d71c95b2c37f2fb7c664c0f1a8faad39f))
+- error handling for no scratch org info from the hub ([d536bad](https://github.com/salesforcecli/plugin-org/commit/d536badb53580a73603bc9125a49029f5962cbbe))
+- list command shows orgs that have userId ([b26a656](https://github.com/salesforcecli/plugin-org/commit/b26a656185bd84b182be29fc401231698644b499))
+- shane's suggestion ([0f03592](https://github.com/salesforcecli/plugin-org/commit/0f0359274ca218ac8d6044c9f6282fe85c480d82))
 
 ### [1.3.3](https://github.com/salesforcecli/plugin-org/compare/v1.3.2...v1.3.3) (2021-03-03)
 
-
 ### Bug Fixes
 
-* no devhub on display ([3d220ab](https://github.com/salesforcecli/plugin-org/commit/3d220ab2cff97a6fc9bfc8697a26606f70a9509e))
+- no devhub on display ([3d220ab](https://github.com/salesforcecli/plugin-org/commit/3d220ab2cff97a6fc9bfc8697a26606f70a9509e))
 
 ### [1.3.2](https://github.com/salesforcecli/plugin-org/compare/v1.3.1...v1.3.2) (2021-02-19)
 
-
 ### Bug Fixes
 
-* refresh before reading files ([aa2e612](https://github.com/salesforcecli/plugin-org/commit/aa2e612738718911008b8ceaac2b4507b2fb4d1d))
+- refresh before reading files ([aa2e612](https://github.com/salesforcecli/plugin-org/commit/aa2e612738718911008b8ceaac2b4507b2fb4d1d))
 
 ### [1.3.1](https://github.com/salesforcecli/plugin-org/compare/v1.3.0...v1.3.1) (2021-02-16)
 
-
 ### Bug Fixes
 
-* no connectStatus json ([5704c3f](https://github.com/salesforcecli/plugin-org/commit/5704c3f973f0936709347bdfb9acadcf2fd3c90a))
-* no json connectedStatus on skipconnection ([7889c4b](https://github.com/salesforcecli/plugin-org/commit/7889c4ba5110b84357f8ec1f33f81acf51f33a82))
-* org:list updates devhub status ([df45fd9](https://github.com/salesforcecli/plugin-org/commit/df45fd9f3a39d106066d3ccf6450eda38313c152))
+- no connectStatus json ([5704c3f](https://github.com/salesforcecli/plugin-org/commit/5704c3f973f0936709347bdfb9acadcf2fd3c90a))
+- no json connectedStatus on skipconnection ([7889c4b](https://github.com/salesforcecli/plugin-org/commit/7889c4ba5110b84357f8ec1f33f81acf51f33a82))
+- org:list updates devhub status ([df45fd9](https://github.com/salesforcecli/plugin-org/commit/df45fd9f3a39d106066d3ccf6450eda38313c152))
 
 ## [1.3.0](https://github.com/salesforcecli/plugin-org/compare/v1.2.0...v1.3.0) (2021-02-16)
 
-
 ### Features
 
-* uses default username ([5654f9e](https://github.com/salesforcecli/plugin-org/commit/5654f9e9fd26a421054b6f200a65e56f85e69975))
-
+- uses default username ([5654f9e](https://github.com/salesforcecli/plugin-org/commit/5654f9e9fd26a421054b6f200a65e56f85e69975))
 
 ### Bug Fixes
 
-* org:display default username ([bc815da](https://github.com/salesforcecli/plugin-org/commit/bc815da15b3c0a6e910a4b1752ad39489cabc7c9))
+- org:display default username ([bc815da](https://github.com/salesforcecli/plugin-org/commit/bc815da15b3c0a6e910a4b1752ad39489cabc7c9))
 
 ## [1.2.0](https://github.com/salesforcecli/plugin-org/compare/v1.1.3...v1.2.0) (2021-02-16)
 
-
 ### Features
 
-* add deprecation warning ([64f0f72](https://github.com/salesforcecli/plugin-org/commit/64f0f72f0d4794ae076c71a731552103dc437a49))
+- add deprecation warning ([64f0f72](https://github.com/salesforcecli/plugin-org/commit/64f0f72f0d4794ae076c71a731552103dc437a49))
 
 ### [1.1.3](https://github.com/salesforcecli/plugin-org/compare/v1.1.2...v1.1.3) (2021-02-04)
 
-
 ### Bug Fixes
 
-* handle remaining orgs when decryption fails ([6276d49](https://github.com/salesforcecli/plugin-org/commit/6276d49228129cd252e9f8c98fa134146b579891))
-* unencrypt access tokens on org:list ([38f17a0](https://github.com/salesforcecli/plugin-org/commit/38f17a0fed306d0ff0345db1cc466c7e04206379))
-* warning and instructions for unable to clean ([78e7702](https://github.com/salesforcecli/plugin-org/commit/78e7702c3cd19c6f071152e909a5f64551f21de0))
+- handle remaining orgs when decryption fails ([6276d49](https://github.com/salesforcecli/plugin-org/commit/6276d49228129cd252e9f8c98fa134146b579891))
+- unencrypt access tokens on org:list ([38f17a0](https://github.com/salesforcecli/plugin-org/commit/38f17a0fed306d0ff0345db1cc466c7e04206379))
+- warning and instructions for unable to clean ([78e7702](https://github.com/salesforcecli/plugin-org/commit/78e7702c3cd19c6f071152e909a5f64551f21de0))
 
 ### 1.1.2 (2021-02-03)
 
-
 ### Bug Fixes
 
-* ask internal about url, not domain ([dec90df](https://github.com/salesforcecli/plugin-org/commit/dec90dfda8ae7e737580a51f818b50711eea9349))
-* changes from code review ([b0a24a5](https://github.com/salesforcecli/plugin-org/commit/b0a24a51197415ab09b6691912e3f8db030f01d0))
-* default open behavior ([6dc3f2f](https://github.com/salesforcecli/plugin-org/commit/6dc3f2f7ea4b13a0dbcc6adc1b9a135b3e4d7f54))
+- ask internal about url, not domain ([dec90df](https://github.com/salesforcecli/plugin-org/commit/dec90dfda8ae7e737580a51f818b50711eea9349))
+- changes from code review ([b0a24a5](https://github.com/salesforcecli/plugin-org/commit/b0a24a51197415ab09b6691912e3f8db030f01d0))
+- default open behavior ([6dc3f2f](https://github.com/salesforcecli/plugin-org/commit/6dc3f2f7ea4b13a0dbcc6adc1b9a135b3e4d7f54))

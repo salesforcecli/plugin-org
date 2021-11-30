@@ -77,9 +77,10 @@ sfdx plugins
 ## Commands
 
 <!-- commands -->
-* [`sfdx force:org:display [-u <string>] [--apiversion <string>] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-forceorgdisplay--u-string---apiversion-string---verbose---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
-* [`sfdx force:org:list [--all] [-p --clean] [--skipconnectionstatus] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-forceorglist---all--p---clean---skipconnectionstatus---verbose---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
-* [`sfdx force:org:open [-b <string> | -r] [-p <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-forceorgopen--b-string---r--p-string--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
+
+- [`sfdx force:org:display [-u <string>] [--apiversion <string>] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-forceorgdisplay--u-string---apiversion-string---verbose---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
+- [`sfdx force:org:list [--all] [-p --clean] [--skipconnectionstatus] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-forceorglist---all--p---clean---skipconnectionstatus---verbose---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
+- [`sfdx force:org:open [-b <string> | -r] [-p <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-forceorgopen--b-string---r--p-string--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
 
 ## `sfdx force:org:display [-u <string>] [--apiversion <string>] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
@@ -92,7 +93,7 @@ Use --verbose to include the SFDX auth URL. WARNING: The SFDX auth URL contains 
 Including --verbose displays the sfdxAuthUrl property only if you authenticated to the org using auth:web:login (not auth:jwt:grant)
 
 USAGE
-  $ sfdx force:org:display [-u <string>] [--apiversion <string>] [--verbose] [--json] [--loglevel 
+  $ sfdx force:org:display [-u <string>] [--apiversion <string>] [--verbose] [--json] [--loglevel
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
@@ -111,11 +112,11 @@ OPTIONS
                                                                                     stdout
 
 DESCRIPTION
-  Output includes your access token, client Id, connected status, org ID, instance URL, username, and alias, if 
+  Output includes your access token, client Id, connected status, org ID, instance URL, username, and alias, if
   applicable.
-  Use --verbose to include the SFDX auth URL. WARNING: The SFDX auth URL contains sensitive information, such as a 
+  Use --verbose to include the SFDX auth URL. WARNING: The SFDX auth URL contains sensitive information, such as a
   refresh token that can be used to access an org. Don't share or distribute this URL or token.
-  Including --verbose displays the sfdxAuthUrl property only if you authenticated to the org using auth:web:login (not 
+  Including --verbose displays the sfdxAuthUrl property only if you authenticated to the org using auth:web:login (not
   auth:jwt:grant)
 
 EXAMPLES
@@ -125,7 +126,7 @@ EXAMPLES
   sfdx force:org:display -u TestOrg1 --json > tmp/MyOrgDesc.json
 ```
 
-_See code: [src/commands/force/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/v1.9.1/src/commands/force/org/display.ts)_
+_See code: [src/commands/force/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/v1.9.2/src/commands/force/org/display.ts)_
 
 ## `sfdx force:org:list [--all] [-p --clean] [--skipconnectionstatus] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
@@ -135,7 +136,7 @@ list all orgs you’ve created or authenticated to
 list all orgs you’ve created or authenticated to
 
 USAGE
-  $ sfdx force:org:list [--all] [-p --clean] [--skipconnectionstatus] [--verbose] [--json] [--loglevel 
+  $ sfdx force:org:list [--all] [-p --clean] [--skipconnectionstatus] [--verbose] [--json] [--loglevel
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
@@ -163,7 +164,7 @@ EXAMPLES
   sfdx force:org:list --verbose --json > tmp/MyOrgList.json
 ```
 
-_See code: [src/commands/force/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/v1.9.1/src/commands/force/org/list.ts)_
+_See code: [src/commands/force/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/v1.9.2/src/commands/force/org/list.ts)_
 
 ## `sfdx force:org:open [-b <string> | -r] [-p <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
@@ -177,7 +178,7 @@ To generate a URL but not launch it in your browser, specify --urlonly.
 To open in a specific browser, use the --browser parameter. Supported browsers are "chrome", "edge", and "firefox". If you don't specify --browser, the org opens in your default browser.
 
 USAGE
-  $ sfdx force:org:open [-b <string> | -r] [-p <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel 
+  $ sfdx force:org:open [-b <string> | -r] [-p <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
@@ -200,10 +201,10 @@ OPTIONS
 
 DESCRIPTION
   To open a specific page, specify the portion of the URL after "https://MyDomainName.my.salesforce.com/" as --path.
-  For example, specify "--path lightning" to open Lightning Experience, or specify "--path /apex/YourPage" to open a 
+  For example, specify "--path lightning" to open Lightning Experience, or specify "--path /apex/YourPage" to open a
   Visualforce page.
   To generate a URL but not launch it in your browser, specify --urlonly.
-  To open in a specific browser, use the --browser parameter. Supported browsers are "chrome", "edge", and "firefox". If 
+  To open in a specific browser, use the --browser parameter. Supported browsers are "chrome", "edge", and "firefox". If
   you don't specify --browser, the org opens in your default browser.
 
 EXAMPLES
@@ -214,5 +215,6 @@ EXAMPLES
   sfdx force:org:open -u me@my.org -b firefox
 ```
 
-_See code: [src/commands/force/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/v1.9.1/src/commands/force/org/open.ts)_
+_See code: [src/commands/force/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/v1.9.2/src/commands/force/org/open.ts)_
+
 <!-- commandsstop -->
