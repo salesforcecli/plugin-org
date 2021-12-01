@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.10.1](https://github.com/salesforcecli/plugin-org/compare/v1.10.0...v1.10.1) (2021-12-01)
+
+### Bug Fixes
+
+- org:delete scratch org + sandboxes ([#228](https://github.com/salesforcecli/plugin-org/issues/228)) ([ab4b7a2](https://github.com/salesforcecli/plugin-org/commit/ab4b7a234c22d226aa148002daf578ee8a7975e6))
+
 ## [1.10.0](https://github.com/salesforcecli/plugin-org/compare/v1.9.2...v1.10.0) (2021-11-30)
 
 ### Features
