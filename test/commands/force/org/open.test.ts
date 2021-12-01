@@ -11,6 +11,7 @@ import * as utils from '../../../../src/shared/utils';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
+const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
 
 const orgId = '000000000000000';
 const username = 'test@test.org';
@@ -54,6 +55,7 @@ describe('open commands', () => {
         expect(response.status).to.equal(0);
         expect(testJsonStructure(response.result)).to.be.true;
         expect(response.result.url).to.equal(expectedDefaultUrl);
+        expect(response.warnings).to.include(sharedMessages.getMessage('SecurityWarning'));
       });
 
     test
@@ -64,6 +66,7 @@ describe('open commands', () => {
         expect(response.status).to.equal(0);
         expect(testJsonStructure(response.result)).to.be.true;
         expect(response.result.url).to.equal(expectedUrl);
+        expect(response.warnings).to.include(sharedMessages.getMessage('SecurityWarning'));
       });
 
     test
@@ -141,7 +144,7 @@ describe('open commands', () => {
         expect(response.status).to.equal(0);
         expect(testJsonStructure(response.result)).to.be.true;
         expect(response.result.url).to.equal(expectedUrl);
-
+        expect(response.warnings).to.include(sharedMessages.getMessage('SecurityWarning'));
         expect(spies.get('resolver').callCount).to.equal(0);
       });
 
@@ -169,10 +172,20 @@ describe('open commands', () => {
       })
       .stdout()
       .command(['force:org:open', '--targetusername', username, '--path', testPath])
-      .it('calls open and outputs proper success message', (ctx) => {
-        expect(ctx.stdout).to.include(messages.getMessage('humanSuccess', [orgId, username, expectedUrl]));
+      .it('calls open and outputs proper success message (no url)', (ctx) => {
+        expect(ctx.stdout).to.include(messages.getMessage('humanSuccessNoUrl', [orgId, username]));
         expect(spies.get('resolver').callCount).to.equal(1);
         expect(spies.get('open').callCount).to.equal(1);
+      });
+
+    test
+      .do(() => {
+        spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
+      })
+      .stdout()
+      .command(['force:org:open', '--targetusername', username, '--path', testPath, '--urlonly'])
+      .it('outputs proper warning and message (includes url for --urlonly)', (ctx) => {
+        expect(ctx.stdout).to.include(messages.getMessage('humanSuccess', [orgId, username, expectedUrl]));
       });
 
     test

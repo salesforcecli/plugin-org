@@ -12,6 +12,7 @@
   "urlonly": "display navigation URL, but don’t launch browser",
   "containerAction": "You are in a headless environment. To access the org %s, open this URL in a browser:\n\n%s",
   "humanSuccess": "Access org %s as user %s with the following URL: %s",
+  "humanSuccessNoUrl": "Opening org %s as user %s",
   "domainWaiting": "Waiting to resolve the Lightning Experience-enabled custom domain...",
   "domainTimeoutError": "The Lightning Experience-enabled custom domain is unavailable.",
   "domainTimeoutAction": "The Lightning Experience-enabled custom domain may take a few more minutes to resolve. Try the \"force:org:open\" command again."

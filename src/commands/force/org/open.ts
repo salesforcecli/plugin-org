@@ -45,22 +45,28 @@ export class OrgOpenCommand extends SfdxCommand {
     const orgId = this.org.getOrgId();
     const username = this.org.getUsername();
     const output = { orgId, url, username };
+    const containerMode = new Env().getBoolean('SFDX_CONTAINER_MODE');
 
-    this.ux.warn(sharedMessages.getMessage('SecurityWarning'));
-    this.ux.log('');
+    // security warning only for --json OR --urlonly OR containerMode
+    if (this.flags.urlonly || this.flags.json || containerMode) {
+      this.ux.warn(sharedMessages.getMessage('SecurityWarning'));
+      this.ux.log('');
+    }
 
-    if (new Env().getBoolean('SFDX_CONTAINER_MODE')) {
+    if (containerMode) {
       // instruct the user that they need to paste the URL into the browser
       this.ux.styledHeader('Action Required!');
       this.ux.log(messages.getMessage('containerAction', [orgId, url]));
       return output;
     }
 
-    this.ux.log(messages.getMessage('humanSuccess', [orgId, username, url]));
-
     if (this.flags.urlonly) {
+      // this includes the URL
+      this.ux.log(messages.getMessage('humanSuccess', [orgId, username, url]));
       return output;
     }
+
+    this.ux.log(messages.getMessage('humanSuccessNoUrl', [orgId, username]));
     // we actually need to open the org
     try {
       this.ux.startSpinner(messages.getMessage('domainWaiting'));
@@ -79,9 +85,8 @@ export class OrgOpenCommand extends SfdxCommand {
       throw SfdxError.wrap(err);
     }
 
-    const openOptions = this.flags.browser
-      ? { app: { name: open.apps[this.flags.browser as string] as open.AppName } }
-      : {};
+    const openOptions =
+      typeof this.flags.browser === 'string' ? { app: { name: open.apps[this.flags.browser] as open.AppName } } : {};
 
     await openUrl(url, openOptions);
     return output;
