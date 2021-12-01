@@ -1,5 +1,10 @@
 [
   {
+    "command": "force:org:delete",
+    "plugin": "@salesforce/plugin-org",
+    "flags": ["apiversion", "json", "loglevel", "noprompt", "targetdevhubusername", "targetusername"]
+  },
+  {
     "command": "force:org:display",
     "plugin": "@salesforce/plugin-org",
     "flags": ["apiversion", "json", "loglevel", "targetusername", "verbose"]
@@ -12,6 +17,6 @@
   {
     "command": "force:org:open",
     "plugin": "@salesforce/plugin-org",
-    "flags": ["path", "urlonly", "json", "loglevel", "targetusername", "apiversion", "browser"]
+    "flags": ["apiversion", "browser", "json", "loglevel", "path", "targetusername", "urlonly"]
   }
 ]
