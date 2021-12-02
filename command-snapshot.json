@@ -1,5 +1,28 @@
 [
   {
+    "command": "force:org:beta:create",
+    "plugin": "@salesforce/plugin-org",
+    "flags": [
+      "apiversion",
+      "clientid",
+      "definitionfile",
+      "definitionjson",
+      "durationdays",
+      "env",
+      "json",
+      "loglevel",
+      "noancestors",
+      "nonamespace",
+      "retry",
+      "setalias",
+      "setdefaultusername",
+      "targetdevhubusername",
+      "targetusername",
+      "type",
+      "wait"
+    ]
+  },
+  {
     "command": "force:org:delete",
     "plugin": "@salesforce/plugin-org",
     "flags": ["apiversion", "json", "loglevel", "noprompt", "targetdevhubusername", "targetusername"]
