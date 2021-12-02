@@ -1,7 +1,7 @@
 {
   "name": "@salesforce/plugin-org",
   "description": "A template repository for sfdx plugins",
-  "version": "1.10.1",
+  "version": "1.11.0",
   "author": "Salesforce",
   "bugs": "https://github.com/forcedotcom/cli/issues",
   "dependencies": {
