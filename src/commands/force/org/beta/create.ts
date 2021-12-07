@@ -6,18 +6,28 @@
  */
 
 import * as os from 'os';
+import * as fs from 'fs';
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
 import { Duration } from '@salesforce/kit';
 
-import { Messages, SfdxError } from '@salesforce/core';
+import {
+  Lifecycle,
+  Messages,
+  Org,
+  SfdxError,
+  OrgTypes,
+  SandboxEvents,
+  SandboxProcessObject,
+  SandboxRequest,
+  SandboxUserAuthResponse,
+  Aliases,
+  Config,
+} from '@salesforce/core';
+import { AnyJson } from '@salesforce/ts-types';
+import { SandboxReporter } from '../../../../shared/sandboxReporter';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
-
-export enum OrgTypes {
-  Scratch = 'scratch',
-  Sandbox = 'sandbox',
-}
 
 enum EnvTypes {
   Sandbox = 'sandbox',
@@ -98,25 +108,105 @@ export class Create extends SfdxCommand {
   protected readonly lifecycleEventNames = ['postorgcreate'];
 
   // TODO: find return types for scratch/sandbox org signup
-  public async run(): Promise<void> {
+  public async run(): Promise<SandboxProcessObject> {
     this.logger.debug('Create started with args %s ', this.flags);
 
     if (this.flags.type === OrgTypes.Sandbox) {
       if (this.flags.retry !== 0) {
-        throw SfdxError.create('@salesforce/plugin-org', 'create', 'RetryIsNotValidForSandboxes');
+        throw SfdxError.create('@salesforce/plugin-org', 'create', 'retryIsNotValidForSandboxes');
       }
       if (this.flags.clientid) {
         this.ux.warn(messages.getMessage('clientIdNotSupported', [this.flags.clientid]));
       }
-      await this.createSandbox();
+      return await this.createSandbox();
     } else {
       // default to scratch org
       this.createScratchOrg();
     }
   }
 
-  private async createSandbox(): Promise<void> {
-    //
+  private async createSandbox(): Promise<SandboxProcessObject> {
+    const prodOrg = await Org.create({ aliasOrUsername: this.flags.targetusername as string });
+    const lifecycle = Lifecycle.getInstance();
+
+    // register the sandbox event listeners before calling `prodOrg.createSandbox()`
+
+    // `on` doesn't support synchronous methods
+    // eslint-disable-next-line @typescript-eslint/require-await
+    lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results: SandboxProcessObject) => {
+      this.ux.log(messages.getMessage('sandboxSuccess', [results.Id, results.SandboxName]));
+    });
+
+    lifecycle.on(
+      SandboxEvents.EVENT_STATUS,
+      async (results: {
+        sandboxProcessObj: SandboxProcessObject;
+        interval: Duration.Unit.SECONDS;
+        retries: number;
+        waitingOnAuth: boolean;
+        // eslint-disable-next-line @typescript-eslint/require-await
+      }) => {
+        this.ux.log(
+          SandboxReporter.sandboxProgress(
+            results.sandboxProcessObj,
+            results.interval,
+            results.retries,
+            results.waitingOnAuth
+          )
+        );
+      }
+    );
+
+    lifecycle.on(
+      SandboxEvents.EVENT_RESULT,
+      async (results: { sandboxProcessObj: SandboxProcessObject; sandboxRes: SandboxUserAuthResponse }) => {
+        const { sandboxReadyForUse, data } = SandboxReporter.logSandboxProcessResult(
+          results.sandboxProcessObj,
+          results.sandboxRes
+        );
+        this.ux.log(sandboxReadyForUse);
+        this.ux.styledHeader('Sandbox Org Creation Status');
+        this.ux.table(data, {
+          columns: [
+            { key: 'key', label: 'Name' },
+            { key: 'value', label: 'Value' },
+          ],
+        });
+        if (results.sandboxRes && results.sandboxRes.authUserName) {
+          if (this.flags.setalias) {
+            const alias = await Aliases.create({});
+            alias.set(this.flags.setalias, results.sandboxRes.authUserName);
+            const result = await alias.write();
+            this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
+          }
+          if (this.flags.setdefaultusername) {
+            const globalConfig: Config = this.configAggregator.getGlobalConfig();
+            globalConfig.set(Config.DEFAULT_USERNAME, results.sandboxRes.authUserName);
+            const result = await globalConfig.write();
+            this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
+          }
+        }
+      }
+    );
+
+    const sandboxDefFileContents = this.readJsonDefFile();
+    this.logger.debug('Create Varargs: %s ', this.varargs);
+    const sandboxReq: SandboxRequest = { SandboxName: undefined };
+    // definitionjson and varargs override file input
+    Object.assign(sandboxReq, sandboxDefFileContents, this.varargs);
+
+    this.logger.debug('Calling create with SandboxRequest: %s ', sandboxReq);
+
+    return await prodOrg.createSandbox(sandboxReq, this.flags.wait);
+  }
+
+  private readJsonDefFile(): AnyJson {
+    // the -f option
+    if (this.flags.definitionfile) {
+      this.logger.debug('Reading JSON DefFile %s ', this.flags.definitionfile);
+      return JSON.parse(fs.readFileSync(this.flags.definitionfile, 'utf-8')) as AnyJson;
+    }
+    return;
   }
 
   private createScratchOrg(): void {

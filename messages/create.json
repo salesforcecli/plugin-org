@@ -22,5 +22,6 @@
   },
 
   "clientIdNotSupported": "-i | --clientid is not supported for the sandbox org create command. Its value, %s, has been ignored.",
-  "RetryIsNotValidForSandboxes": "One cannot use flag retry with Sandbox org create."
+  "retryIsNotValidForSandboxes": "One cannot use flag retry with Sandbox org create.",
+  "sandboxSuccess": "The sandbox org creation process %s is in progress. Run \"sfdx force:org:status -n %s\" to check for status. If the org is ready, checking the status also authorizes the org for use with Salesforce CLI."
 }
