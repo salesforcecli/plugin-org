@@ -8,7 +8,6 @@ import {
   Aliases,
   Config,
   Lifecycle,
-  Messages,
   Org,
   SandboxEvents,
   SandboxProcessObject,
@@ -22,8 +21,6 @@ import { expect } from '@salesforce/command/lib/test';
 import { UX } from '@salesforce/command';
 import { Duration } from '@salesforce/kit';
 import { Create } from '../../../../src/commands/force/org/beta/create';
-
-Messages.importMessagesDirectory(__dirname);
 
 describe('org:create', () => {
   const sandbox = sinon.createSandbox();
@@ -146,13 +143,9 @@ describe('org:create', () => {
     };
 
     it('will print the correct message for asyncResult lifecycle event', async () => {
-      const command = await createCommand(['--type', 'sandbox', '--definitionfile', 'mySandboxDef.json']);
+      const command = await createCommand(['--type', 'sandbox']);
 
       createSandboxStub.restore();
-      stubMethod(sandbox, cmd, 'readJsonDefFile').returns({
-        license: 'licenseFromJon',
-        SandboxName: 'sandboxNameFromJson',
-      });
       stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
       stubMethod(sandbox, Org.prototype, 'createSandbox');
       await command.runIt();
@@ -168,13 +161,9 @@ describe('org:create', () => {
     });
 
     it('will print the correct message for status lifecycle event', async () => {
-      const command = await createCommand(['--type', 'sandbox', '--definitionfile', 'mySandboxDef.json']);
+      const command = await createCommand(['--type', 'sandbox']);
 
       createSandboxStub.restore();
-      stubMethod(sandbox, cmd, 'readJsonDefFile').returns({
-        license: 'licenseFromJon',
-        SandboxName: 'sandboxNameFromJson',
-      });
       stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
       stubMethod(sandbox, Org.prototype, 'createSandbox');
       await command.runIt();
@@ -197,21 +186,9 @@ describe('org:create', () => {
     });
 
     it('will print the correct message for result lifecycle event and set alias/defaultusername', async () => {
-      const command = await createCommand([
-        '--type',
-        'sandbox',
-        '--definitionfile',
-        'mySandboxDef.json',
-        '--setalias',
-        'sandboxAlias',
-        '--setdefaultusername',
-      ]);
+      const command = await createCommand(['--type', 'sandbox', '--setalias', 'sandboxAlias', '--setdefaultusername']);
 
       createSandboxStub.restore();
-      stubMethod(sandbox, cmd, 'readJsonDefFile').returns({
-        license: 'licenseFromJon',
-        SandboxName: 'sandboxNameFromJson',
-      });
       stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
       stubMethod(sandbox, Org.prototype, 'createSandbox');
       const aliasStub = stubMethod(sandbox, Aliases.prototype, 'set');

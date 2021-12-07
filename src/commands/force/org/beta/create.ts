@@ -107,7 +107,7 @@ export class Create extends SfdxCommand {
   };
   protected readonly lifecycleEventNames = ['postorgcreate'];
 
-  // TODO: find return types for scratch/sandbox org signup
+  // TODO: union type of sandbox and scratch org
   public async run(): Promise<SandboxProcessObject> {
     this.logger.debug('Create started with args %s ', this.flags);
 
@@ -172,7 +172,7 @@ export class Create extends SfdxCommand {
             { key: 'value', label: 'Value' },
           ],
         });
-        if (results.sandboxRes && results.sandboxRes.authUserName) {
+        if (results.sandboxRes?.authUserName) {
           if (this.flags.setalias) {
             const alias = await Aliases.create({});
             alias.set(this.flags.setalias, results.sandboxRes.authUserName);
