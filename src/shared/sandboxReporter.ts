@@ -4,47 +4,42 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { SandboxProcessObject, SandboxUserAuthResponse } from '@salesforce/core';
+import { StatusEvent, ResultEvent } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
 
 export class SandboxReporter {
-  public static sandboxProgress(update: {
-    sandboxProcessObject: SandboxProcessObject;
-    pollIntervalInSecond: number;
-    retriesLeft: number;
-    waitingOnAuth: boolean;
-  }): string {
-    const { retriesLeft, pollIntervalInSecond, sandboxProcessObject, waitingOnAuth } = update;
-    const waitTimeInSec: number = retriesLeft * pollIntervalInSecond;
+  public static sandboxProgress(update: StatusEvent): string {
+    const { retries, interval, sandboxProcessObj, waitingOnAuth } = update;
+    const waitTimeInSec: number = retries * interval;
 
     const waitTime: string = Duration.seconds(waitTimeInSec).seconds.toString();
-    const waitTimeMsg = `Sleeping ${pollIntervalInSecond} seconds. Will wait ${waitTime} more before timing out.`;
-    const sandboxIdentifierMsg = `${sandboxProcessObject.SandboxName}(${sandboxProcessObject.Id})`;
+    const waitTimeMsg = `Sleeping ${interval} seconds. Will wait ${waitTime} more before timing out.`;
+    const sandboxIdentifierMsg = `${sandboxProcessObj.SandboxName}(${sandboxProcessObj.Id})`;
     const waitingOnAuthMessage: string = waitingOnAuth ? ', waiting on JWT auth' : '';
-    const completionMessage = `(${sandboxProcessObject.CopyProgress}% completed${waitingOnAuthMessage})`;
+    const completionMessage = `(${sandboxProcessObj.CopyProgress}% completed${waitingOnAuthMessage})`;
 
-    return `Sandbox request ${sandboxIdentifierMsg} is ${sandboxProcessObject.Status} ${completionMessage}. ${waitTimeMsg}`;
+    return `Sandbox request ${sandboxIdentifierMsg} is ${sandboxProcessObj.Status} ${completionMessage}. ${waitTimeMsg}`;
   }
 
   public static logSandboxProcessResult(
-    processRecord: SandboxProcessObject,
-    sandboxRes: SandboxUserAuthResponse
-    // processRecord.CopyProgress is a number
+    result: ResultEvent
+    // sandboxProcessObj.CopyProgress is a number
   ): { sandboxReadyForUse: string; data: Array<{ key: string; value: string | number }> } {
-    const sandboxReadyForUse = `Sandbox ${processRecord.SandboxName}(${processRecord.Id}) is ready for use.`;
+    const { sandboxProcessObj, sandboxRes } = result;
+    const sandboxReadyForUse = `Sandbox ${sandboxProcessObj.SandboxName}(${sandboxProcessObj.Id}) is ready for use.`;
 
     const data = [
-      { key: 'Id', value: processRecord.Id },
-      { key: 'SandboxName', value: processRecord.SandboxName },
-      { key: 'Status', value: processRecord.Status },
-      { key: 'CopyProgress', value: processRecord.CopyProgress },
-      { key: 'Description', value: processRecord.Description },
-      { key: 'LicenseType', value: processRecord.LicenseType },
-      { key: 'SandboxInfoId', value: processRecord.SandboxInfoId },
-      { key: 'SourceId', value: processRecord.SourceId },
-      { key: 'SandboxOrg', value: processRecord.SandboxOrganization },
-      { key: 'Created Date', value: processRecord.CreatedDate },
-      { key: 'ApexClassId', value: processRecord.ApexClassId },
+      { key: 'Id', value: sandboxProcessObj.Id },
+      { key: 'SandboxName', value: sandboxProcessObj.SandboxName },
+      { key: 'Status', value: sandboxProcessObj.Status },
+      { key: 'CopyProgress', value: sandboxProcessObj.CopyProgress },
+      { key: 'Description', value: sandboxProcessObj.Description },
+      { key: 'LicenseType', value: sandboxProcessObj.LicenseType },
+      { key: 'SandboxInfoId', value: sandboxProcessObj.SandboxInfoId },
+      { key: 'SourceId', value: sandboxProcessObj.SourceId },
+      { key: 'SandboxOrg', value: sandboxProcessObj.SandboxOrganization },
+      { key: 'Created Date', value: sandboxProcessObj.CreatedDate },
+      { key: 'ApexClassId', value: sandboxProcessObj.ApexClassId },
       { key: 'Authorized Sandbox Username', value: sandboxRes.authUserName },
     ];
 

@@ -19,9 +19,10 @@ import {
   SandboxEvents,
   SandboxProcessObject,
   SandboxRequest,
-  SandboxUserAuthResponse,
   Aliases,
   Config,
+  StatusEvent,
+  ResultEvent,
 } from '@salesforce/core';
 import { SandboxReporter } from '../../../../shared/sandboxReporter';
 
@@ -116,57 +117,36 @@ export class Create extends SfdxCommand {
       this.ux.log(messages.getMessage('sandboxSuccess', [results.Id, results.SandboxName]));
     });
 
-    lifecycle.on(
-      SandboxEvents.EVENT_STATUS,
-      async (results: {
-        sandboxProcessObj: SandboxProcessObject;
-        interval: Duration.Unit.SECONDS;
-        retries: number;
-        waitingOnAuth: boolean;
-        // eslint-disable-next-line @typescript-eslint/require-await
-      }) => {
-        this.ux.log(
-          SandboxReporter.sandboxProgress({
-            sandboxProcessObject: results.sandboxProcessObj,
-            waitingOnAuth: results.waitingOnAuth,
-            retriesLeft: results.retries,
-            pollIntervalInSecond: results.interval,
-          })
-        );
-      }
-    );
+    // eslint-disable-next-line @typescript-eslint/require-await
+    lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) => {
+      this.ux.log(SandboxReporter.sandboxProgress(results));
+    });
 
-    lifecycle.on(
-      SandboxEvents.EVENT_RESULT,
-      async (results: { sandboxProcessObj: SandboxProcessObject; sandboxRes: SandboxUserAuthResponse }) => {
-        const { sandboxReadyForUse, data } = SandboxReporter.logSandboxProcessResult(
-          results.sandboxProcessObj,
-          results.sandboxRes
-        );
-        this.ux.log(sandboxReadyForUse);
-        this.ux.styledHeader('Sandbox Org Creation Status');
-        this.ux.table(data, {
-          columns: [
-            { key: 'key', label: 'Name' },
-            { key: 'value', label: 'Value' },
-          ],
-        });
-        if (results.sandboxRes?.authUserName) {
-          if (this.flags.setalias) {
-            const alias = await Aliases.create({});
-            alias.set(this.flags.setalias, results.sandboxRes.authUserName);
-            const result = await alias.write();
-            this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
-          }
-          if (this.flags.setdefaultusername) {
-            const globalConfig: Config = this.configAggregator.getGlobalConfig();
-            globalConfig.set(Config.DEFAULT_USERNAME, results.sandboxRes.authUserName);
-            const result = await globalConfig.write();
-            this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
-          }
+    lifecycle.on(SandboxEvents.EVENT_RESULT, async (results: ResultEvent) => {
+      const { sandboxReadyForUse, data } = SandboxReporter.logSandboxProcessResult(results);
+      this.ux.log(sandboxReadyForUse);
+      this.ux.styledHeader('Sandbox Org Creation Status');
+      this.ux.table(data, {
+        columns: [
+          { key: 'key', label: 'Name' },
+          { key: 'value', label: 'Value' },
+        ],
+      });
+      if (results.sandboxRes?.authUserName) {
+        if (this.flags.setalias) {
+          const alias = await Aliases.create({});
+          alias.set(this.flags.setalias, results.sandboxRes.authUserName);
+          const result = await alias.write();
+          this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
+        }
+        if (this.flags.setdefaultusername) {
+          const globalConfig: Config = this.configAggregator.getGlobalConfig();
+          globalConfig.set(Config.DEFAULT_USERNAME, results.sandboxRes.authUserName);
+          const result = await globalConfig.write();
+          this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
         }
       }
-    );
+    });
 
     const sandboxDefFileContents = this.readJsonDefFile();
     this.logger.debug('Create Varargs: %s ', this.varargs);
