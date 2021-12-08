@@ -28,12 +28,6 @@ import { SandboxReporter } from '../../../../shared/sandboxReporter';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
 
-enum EnvTypes {
-  Sandbox = 'sandbox',
-  Virtual = 'virtual',
-  Prototype = 'prototype',
-}
-
 export class Create extends SfdxCommand {
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessage('examples').split(os.EOL);
@@ -50,11 +44,6 @@ export class Create extends SfdxCommand {
     definitionfile: flags.filepath({
       char: 'f',
       description: messages.getMessage('flags.definitionFile'),
-    }),
-    definitionjson: flags.string({
-      char: 'j',
-      description: messages.getMessage('flags.definitionJson'),
-      hidden: true,
     }),
     nonamespace: flags.boolean({
       char: 'n',
@@ -75,15 +64,6 @@ export class Create extends SfdxCommand {
     setalias: flags.string({
       char: 'a',
       description: messages.getMessage('flags.setAlias'),
-    }),
-    env: flags.enum({
-      char: 'e',
-      description: messages.getMessage('flags.env', [
-        [`${EnvTypes.Sandbox}*`, EnvTypes.Virtual, EnvTypes.Prototype].join(),
-      ]),
-      hidden: true,
-      options: [`${EnvTypes.Sandbox}*`, EnvTypes.Virtual, EnvTypes.Prototype],
-      default: EnvTypes.Sandbox,
     }),
     wait: flags.minutes({
       char: 'w',
