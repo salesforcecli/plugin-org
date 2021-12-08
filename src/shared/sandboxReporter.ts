@@ -8,21 +8,22 @@ import { SandboxProcessObject, SandboxUserAuthResponse } from '@salesforce/core'
 import { Duration } from '@salesforce/kit';
 
 export class SandboxReporter {
-  public static sandboxProgress(
-    processRecord: SandboxProcessObject,
-    pollIntervalInSecond: number,
-    retriesLeft: number,
-    waitingOnAuth: boolean
-  ): string {
+  public static sandboxProgress(update: {
+    sandboxProcessObject: SandboxProcessObject;
+    pollIntervalInSecond: number;
+    retriesLeft: number;
+    waitingOnAuth: boolean;
+  }): string {
+    const { retriesLeft, pollIntervalInSecond, sandboxProcessObject, waitingOnAuth } = update;
     const waitTimeInSec: number = retriesLeft * pollIntervalInSecond;
 
     const waitTime: string = Duration.seconds(waitTimeInSec).seconds.toString();
     const waitTimeMsg = `Sleeping ${pollIntervalInSecond} seconds. Will wait ${waitTime} more before timing out.`;
-    const sandboxIdentifierMsg = `${processRecord.SandboxName}(${processRecord.Id})`;
+    const sandboxIdentifierMsg = `${sandboxProcessObject.SandboxName}(${sandboxProcessObject.Id})`;
     const waitingOnAuthMessage: string = waitingOnAuth ? ', waiting on JWT auth' : '';
-    const completionMessage = `(${processRecord.CopyProgress}% completed${waitingOnAuthMessage})`;
+    const completionMessage = `(${sandboxProcessObject.CopyProgress}% completed${waitingOnAuthMessage})`;
 
-    return `Sandbox request ${sandboxIdentifierMsg} is ${processRecord.Status} ${completionMessage}. ${waitTimeMsg}`;
+    return `Sandbox request ${sandboxIdentifierMsg} is ${sandboxProcessObject.Status} ${completionMessage}. ${waitTimeMsg}`;
   }
 
   public static logSandboxProcessResult(

@@ -74,8 +74,6 @@ describe('org:create', () => {
     return cmd;
   };
 
-  describe('scratch org', () => {});
-
   describe('sandbox', () => {
     it('will parse the --type flag correctly to create a sandbox', async () => {
       const command = await createCommand(['--type', 'sandbox']);

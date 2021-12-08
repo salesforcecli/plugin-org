@@ -23,7 +23,6 @@ import {
   Aliases,
   Config,
 } from '@salesforce/core';
-import { AnyJson } from '@salesforce/ts-types';
 import { SandboxReporter } from '../../../../shared/sandboxReporter';
 
 Messages.importMessagesDirectory(__dirname);
@@ -118,7 +117,7 @@ export class Create extends SfdxCommand {
       if (this.flags.clientid) {
         this.ux.warn(messages.getMessage('clientIdNotSupported', [this.flags.clientid]));
       }
-      return await this.createSandbox();
+      return this.createSandbox();
     } else {
       // default to scratch org
       this.createScratchOrg();
@@ -147,12 +146,12 @@ export class Create extends SfdxCommand {
         // eslint-disable-next-line @typescript-eslint/require-await
       }) => {
         this.ux.log(
-          SandboxReporter.sandboxProgress(
-            results.sandboxProcessObj,
-            results.interval,
-            results.retries,
-            results.waitingOnAuth
-          )
+          SandboxReporter.sandboxProgress({
+            sandboxProcessObject: results.sandboxProcessObj,
+            waitingOnAuth: results.waitingOnAuth,
+            retriesLeft: results.retries,
+            pollIntervalInSecond: results.interval,
+          })
         );
       }
     );
@@ -191,22 +190,20 @@ export class Create extends SfdxCommand {
 
     const sandboxDefFileContents = this.readJsonDefFile();
     this.logger.debug('Create Varargs: %s ', this.varargs);
-    const sandboxReq: SandboxRequest = { SandboxName: undefined };
     // definitionjson and varargs override file input
-    Object.assign(sandboxReq, sandboxDefFileContents, this.varargs);
+    const sandboxReq: SandboxRequest = { SandboxName: undefined, ...sandboxDefFileContents, ...this.varargs };
 
     this.logger.debug('Calling create with SandboxRequest: %s ', sandboxReq);
 
-    return await prodOrg.createSandbox(sandboxReq, this.flags.wait);
+    return prodOrg.createSandbox(sandboxReq, this.flags.wait);
   }
 
-  private readJsonDefFile(): AnyJson {
+  private readJsonDefFile(): Record<string, unknown> {
     // the -f option
     if (this.flags.definitionfile) {
       this.logger.debug('Reading JSON DefFile %s ', this.flags.definitionfile);
-      return JSON.parse(fs.readFileSync(this.flags.definitionfile, 'utf-8')) as AnyJson;
+      return JSON.parse(fs.readFileSync(this.flags.definitionfile, 'utf-8')) as Record<string, unknown>;
     }
-    return;
   }
 
   private createScratchOrg(): void {
