@@ -9,7 +9,6 @@ import * as os from 'os';
 import * as fs from 'fs';
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
 import { Duration } from '@salesforce/kit';
-
 import {
   Lifecycle,
   Messages,
@@ -154,8 +153,9 @@ export class Create extends SfdxCommand {
     const sandboxReq: SandboxRequest = { SandboxName: undefined, ...sandboxDefFileContents, ...this.varargs };
 
     this.logger.debug('Calling create with SandboxRequest: %s ', sandboxReq);
+    const wait = this.flags.wait as Duration;
 
-    return prodOrg.createSandbox(sandboxReq, this.flags.wait);
+    return prodOrg.createSandbox(sandboxReq, { wait });
   }
 
   private readJsonDefFile(): Record<string, unknown> {
