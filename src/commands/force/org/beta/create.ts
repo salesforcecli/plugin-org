@@ -122,22 +122,25 @@ export class Create extends SfdxCommand {
   }
 
   private createSandboxRequest(): SandboxRequest {
-    const sandboxDefFileContents = this.readJsonDefFile();
     this.logger.debug('Create Varargs: %s ', this.varargs);
-    // the API has keys defined in capital camel case, while the definition schema has them as lower camel case
-    // we need to convert lower camel case to upper before merging options so they will override properly
-    Object.keys(sandboxDefFileContents).map((key) => {
-      const capitalKey = key.charAt(0).toUpperCase() + key.slice(1);
-      sandboxDefFileContents[capitalKey] = sandboxDefFileContents[key];
-      delete sandboxDefFileContents[key];
-    });
+    const sandboxDefFileContents = this.readJsonDefFile();
+
+    if (sandboxDefFileContents) {
+      // the API has keys defined in capital camel case, while the definition schema has them as lower camel case
+      // we need to convert lower camel case to upper before merging options so they will override properly
+      Object.keys(sandboxDefFileContents).map((key) => {
+        const capitalKey = key.charAt(0).toUpperCase() + key.slice(1);
+        sandboxDefFileContents[capitalKey] = sandboxDefFileContents[key];
+        delete sandboxDefFileContents[key];
+      });
+    }
     // varargs override file input
     const sandboxReq: SandboxRequest = { SandboxName: undefined, ...sandboxDefFileContents, ...this.varargs };
 
     if (!sandboxReq.SandboxName) {
       // sandbox names are 10 chars or less, a radix of 36 = [a-z][0-9]
       // technically without querying the production org, the generated name could already exist, but the chances of that are lower than the perf penalty of querying and verifying
-      sandboxReq.SandboxName = `SBX${Date.now().toString(36).slice(-7)}`;
+      sandboxReq.SandboxName = `sbx${Date.now().toString(36).slice(-7)}`;
       this.ux.warn(`No SandboxName defined, generating new SandboxName: ${sandboxReq.SandboxName}`);
     }
     if (!sandboxReq.LicenseType) {

@@ -180,8 +180,8 @@ describe('org:create', () => {
       const createStub = stubMethod(sandbox, Org.prototype, 'createSandbox');
       await command.runIt();
 
-      // no SandboxName defined, so we should generate one that starts with SBX
-      expect(createStub.firstCall.args[0].SandboxName).includes('SBX');
+      // no SandboxName defined, so we should generate one that starts with sbx
+      expect(createStub.firstCall.args[0].SandboxName).includes('sbx');
       expect(createStub.firstCall.args[0].SandboxName.length).equals(10);
 
       Lifecycle.getInstance().on(SandboxEvents.EVENT_ASYNC_RESULT, async (result) => {
