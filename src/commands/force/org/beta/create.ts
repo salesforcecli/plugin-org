@@ -9,20 +9,19 @@ import * as os from 'os';
 import * as fs from 'fs';
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
 import { Duration } from '@salesforce/kit';
-
 import {
+  Aliases,
+  Config,
   Lifecycle,
   Messages,
   Org,
-  SfdxError,
   OrgTypes,
+  ResultEvent,
   SandboxEvents,
   SandboxProcessObject,
   SandboxRequest,
-  Aliases,
-  Config,
+  SfdxError,
   StatusEvent,
-  ResultEvent,
 } from '@salesforce/core';
 import { SandboxReporter } from '../../../../shared/sandboxReporter';
 
@@ -92,17 +91,59 @@ export class Create extends SfdxCommand {
     this.logger.debug('Create started with args %s ', this.flags);
 
     if (this.flags.type === OrgTypes.Sandbox) {
-      if (this.flags.retry !== 0) {
-        throw SfdxError.create('@salesforce/plugin-org', 'create', 'retryIsNotValidForSandboxes');
-      }
-      if (this.flags.clientid) {
-        this.ux.warn(messages.getMessage('clientIdNotSupported', [this.flags.clientid]));
-      }
+      this.validateSandboxFlags();
       return this.createSandbox();
     } else {
       // default to scratch org
       this.createScratchOrg();
     }
+  }
+
+  private validateSandboxFlags(): void {
+    if (!this.flags.targetusername) {
+      throw SfdxError.create('@salesforce/plugin-org', 'create', 'requiresUsername');
+    }
+    if (this.flags.retry !== 0) {
+      throw SfdxError.create('@salesforce/plugin-org', 'create', 'retryIsNotValidForSandboxes');
+    }
+
+    if (this.flags.clientid) {
+      this.ux.warn(messages.getMessage('clientIdNotSupported', [this.flags.clientid]));
+    }
+    if (this.flags.nonamespace) {
+      this.ux.warn(messages.getMessage('noNamespaceNotSupported', [this.flags.nonamespace]));
+    }
+    if (this.flags.noancestors) {
+      this.ux.warn(messages.getMessage('noAncestorsNotSupported', [this.flags.noancestors]));
+    }
+    if (this.flags.durationdays) {
+      this.ux.warn(messages.getMessage('durationDaysNotSupported', [this.flags.durationdays]));
+    }
+  }
+
+  private createSandboxRequest(): SandboxRequest {
+    const sandboxDefFileContents = this.readJsonDefFile();
+    this.logger.debug('Create Varargs: %s ', this.varargs);
+    // the API has keys defined in capital camel case, while the definition schema has them as lower camel case
+    // we need to convert lower camel case to upper before merging options so they will override properly
+    Object.keys(sandboxDefFileContents).map((key) => {
+      const capitalKey = key.charAt(0).toUpperCase() + key.slice(1);
+      sandboxDefFileContents[capitalKey] = sandboxDefFileContents[key];
+      delete sandboxDefFileContents[key];
+    });
+    // varargs override file input
+    const sandboxReq: SandboxRequest = { SandboxName: undefined, ...sandboxDefFileContents, ...this.varargs };
+
+    if (!sandboxReq.SandboxName) {
+      // sandbox names are 10 chars or less, a radix of 36 = [a-z][0-9]
+      // technically without querying the production org, the generated name could already exist, but the chances of that are lower than the perf penalty of querying and verifying
+      sandboxReq.SandboxName = `SBX${Date.now().toString(36).slice(-7)}`;
+      this.ux.warn(`No SandboxName defined, generating new SandboxName: ${sandboxReq.SandboxName}`);
+    }
+    if (!sandboxReq.LicenseType) {
+      throw SfdxError.create('@salesforce/plugin-org', 'create', 'missingLicenseType');
+    }
+    return sandboxReq;
   }
 
   private async createSandbox(): Promise<SandboxProcessObject> {
@@ -114,7 +155,7 @@ export class Create extends SfdxCommand {
     // `on` doesn't support synchronous methods
     // eslint-disable-next-line @typescript-eslint/require-await
     lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results: SandboxProcessObject) => {
-      this.ux.log(messages.getMessage('sandboxSuccess', [results.Id, results.SandboxName]));
+      this.ux.log(messages.getMessage('sandboxSuccess', [results.Id, results.SandboxName, this.flags.targetusername]));
     });
 
     // eslint-disable-next-line @typescript-eslint/require-await
@@ -134,7 +175,7 @@ export class Create extends SfdxCommand {
       });
       if (results.sandboxRes?.authUserName) {
         if (this.flags.setalias) {
-          const alias = await Aliases.create({});
+          const alias = await Aliases.create(Aliases.getDefaultOptions());
           alias.set(this.flags.setalias, results.sandboxRes.authUserName);
           const result = await alias.write();
           this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
@@ -148,14 +189,12 @@ export class Create extends SfdxCommand {
       }
     });
 
-    const sandboxDefFileContents = this.readJsonDefFile();
-    this.logger.debug('Create Varargs: %s ', this.varargs);
-    // definitionjson and varargs override file input
-    const sandboxReq: SandboxRequest = { SandboxName: undefined, ...sandboxDefFileContents, ...this.varargs };
+    const sandboxReq = this.createSandboxRequest();
 
     this.logger.debug('Calling create with SandboxRequest: %s ', sandboxReq);
+    const wait = this.flags.wait as Duration;
 
-    return prodOrg.createSandbox(sandboxReq, this.flags.wait);
+    return prodOrg.createSandbox(sandboxReq, { wait });
   }
 
   private readJsonDefFile(): Record<string, unknown> {

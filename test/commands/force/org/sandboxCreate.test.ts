@@ -19,8 +19,8 @@ import { IConfig } from '@oclif/config';
 import * as sinon from 'sinon';
 import { expect } from '@salesforce/command/lib/test';
 import { UX } from '@salesforce/command';
-import { Duration } from '@salesforce/kit';
 import { Create } from '../../../../src/commands/force/org/beta/create';
+import { SandboxReporter } from '../../../../src/shared/sandboxReporter';
 
 describe('org:create', () => {
   const sandbox = sinon.createSandbox();
@@ -76,13 +76,13 @@ describe('org:create', () => {
 
   describe('sandbox', () => {
     it('will parse the --type flag correctly to create a sandbox', async () => {
-      const command = await createCommand(['--type', 'sandbox']);
+      const command = await createCommand(['--type', 'sandbox', '-u', 'testProdOrg']);
       await command.runIt();
       expect(createSandboxStub.calledOnce).to.be.true;
     });
 
     it('will warn the user when --clientid is passed', async () => {
-      const commmand = await createCommand(['--type', 'sandbox', '--clientid', '123']);
+      const commmand = await createCommand(['--type', 'sandbox', '--clientid', '123', '-u', 'testProdOrg']);
       await commmand.runIt();
       expect(uxWarnStub.calledOnce).to.be.true;
       expect(uxWarnStub.firstCall.args[0]).to.equal(
@@ -91,9 +91,37 @@ describe('org:create', () => {
       expect(createSandboxStub.calledOnce).to.be.true;
     });
 
+    it('will warn the user when --nonamespace is passed', async () => {
+      const commmand = await createCommand(['--type', 'sandbox', '--nonamespace', '-u', 'testProdOrg']);
+      await commmand.runIt();
+      expect(uxWarnStub.calledOnce).to.be.true;
+      expect(uxWarnStub.firstCall.args[0]).to.equal(
+        '-n | --nonamespace is not supported for the sandbox org create command. Its value, true, has been ignored.'
+      );
+      expect(createSandboxStub.calledOnce).to.be.true;
+    });
+    it('will warn the user when --noancestors is passed', async () => {
+      const commmand = await createCommand(['--type', 'sandbox', '--noancestors', '-u', 'testProdOrg']);
+      await commmand.runIt();
+      expect(uxWarnStub.calledOnce).to.be.true;
+      expect(uxWarnStub.firstCall.args[0]).to.equal(
+        '-c | --noancestors is not supported for the sandbox org create command. Its value, true, has been ignored.'
+      );
+      expect(createSandboxStub.calledOnce).to.be.true;
+    });
+    it('will warn the user when --durationdays is passed', async () => {
+      const commmand = await createCommand(['--type', 'sandbox', '--durationdays', '1', '-u', 'testProdOrg']);
+      await commmand.runIt();
+      expect(uxWarnStub.calledOnce).to.be.true;
+      expect(uxWarnStub.firstCall.args[0]).to.equal(
+        '-d | --durationdays is not supported for the sandbox org create command. Its value, 1, has been ignored.'
+      );
+      expect(createSandboxStub.calledOnce).to.be.true;
+    });
+
     it('will throw an error when creating a sandbox with retry', async () => {
       try {
-        const command = await createCommand(['--type', 'sandbox', '--retry', '1']);
+        const command = await createCommand(['--type', 'sandbox', '--retry', '1', '-u', 'testProdOrg']);
         await command.runIt();
       } catch (e) {
         expect(e.name).to.equal('retryIsNotValidForSandboxes');
@@ -102,26 +130,27 @@ describe('org:create', () => {
     });
 
     it('properly overwrites options from defaults, varargs, and definition file', async () => {
-      // the keys don't need to be valid sandbox definition keys
       const command = await createCommand([
         '--type',
         'sandbox',
-        'license=LicenseFromVarargs',
+        'LicenseType=LicenseFromVarargs',
         '--definitionfile',
         'mySandboxDef.json',
+        '-u',
+        'testProdOrg',
       ]);
 
       createSandboxStub.restore();
       stubMethod(sandbox, cmd, 'readJsonDefFile').returns({
-        license: 'licenseFromJon',
-        SandboxName: 'sandboxNameFromJson',
+        licenseType: 'licenseFromJon',
+        sandboxName: 'sandboxNameFromJson',
       });
       stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
       const prodOrg = stubMethod(sandbox, Org.prototype, 'createSandbox');
       await command.runIt();
       expect(prodOrg.firstCall.args[0]).to.deep.equal({
         SandboxName: 'sandboxNameFromJson',
-        license: 'LicenseFromVarargs',
+        LicenseType: 'LicenseFromVarargs',
       });
     });
 
@@ -141,41 +170,51 @@ describe('org:create', () => {
     };
 
     it('will print the correct message for asyncResult lifecycle event', async () => {
-      const command = await createCommand(['--type', 'sandbox']);
+      const command = await createCommand(['--type', 'sandbox', '-u', 'testProdOrg']);
 
       createSandboxStub.restore();
+      stubMethod(sandbox, cmd, 'readJsonDefFile').returns({
+        licenseType: 'licenseFromJon',
+      });
       stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
-      stubMethod(sandbox, Org.prototype, 'createSandbox');
+      const createStub = stubMethod(sandbox, Org.prototype, 'createSandbox');
       await command.runIt();
+
+      // no SandboxName defined, so we should generate one that starts with SBX
+      expect(createStub.firstCall.args[0].SandboxName).includes('SBX');
+      expect(createStub.firstCall.args[0].SandboxName.length).equals(10);
 
       Lifecycle.getInstance().on(SandboxEvents.EVENT_ASYNC_RESULT, async (result) => {
         expect(result).to.deep.equal(sandboxProcessObj);
         expect(uxLogStub.firstCall.args[0]).to.equal(
-          'The sandbox org creation process 0GR4p000000U8EMXXX is in progress. Run "sfdx force:org:status -n TestSandbox" to check for status. If the org is ready, checking the status also authorizes the org for use with Salesforce CLI.'
+          'The sandbox org creation process 0GR4p000000U8EMXXX is in progress. Run "sfdx force:org:status -n TestSandbox -u testProdOrg" to check for status. If the org is ready, checking the status also authorizes the org for use with Salesforce CLI.'
         );
       });
 
       await Lifecycle.getInstance().emit(SandboxEvents.EVENT_ASYNC_RESULT, sandboxProcessObj);
     });
 
-    it('will print the correct message for status lifecycle event', async () => {
-      const command = await createCommand(['--type', 'sandbox']);
+    it('will print the correct message for status lifecycle event (30 seconds left)', async () => {
+      const command = await createCommand(['--type', 'sandbox', '-u', 'testProdOrg']);
 
       createSandboxStub.restore();
+      stubMethod(sandbox, cmd, 'readJsonDefFile').returns({
+        licenseType: 'licenseFromJon',
+        sandboxName: 'sandboxNameFromJson',
+      });
       stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
       stubMethod(sandbox, Org.prototype, 'createSandbox');
       await command.runIt();
 
-      Lifecycle.getInstance().on(SandboxEvents.EVENT_STATUS, async (result) => {
-        expect(result).to.deep.equal(data);
+      Lifecycle.getInstance().on(SandboxEvents.EVENT_STATUS, async () => {
         expect(uxLogStub.firstCall.args[0]).to.equal(
-          'Sandbox request TestSandbox(0GR4p000000U8EMXXX) is Completed (100% completed). Sleeping 30 seconds seconds. Will wait NaN more before timing out.'
+          'Sandbox request TestSandbox(0GR4p000000U8EMXXX) is Completed (100% completed). Sleeping 30 seconds. Will wait 30 seconds more before timing out.'
         );
       });
 
       const data = {
         sandboxProcessObj,
-        interval: Duration.seconds(30),
+        interval: 30,
         retries: 1,
         waitingOnAuth: false,
       };
@@ -184,9 +223,20 @@ describe('org:create', () => {
     });
 
     it('will print the correct message for result lifecycle event and set alias/defaultusername', async () => {
-      const command = await createCommand(['--type', 'sandbox', '--setalias', 'sandboxAlias', '--setdefaultusername']);
+      const command = await createCommand([
+        '--type',
+        'sandbox',
+        '--setalias',
+        'sandboxAlias',
+        '--setdefaultusername',
+        '-u',
+        'testProdOrg',
+      ]);
 
       createSandboxStub.restore();
+      stubMethod(sandbox, cmd, 'readJsonDefFile').returns({
+        licenseType: 'licenseFromJon',
+      });
       stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
       stubMethod(sandbox, Org.prototype, 'createSandbox');
       const aliasStub = stubMethod(sandbox, Aliases.prototype, 'set');
@@ -261,6 +311,33 @@ describe('org:create', () => {
       const data = { sandboxProcessObj, sandboxRes };
 
       await Lifecycle.getInstance().emit(SandboxEvents.EVENT_RESULT, data);
+    });
+
+    it('will calculate the correct human readable message (1h 33min 00seconds seconds left)', async () => {
+      const data = {
+        // 186*30 = 5580 = 1 hour, 33 min, 0 seconds. so 186 attempts left, at a 30 second polling interval
+        sandboxProcessObj,
+        interval: 30,
+        retries: 186,
+        waitingOnAuth: false,
+      };
+      const res = SandboxReporter.sandboxProgress(data);
+      expect(res).to.equal(
+        'Sandbox request TestSandbox(0GR4p000000U8EMXXX) is Completed (100% completed). Sleeping 30 seconds. Will wait 1 hour 33 minutes more before timing out.'
+      );
+    });
+
+    it('will calculate the correct human readable message (5 min 30seconds seconds left)', async () => {
+      const data = {
+        sandboxProcessObj,
+        interval: 30,
+        retries: 11,
+        waitingOnAuth: false,
+      };
+      const res = SandboxReporter.sandboxProgress(data);
+      expect(res).to.equal(
+        'Sandbox request TestSandbox(0GR4p000000U8EMXXX) is Completed (100% completed). Sleeping 30 seconds. Will wait 5 minutes 30 seconds more before timing out.'
+      );
     });
   });
 
