@@ -121,21 +121,33 @@ export class Create extends SfdxCommand {
     }
   }
 
+  private lowerToUpper(object: Record<string, unknown>): Record<string, unknown> {
+    // the API has keys defined in capital camel case, while the definition schema has them as lower camel case
+    // we need to convert lower camel case to upper before merging options so they will override properly
+    Object.keys(object).map((key) => {
+      const upperCase = key.charAt(0).toUpperCase();
+      if (key.charAt(0) !== upperCase) {
+        const capitalKey = upperCase + key.slice(1);
+        object[capitalKey] = object[key];
+        delete object[key];
+      }
+    });
+    return object;
+  }
+
   private createSandboxRequest(): SandboxRequest {
     this.logger.debug('Create Varargs: %s ', this.varargs);
-    const sandboxDefFileContents = this.readJsonDefFile();
+    let sandboxDefFileContents = this.readJsonDefFile();
+    let capitalizedVarArgs = {};
 
     if (sandboxDefFileContents) {
-      // the API has keys defined in capital camel case, while the definition schema has them as lower camel case
-      // we need to convert lower camel case to upper before merging options so they will override properly
-      Object.keys(sandboxDefFileContents).map((key) => {
-        const capitalKey = key.charAt(0).toUpperCase() + key.slice(1);
-        sandboxDefFileContents[capitalKey] = sandboxDefFileContents[key];
-        delete sandboxDefFileContents[key];
-      });
+      sandboxDefFileContents = this.lowerToUpper(sandboxDefFileContents);
+    }
+    if (this.varargs) {
+      capitalizedVarArgs = this.lowerToUpper(this.varargs);
     }
     // varargs override file input
-    const sandboxReq: SandboxRequest = { SandboxName: undefined, ...sandboxDefFileContents, ...this.varargs };
+    const sandboxReq: SandboxRequest = { SandboxName: undefined, ...sandboxDefFileContents, ...capitalizedVarArgs };
 
     if (!sandboxReq.SandboxName) {
       // sandbox names are 10 chars or less, a radix of 36 = [a-z][0-9]
@@ -197,7 +209,18 @@ export class Create extends SfdxCommand {
     this.logger.debug('Calling create with SandboxRequest: %s ', sandboxReq);
     const wait = this.flags.wait as Duration;
 
-    return prodOrg.createSandbox(sandboxReq, { wait });
+    try {
+      return prodOrg.createSandbox(sandboxReq, { wait });
+    } catch (e) {
+      // guaranteed to be SfdxError from core;
+      const err = e as SfdxError;
+      if (err?.message.includes('The org cannot be found')) {
+        // there was most likely an issue with DNS when auth'ing to the new sandbox, but it was created.
+        err.actions = [messages.getMessage('dnsTimeout'), messages.getMessage('partialSuccess')];
+        err.exitCode = 68;
+        throw err;
+      }
+    }
   }
 
   private readJsonDefFile(): Record<string, unknown> {
