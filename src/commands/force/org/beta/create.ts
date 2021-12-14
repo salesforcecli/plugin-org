@@ -95,7 +95,6 @@ export class Create extends SfdxCommand {
     if (this.flags.type === OrgTypes.Sandbox) {
       this.validateSandboxFlags();
       return this.createSandbox();
-
     } else {
       // default to scratch org
       this.createScratchOrg();
