@@ -8,6 +8,7 @@ import {
   Aliases,
   Config,
   Lifecycle,
+  Messages,
   Org,
   SandboxEvents,
   SandboxProcessObject,
@@ -22,7 +23,8 @@ import { UX } from '@salesforce/command';
 import { assert } from 'sinon';
 import { Create } from '../../../../src/commands/force/org/beta/create';
 import { SandboxReporter } from '../../../../src/shared/sandboxReporter';
-
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
 describe('org:create', () => {
   const sandbox = sinon.createSandbox();
   const oclifConfigStub = fromStub(stubInterface<IConfig>(sandbox));
@@ -380,12 +382,8 @@ describe('org:create', () => {
         await command.runIt();
         assert.fail('the above should throw an error');
       } catch (e) {
-        expect(e.actions[0]).to.equal(
-          'The sandbox failed to authenticate in time, if this frequently occurs, trying increasing the SFDX_DNS_TIMEOUT environment variable'
-        );
-        expect(e.actions[1]).to.equal(
-          'The sandbox has been created, try running "sfdx force:org:list" to verify, you may have to manually set the alias or config values. Run "sfdx force:org:status" to connect'
-        );
+        expect(e.actions[0]).to.equal(messages.getMessage('dnsTimeout'));
+        expect(e.actions[1]).to.equal(messages.getMessage('partialSuccess'));
         expect(e.exitCode).to.equal(68);
       }
 

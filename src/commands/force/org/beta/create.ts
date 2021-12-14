@@ -20,6 +20,7 @@ import {
   SandboxEvents,
   SandboxProcessObject,
   SandboxRequest,
+  SandboxUserAuthResponse,
   SfdxError,
   StatusEvent,
 } from '@salesforce/core';
@@ -85,6 +86,7 @@ export class Create extends SfdxCommand {
     }),
   };
   protected readonly lifecycleEventNames = ['postorgcreate'];
+  private sandboxAuth?: SandboxUserAuthResponse;
 
   // TODO: union type of sandbox and scratch org
   public async run(): Promise<SandboxProcessObject> {
@@ -178,6 +180,11 @@ export class Create extends SfdxCommand {
       this.ux.log(SandboxReporter.sandboxProgress(results));
     });
 
+    // eslint-disable-next-line @typescript-eslint/require-await
+    lifecycle.on(SandboxEvents.EVENT_AUTH, async (results: SandboxUserAuthResponse) => {
+      this.sandboxAuth = results;
+    });
+
     lifecycle.on(SandboxEvents.EVENT_RESULT, async (results: ResultEvent) => {
       const { sandboxReadyForUse, data } = SandboxReporter.logSandboxProcessResult(results);
       this.ux.log(sandboxReadyForUse);
@@ -216,6 +223,18 @@ export class Create extends SfdxCommand {
       const err = e as SfdxError;
       if (err?.message.includes('The org cannot be found')) {
         // there was most likely an issue with DNS when auth'ing to the new sandbox, but it was created.
+        if (this.flags.setalias && this.sandboxAuth) {
+          const alias = await Aliases.create(Aliases.getDefaultOptions());
+          alias.set(this.flags.setalias, this.sandboxAuth.authUserName);
+          const result = await alias.write();
+          this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
+        }
+        if (this.flags.setdefaultusername && this.sandboxAuth) {
+          const globalConfig: Config = this.configAggregator.getGlobalConfig();
+          globalConfig.set(Config.DEFAULT_USERNAME, this.sandboxAuth.authUserName);
+          const result = await globalConfig.write();
+          this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
+        }
         err.actions = [messages.getMessage('dnsTimeout'), messages.getMessage('partialSuccess')];
         err.exitCode = 68;
         throw err;
