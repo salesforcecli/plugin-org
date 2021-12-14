@@ -8,6 +8,7 @@ import {
   Aliases,
   Config,
   Lifecycle,
+  Messages,
   Org,
   SandboxEvents,
   SandboxProcessObject,
@@ -19,9 +20,11 @@ import { IConfig } from '@oclif/config';
 import * as sinon from 'sinon';
 import { expect } from '@salesforce/command/lib/test';
 import { UX } from '@salesforce/command';
+import { assert } from 'sinon';
 import { Create } from '../../../../src/commands/force/org/beta/create';
 import { SandboxReporter } from '../../../../src/shared/sandboxReporter';
-
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
 describe('org:create', () => {
   const sandbox = sinon.createSandbox();
   const oclifConfigStub = fromStub(stubInterface<IConfig>(sandbox));
@@ -133,6 +136,31 @@ describe('org:create', () => {
       const command = await createCommand([
         '--type',
         'sandbox',
+        'licenseType=LicenseFromVarargs',
+        '--definitionfile',
+        'mySandboxDef.json',
+        '-u',
+        'testProdOrg',
+      ]);
+
+      createSandboxStub.restore();
+      stubMethod(sandbox, cmd, 'readJsonDefFile').returns({
+        licenseType: 'licenseFromJson',
+        sandboxName: 'sandboxNameFromJson',
+      });
+      stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
+      const prodOrg = stubMethod(sandbox, Org.prototype, 'createSandbox');
+      await command.runIt();
+      expect(prodOrg.firstCall.args[0]).to.deep.equal({
+        SandboxName: 'sandboxNameFromJson',
+        LicenseType: 'LicenseFromVarargs',
+      });
+    });
+
+    it('properly overwrites options from defaults, varargs, and definition file with mixed capitalization', async () => {
+      const command = await createCommand([
+        '--type',
+        'sandbox',
         'LicenseType=LicenseFromVarargs',
         '--definitionfile',
         'mySandboxDef.json',
@@ -142,7 +170,7 @@ describe('org:create', () => {
 
       createSandboxStub.restore();
       stubMethod(sandbox, cmd, 'readJsonDefFile').returns({
-        licenseType: 'licenseFromJon',
+        licenseType: 'licenseFromJson',
         sandboxName: 'sandboxNameFromJson',
       });
       stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
@@ -338,6 +366,41 @@ describe('org:create', () => {
       expect(res).to.equal(
         'Sandbox request TestSandbox(0GR4p000000U8EMXXX) is Completed (100% completed). Sleeping 30 seconds. Will wait 5 minutes 30 seconds more before timing out.'
       );
+    });
+
+    it('will wrap the partial success error correctly', async () => {
+      const command = await createCommand(['--type', 'sandbox', '-u', 'testProdOrg']);
+
+      createSandboxStub.restore();
+      stubMethod(sandbox, cmd, 'readJsonDefFile').returns({
+        licenseType: 'licenseFromJon',
+        sandboxName: 'sandboxNameFromJson',
+      });
+      stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
+      stubMethod(sandbox, Org.prototype, 'createSandbox').throws({ message: 'The org cannot be found' });
+      try {
+        await command.runIt();
+        assert.fail('the above should throw an error');
+      } catch (e) {
+        expect(e.actions[0]).to.equal(messages.getMessage('dnsTimeout'));
+        expect(e.actions[1]).to.equal(messages.getMessage('partialSuccess'));
+        expect(e.exitCode).to.equal(68);
+      }
+
+      Lifecycle.getInstance().on(SandboxEvents.EVENT_STATUS, async () => {
+        expect(uxLogStub.firstCall.args[0]).to.equal(
+          'Sandbox request TestSandbox(0GR4p000000U8EMXXX) is Completed (100% completed). Sleeping 30 seconds. Will wait 30 seconds more before timing out.'
+        );
+      });
+
+      const data = {
+        sandboxProcessObj,
+        interval: 30,
+        retries: 1,
+        waitingOnAuth: false,
+      };
+
+      await Lifecycle.getInstance().emit(SandboxEvents.EVENT_STATUS, data);
     });
   });
 
