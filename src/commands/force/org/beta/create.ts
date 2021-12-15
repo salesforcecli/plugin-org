@@ -23,6 +23,9 @@ import {
   SandboxUserAuthResponse,
   SfdxError,
   StatusEvent,
+  ScratchOrgCreateResult,
+  ScratchOrgCreateOptions,
+  scratchOrgCreate,
 } from '@salesforce/core';
 import { SandboxReporter } from '../../../../shared/sandboxReporter';
 
@@ -89,7 +92,7 @@ export class Create extends SfdxCommand {
   private sandboxAuth?: SandboxUserAuthResponse;
 
   // TODO: union type of sandbox and scratch org
-  public async run(): Promise<SandboxProcessObject> {
+  public async run(): Promise<SandboxProcessObject | ScratchOrgCreateResult> {
     this.logger.debug('Create started with args %s ', this.flags);
 
     if (this.flags.type === OrgTypes.Sandbox) {
@@ -97,7 +100,7 @@ export class Create extends SfdxCommand {
       return this.createSandbox();
     } else {
       // default to scratch org
-      this.createScratchOrg();
+      return this.createScratchOrg();
     }
   }
 
@@ -250,7 +253,65 @@ export class Create extends SfdxCommand {
     }
   }
 
-  private createScratchOrg(): void {
-    //
+  private async createScratchOrg(): Promise<ScratchOrgCreateResult> {
+    this.logger.debug('OK, will do scratch org creation');
+    if (!this.hubOrg) {
+      throw SfdxError.create('salesforce-alm', 'org', 'RequiresDevhubUsernameError');
+    }
+    // Ensure we have an org config input source.
+    if (!this.flags.definitionjson && !this.flags.definitionfile && Object.keys(this.varargs).length === 0) {
+      this.ux.log('--------------------');
+      this.ux.log('a definition or varargs is required');
+      this.logger.error('a definition or varargs is required');
+      throw new SfdxError(messages.getMessage('cliForceCreateNoConfig'));
+    }
+
+    this.logger.debug('validation complete');
+
+    let secret: string;
+    if (this.flags.clientid) {
+      // If the user supplied a specific client ID, we have no way of knowing if it's
+      // a certificate-based Connected App or not. Therefore, we have to assume that
+      // we'll need the client secret, so prompt the user for it.
+      // secret = await this.ux.prompt(messages.getMessage('stdin', [], 'auth_weblogin'), {
+      //   type: 'mask',
+      // });
+    }
+
+    const createCommandOptions: ScratchOrgCreateOptions = {
+      hubOrg: this.hubOrg,
+      connectedAppConsumerKey: this.flags.clientid as string,
+      durationDays: this.flags.durationdays as number,
+      nonamespace: this.flags.nonamespace as boolean,
+      noancestors: this.flags.noancestors as boolean,
+      wait: this.flags.wait as Duration,
+      defaultusername: this.flags.setdefaultusername as boolean,
+      alias: this.flags.setalias as string,
+      retry: this.flags.retry as number,
+      apiversion: this.flags.apiversion as string,
+      definitionjson: this.flags.definitionjson as string,
+      definitionfile: this.flags.definitionfile as string,
+      orgConfig: this.varargs,
+      clientSecret: secret,
+    };
+
+    try {
+      const { username, authInfo, warnings } = await scratchOrgCreate(createCommandOptions);
+      // this.ux.log(messages.getMessage('commandSuccess', [authInfo.getFields().orgId, username]));
+      // if (warnings.length > 0) {
+      //   warnings.forEach((warning) => {
+      //     this.ux.warn(warning);
+      //   });
+      // }
+
+      return {
+        username,
+        authInfo,
+        warnings,
+      };
+    } catch (error) {
+      this.ux.error(...this.formatError(error));
+      throw error;
+    }
   }
 }
