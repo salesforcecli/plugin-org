@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  release-management: salesforce/npm-release-management@4
+  release-management: salesforce/npm-release-management@dev:alpha
 parameters:
   run-auto-workflows:
     description: >
@@ -29,7 +29,7 @@ parameters:
     default: ''
     type: string
   repo_tag:
-    description: 'The tag of the module repo to checkout, '''' defaults to branch/PR'
+    description: "The tag of the module repo to checkout, '' defaults to branch/PR"
     default: ''
     type: string
   npm_module_name:
@@ -72,6 +72,7 @@ workflows:
           os: windows
           requires:
             - release-management/test-package
+      - release-management/run-sandbox-nut
       - release-management/release-package:
           sign: true
           github-release: true
