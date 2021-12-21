@@ -72,7 +72,13 @@ workflows:
           os: windows
           requires:
             - release-management/test-package
-      - release-management/run-sandbox-nut
+      - release-management/run-command-keyword:
+          git_key_word: '[sb-nuts]'
+          timeout: 1.5h
+          command: test:nuts:sandbox
+          requires:
+            - nuts-on-windows
+            - nuts-on-linux
       - release-management/release-package:
           sign: true
           github-release: true
