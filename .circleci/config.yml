@@ -73,6 +73,7 @@ workflows:
           requires:
             - release-management/test-package
       - release-management/run-command-keyword:
+          name: sandbox-nuts
           git_key_word: '[sb-nuts]'
           timeout: 1.5h
           command: test:nuts:sandbox
