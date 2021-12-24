@@ -24,9 +24,9 @@ import {
   SfdxError,
   StatusEvent,
   ScratchOrgCreateResult,
-  ScratchOrgCreateOptions,
-  scratchOrgCreate,
+  ScratchOrgRequest,
 } from '@salesforce/core';
+import { OrgCreateResult } from '../../../../shared/orgHooks';
 import { SandboxReporter } from '../../../../shared/sandboxReporter';
 
 Messages.importMessagesDirectory(__dirname);
@@ -278,15 +278,12 @@ export class Create extends SfdxCommand {
       // });
     }
 
-    const createCommandOptions: ScratchOrgCreateOptions = {
-      hubOrg: this.hubOrg,
+    const createCommandOptions: ScratchOrgRequest = {
       connectedAppConsumerKey: this.flags.clientid as string,
       durationDays: this.flags.durationdays as number,
       nonamespace: this.flags.nonamespace as boolean,
       noancestors: this.flags.noancestors as boolean,
       wait: this.flags.wait as Duration,
-      defaultusername: this.flags.setdefaultusername as boolean,
-      alias: this.flags.setalias as string,
       retry: this.flags.retry as number,
       apiversion: this.flags.apiversion as string,
       definitionjson: this.flags.definitionjson as string,
@@ -296,13 +293,32 @@ export class Create extends SfdxCommand {
     };
 
     try {
-      const { username, authInfo, warnings } = await scratchOrgCreate(createCommandOptions);
-      // this.ux.log(messages.getMessage('commandSuccess', [authInfo.getFields().orgId, username]));
-      // if (warnings.length > 0) {
-      //   warnings.forEach((warning) => {
-      //     this.ux.warn(warning);
-      //   });
-      // }
+      const { username, authInfo, warnings } = await this.hubOrg.scratchOrgCreate(createCommandOptions);
+
+      const postOrgCreateHookInfo: OrgCreateResult = [authInfo]
+        .map((result) => result.getFields())
+        .map((element) => ({
+          accessToken: element.accessToken,
+          clientId: element.clientId,
+          created: element.created,
+          createdOrgInstance: element.createdOrgInstance,
+          devHubUsername: element.devHubUsername,
+          expirationDate: element.expirationDate,
+          instanceUrl: element.instanceUrl,
+          loginUrl: element.loginUrl,
+          orgId: element.orgId,
+          username: element.username,
+        }))[0];
+
+      await Lifecycle.getInstance().emit('postorgcreate', postOrgCreateHookInfo);
+
+      this.ux.log(messages.getMessage('scratchOrgCreateSuccess', [authInfo.getFields().orgId, username]));
+
+      if (warnings.length > 0) {
+        warnings.forEach((warning) => {
+          this.ux.warn(warning);
+        });
+      }
 
       return {
         username,

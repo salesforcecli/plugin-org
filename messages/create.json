@@ -20,6 +20,7 @@
     "retry": "Number of scratch org auth retries after scratch org is successfully signed up.",
     "wait": "the streaming client socket timeout (in minutes)"
   },
+  "scratchOrgCreateSuccess": "Successfully created scratch org: %s, username: %s",
   "clientIdNotSupported": "-i | --clientid is not supported for the sandbox org create command. Its value, %s, has been ignored.",
   "noNamespaceNotSupported": "-n | --nonamespace is not supported for the sandbox org create command. Its value, %s, has been ignored.",
   "noAncestorsNotSupported": "-c | --noancestors is not supported for the sandbox org create command. Its value, %s, has been ignored.",
