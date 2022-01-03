@@ -10,7 +10,6 @@ import * as fs from 'fs';
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
 import { Duration } from '@salesforce/kit';
 import {
-  // AuthInfo,
   AuthFields,
   Aliases,
   Config,
@@ -263,36 +262,20 @@ export class Create extends SfdxCommand {
     }
   }
 
-  /*
-  private async saveAuthInfo(options: {
-    scratchOrgInfo: ScratchOrgInfo;
-    authInfo: AuthInfo;
-    setdefaultusername?: boolean;
-    alias?: string;
-  }): Promise<void> {
-    await options.authInfo.save({
-      devHubUsername: this.hubOrg.getUsername(),
-      created: new Date(options.scratchOrgInfo.CreatedDate ?? new Date()).valueOf().toString(),
-      expirationDate: options.scratchOrgInfo.ExpirationDate,
-      clientId: options.scratchOrgInfo.ConnectedAppConsumerKey,
-      createdOrgInstance: options.scratchOrgInfo.SignupInstance,
-      isDevHub: false,
-      snapshot: options.scratchOrgInfo.Snapshot,
-    });
-
-    if (options.alias) {
-      await options.authInfo.setAlias(options.alias);
-      this.logger.debug(`AuthInfo has alias to ${options.authInfo.getFields().alias}`);
+  private async saveAuthInfo(username: string): Promise<void> {
+    if (this.flags.setalias) {
+      const alias = await Aliases.create(Aliases.getDefaultOptions());
+      alias.set(this.flags.setalias, username);
+      const result = await alias.write();
+      this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
     }
-    if (options.setdefaultusername) {
-      await options.authInfo.setAsDefault({ defaultUsername: true });
+    if (this.flags.setdefaultusername) {
+      const globalConfig: Config = this.configAggregator.getGlobalConfig();
+      globalConfig.set(Config.DEFAULT_USERNAME, username);
+      const result = await globalConfig.write();
+      this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
     }
-
-    this.logger.debug(`orgConfig.loginUrl: ${options.authInfo.getFields().loginUrl}`);
-    this.logger.debug(`orgConfig.instanceUrl: ${options.authInfo.getFields().instanceUrl}`);
   }
-  */
-
   private async createScratchOrg(): Promise<ScrathcOrgProcessObject> {
     this.logger.debug('OK, will do scratch org creation');
     if (!this.hubOrg) {
@@ -333,55 +316,34 @@ export class Create extends SfdxCommand {
     };
 
     try {
-      const { username, scratchOrgInfo, authInfo, warnings } = await this.hubOrg.scratchOrgCreate(createCommandOptions);
+      const { username, scratchOrgInfo, authFields, warnings } = await this.hubOrg.scratchOrgCreate(
+        createCommandOptions
+      );
 
       await Lifecycle.getInstance().emit('scratchOrgInfo', scratchOrgInfo);
 
-      // await this.saveAuthInfo({
-      //   scratchOrgInfo,
-      //   authInfo,
-      //   setdefaultusername: this.flags.setdefaultusername as boolean,
-      //   alias: this.flags.setalias as string,
-      // });
+      await this.saveAuthInfo(username);
 
-      const postOrgCreateHookInfo: OrgCreateResult = [authInfo]
-        .map((result) => result.getFields())
-        .map((element) => ({
-          accessToken: element.accessToken,
-          clientId: element.clientId,
-          created: element.created,
-          createdOrgInstance: element.createdOrgInstance,
-          devHubUsername: element.devHubUsername,
-          expirationDate: element.expirationDate,
-          instanceUrl: element.instanceUrl,
-          loginUrl: element.loginUrl,
-          orgId: element.orgId,
-          username: element.username,
-        }))[0];
+      // emit postorgcreate event for hook
+      const postOrgCreateHookInfo: OrgCreateResult = [authFields].map((element) => ({
+        accessToken: element.accessToken,
+        clientId: element.clientId,
+        created: element.created,
+        createdOrgInstance: element.createdOrgInstance,
+        devHubUsername: element.devHubUsername,
+        expirationDate: element.expirationDate,
+        instanceUrl: element.instanceUrl,
+        loginUrl: element.loginUrl,
+        orgId: element.orgId,
+        username: element.username,
+      }))[0];
+
       await Lifecycle.getInstance().emit('postorgcreate', postOrgCreateHookInfo);
 
-      await authInfo.save({
-        devHubUsername: this.hubOrg.getUsername(),
-        created: new Date(scratchOrgInfo.CreatedDate ?? new Date()).valueOf().toString(),
-        expirationDate: scratchOrgInfo.ExpirationDate,
-        clientId: scratchOrgInfo.ConnectedAppConsumerKey,
-        createdOrgInstance: scratchOrgInfo.SignupInstance,
-        isDevHub: false,
-        snapshot: scratchOrgInfo.Snapshot,
-      });
+      this.logger.debug(`orgConfig.loginUrl: ${authFields.loginUrl}`);
+      this.logger.debug(`orgConfig.instanceUrl: ${authFields.instanceUrl}`);
 
-      if (this.flags.setalias) {
-        await authInfo.setAlias(this.flags.setalias);
-        this.logger.debug(`AuthInfo has alias to ${authInfo.getFields().alias}`);
-      }
-      if (this.flags.setdefaultusername) {
-        await authInfo.setAsDefault({ defaultUsername: true });
-      }
-
-      this.logger.debug(`orgConfig.loginUrl: ${authInfo.getFields().loginUrl}`);
-      this.logger.debug(`orgConfig.instanceUrl: ${authInfo.getFields().instanceUrl}`);
-
-      this.ux.log(messages.getMessage('scratchOrgCreateSuccess', [authInfo.getFields().orgId, username]));
+      this.ux.log(messages.getMessage('scratchOrgCreateSuccess', [authFields.orgId, username]));
 
       if (warnings.length > 0) {
         warnings.forEach((warning) => {
@@ -392,7 +354,7 @@ export class Create extends SfdxCommand {
       return {
         username,
         scratchOrgInfo,
-        authFields: authInfo.getFields(),
+        authFields,
         warnings,
       };
     } catch (error) {
