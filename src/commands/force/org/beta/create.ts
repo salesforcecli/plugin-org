@@ -296,9 +296,9 @@ export class Create extends SfdxCommand {
       // If the user supplied a specific client ID, we have no way of knowing if it's
       // a certificate-based Connected App or not. Therefore, we have to assume that
       // we'll need the client secret, so prompt the user for it.
-      // secret = await this.ux.prompt(messages.getMessage('stdin', [], 'auth_weblogin'), {
-      //   type: 'mask',
-      // });
+      secret = await this.ux.prompt(messages.getMessage('secretPrompt'), {
+        type: 'mask',
+      });
     }
 
     const createCommandOptions: ScratchOrgRequest = {
