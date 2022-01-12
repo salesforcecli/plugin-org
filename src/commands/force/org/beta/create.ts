@@ -99,9 +99,7 @@ export class Create extends SfdxCommand {
   protected readonly lifecycleEventNames = ['postorgcreate'];
   private sandboxAuth?: SandboxUserAuthResponse;
 
-  // TODO: union type of sandbox and scratch org
   public async run(): Promise<SandboxProcessObject | ScrathcOrgProcessObject> {
-    // public async run(): Promise<SandboxProcessObject> {
     this.logger.debug('Create started with args %s ', this.flags);
 
     if (this.flags.type === OrgTypes.Sandbox) {
@@ -262,7 +260,7 @@ export class Create extends SfdxCommand {
     }
   }
 
-  private async saveAuthInfo(username: string): Promise<void> {
+  private async setAliasAndDefaultUsername(username: string): Promise<void> {
     if (this.flags.setalias) {
       const alias = await Aliases.create(Aliases.getDefaultOptions());
       alias.set(this.flags.setalias, username);
@@ -286,7 +284,7 @@ export class Create extends SfdxCommand {
       this.ux.log('--------------------');
       this.ux.log('a definition or varargs is required');
       this.logger.error('a definition or varargs is required');
-      throw new SfdxError(messages.getMessage('cliForceCreateNoConfig'));
+      throw new SfdxError(messages.getMessage('noConfig'));
     }
 
     this.logger.debug('validation complete');
@@ -322,7 +320,7 @@ export class Create extends SfdxCommand {
 
       await Lifecycle.getInstance().emit('scratchOrgInfo', scratchOrgInfo);
 
-      await this.saveAuthInfo(username);
+      await this.setAliasAndDefaultUsername(username);
 
       // emit postorgcreate event for hook
       const postOrgCreateHookInfo: OrgCreateResult = [authFields].map((element) => ({

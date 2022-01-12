@@ -69,7 +69,7 @@ describe('org:create', () => {
   };
 
   describe('sandbox', () => {
-    it('will parse the --type flag correctly to create a sandbox', async () => {
+    it('will parse the --type flag correctly to create a scratchOrg', async () => {
       const command = await createCommand(['--type', 'scratch', '-u', 'testProdOrg']);
       await command.runIt();
       expect(scratchOrgCreateStub.calledOnce).to.be.true;

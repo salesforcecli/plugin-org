@@ -68,7 +68,7 @@ describe('org:create command', () => {
   });
 
   describe('create with alias', () => {
-    const alias = 'toolbeltNUTalias';
+    const alias = 'MyAlias';
 
     it('should create a new scratch org using an alias', () => {
       const result = execCmd<ScratchOrgCreateResult>(
