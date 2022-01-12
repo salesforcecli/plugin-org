@@ -4,38 +4,29 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import {
-  // Aliases,
-  // Config,
-  // Lifecycle,
-  Messages,
-  Org,
-  // SandboxEvents,
-  // SandboxProcessObject,
-  // SandboxUserAuthResponse,
-  SfdxProject,
-} from '@salesforce/core';
+import { Aliases, Config, SfdxError, Messages, Org, SfdxProject } from '@salesforce/core';
 import { fromStub, stubInterface, stubMethod } from '@salesforce/ts-sinon';
 import { IConfig } from '@oclif/config';
 import * as sinon from 'sinon';
 import { expect } from '@salesforce/command/lib/test';
 import { UX } from '@salesforce/command';
-// import { assert } from 'sinon';
+import { assert } from 'sinon';
 import { Create } from '../../../../src/commands/force/org/beta/create';
-// import { SandboxReporter } from '../../../../src/shared/sandboxReporter';
+
 Messages.importMessagesDirectory(__dirname);
-// const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
+const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
+
 describe('org:create', () => {
   const sandbox = sinon.createSandbox();
   const oclifConfigStub = fromStub(stubInterface<IConfig>(sandbox));
-
+  const clientSecret = '123456';
   // stubs
   let resolveProjectConfigStub: sinon.SinonStub;
   let scratchOrgCreateStub: sinon.SinonStub;
-  // let uxWarnStub: sinon.SinonStub;
   let uxLogStub: sinon.SinonStub;
-  // let uxTableStub: sinon.SinonStub;
-  // let uxStyledHeaderStub: sinon.SinonStub;
+  let uxWarnStub: sinon.SinonStub;
+  let uxErrorStub: sinon.SinonStub;
+  let promptStub: sinon.SinonStub;
   let cmd: TestCreate;
 
   class TestCreate extends Create {
@@ -64,10 +55,10 @@ describe('org:create', () => {
 
     scratchOrgCreateStub = stubMethod(sandbox, cmd, 'createScratchOrg').resolves();
 
-    // uxWarnStub = stubMethod(sandbox, UX.prototype, 'warn');
     uxLogStub = stubMethod(sandbox, UX.prototype, 'log');
-    // uxStyledHeaderStub = stubMethod(sandbox, UX.prototype, 'styledHeader');
-    // uxTableStub = stubMethod(sandbox, UX.prototype, 'table');
+    uxErrorStub = stubMethod(sandbox, UX.prototype, 'error');
+    uxWarnStub = stubMethod(sandbox, UX.prototype, 'warn');
+    promptStub = stubMethod(sandbox, UX.prototype, 'prompt').returns(clientSecret);
     stubMethod(sandbox, cmd, 'assignOrg').callsFake(() => {
       const orgStubOptions = {};
 
@@ -83,56 +74,6 @@ describe('org:create', () => {
       await command.runIt();
       expect(scratchOrgCreateStub.calledOnce).to.be.true;
     });
-
-    /*
-    it('will warn the user when --clientid is passed', async () => {
-      const commmand = await createCommand(['--type', 'scratch', '--clientid', '123', '-u', 'testProdOrg']);
-      await commmand.runIt();
-      expect(uxWarnStub.calledOnce).to.be.true;
-      expect(uxWarnStub.firstCall.args[0]).to.equal(
-        '-i | --clientid is not supported for the sandbox org create command. Its value, 123, has been ignored.'
-      );
-      expect(scratchOrgCreateStub.calledOnce).to.be.true;
-    });
-
-    it('will warn the user when --nonamespace is passed', async () => {
-      const commmand = await createCommand(['--type', 'sandbox', '--nonamespace', '-u', 'testProdOrg']);
-      await commmand.runIt();
-      expect(uxWarnStub.calledOnce).to.be.true;
-      expect(uxWarnStub.firstCall.args[0]).to.equal(
-        '-n | --nonamespace is not supported for the sandbox org create command. Its value, true, has been ignored.'
-      );
-      expect(scratchOrgCreateStub.calledOnce).to.be.true;
-    });
-    it('will warn the user when --noancestors is passed', async () => {
-      const commmand = await createCommand(['--type', 'sandbox', '--noancestors', '-u', 'testProdOrg']);
-      await commmand.runIt();
-      expect(uxWarnStub.calledOnce).to.be.true;
-      expect(uxWarnStub.firstCall.args[0]).to.equal(
-        '-c | --noancestors is not supported for the sandbox org create command. Its value, true, has been ignored.'
-      );
-      expect(scratchOrgCreateStub.calledOnce).to.be.true;
-    });
-    it('will warn the user when --durationdays is passed', async () => {
-      const commmand = await createCommand(['--type', 'sandbox', '--durationdays', '1', '-u', 'testProdOrg']);
-      await commmand.runIt();
-      expect(uxWarnStub.calledOnce).to.be.true;
-      expect(uxWarnStub.firstCall.args[0]).to.equal(
-        '-d | --durationdays is not supported for the sandbox org create command. Its value, 1, has been ignored.'
-      );
-      expect(scratchOrgCreateStub.calledOnce).to.be.true;
-    });
-
-    it('will throw an error when creating a sandbox with retry', async () => {
-      try {
-        const command = await createCommand(['--type', 'sandbox', '--retry', '1', '-u', 'testProdOrg']);
-        await command.runIt();
-      } catch (e) {
-        expect(e.name).to.equal('retryIsNotValidForSandboxes');
-        expect(scratchOrgCreateStub.callCount).to.equal(0);
-      }
-    });
-    */
 
     it('properly sends varargs, and definition file', async () => {
       const command = await createCommand([
@@ -188,253 +129,183 @@ describe('org:create', () => {
       );
     });
 
-    /*
-    it('properly overwrites options from defaults, varargs, and definition file with mixed capitalization', async () => {
-      const command = await createCommand([
-        '--type',
-        'sandbox',
-        'LicenseType=LicenseFromVarargs',
-        '--definitionfile',
-        'mySandboxDef.json',
-        '-u',
-        'testProdOrg',
-      ]);
+    it('will fail if no definitionjson or not definitionfile or not varargs', async () => {
+      const command = await createCommand(['--type', 'scratch', '-u', 'testProdOrg']);
 
       scratchOrgCreateStub.restore();
-      stubMethod(sandbox, cmd, 'readJsonDefFile').returns({
-        licenseType: 'licenseFromJson',
-        sandboxName: 'sandboxNameFromJson',
-      });
       stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
-      const prodOrg = stubMethod(sandbox, Org.prototype, 'createSandbox');
-      await command.runIt();
-      expect(prodOrg.firstCall.args[0]).to.deep.equal({
-        SandboxName: 'sandboxNameFromJson',
-        LicenseType: 'LicenseFromVarargs',
-      });
-    });
-
-    const sandboxProcessObj: SandboxProcessObject = {
-      Id: '0GR4p000000U8EMXXX',
-      Status: 'Completed',
-      SandboxName: 'TestSandbox',
-      SandboxInfoId: '0GQ4p000000U6sKXXX',
-      LicenseType: 'DEVELOPER',
-      CreatedDate: '2021-12-07T16:20:21.000+0000',
-      CopyProgress: 100,
-      SandboxOrganization: '00D2f0000008XXX',
-      SourceId: '123',
-      Description: 'sandbox description',
-      ApexClassId: '123',
-      EndDate: '2021-12-07T16:38:47.000+0000',
-    };
-    
-
-    it('will print the correct message for asyncResult lifecycle event', async () => {
-      const command = await createCommand(['--type', 'sandbox', '-u', 'testProdOrg']);
-
-      scratchOrgCreateStub.restore();
-      stubMethod(sandbox, cmd, 'readJsonDefFile').returns({
-        licenseType: 'licenseFromJon',
-      });
-      stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
-      const createStub = stubMethod(sandbox, Org.prototype, 'createSandbox');
-      await command.runIt();
-
-      // no SandboxName defined, so we should generate one that starts with sbx
-      expect(createStub.firstCall.args[0].SandboxName).includes('sbx');
-      expect(createStub.firstCall.args[0].SandboxName.length).equals(10);
-
-      Lifecycle.getInstance().on(SandboxEvents.EVENT_ASYNC_RESULT, async (result) => {
-        expect(result).to.deep.equal(sandboxProcessObj);
-        expect(uxLogStub.firstCall.args[0]).to.equal(
-          'The sandbox org creation process 0GR4p000000U8EMXXX is in progress. Run "sfdx force:org:status -n TestSandbox -u testProdOrg" to check for status. If the org is ready, checking the status also authorizes the org for use with Salesforce CLI.'
-        );
-      });
-
-      await Lifecycle.getInstance().emit(SandboxEvents.EVENT_ASYNC_RESULT, sandboxProcessObj);
-    });
-
-    it('will print the correct message for status lifecycle event (30 seconds left)', async () => {
-      const command = await createCommand(['--type', 'sandbox', '-u', 'testProdOrg']);
-
-      scratchOrgCreateStub.restore();
-      stubMethod(sandbox, cmd, 'readJsonDefFile').returns({
-        licenseType: 'licenseFromJon',
-        sandboxName: 'sandboxNameFromJson',
-      });
-      stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
-      stubMethod(sandbox, Org.prototype, 'createSandbox');
-      await command.runIt();
-
-      Lifecycle.getInstance().on(SandboxEvents.EVENT_STATUS, async () => {
-        expect(uxLogStub.firstCall.args[0]).to.equal(
-          'Sandbox request TestSandbox(0GR4p000000U8EMXXX) is Completed (100% completed). Sleeping 30 seconds. Will wait 30 seconds more before timing out.'
-        );
-      });
-
-      const data = {
-        sandboxProcessObj,
-        interval: 30,
-        retries: 1,
-        waitingOnAuth: false,
-      };
-
-      await Lifecycle.getInstance().emit(SandboxEvents.EVENT_STATUS, data);
-    });
-
-    it('will print the correct message for result lifecycle event and set alias/defaultusername', async () => {
-      const command = await createCommand([
-        '--type',
-        'sandbox',
-        '--setalias',
-        'sandboxAlias',
-        '--setdefaultusername',
-        '-u',
-        'testProdOrg',
-      ]);
-
-      scratchOrgCreateStub.restore();
-      stubMethod(sandbox, cmd, 'readJsonDefFile').returns({
-        licenseType: 'licenseFromJon',
-      });
-      stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
-      stubMethod(sandbox, Org.prototype, 'createSandbox');
-      const aliasStub = stubMethod(sandbox, Aliases.prototype, 'set');
-      const configStub = stubMethod(sandbox, Config.prototype, 'set');
-      await command.runIt();
-
-      Lifecycle.getInstance().on(SandboxEvents.EVENT_RESULT, async (result) => {
-        expect(result).to.deep.equal(data);
-        expect(uxLogStub.firstCall.args[0]).to.equal('Sandbox TestSandbox(0GR4p000000U8EMXXX) is ready for use.');
-        expect(uxStyledHeaderStub.firstCall.args[0]).to.equal('Sandbox Org Creation Status');
-        expect(uxTableStub.firstCall.args[0].length).to.equal(12);
-        expect(uxTableStub.firstCall.args[0]).to.deep.equal([
-          {
-            key: 'Id',
-            value: '0GR4p000000U8EMXXX',
-          },
-          {
-            key: 'SandboxName',
-            value: 'TestSandbox',
-          },
-          {
-            key: 'Status',
-            value: 'Completed',
-          },
-          {
-            key: 'CopyProgress',
-            value: 100,
-          },
-          {
-            key: 'Description',
-            value: 'sandbox description',
-          },
-          {
-            key: 'LicenseType',
-            value: 'DEVELOPER',
-          },
-          {
-            key: 'SandboxInfoId',
-            value: '0GQ4p000000U6sKXXX',
-          },
-          {
-            key: 'SourceId',
-            value: '123',
-          },
-          {
-            key: 'SandboxOrg',
-            value: '00D2f0000008XXX',
-          },
-          {
-            key: 'Created Date',
-            value: '2021-12-07T16:20:21.000+0000',
-          },
-          {
-            key: 'ApexClassId',
-            value: '123',
-          },
-          {
-            key: 'Authorized Sandbox Username',
-            value: 'newSandboxUsername',
-          },
-        ]);
-        expect(aliasStub.firstCall.args).to.deep.equal(['sandboxAlias', 'newSandboxUsername']);
-        expect(configStub.firstCall.args).to.deep.equal(['defaultusername', 'newSandboxUsername']);
-      });
-
-      const sandboxRes: SandboxUserAuthResponse = {
-        authCode: 'sandboxTestAuthCode',
-        authUserName: 'newSandboxUsername',
-        instanceUrl: 'https://login.salesforce.com',
-        loginUrl: 'https://productionOrg--createdSandbox.salesforce.com/',
-      };
-      const data = { sandboxProcessObj, sandboxRes };
-
-      await Lifecycle.getInstance().emit(SandboxEvents.EVENT_RESULT, data);
-    });
-
-    it('will calculate the correct human readable message (1h 33min 00seconds seconds left)', async () => {
-      const data = {
-        // 186*30 = 5580 = 1 hour, 33 min, 0 seconds. so 186 attempts left, at a 30 second polling interval
-        sandboxProcessObj,
-        interval: 30,
-        retries: 186,
-        waitingOnAuth: false,
-      };
-      const res = SandboxReporter.sandboxProgress(data);
-      expect(res).to.equal(
-        'Sandbox request TestSandbox(0GR4p000000U8EMXXX) is Completed (100% completed). Sleeping 30 seconds. Will wait 1 hour 33 minutes more before timing out.'
-      );
-    });
-
-    it('will calculate the correct human readable message (5 min 30seconds seconds left)', async () => {
-      const data = {
-        sandboxProcessObj,
-        interval: 30,
-        retries: 11,
-        waitingOnAuth: false,
-      };
-      const res = SandboxReporter.sandboxProgress(data);
-      expect(res).to.equal(
-        'Sandbox request TestSandbox(0GR4p000000U8EMXXX) is Completed (100% completed). Sleeping 30 seconds. Will wait 5 minutes 30 seconds more before timing out.'
-      );
-    });
-
-    it('will wrap the partial success error correctly', async () => {
-      const command = await createCommand(['--type', 'sandbox', '-u', 'testProdOrg']);
-
-      scratchOrgCreateStub.restore();
-      stubMethod(sandbox, cmd, 'readJsonDefFile').returns({
-        licenseType: 'licenseFromJon',
-        sandboxName: 'sandboxNameFromJson',
-      });
-      stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
-      stubMethod(sandbox, Org.prototype, 'createSandbox').throws({ message: 'The org cannot be found' });
       try {
         await command.runIt();
         assert.fail('the above should throw an error');
       } catch (e) {
-        expect(e.actions[0]).to.equal(messages.getMessage('dnsTimeout'));
-        expect(e.actions[1]).to.equal(messages.getMessage('partialSuccess'));
-        expect(e.exitCode).to.equal(68);
+        expect(e.message).to.equal(messages.getMessage('cliForceCreateNoConfig'));
       }
+    });
 
-      Lifecycle.getInstance().on(SandboxEvents.EVENT_STATUS, async () => {
-        expect(uxLogStub.firstCall.args[0]).to.equal(
-          'Sandbox request TestSandbox(0GR4p000000U8EMXXX) is Completed (100% completed). Sleeping 30 seconds. Will wait 30 seconds more before timing out.'
-        );
+    it('will prompt the user for a secret if clientId is provided', async () => {
+      const connectedAppConsumerKey = 'abcdef';
+      const definitionfile = 'myScratchDef.json';
+      const command = await createCommand([
+        '--type',
+        'scratch',
+        '-i',
+        connectedAppConsumerKey,
+        '--definitionfile',
+        definitionfile,
+        '-u',
+        'testProdOrg',
+      ]);
+      scratchOrgCreateStub.restore();
+      stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
+      const prodOrg = stubMethod(sandbox, Org.prototype, 'scratchOrgCreate').resolves({
+        username: 'sfdx-cli@salesforce.com',
+        scratchOrgInfo: {},
+        authFields: {
+          accessToken: '1234',
+          clientId: '1234',
+          created: '2022-01-01',
+          createdOrgInstance: 'instance',
+          devHubUsername: 'sfdx-cli@salesforce.com',
+          expirationDate: '2021-01-01',
+          instanceUrl: 'https://instance.salesforce.com',
+          loginUrl: 'https://login.salesforce.com',
+          orgId: '12345',
+          username: 'sfdx-cli@salesforce.com',
+        },
+        warnings: [],
       });
+      await command.runIt();
+      expect(prodOrg.firstCall.args[0]).to.deep.equal({
+        apiversion: undefined,
+        clientSecret,
+        connectedAppConsumerKey,
+        definitionfile,
+        definitionjson: undefined,
+        durationDays: undefined,
+        noancestors: undefined,
+        nonamespace: undefined,
+        wait: {
+          quantity: 6,
+          unit: 0,
+        },
+        retry: 0,
+        orgConfig: {},
+      });
+      expect(promptStub.callCount).to.equal(1);
+      expect(uxLogStub.firstCall.firstArg).to.equal(
+        'Successfully created scratch org: 12345, username: sfdx-cli@salesforce.com'
+      );
+    });
 
-      const data = {
-        sandboxProcessObj,
-        interval: 30,
-        retries: 1,
-        waitingOnAuth: false,
-      };
+    it('will set alias/defaultusername', async () => {
+      const definitionfile = 'myScratchDef.json';
+      const command = await createCommand([
+        '--type',
+        'scratch',
+        '--setalias',
+        'sandboxAlias',
+        '--setdefaultusername',
+        '--definitionfile',
+        definitionfile,
+        '-u',
+        'testProdOrg',
+      ]);
 
-      await Lifecycle.getInstance().emit(SandboxEvents.EVENT_STATUS, data);
-    });*/
+      scratchOrgCreateStub.restore();
+      stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
+      const prodOrg = stubMethod(sandbox, Org.prototype, 'scratchOrgCreate').resolves({
+        username: 'newScratchUsername',
+        scratchOrgInfo: {},
+        authFields: {
+          accessToken: '1234',
+          clientId: '1234',
+          created: '2022-01-01',
+          createdOrgInstance: 'instance',
+          devHubUsername: 'sfdx-cli@salesforce.com',
+          expirationDate: '2021-01-01',
+          instanceUrl: 'https://instance.salesforce.com',
+          loginUrl: 'https://login.salesforce.com',
+          orgId: '12345',
+          username: 'sfdx-cli@salesforce.com',
+        },
+        warnings: [],
+      });
+      const aliasStub = stubMethod(sandbox, Aliases.prototype, 'set');
+      const configStub = stubMethod(sandbox, Config.prototype, 'set');
+      await command.runIt();
+      expect(prodOrg.firstCall.args[0]).to.deep.equal({
+        apiversion: undefined,
+        clientSecret: undefined,
+        connectedAppConsumerKey: undefined,
+        definitionfile,
+        definitionjson: undefined,
+        durationDays: undefined,
+        noancestors: undefined,
+        nonamespace: undefined,
+        wait: {
+          quantity: 6,
+          unit: 0,
+        },
+        retry: 0,
+        orgConfig: {},
+      });
+      expect(aliasStub.firstCall.args).to.deep.equal(['sandboxAlias', 'newScratchUsername']);
+      expect(configStub.firstCall.args).to.deep.equal(['defaultusername', 'newScratchUsername']);
+    });
+
+    it('will print warnings if any', async () => {
+      const definitionfile = 'myScratchDef.json';
+      const warnings = ['warning1', 'warning2'];
+      const command = await createCommand([
+        '--type',
+        'scratch',
+        '--definitionfile',
+        definitionfile,
+        '-u',
+        'testProdOrg',
+      ]);
+
+      scratchOrgCreateStub.restore();
+      stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
+      stubMethod(sandbox, Org.prototype, 'scratchOrgCreate').resolves({
+        username: 'newScratchUsername',
+        scratchOrgInfo: {},
+        authFields: {
+          accessToken: '1234',
+          clientId: '1234',
+          created: '2022-01-01',
+          createdOrgInstance: 'instance',
+          devHubUsername: 'sfdx-cli@salesforce.com',
+          expirationDate: '2021-01-01',
+          instanceUrl: 'https://instance.salesforce.com',
+          loginUrl: 'https://login.salesforce.com',
+          orgId: '12345',
+          username: 'sfdx-cli@salesforce.com',
+        },
+        warnings,
+      });
+      await command.runIt();
+      expect(uxWarnStub.callCount).to.equal(2);
+      expect(uxWarnStub.firstCall.firstArg).to.equal(warnings[0]);
+      expect(uxWarnStub.secondCall.firstArg).to.equal(warnings[1]);
+    });
+  });
+
+  it('should print the error if command fails', async () => {
+    const errorMessage = 'MyError';
+    const definitionfile = 'myScratchDef.json';
+    const command = await createCommand(['--type', 'scratch', '--definitionfile', definitionfile, '-u', 'testProdOrg']);
+
+    scratchOrgCreateStub.restore();
+    stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
+    stubMethod(sandbox, Org.prototype, 'scratchOrgCreate').rejects(new SfdxError(errorMessage));
+    try {
+      await command.runIt();
+      assert.fail('the above should throw an error');
+    } catch (e) {
+      expect(e.message).to.equal(errorMessage);
+    }
+    expect(uxErrorStub.callCount).to.equal(1);
   });
 
   afterEach(() => {

@@ -279,7 +279,7 @@ export class Create extends SfdxCommand {
   private async createScratchOrg(): Promise<ScrathcOrgProcessObject> {
     this.logger.debug('OK, will do scratch org creation');
     if (!this.hubOrg) {
-      throw SfdxError.create('salesforce-alm', 'org', 'RequiresDevhubUsernameError');
+      throw SfdxError.create('@salesforce/plugin-org', 'org', 'RequiresDevhubUsernameError');
     }
     // Ensure we have an org config input source.
     if (!this.flags.definitionjson && !this.flags.definitionfile && Object.keys(this.varargs).length === 0) {
