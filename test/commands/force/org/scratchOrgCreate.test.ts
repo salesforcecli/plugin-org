@@ -138,7 +138,7 @@ describe('org:create', () => {
         await command.runIt();
         assert.fail('the above should throw an error');
       } catch (e) {
-        expect(e.message).to.equal(messages.getMessage('cliForceCreateNoConfig'));
+        expect(e.message).to.equal(messages.getMessage('noConfig'));
       }
     });
 
