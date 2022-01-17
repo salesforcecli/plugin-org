@@ -281,9 +281,6 @@ export class Create extends SfdxCommand {
     }
     // Ensure we have an org config input source.
     if (!this.flags.definitionjson && !this.flags.definitionfile && Object.keys(this.varargs).length === 0) {
-      this.ux.log('--------------------');
-      this.ux.log('a definition or varargs is required');
-      this.logger.error('a definition or varargs is required');
       throw new SfdxError(messages.getMessage('noConfig'));
     }
 
@@ -313,51 +310,44 @@ export class Create extends SfdxCommand {
       clientSecret: secret,
     };
 
-    try {
-      const { username, scratchOrgInfo, authFields, warnings } = await this.hubOrg.scratchOrgCreate(
-        createCommandOptions
-      );
+    const { username, scratchOrgInfo, authFields, warnings } = await this.hubOrg.scratchOrgCreate(createCommandOptions);
 
-      await Lifecycle.getInstance().emit('scratchOrgInfo', scratchOrgInfo);
+    await Lifecycle.getInstance().emit('scratchOrgInfo', scratchOrgInfo);
 
-      await this.setAliasAndDefaultUsername(username);
+    await this.setAliasAndDefaultUsername(username);
 
-      // emit postorgcreate event for hook
-      const postOrgCreateHookInfo: OrgCreateResult = [authFields].map((element) => ({
-        accessToken: element.accessToken,
-        clientId: element.clientId,
-        created: element.created,
-        createdOrgInstance: element.createdOrgInstance,
-        devHubUsername: element.devHubUsername,
-        expirationDate: element.expirationDate,
-        instanceUrl: element.instanceUrl,
-        loginUrl: element.loginUrl,
-        orgId: element.orgId,
-        username: element.username,
-      }))[0];
+    // emit postorgcreate event for hook
+    const postOrgCreateHookInfo: OrgCreateResult = [authFields].map((element) => ({
+      accessToken: element.accessToken,
+      clientId: element.clientId,
+      created: element.created,
+      createdOrgInstance: element.createdOrgInstance,
+      devHubUsername: element.devHubUsername,
+      expirationDate: element.expirationDate,
+      instanceUrl: element.instanceUrl,
+      loginUrl: element.loginUrl,
+      orgId: element.orgId,
+      username: element.username,
+    }))[0];
 
-      await Lifecycle.getInstance().emit('postorgcreate', postOrgCreateHookInfo);
+    await Lifecycle.getInstance().emit('postorgcreate', postOrgCreateHookInfo);
 
-      this.logger.debug(`orgConfig.loginUrl: ${authFields.loginUrl}`);
-      this.logger.debug(`orgConfig.instanceUrl: ${authFields.instanceUrl}`);
+    this.logger.debug(`orgConfig.loginUrl: ${authFields.loginUrl}`);
+    this.logger.debug(`orgConfig.instanceUrl: ${authFields.instanceUrl}`);
 
-      this.ux.log(messages.getMessage('scratchOrgCreateSuccess', [authFields.orgId, username]));
+    this.ux.log(messages.getMessage('scratchOrgCreateSuccess', [authFields.orgId, username]));
 
-      if (warnings.length > 0) {
-        warnings.forEach((warning) => {
-          this.ux.warn(warning);
-        });
-      }
-
-      return {
-        username,
-        scratchOrgInfo,
-        authFields,
-        warnings,
-      };
-    } catch (error) {
-      this.ux.error(...this.formatError(error));
-      throw error;
+    if (warnings.length > 0) {
+      warnings.forEach((warning) => {
+        this.ux.warn(warning);
+      });
     }
+
+    return {
+      username,
+      scratchOrgInfo,
+      authFields,
+      warnings,
+    };
   }
 }

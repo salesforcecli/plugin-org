@@ -5,27 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import * as path from 'path';
-import { randomBytes } from 'crypto';
-import * as util from 'util';
 import { expect } from 'chai';
-import { TestSession, execCmd } from '@salesforce/cli-plugins-testkit';
+import { TestSession, execCmd, genUniqueString } from '@salesforce/cli-plugins-testkit';
 import { ScratchOrgCreateResult } from '@salesforce/core';
-
-/**
- * Returns a unique string. If template is supplied and contains a replaceable string (see node library util.format)
- * the unique string will be applied to the template using util.format. If the template does not contain a replaceable string
- * the unique string will be appended to the template.
- *
- * @param {string} template - can contain a replaceable string (%s)
- * @returns {string}
- */
-const genUniqueString = (template?: string): string => {
-  const uniqueString = randomBytes(8).toString('hex');
-  if (!template) {
-    return uniqueString;
-  }
-  return template.includes('%s') ? util.format(template, uniqueString) : `${template}${uniqueString}`;
-};
 
 let session: TestSession;
 

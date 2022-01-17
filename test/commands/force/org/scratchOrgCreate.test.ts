@@ -16,6 +16,24 @@ import { Create } from '../../../../src/commands/force/org/beta/create';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
 
+const CREATE_RESULT = {
+  username: 'sfdx-cli@salesforce.com',
+  scratchOrgInfo: {},
+  authFields: {
+    accessToken: '1234',
+    clientId: '1234',
+    created: '2022-01-01',
+    createdOrgInstance: 'instance',
+    devHubUsername: 'sfdx-cli@salesforce.com',
+    expirationDate: '2021-01-01',
+    instanceUrl: 'https://instance.salesforce.com',
+    loginUrl: 'https://login.salesforce.com',
+    orgId: '12345',
+    username: 'sfdx-cli@salesforce.com',
+  },
+  warnings: [],
+};
+
 describe('org:create', () => {
   const sandbox = sinon.createSandbox();
   const oclifConfigStub = fromStub(stubInterface<IConfig>(sandbox));
@@ -25,7 +43,6 @@ describe('org:create', () => {
   let scratchOrgCreateStub: sinon.SinonStub;
   let uxLogStub: sinon.SinonStub;
   let uxWarnStub: sinon.SinonStub;
-  let uxErrorStub: sinon.SinonStub;
   let promptStub: sinon.SinonStub;
   let cmd: TestCreate;
 
@@ -42,7 +59,7 @@ describe('org:create', () => {
     }
   }
 
-  const createCommand = async (params: string[]) => {
+  const createCommand = (params: string[]) => {
     cmd = new TestCreate(params, oclifConfigStub);
     stubMethod(sandbox, cmd, 'assignProject').callsFake(() => {
       const sfdxProjectStub = fromStub(
@@ -56,7 +73,6 @@ describe('org:create', () => {
     scratchOrgCreateStub = stubMethod(sandbox, cmd, 'createScratchOrg').resolves();
 
     uxLogStub = stubMethod(sandbox, UX.prototype, 'log');
-    uxErrorStub = stubMethod(sandbox, UX.prototype, 'error');
     uxWarnStub = stubMethod(sandbox, UX.prototype, 'warn');
     promptStub = stubMethod(sandbox, UX.prototype, 'prompt').returns(clientSecret);
     stubMethod(sandbox, cmd, 'assignOrg').callsFake(() => {
@@ -70,13 +86,13 @@ describe('org:create', () => {
 
   describe('sandbox', () => {
     it('will parse the --type flag correctly to create a scratchOrg', async () => {
-      const command = await createCommand(['--type', 'scratch', '-u', 'testProdOrg']);
+      const command = createCommand(['--type', 'scratch', '-u', 'testProdOrg']);
       await command.runIt();
       expect(scratchOrgCreateStub.calledOnce).to.be.true;
     });
 
     it('properly sends varargs, and definition file', async () => {
-      const command = await createCommand([
+      const command = createCommand([
         '--type',
         'scratch',
         'licenseType=LicenseFromVarargs',
@@ -88,23 +104,7 @@ describe('org:create', () => {
 
       scratchOrgCreateStub.restore();
       stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
-      const prodOrg = stubMethod(sandbox, Org.prototype, 'scratchOrgCreate').resolves({
-        username: 'sfdx-cli@salesforce.com',
-        scratchOrgInfo: {},
-        authFields: {
-          accessToken: '1234',
-          clientId: '1234',
-          created: '2022-01-01',
-          createdOrgInstance: 'instance',
-          devHubUsername: 'sfdx-cli@salesforce.com',
-          expirationDate: '2021-01-01',
-          instanceUrl: 'https://instance.salesforce.com',
-          loginUrl: 'https://login.salesforce.com',
-          orgId: '12345',
-          username: 'sfdx-cli@salesforce.com',
-        },
-        warnings: [],
-      });
+      const prodOrg = stubMethod(sandbox, Org.prototype, 'scratchOrgCreate').resolves(CREATE_RESULT);
       await command.runIt();
       expect(prodOrg.firstCall.args[0]).to.deep.equal({
         apiversion: undefined,
@@ -125,12 +125,12 @@ describe('org:create', () => {
         },
       });
       expect(uxLogStub.firstCall.firstArg).to.equal(
-        'Successfully created scratch org: 12345, username: sfdx-cli@salesforce.com'
+        'Successfully created scratch org: 12345, username: sfdx-cli@salesforce.com.'
       );
     });
 
     it('will fail if no definitionjson or not definitionfile or not varargs', async () => {
-      const command = await createCommand(['--type', 'scratch', '-u', 'testProdOrg']);
+      const command = createCommand(['--type', 'scratch', '-u', 'testProdOrg']);
 
       scratchOrgCreateStub.restore();
       stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
@@ -145,7 +145,7 @@ describe('org:create', () => {
     it('will prompt the user for a secret if clientId is provided', async () => {
       const connectedAppConsumerKey = 'abcdef';
       const definitionfile = 'myScratchDef.json';
-      const command = await createCommand([
+      const command = createCommand([
         '--type',
         'scratch',
         '-i',
@@ -157,23 +157,7 @@ describe('org:create', () => {
       ]);
       scratchOrgCreateStub.restore();
       stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
-      const prodOrg = stubMethod(sandbox, Org.prototype, 'scratchOrgCreate').resolves({
-        username: 'sfdx-cli@salesforce.com',
-        scratchOrgInfo: {},
-        authFields: {
-          accessToken: '1234',
-          clientId: '1234',
-          created: '2022-01-01',
-          createdOrgInstance: 'instance',
-          devHubUsername: 'sfdx-cli@salesforce.com',
-          expirationDate: '2021-01-01',
-          instanceUrl: 'https://instance.salesforce.com',
-          loginUrl: 'https://login.salesforce.com',
-          orgId: '12345',
-          username: 'sfdx-cli@salesforce.com',
-        },
-        warnings: [],
-      });
+      const prodOrg = stubMethod(sandbox, Org.prototype, 'scratchOrgCreate').resolves(CREATE_RESULT);
       await command.runIt();
       expect(prodOrg.firstCall.args[0]).to.deep.equal({
         apiversion: undefined,
@@ -193,13 +177,13 @@ describe('org:create', () => {
       });
       expect(promptStub.callCount).to.equal(1);
       expect(uxLogStub.firstCall.firstArg).to.equal(
-        'Successfully created scratch org: 12345, username: sfdx-cli@salesforce.com'
+        'Successfully created scratch org: 12345, username: sfdx-cli@salesforce.com.'
       );
     });
 
     it('will set alias/defaultusername', async () => {
       const definitionfile = 'myScratchDef.json';
-      const command = await createCommand([
+      const command = createCommand([
         '--type',
         'scratch',
         '--setalias',
@@ -214,21 +198,8 @@ describe('org:create', () => {
       scratchOrgCreateStub.restore();
       stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
       const prodOrg = stubMethod(sandbox, Org.prototype, 'scratchOrgCreate').resolves({
+        ...CREATE_RESULT,
         username: 'newScratchUsername',
-        scratchOrgInfo: {},
-        authFields: {
-          accessToken: '1234',
-          clientId: '1234',
-          created: '2022-01-01',
-          createdOrgInstance: 'instance',
-          devHubUsername: 'sfdx-cli@salesforce.com',
-          expirationDate: '2021-01-01',
-          instanceUrl: 'https://instance.salesforce.com',
-          loginUrl: 'https://login.salesforce.com',
-          orgId: '12345',
-          username: 'sfdx-cli@salesforce.com',
-        },
-        warnings: [],
       });
       const aliasStub = stubMethod(sandbox, Aliases.prototype, 'set');
       const configStub = stubMethod(sandbox, Config.prototype, 'set');
@@ -256,32 +227,13 @@ describe('org:create', () => {
     it('will print warnings if any', async () => {
       const definitionfile = 'myScratchDef.json';
       const warnings = ['warning1', 'warning2'];
-      const command = await createCommand([
-        '--type',
-        'scratch',
-        '--definitionfile',
-        definitionfile,
-        '-u',
-        'testProdOrg',
-      ]);
+      const command = createCommand(['--type', 'scratch', '--definitionfile', definitionfile, '-u', 'testProdOrg']);
 
       scratchOrgCreateStub.restore();
       stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
       stubMethod(sandbox, Org.prototype, 'scratchOrgCreate').resolves({
+        ...CREATE_RESULT,
         username: 'newScratchUsername',
-        scratchOrgInfo: {},
-        authFields: {
-          accessToken: '1234',
-          clientId: '1234',
-          created: '2022-01-01',
-          createdOrgInstance: 'instance',
-          devHubUsername: 'sfdx-cli@salesforce.com',
-          expirationDate: '2021-01-01',
-          instanceUrl: 'https://instance.salesforce.com',
-          loginUrl: 'https://login.salesforce.com',
-          orgId: '12345',
-          username: 'sfdx-cli@salesforce.com',
-        },
         warnings,
       });
       await command.runIt();
@@ -294,7 +246,7 @@ describe('org:create', () => {
   it('should print the error if command fails', async () => {
     const errorMessage = 'MyError';
     const definitionfile = 'myScratchDef.json';
-    const command = await createCommand(['--type', 'scratch', '--definitionfile', definitionfile, '-u', 'testProdOrg']);
+    const command = createCommand(['--type', 'scratch', '--definitionfile', definitionfile, '-u', 'testProdOrg']);
 
     scratchOrgCreateStub.restore();
     stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
@@ -305,7 +257,6 @@ describe('org:create', () => {
     } catch (e) {
       expect(e.message).to.equal(errorMessage);
     }
-    expect(uxErrorStub.callCount).to.equal(1);
   });
 
   afterEach(() => {
