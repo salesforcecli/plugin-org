@@ -33,7 +33,7 @@ import { SandboxReporter } from '../../../../shared/sandboxReporter';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
 
-export interface ScrathcOrgProcessObject {
+export interface ScratchOrgProcessObject {
   username?: string;
   scratchOrgInfo: ScratchOrgInfo;
   authFields?: AuthFields;
@@ -99,7 +99,7 @@ export class Create extends SfdxCommand {
   protected readonly lifecycleEventNames = ['postorgcreate'];
   private sandboxAuth?: SandboxUserAuthResponse;
 
-  public async run(): Promise<SandboxProcessObject | ScrathcOrgProcessObject> {
+  public async run(): Promise<SandboxProcessObject | ScratchOrgProcessObject> {
     this.logger.debug('Create started with args %s ', this.flags);
 
     if (this.flags.type === OrgTypes.Sandbox) {
@@ -274,7 +274,7 @@ export class Create extends SfdxCommand {
       this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
     }
   }
-  private async createScratchOrg(): Promise<ScrathcOrgProcessObject> {
+  private async createScratchOrg(): Promise<ScratchOrgProcessObject> {
     this.logger.debug('OK, will do scratch org creation');
     if (!this.hubOrg) {
       throw SfdxError.create('@salesforce/plugin-org', 'org', 'RequiresDevhubUsernameError');
