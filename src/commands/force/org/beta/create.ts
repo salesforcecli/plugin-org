@@ -38,6 +38,7 @@ export interface ScratchOrgProcessObject {
   scratchOrgInfo: ScratchOrgInfo;
   authFields?: AuthFields;
   warnings: string[];
+  orgId: string;
 }
 
 export class Create extends SfdxCommand {
@@ -277,10 +278,10 @@ export class Create extends SfdxCommand {
   private async createScratchOrg(): Promise<ScratchOrgProcessObject> {
     this.logger.debug('OK, will do scratch org creation');
     if (!this.hubOrg) {
-      throw SfdxError.create('@salesforce/plugin-org', 'org', 'RequiresDevhubUsernameError');
+      throw SfdxError.create('@salesforce/plugin-org', 'create', 'RequiresDevhubUsernameError');
     }
     // Ensure we have an org config input source.
-    if (!this.flags.definitionjson && !this.flags.definitionfile && Object.keys(this.varargs).length === 0) {
+    if (!this.flags.definitionfile && Object.keys(this.varargs).length === 0) {
       throw new SfdxError(messages.getMessage('noConfig'));
     }
 
@@ -304,7 +305,6 @@ export class Create extends SfdxCommand {
       wait: this.flags.wait as Duration,
       retry: this.flags.retry as number,
       apiversion: this.flags.apiversion as string,
-      definitionjson: this.flags.definitionjson as string,
       definitionfile: this.flags.definitionfile as string,
       orgConfig: this.varargs,
       clientSecret: secret,
@@ -348,6 +348,7 @@ export class Create extends SfdxCommand {
       scratchOrgInfo,
       authFields,
       warnings,
+      orgId: authFields.orgId,
     };
   }
 }

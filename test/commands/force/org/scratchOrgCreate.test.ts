@@ -110,7 +110,6 @@ describe('org:create', () => {
         apiversion: undefined,
         clientSecret: undefined,
         connectedAppConsumerKey: undefined,
-        definitionjson: undefined,
         durationDays: undefined,
         noancestors: undefined,
         nonamespace: undefined,
@@ -129,7 +128,7 @@ describe('org:create', () => {
       );
     });
 
-    it('will fail if no definitionjson or not definitionfile or not varargs', async () => {
+    it('will fail if no definitionfile or not varargs', async () => {
       const command = createCommand(['--type', 'scratch', '-u', 'testProdOrg']);
 
       scratchOrgCreateStub.restore();
@@ -164,7 +163,6 @@ describe('org:create', () => {
         clientSecret,
         connectedAppConsumerKey,
         definitionfile,
-        definitionjson: undefined,
         durationDays: undefined,
         noancestors: undefined,
         nonamespace: undefined,
@@ -209,7 +207,6 @@ describe('org:create', () => {
         clientSecret: undefined,
         connectedAppConsumerKey: undefined,
         definitionfile,
-        definitionjson: undefined,
         durationDays: undefined,
         noancestors: undefined,
         nonamespace: undefined,
@@ -222,6 +219,35 @@ describe('org:create', () => {
       });
       expect(aliasStub.firstCall.args).to.deep.equal(['sandboxAlias', 'newScratchUsername']);
       expect(configStub.firstCall.args).to.deep.equal(['defaultusername', 'newScratchUsername']);
+    });
+
+    it('will test json output', async () => {
+      const definitionfile = 'myScratchDef.json';
+      const command = createCommand(['--type', 'scratch', '--definitionfile', definitionfile, '-u', 'testProdOrg']);
+
+      scratchOrgCreateStub.restore();
+      stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
+      const prodOrg = stubMethod(sandbox, Org.prototype, 'scratchOrgCreate').resolves({
+        ...CREATE_RESULT,
+        username: 'newScratchUsername',
+      });
+      const result = await command.runIt();
+      expect(prodOrg.firstCall.args[0]).to.deep.equal({
+        apiversion: undefined,
+        clientSecret: undefined,
+        connectedAppConsumerKey: undefined,
+        definitionfile,
+        durationDays: undefined,
+        noancestors: undefined,
+        nonamespace: undefined,
+        wait: {
+          quantity: 6,
+          unit: 0,
+        },
+        retry: 0,
+        orgConfig: {},
+      });
+      expect(result).to.have.keys(['username', 'authFields', 'scratchOrgInfo', 'warnings', 'orgId']);
     });
 
     it('will print warnings if any', async () => {
