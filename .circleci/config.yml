@@ -80,7 +80,9 @@ workflows:
           filters:
             branches:
               only: main
-          context: CLI_CTC
+          context:
+            - CLI_CTC
+            - AWS
   test-ts-update:
     triggers:
       - schedule:
