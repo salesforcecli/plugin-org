@@ -30,7 +30,7 @@ describe('org:create command', () => {
           ensureExitCode: 0,
         }
       ).jsonOutput.result;
-      expect(result).to.have.all.keys(['username', 'authFields', 'scratchOrgInfo', 'warnings']);
+      expect(result).to.have.all.keys(['username', 'authFields', 'orgId', 'scratchOrgInfo', 'warnings']);
       expect(result.username).to.equal(username.toLowerCase());
     });
 
@@ -59,7 +59,7 @@ describe('org:create command', () => {
           ensureExitCode: 0,
         }
       ).jsonOutput.result;
-      expect(result).to.have.all.keys(['username', 'authFields', 'scratchOrgInfo', 'warnings']);
+      expect(result).to.have.all.keys(['username', 'authFields', 'orgId', 'scratchOrgInfo', 'warnings']);
     });
 
     describe('create and delete by project default', () => {
@@ -70,7 +70,7 @@ describe('org:create command', () => {
             ensureExitCode: 0,
           }
         ).jsonOutput.result;
-        expect(result).to.have.all.keys(['username', 'authFields', 'scratchOrgInfo', 'warnings']);
+        expect(result).to.have.all.keys(['username', 'authFields', 'orgId', 'scratchOrgInfo', 'warnings']);
       });
     });
 
