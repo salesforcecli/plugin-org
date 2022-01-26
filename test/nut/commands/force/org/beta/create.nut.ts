@@ -7,7 +7,7 @@
 import * as path from 'path';
 import { expect } from 'chai';
 import { TestSession, execCmd, genUniqueString } from '@salesforce/cli-plugins-testkit';
-import { ScratchOrgCreateResult } from '@salesforce/core';
+import { ScratchOrgCreateResult, Messages } from '@salesforce/core';
 
 let session: TestSession;
 
@@ -43,9 +43,8 @@ describe('org:create command', () => {
         }
       ).jsonOutput as unknown as { message: string };
 
-      // originally from toolbelt which had messages but not they exist inside sfdx-core
-      // const expectedMessage = messages('en_US').getMessage('C-1007', null, 'signup') as string;
-      expect(errorOutput.message).to.be.a('string').and.to.include('Failed to create scratchOrg');
+      const messages = Messages.loadMessages('@salesforce/core', 'scratchOrgErrorCodes');
+      expect(errorOutput.message).to.be.a('string').and.to.include(messages.getMessage('C-1007'));
     });
   });
 
