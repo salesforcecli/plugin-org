@@ -66,19 +66,19 @@ workflows:
           sfdx_version: latest
           requires:
             - release-management/test-package
-      - release-management/test-nut:
-          name: nuts-on-windows
-          sfdx_version: latest
-          os: windows
-          requires:
-            - release-management/test-package
+      #- release-management/test-nut:
+      #    name: nuts-on-windows
+      #    sfdx_version: latest
+      #    os: windows
+      #    requires:
+      #      - release-management/test-package
       - release-management/run-command-keyword:
           name: sandbox-nuts
           git_key_word: '[sb-nuts]'
           timeout: 1.5h
           command: test:nuts:sandbox
           requires:
-            - nuts-on-windows
+            #- nuts-on-windows
             - nuts-on-linux
       - release-management/release-package:
           sign: true
