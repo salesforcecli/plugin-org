@@ -6,8 +6,8 @@
   "bugs": "https://github.com/forcedotcom/cli/issues",
   "dependencies": {
     "@oclif/config": "^1.18.1",
-    "@salesforce/command": "^4.2.0",
-    "@salesforce/core": "^2.31.0",
+    "@salesforce/command": "^4.2.2",
+    "@salesforce/core": "^2.35.0",
     "@salesforce/kit": "^1.5.17",
     "open": "8.4.0",
     "tslib": "^2"
@@ -15,12 +15,13 @@
   "devDependencies": {
     "@oclif/dev-cli": "^1",
     "@oclif/plugin-command-snapshot": "^2.2.2",
-    "@salesforce/cli-plugins-testkit": "^1.4.10",
+    "@salesforce/cli-plugins-testkit": "^1.5.3",
     "@salesforce/dev-config": "^3.0.0",
     "@salesforce/dev-scripts": "^2.0.0",
     "@salesforce/plugin-command-reference": "^1.3.0",
     "@salesforce/prettier-config": "^0.0.2",
     "@salesforce/ts-sinon": "1.3.21",
+    "@types/shelljs": "^0.8.10",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
     "chai": "^4.2.0",
@@ -108,6 +109,7 @@
     "test:command-reference": "./bin/run commandreference:generate --erroronwarnings",
     "test:deprecation-policy": "./bin/run snapshot:compare",
     "test:nuts": "nyc mocha \"**/*.nut.ts\" --slow 4500 --timeout 600000 --parallel",
+    "test:nuts:sandbox": "nyc mocha \"**/*.sandboxNut.ts\" --slow 450000 --timeout 7200000",
     "version": "oclif-dev readme"
   },
   "publishConfig": {
