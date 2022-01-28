@@ -16,9 +16,8 @@ import {
   SfdxProject,
 } from '@salesforce/core';
 import { fromStub, stubInterface, stubMethod } from '@salesforce/ts-sinon';
-import { IConfig } from '@oclif/config';
 import * as sinon from 'sinon';
-import { expect } from '@salesforce/command/lib/test';
+import { expect, IConfig } from '@salesforce/command/lib/test';
 import { UX } from '@salesforce/command';
 import { assert } from 'sinon';
 import { Create } from '../../../../src/commands/force/org/beta/create';
@@ -27,7 +26,7 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
 describe('org:create', () => {
   const sandbox = sinon.createSandbox();
-  const oclifConfigStub = fromStub(stubInterface<IConfig>(sandbox));
+  const oclifConfigStub = fromStub(stubInterface<IConfig.IConfig>(sandbox));
 
   // stubs
   let resolveProjectConfigStub: sinon.SinonStub;
