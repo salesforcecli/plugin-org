@@ -2,26 +2,6 @@ version: 2.1
 orbs:
   release-management: salesforce/npm-release-management@4
 parameters:
-  run-auto-workflows:
-    description: >
-      Boolean that controls when an workflow would run.
-
-      It is used to gate which workflows should run when github events occur.
-
-      This parameter is used by automation to determine if a workflow will run
-      within a pipeline.
-    default: true
-    type: boolean
-  run-just-nuts:
-    description: >
-      Boolean that controls when the just-nuts will run.
-
-      Default value is false and this parameter is used by automation to
-      determine if
-
-      the just-nuts workflow will run.
-    default: false
-    type: boolean
   sfdx_version:
     description: |
       By default, the latest version of the standalone CLI will be installed.
@@ -36,10 +16,19 @@ parameters:
     description: 'The fully qualified npm module name, i.e. @salesforce/plugins-data'
     default: ''
     type: string
+  workflow:
+    description: >
+      String that controls which workflow would run.
+
+      This parameter is used by automation to determine if a workflow will run within a pipeline.
+
+    type: string
+    default: 'test-and-release'
 workflows:
   version: 2
   test-and-release:
-    when: << pipeline.parameters.run-auto-workflows >>
+    when:
+      equal: [test-and-release, << pipeline.parameters.workflow >>]
     jobs:
       - release-management/validate-pr:
           filters:
@@ -93,17 +82,13 @@ workflows:
             - CLI_CTC
             - AWS
   test-ts-update:
-    triggers:
-      - schedule:
-          cron: 0 0 * * *
-          filters:
-            branches:
-              only:
-                - main
+    when:
+      equal: [test-ts-update, << pipeline.parameters.workflow >>]
     jobs:
       - release-management/test-ts-update
   just-nuts:
-    when: << pipeline.parameters.run-just-nuts >>
+    when:
+      equal: [just-nuts, << pipeline.parameters.workflow >>]
     jobs:
       - release-management/test-nut:
           name: just-nuts-<< matrix.os >>
@@ -117,12 +102,7 @@ workflows:
                 - windows
           npm_module_name: << pipeline.parameters.npm_module_name >>
   dependabot-automerge:
-    triggers:
-      - schedule:
-          cron: '0 2,5,8,11 * * *'
-          filters:
-            branches:
-              only:
-                - main
+    when:
+      equal: [dependabot-automerge, << pipeline.parameters.workflow >>]
     jobs:
       - release-management/dependabot-automerge
