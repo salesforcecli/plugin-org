@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  release-management: salesforce/npm-release-management@dev:5f684cf
+  release-management: salesforce/npm-release-management@dev:b6c604b
 parameters:
   sfdx_version:
     description: |
