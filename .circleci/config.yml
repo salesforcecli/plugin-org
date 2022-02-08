@@ -47,7 +47,7 @@ workflows:
                 - maintenance
             exclude:
               - os: windows
-                node_version: latest
+                node_version: lts
               - os: windows
                 node_version: maintenance
       - release-management/test-nut:
