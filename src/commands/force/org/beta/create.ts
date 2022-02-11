@@ -269,9 +269,14 @@ export class Create extends SfdxCommand {
       this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
     }
     if (this.flags.setdefaultusername) {
-      const globalConfig: Config = this.configAggregator.getGlobalConfig();
-      globalConfig.set(Config.DEFAULT_USERNAME, username);
-      const result = await globalConfig.write();
+      let config: Config;
+      try {
+        config = await Config.create({ isGlobal: false });
+      } catch {
+        config = await Config.create({ isGlobal: true });
+      }
+      const result = config.set(Config.DEFAULT_USERNAME, username);
+      await config.write();
       this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
     }
   }
