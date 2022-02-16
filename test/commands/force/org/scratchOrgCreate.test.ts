@@ -205,7 +205,6 @@ describe('org:create', () => {
         set: setStub,
         write: writeStub,
       });
-      // const configStub = stubMethod(sandbox, Config.prototype, 'set');
       await command.runIt();
       expect(prodOrg.firstCall.args[0]).to.deep.equal({
         apiversion: undefined,
