@@ -269,15 +269,14 @@ export class Create extends SfdxCommand {
       this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
     }
     if (this.flags.setdefaultusername) {
-      let config: Config;
       try {
-        config = await Config.create({ isGlobal: false });
-      } catch {
-        config = await Config.create({ isGlobal: true });
+        const config = await Config.create({ isGlobal: false });
+        const result = config.set(Config.DEFAULT_USERNAME, username);
+        await config.write();
+        this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
+      } catch (error) {
+        this.logger.debug('Set defaultUsername failed with error: %s', error);
       }
-      const result = config.set(Config.DEFAULT_USERNAME, username);
-      await config.write();
-      this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
     }
   }
   private async createScratchOrg(): Promise<ScratchOrgProcessObject> {

@@ -199,7 +199,13 @@ describe('org:create', () => {
         username: 'newScratchUsername',
       });
       const aliasStub = stubMethod(sandbox, Aliases.prototype, 'set');
-      const configStub = stubMethod(sandbox, Config.prototype, 'set');
+      const setStub = sandbox.spy();
+      const writeStub = sandbox.spy();
+      const configCreateStub = stubMethod(sandbox, Config, 'create').withArgs({ isGlobal: false }).resolves({
+        set: setStub,
+        write: writeStub,
+      });
+      // const configStub = stubMethod(sandbox, Config.prototype, 'set');
       await command.runIt();
       expect(prodOrg.firstCall.args[0]).to.deep.equal({
         apiversion: undefined,
@@ -217,7 +223,10 @@ describe('org:create', () => {
         orgConfig: {},
       });
       expect(aliasStub.firstCall.args).to.deep.equal(['sandboxAlias', 'newScratchUsername']);
-      expect(configStub.firstCall.args).to.deep.equal(['defaultusername', 'newScratchUsername']);
+      expect(configCreateStub.calledOnce).to.be.true;
+      expect(writeStub.calledOnce).to.be.true;
+      expect(configCreateStub.firstCall.firstArg).to.deep.equal({ isGlobal: false });
+      expect(setStub.firstCall.args).to.deep.equal(['defaultusername', 'newScratchUsername']);
     });
 
     it('will test json output', async () => {
