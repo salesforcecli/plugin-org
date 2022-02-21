@@ -263,7 +263,8 @@ export class Create extends SfdxCommand {
 
   private async setAliasAndDefaultUsername(username: string): Promise<void> {
     if (this.flags.setalias) {
-      await Aliases.parseAndUpdate([`${this.flags.setalias as string}=${username}`]);
+      const alias = await Aliases.create(Aliases.getDefaultOptions());
+      await alias.updateValue(this.flags.setalias, username);
       this.logger.debug('Set Alias: %s result: %s', this.flags.setalias);
     }
     if (this.flags.setdefaultusername) {

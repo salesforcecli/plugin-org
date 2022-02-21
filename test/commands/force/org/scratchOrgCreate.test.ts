@@ -198,7 +198,7 @@ describe('org:create', () => {
         ...CREATE_RESULT,
         username: 'newScratchUsername',
       });
-      const aliasStub = stubMethod(sandbox, Aliases, 'parseAndUpdate');
+      const aliasStub = stubMethod(sandbox, Aliases.prototype, 'updateValue');
       const configStub = stubMethod(sandbox, Config.prototype, 'set');
       await command.runIt();
       expect(prodOrg.firstCall.args[0]).to.deep.equal({
@@ -216,7 +216,7 @@ describe('org:create', () => {
         retry: 0,
         orgConfig: {},
       });
-      expect(aliasStub.firstCall.args).to.deep.equal([['scratchOrgAlias=newScratchUsername']]);
+      expect(aliasStub.firstCall.args).to.deep.equal(['scratchOrgAlias', 'newScratchUsername']);
       expect(configStub.firstCall.args).to.deep.equal(['defaultusername', 'newScratchUsername']);
     });
 
