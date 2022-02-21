@@ -198,7 +198,8 @@ describe('org:create', () => {
         ...CREATE_RESULT,
         username: 'newScratchUsername',
       });
-      const aliasStub = stubMethod(sandbox, Aliases.prototype, 'updateValue');
+      const updateValueStub = stubMethod(sandbox, Aliases.prototype, 'updateValue');
+      const getKeysByValueStub = stubMethod(sandbox, Aliases.prototype, 'getKeysByValue').returns([]);
       const configStub = stubMethod(sandbox, Config.prototype, 'set');
       await command.runIt();
       expect(prodOrg.firstCall.args[0]).to.deep.equal({
@@ -216,8 +217,53 @@ describe('org:create', () => {
         retry: 0,
         orgConfig: {},
       });
-      expect(aliasStub.firstCall.args).to.deep.equal(['scratchOrgAlias', 'newScratchUsername']);
+      expect(updateValueStub.firstCall.args).to.deep.equal(['scratchOrgAlias', 'newScratchUsername']);
+      expect(getKeysByValueStub.firstCall.args).to.deep.equal(['newScratchUsername']);
       expect(configStub.firstCall.args).to.deep.equal(['defaultusername', 'newScratchUsername']);
+    });
+
+    it('will set alias as default', async () => {
+      const definitionfile = 'myScratchDef.json';
+      const command = createCommand([
+        '--type',
+        'scratch',
+        '--setalias',
+        'scratchOrgAlias',
+        '--setdefaultusername',
+        '--definitionfile',
+        definitionfile,
+        '-u',
+        'testProdOrg',
+      ]);
+
+      scratchOrgCreateStub.restore();
+      stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
+      const prodOrg = stubMethod(sandbox, Org.prototype, 'scratchOrgCreate').resolves({
+        ...CREATE_RESULT,
+        username: 'newScratchUsername',
+      });
+      const updateValueStub = stubMethod(sandbox, Aliases.prototype, 'updateValue');
+      const getKeysByValueStub = stubMethod(sandbox, Aliases.prototype, 'getKeysByValue').returns(['scratchOrgAlias']);
+      const configStub = stubMethod(sandbox, Config.prototype, 'set');
+      await command.runIt();
+      expect(prodOrg.firstCall.args[0]).to.deep.equal({
+        apiversion: undefined,
+        clientSecret: undefined,
+        connectedAppConsumerKey: undefined,
+        definitionfile,
+        durationDays: undefined,
+        noancestors: undefined,
+        nonamespace: undefined,
+        wait: {
+          quantity: 6,
+          unit: 0,
+        },
+        retry: 0,
+        orgConfig: {},
+      });
+      expect(updateValueStub.firstCall.args).to.deep.equal(['scratchOrgAlias', 'newScratchUsername']);
+      expect(getKeysByValueStub.firstCall.args).to.deep.equal(['newScratchUsername']);
+      expect(configStub.firstCall.args).to.deep.equal(['defaultusername', 'scratchOrgAlias']);
     });
 
     it('will test json output', async () => {
