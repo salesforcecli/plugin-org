@@ -89,11 +89,6 @@ sfdx plugins
 create a scratch or sandbox org
 
 ```
-create a scratch or sandbox org
-Creates a scratch org or a sandbox org using the values specified in a configuration file or key=value pairs that you specify on the command line. Values specified on the command line override values in the configuration file. Specify a configuration file or provide key=value pairs while creating a scratch org or a sandbox. When creating scratch orgs, —targetdevhubusername (-v) must be a Dev Hub org. When creating sandboxes, the --targetusername (-u) must be a production org with sandbox licenses. The —type (-t) is required if creating a sandbox.
-
-
-
 USAGE
   $ sfdx force:org:beta:create [name=value...] [-t scratch|sandbox] [-f <filepath>] [-n] [-c] [-i <string>] [-s] [-a
   <string>] [-w <minutes>] [-d <integer>] [-v <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel
@@ -142,7 +137,7 @@ OPTIONS
 DESCRIPTION
   Creates a scratch org or a sandbox org using the values specified in a configuration file or key=value pairs that you
   specify on the command line. Values specified on the command line override values in the configuration file. Specify a
-  configuration file or provide key=value pairs while creating a scratch org or a sandbox. When creating scratch orgs,
+   configuration file or provide key=value pairs while creating a scratch org or a sandbox. When creating scratch orgs,
   —targetdevhubusername (-v) must be a Dev Hub org. When creating sandboxes, the --targetusername (-u) must be a
   production org with sandbox licenses. The —type (-t) is required if creating a sandbox.
 
@@ -161,9 +156,6 @@ _See code: [src/commands/force/org/beta/create.ts](https://github.com/salesforce
 mark a scratch or sandbox org for deletion
 
 ```
-mark a scratch or sandbox org for deletion
-To mark the org for deletion without being prompted to confirm, specify --noprompt.
-
 USAGE
   $ sfdx force:org:delete [-p] [-v <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
@@ -200,11 +192,6 @@ _See code: [src/commands/force/org/delete.ts](https://github.com/salesforcecli/p
 get the description for the current or target org
 
 ```
-get the description for the current or target org
-Output includes your access token, client Id, connected status, org ID, instance URL, username, and alias, if applicable.
-Use --verbose to include the SFDX auth URL. WARNING: The SFDX auth URL contains sensitive information, such as a refresh token that can be used to access an org. Don't share or distribute this URL or token.
-Including --verbose displays the sfdxAuthUrl property only if you authenticated to the org using auth:web:login (not auth:jwt:grant)
-
 USAGE
   $ sfdx force:org:display [-u <string>] [--apiversion <string>] [--verbose] [--json] [--loglevel
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
@@ -246,8 +233,6 @@ _See code: [src/commands/force/org/display.ts](https://github.com/salesforcecli/
 list all orgs you’ve created or authenticated to
 
 ```
-list all orgs you’ve created or authenticated to
-
 USAGE
   $ sfdx force:org:list [--all] [-p --clean] [--skipconnectionstatus] [--verbose] [--json] [--loglevel
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
@@ -284,12 +269,6 @@ _See code: [src/commands/force/org/list.ts](https://github.com/salesforcecli/plu
 open your default scratch org, or another specified org
 
 ```
-open your default scratch org, or another specified org
-To open a specific page, specify the portion of the URL after "https://MyDomainName.my.salesforce.com/" as --path.
-For example, specify "--path lightning" to open Lightning Experience, or specify "--path /apex/YourPage" to open a Visualforce page.
-To generate a URL but not launch it in your browser, specify --urlonly.
-To open in a specific browser, use the --browser parameter. Supported browsers are "chrome", "edge", and "firefox". If you don't specify --browser, the org opens in your default browser.
-
 USAGE
   $ sfdx force:org:open [-b <string> | -r] [-p <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
@@ -318,7 +297,7 @@ DESCRIPTION
   Visualforce page.
   To generate a URL but not launch it in your browser, specify --urlonly.
   To open in a specific browser, use the --browser parameter. Supported browsers are "chrome", "edge", and "firefox". If
-  you don't specify --browser, the org opens in your default browser.
+   you don't specify --browser, the org opens in your default browser.
 
 EXAMPLES
   sfdx force:org:open

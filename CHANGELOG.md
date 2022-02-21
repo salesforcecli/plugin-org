@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.11.2](https://github.com/salesforcecli/plugin-org/compare/v1.11.1...v1.11.2) (2022-02-21)
+
+### Bug Fixes
+
+- only local config ([54e7b93](https://github.com/salesforcecli/plugin-org/commit/54e7b934008bae5a12934932c239c6ff59e2f22e))
+- try to create local config first ([f84c64f](https://github.com/salesforcecli/plugin-org/commit/f84c64f46ed5141bab3167cba04f75ad4e59484b))
+- use Aliases.parseAndUpdate ([0b1860f](https://github.com/salesforcecli/plugin-org/commit/0b1860fb1b535ff2b5a84e4dcb1b691c4b85cdba))
+
 ### [1.11.1](https://github.com/salesforcecli/plugin-org/compare/v1.11.0...v1.11.1) (2022-01-28)
 
 ### Features
