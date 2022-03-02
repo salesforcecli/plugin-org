@@ -5,13 +5,11 @@
     "sfdx force:org:status --sandboxname mySandbox -u devhub --setalias alias",
     "sfdx force:org:status --sandboxname mySandbox -u devhub --setdefaultusername"
   ],
-  "commandDescription": "report sandbox org creation status and authenticate to org",
-  "sandboxnameFlagDescription": "name of the sandbox org to check status for",
-  "sandboxnameFlagLongDescription": "The name of the sandbox org whose creation status you want to check.",
-  "waitFlagDescription": "number of minutes to wait while polling for status",
-  "waitFlagLongDescription": "The number of minutes to wait for the org to be ready while polling for its creation status.",
-  "setdefaultusernameFlagDescription": "set the created org as the default username",
-  "setdefaultusernameFlagLongDescription": "Sets the created org as the default username.",
-  "setaliasFlagDescription": "alias for the created org",
-  "setaliasFlagLongDescription": "An alias for the created org."
+  "description": "report sandbox org creation status and authenticate to org",
+  "flags": {
+    "sandboxname": "name of the sandbox org to check status for",
+    "wait": "number of minutes to wait while polling for status",
+    "setdefaultusername": "set the created org as the default username",
+    "setalias": "alias for the created org"
+  }
 }

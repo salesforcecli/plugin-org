@@ -25,33 +25,29 @@ const messages = Messages.loadMessages('@salesforce/plugin-org', 'status');
 
 export class OrgStatusCommand extends SfdxCommand {
   public static readonly examples = messages.getMessage('examples').split(EOL);
-  public static readonly description = messages.getMessage('commandDescription');
+  public static readonly description = messages.getMessage('description');
   public static readonly requiresProject = false;
   public static readonly requiresUsername = true;
 
   public static readonly flagsConfig: FlagsConfig = {
     sandboxname: flags.string({
       char: 'n',
-      description: messages.getMessage('sandboxnameFlagDescription'),
-      longDescription: messages.getMessage('sandboxnameFlagLongDescription'),
+      description: messages.getMessage('flags.sandboxname'),
       required: true,
     }),
     setdefaultusername: flags.boolean({
       char: 's',
-      description: messages.getMessage('setdefaultusernameFlagDescription'),
-      longDescription: messages.getMessage('setdefaultusernameFlagLongDescription'),
+      description: messages.getMessage('flags.setdefaultusername'),
       required: false,
     }),
     setalias: flags.string({
       char: 'a',
-      description: messages.getMessage('setaliasFlagDescription'),
-      longDescription: messages.getMessage('setaliasFlagLongDescription'),
+      description: messages.getMessage('flags.setalias'),
       required: false,
     }),
     wait: flags.minutes({
       char: 'w',
-      description: messages.getMessage('waitFlagDescription'),
-      longDescription: messages.getMessage('waitFlagLongDescription'),
+      description: messages.getMessage('flags.wait'),
       required: false,
       min: Duration.minutes(2),
       default: Duration.minutes(6),
