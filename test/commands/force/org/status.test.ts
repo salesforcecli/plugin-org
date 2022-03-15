@@ -12,7 +12,7 @@ import { expect, IConfig } from '@salesforce/command/lib/test';
 import { UX } from '@salesforce/command';
 import { OrgStatusCommand } from '../../../../src/commands/force/org/status';
 
-describe('org:delete', () => {
+describe('org:status', () => {
   const sandbox = sinon.createSandbox();
   const sanboxname = 'my-sandbox';
   const sandboxalias = 'my-sandbox-alias';
@@ -51,6 +51,7 @@ describe('org:delete', () => {
   let aliasSetStub: sinon.SinonStub;
   let configSetStub: sinon.SinonStub;
   let configWriteStub: sinon.SinonStub;
+  let onStub: sinon.SinonStub;
   let configAggregatorStub;
 
   class TestOrgStatusCommand extends OrgStatusCommand {
@@ -70,15 +71,14 @@ describe('org:delete', () => {
     cmd = new TestOrgStatusCommand(params, oclifConfigStub);
     stubMethod(sandbox, cmd, 'assignOrg').callsFake(() => {
       const orgStubOptions = {
-        sandboxStatus: sinon.stub().callsFake(async () => {
-          await Lifecycle.getInstance().emit(SandboxEvents.EVENT_RESULT, resultObject);
+        sandboxStatus: sandbox.stub().callsFake(async () => {
           return sandboxProcessObj;
         }),
       };
       const orgStub = fromStub(stubInterface<Org>(sandbox, orgStubOptions));
       cmd.setOrg(orgStub);
-      configSetStub = sinon.stub().returns(true);
-      configWriteStub = sinon.stub().resolves(true);
+      configSetStub = sandbox.stub().returns(true);
+      configWriteStub = sandbox.stub().resolves(true);
       const configAggregatorStubOptions = {
         getGlobalConfig: () => ({
           set: configSetStub,
@@ -87,6 +87,10 @@ describe('org:delete', () => {
       };
       configAggregatorStub = fromStub(stubInterface<ConfigAggregator>(sandbox, configAggregatorStubOptions));
       cmd.setConfigAggregator(configAggregatorStub);
+    });
+    onStub = sandbox.stub().callsArgWith(1, resultObject);
+    stubMethod(sandbox, Lifecycle, 'getInstance').returns({
+      on: onStub,
     });
     aliasSetStub = stubMethod(sandbox, Aliases.prototype, 'set').returns(sandboxalias);
     uxTableStub = stubMethod(sandbox, UX.prototype, 'table');
@@ -112,6 +116,8 @@ describe('org:delete', () => {
     expect(aliasSetStub.firstCall.args[1]).to.be.equal(authUserName);
     expect(configSetStub.firstCall.args[0]).to.be.equal(Config.DEFAULT_USERNAME);
     expect(configSetStub.firstCall.args[1]).to.be.equal(authUserName);
+    expect(onStub.secondCall.firstArg).to.be.equal(SandboxEvents.EVENT_RESULT);
+    expect(onStub.callCount).to.be.equal(2);
     expect(configWriteStub.calledOnce).to.be.true;
     expect(res).to.deep.equal(sandboxProcessObj);
   });
