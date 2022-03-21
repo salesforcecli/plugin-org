@@ -99,8 +99,12 @@ describe('org:status', () => {
 
   it('will return sandbox process object', async () => {
     const res = await runStatusCommand(['--sandboxname', sanboxname]);
-    expect(res).to.deep.equal(sandboxProcessObj);
     expect(uxTableStub.firstCall.args[0].length).to.equal(12);
+    expect(aliasSetStub.callCount).to.be.equal(0);
+    expect(configSetStub.callCount).to.be.equal(0);
+    expect(configWriteStub.callCount).to.be.equal(0);
+    expect(onStub.callCount).to.be.equal(2);
+    expect(res).to.deep.equal(sandboxProcessObj);
   });
 
   it('will set alias and default username', async () => {

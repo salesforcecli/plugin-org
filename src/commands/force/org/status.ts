@@ -38,7 +38,6 @@ export class OrgStatusCommand extends SfdxCommand {
     setdefaultusername: flags.boolean({
       char: 's',
       description: messages.getMessage('flags.setdefaultusername'),
-      required: false,
     }),
     setalias: flags.string({
       char: 'a',
@@ -55,7 +54,6 @@ export class OrgStatusCommand extends SfdxCommand {
   };
 
   public async run(): Promise<SandboxProcessObject> {
-    const alias = await Aliases.create({});
     this.logger.debug('Status started with args %s ', this.flags);
     const lifecycle = Lifecycle.getInstance();
 
@@ -64,7 +62,6 @@ export class OrgStatusCommand extends SfdxCommand {
       this.ux.log(SandboxReporter.sandboxProgress(results));
     });
 
-    // eslint-disable-next-line @typescript-eslint/require-await
     lifecycle.on(SandboxEvents.EVENT_RESULT, async (results: ResultEvent) => {
       const { data } = SandboxReporter.logSandboxProcessResult(results);
       this.ux.styledHeader('Sandbox Org Status');
@@ -76,17 +73,15 @@ export class OrgStatusCommand extends SfdxCommand {
       });
       if (results.sandboxRes && results.sandboxRes.authUserName) {
         if (this.flags.setalias) {
+          const alias = await Aliases.create({});
           const result = alias.set(this.flags.setalias, results.sandboxRes.authUserName);
           this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
         }
         if (this.flags.setdefaultusername) {
           const globalConfig: Config = this.configAggregator.getGlobalConfig();
           globalConfig.set(Config.DEFAULT_USERNAME, results.sandboxRes.authUserName);
-          void globalConfig
-            .write()
-            .then((result) =>
-              this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result)
-            );
+          const result = await globalConfig.write();
+          this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
         }
       }
     });
