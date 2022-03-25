@@ -42,12 +42,10 @@ export class OrgStatusCommand extends SfdxCommand {
     setalias: flags.string({
       char: 'a',
       description: messages.getMessage('flags.setalias'),
-      required: false,
     }),
     wait: flags.minutes({
       char: 'w',
       description: messages.getMessage('flags.wait'),
-      required: false,
       min: Duration.minutes(2),
       default: Duration.minutes(6),
     }),
@@ -71,7 +69,7 @@ export class OrgStatusCommand extends SfdxCommand {
           { key: 'value', label: 'Value' },
         ],
       });
-      if (results.sandboxRes && results.sandboxRes.authUserName) {
+      if (results.sandboxRes?.authUserName) {
         if (this.flags.setalias) {
           const alias = await Aliases.create({});
           const result = alias.set(this.flags.setalias, results.sandboxRes.authUserName);
