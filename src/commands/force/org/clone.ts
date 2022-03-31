@@ -38,25 +38,21 @@ export class OrgCloneCommand extends SfdxCommand {
   public static readonly flagsConfig: FlagsConfig = {
     type: flags.enum({
       char: 't',
-      description: messages.getMessage('type'),
-      longDescription: messages.getMessage('type'),
+      description: messages.getMessage('flags.type'),
       required: true,
       options: ['sandbox'],
     }),
     definitionfile: flags.filepath({
       char: 'f',
-      description: messages.getMessage('definitionfile'),
-      longDescription: messages.getMessage('definitionfile'),
+      description: messages.getMessage('flags.definitionfile'),
     }),
     setdefaultusername: flags.boolean({
       char: 's',
-      description: messages.getMessage('setdefaultusername'),
-      longDescription: messages.getMessage('setdefaultusername'),
+      description: messages.getMessage('flags.setdefaultusername'),
     }),
     setalias: flags.string({
       char: 'a',
-      description: messages.getMessage('setalias'),
-      longDescription: messages.getMessage('setalias'),
+      description: messages.getMessage('flags.setalias'),
     }),
     wait: flags.minutes({
       char: 'w',
