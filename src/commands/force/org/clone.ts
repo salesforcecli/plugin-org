@@ -62,8 +62,6 @@ export class OrgCloneCommand extends SfdxCommand {
     }),
   };
 
-  protected readonly lifecycleEventNames = ['postorgcreate'];
-
   public async run(): Promise<unknown> {
     const lifecycle = Lifecycle.getInstance();
     if (this.flags.type === OrgTypes.Sandbox) {
@@ -75,11 +73,20 @@ export class OrgCloneCommand extends SfdxCommand {
 
       // eslint-disable-next-line @typescript-eslint/require-await
       lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) => {
-        SandboxReporter.sandboxProgress(results);
+        this.ux.log(SandboxReporter.sandboxProgress(results));
       });
 
       lifecycle.on(SandboxEvents.EVENT_RESULT, async (results: ResultEvent) => {
-        SandboxReporter.logSandboxProcessResult(results);
+        const { sandboxReadyForUse, data } = SandboxReporter.logSandboxProcessResult(results);
+        this.ux.log(sandboxReadyForUse);
+        this.ux.styledHeader('Sandbox Org Cloning Status');
+        this.ux.table(data, {
+          columns: [
+            { key: 'key', label: 'Name' },
+            { key: 'value', label: 'Value' },
+          ],
+        });
+
         if (results.sandboxRes && results.sandboxRes.authUserName) {
           if (this.flags.setalias) {
             const alias = await Aliases.create({});
