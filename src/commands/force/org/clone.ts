@@ -33,6 +33,7 @@ export class OrgCloneCommand extends SfdxCommand {
   public static readonly description = messages.getMessage('description');
   public static readonly requiresProject = false;
   public static readonly requiresUsername = true;
+  public static readonly varargs = true;
   public static readonly SANDBOXDEF_SRC_SANDBOXNAME = 'SourceSandboxName';
 
   public static readonly flagsConfig: FlagsConfig = {

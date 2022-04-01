@@ -67,6 +67,7 @@ describe('org:clone', () => {
   let configWriteStub: sinon.SinonStub;
   let onStub: sinon.SinonStub;
   let readFileSyncStub: sinon.SinonStub;
+  let cloneSandboxStub: sinon.SinonStub;
   let configAggregatorStub;
 
   class TestOrgCloneCommand extends OrgCloneCommand {
@@ -85,10 +86,11 @@ describe('org:clone', () => {
   const runCloneCommand = async (params: string[]) => {
     cmd = new TestOrgCloneCommand(params, oclifConfigStub);
     stubMethod(sandbox, cmd, 'assignOrg').callsFake(() => {
+      cloneSandboxStub = sandbox.stub().callsFake(async () => {
+        return sandboxProcessObj;
+      });
       const orgStubOptions = {
-        cloneSandbox: sandbox.stub().callsFake(async () => {
-          return sandboxProcessObj;
-        }),
+        cloneSandbox: cloneSandboxStub,
       };
       const orgStub = fromStub(stubInterface<Org>(sandbox, orgStubOptions));
       cmd.setOrg(orgStub);
@@ -132,6 +134,39 @@ describe('org:clone', () => {
     expect(onStub.secondCall.firstArg).to.be.equal(SandboxEvents.EVENT_STATUS);
     expect(onStub.thirdCall.firstArg).to.be.equal(SandboxEvents.EVENT_RESULT);
     expect(onStub.callCount).to.be.equal(3);
+    expect(cloneSandboxStub.firstCall.firstArg).to.deep.equal({
+      LicenseType: 'Developer',
+      SandboxName: 'newSandbox',
+    });
+    expect(res).to.deep.equal(sandboxProcessObj);
+  });
+
+  it('will return sandbox process object varargs override defFile', async () => {
+    const licenseType = 'Enterprise';
+    const res = await runCloneCommand([
+      '-t',
+      'sandbox',
+      '-u',
+      'DevHub',
+      '-f',
+      'sandbox-def.json',
+      `licenseType=${licenseType}`,
+    ]);
+    expect(uxStyledHeaderStub.calledOnce).to.be.true;
+    expect(uxTableStub.firstCall.args[0].length).to.be.equal(12);
+    expect(readFileSyncStub.calledOnce).to.be.true;
+    expect(uxLogStub.callCount).to.be.equal(3);
+    expect(aliasSetStub.callCount).to.be.equal(0);
+    expect(configSetStub.callCount).to.be.equal(0);
+    expect(configWriteStub.callCount).to.be.equal(0);
+    expect(onStub.firstCall.firstArg).to.be.equal(SandboxEvents.EVENT_ASYNC_RESULT);
+    expect(onStub.secondCall.firstArg).to.be.equal(SandboxEvents.EVENT_STATUS);
+    expect(onStub.thirdCall.firstArg).to.be.equal(SandboxEvents.EVENT_RESULT);
+    expect(onStub.callCount).to.be.equal(3);
+    expect(cloneSandboxStub.firstCall.firstArg).to.deep.equal({
+      LicenseType: licenseType,
+      SandboxName: 'newSandbox',
+    });
     expect(res).to.deep.equal(sandboxProcessObj);
   });
 
@@ -160,6 +195,10 @@ describe('org:clone', () => {
     expect(onStub.secondCall.firstArg).to.be.equal(SandboxEvents.EVENT_STATUS);
     expect(onStub.thirdCall.firstArg).to.be.equal(SandboxEvents.EVENT_RESULT);
     expect(onStub.callCount).to.be.equal(3);
+    expect(cloneSandboxStub.firstCall.firstArg).to.deep.equal({
+      LicenseType: 'Developer',
+      SandboxName: 'newSandbox',
+    });
     expect(configWriteStub.calledOnce).to.be.true;
     expect(res).to.deep.equal(sandboxProcessObj);
   });
