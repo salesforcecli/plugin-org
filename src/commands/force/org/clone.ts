@@ -22,7 +22,7 @@ import {
   ResultEvent,
   SandboxProcessObject,
 } from '@salesforce/core';
-import { Duration } from '@salesforce/kit';
+import { Duration, upperFirst } from '@salesforce/kit';
 import { SandboxReporter } from '../../../shared/sandboxReporter';
 
 Messages.importMessagesDirectory(__dirname);
@@ -88,7 +88,7 @@ export class OrgCloneCommand extends SfdxCommand {
           ],
         });
 
-        if (results.sandboxRes && results.sandboxRes.authUserName) {
+        if (results?.sandboxRes?.authUserName) {
           if (this.flags.setalias) {
             const alias = await Aliases.create({});
             const result = alias.set(this.flags.setalias, results.sandboxRes.authUserName);
@@ -157,15 +157,7 @@ export class OrgCloneCommand extends SfdxCommand {
   private lowerToUpper(object: Record<string, unknown>): Record<string, unknown> {
     // the API has keys defined in capital camel case, while the definition schema has them as lower camel case
     // we need to convert lower camel case to upper before merging options so they will override properly
-    Object.keys(object).map((key) => {
-      const upperCase = key.charAt(0).toUpperCase();
-      if (key.charAt(0) !== upperCase) {
-        const capitalKey = upperCase + key.slice(1);
-        object[capitalKey] = object[key];
-        delete object[key];
-      }
-    });
-    return object;
+    return Object.fromEntries(Object.entries(object).map(([key, value]) => [upperFirst(key), value]));
   }
 
   private readJsonDefFile(): Record<string, unknown> {
