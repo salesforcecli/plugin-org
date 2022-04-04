@@ -4,7 +4,6 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as fs from 'fs';
 import { Org, Aliases, Config, ConfigAggregator, Lifecycle, SandboxEvents } from '@salesforce/core';
 import { fromStub, stubInterface, stubMethod } from '@salesforce/ts-sinon';
 import * as sinon from 'sinon';
@@ -66,7 +65,7 @@ describe('org:clone', () => {
   let configSetStub: sinon.SinonStub;
   let configWriteStub: sinon.SinonStub;
   let onStub: sinon.SinonStub;
-  let readFileSyncStub: sinon.SinonStub;
+  let readJsonDefFileStub: sinon.SinonStub;
   let cloneSandboxStub: sinon.SinonStub;
   let configAggregatorStub;
 
@@ -115,7 +114,10 @@ describe('org:clone', () => {
         .callsArgWith(1, statusEvent)
         .callsArgWith(1, resultObject);
     } else {
-      onStub = sandbox.stub().resolves(true);
+      onStub = sandbox.stub().callsFake((event, cb) => {
+        expect(event).to.exist;
+        expect(cb).to.be.a('function');
+      });
     }
     stubMethod(sandbox, Lifecycle, 'getInstance').returns({
       on: onStub,
@@ -124,15 +126,16 @@ describe('org:clone', () => {
     uxTableStub = stubMethod(sandbox, UX.prototype, 'table');
     uxLogStub = stubMethod(sandbox, UX.prototype, 'log');
     uxStyledHeaderStub = stubMethod(sandbox, UX.prototype, 'styledHeader');
-    readFileSyncStub = stubMethod(sandbox, fs, 'readFileSync').returns(JSON.stringify(defFile));
-    return cmd.runIt();
+    readJsonDefFileStub = stubMethod(sandbox, cmd, 'readJsonDefFile').returns(defFile);
+    return cmd;
   };
 
   it('will return sandbox process object', async () => {
-    const res = await runCloneCommand(['-t', 'sandbox', '-u', 'DevHub', '-f', 'sandbox-def.json']);
+    const commmand = await runCloneCommand(['-t', 'sandbox', '-u', 'DevHub', '-f', 'sandbox-def.json']);
+    const res = await commmand.runIt();
     expect(uxStyledHeaderStub.calledOnce).to.be.true;
     expect(uxTableStub.firstCall.args[0].length).to.be.equal(12);
-    expect(readFileSyncStub.calledOnce).to.be.true;
+    expect(readJsonDefFileStub.calledOnce).to.be.true;
     expect(uxLogStub.callCount).to.be.equal(3);
     expect(aliasSetStub.callCount).to.be.equal(0);
     expect(configSetStub.callCount).to.be.equal(0);
@@ -150,7 +153,7 @@ describe('org:clone', () => {
 
   it('will return sandbox process object varargs override defFile', async () => {
     const licenseType = 'Enterprise';
-    const res = await runCloneCommand([
+    const commmand = await runCloneCommand([
       '-t',
       'sandbox',
       '-u',
@@ -159,9 +162,10 @@ describe('org:clone', () => {
       'sandbox-def.json',
       `licenseType=${licenseType}`,
     ]);
+    const res = await commmand.runIt();
     expect(uxStyledHeaderStub.calledOnce).to.be.true;
     expect(uxTableStub.firstCall.args[0].length).to.be.equal(12);
-    expect(readFileSyncStub.calledOnce).to.be.true;
+    expect(readJsonDefFileStub.calledOnce).to.be.true;
     expect(uxLogStub.callCount).to.be.equal(3);
     expect(aliasSetStub.callCount).to.be.equal(0);
     expect(configSetStub.callCount).to.be.equal(0);
@@ -178,7 +182,7 @@ describe('org:clone', () => {
   });
 
   it('will set alias and default username', async () => {
-    const res = await runCloneCommand([
+    const commmand = await runCloneCommand([
       '-t',
       'sandbox',
       '-u',
@@ -189,9 +193,10 @@ describe('org:clone', () => {
       sandboxalias,
       '-s',
     ]);
+    const res = await commmand.runIt();
     expect(uxStyledHeaderStub.calledOnce).to.be.true;
     expect(uxTableStub.firstCall.args[0].length).to.be.equal(12);
-    expect(readFileSyncStub.calledOnce).to.be.true;
+    expect(readJsonDefFileStub.calledOnce).to.be.true;
     expect(uxLogStub.callCount).to.be.equal(3);
     expect(aliasSetStub.callCount).to.be.equal(1);
     expect(aliasSetStub.firstCall.args[0]).to.be.equal(sandboxalias);
@@ -212,15 +217,16 @@ describe('org:clone', () => {
 
   it('cloneSandbox fails and wont set alias or default username', async () => {
     try {
-      await runCloneCommand(
+      const commmand = await runCloneCommand(
         ['-t', 'sandbox', '-u', 'DevHub', '-f', 'sandbox-def.json', '-a', sandboxalias, '-s'],
         true
       );
+      await commmand.runIt();
       sinon.assert.fail('the above should throw an error');
     } catch (e) {
       expect(uxStyledHeaderStub.calledOnce).to.be.false;
       expect(uxTableStub.calledOnce).to.be.false;
-      expect(readFileSyncStub.calledOnce).to.be.true;
+      expect(readJsonDefFileStub.calledOnce).to.be.true;
       expect(uxLogStub.callCount).to.be.equal(0);
       expect(aliasSetStub.callCount).to.be.equal(0);
       expect(configSetStub.callCount).to.be.equal(0);
