@@ -9,7 +9,7 @@
   "flags": {
     "type": "type of org to create",
     "wait": "number of minutes to wait while polling for status",
-    "setdefaultusername": "set the created org as the default username",
+    "setdefaultusername": "set the cloned org as your default",
     "setalias": "alias for the created org",
     "definitionfile": "path to an org definition file"
   },
