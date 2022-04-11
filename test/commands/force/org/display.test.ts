@@ -4,9 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { $$, expect, test } from '@salesforce/command/lib/test';
+import { expect, test } from '@salesforce/command/lib/test';
 import { Aliases, AuthInfo, Connection, Org } from '@salesforce/core';
-
+import * as sinon from 'sinon';
 import { stubMethod, stubInterface, StubbedType } from '@salesforce/ts-sinon';
 import * as utils from '../../../../src/shared/utils';
 
@@ -45,15 +45,15 @@ const fakeAuthUrl = 'fakeAuthUrl';
 
 describe('org:display', () => {
   let authInfoStub: StubbedType<AuthInfo>;
+  const sandbox = sinon.createSandbox();
 
   beforeEach(async function () {
-    $$.SANDBOX.restore();
-    stubMethod($$.SANDBOX, Aliases, 'fetch')
+    stubMethod(sandbox, Aliases, 'fetch')
       .withArgs('nonscratchalias')
       .resolves('nonscratch@test.com')
       .withArgs('scratchAlias')
       .resolves('scratch@test.com');
-    stubMethod($$.SANDBOX, utils, 'getAliasByUsername')
+    stubMethod(sandbox, utils, 'getAliasByUsername')
       .withArgs('nonscratch@test.com')
       .resolves('nonscratchalias')
       .withArgs('scratch@test.com')
@@ -62,9 +62,13 @@ describe('org:display', () => {
       .resolves(undefined);
   });
 
+  afterEach(() => {
+    sandbox.restore();
+  });
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async function prepareStubs(AuthInfoModifications: any = {}) {
-    authInfoStub = stubInterface<AuthInfo>($$.SANDBOX, {
+    authInfoStub = stubInterface<AuthInfo>(sandbox, {
       getFields: () => ({
         ...baseAuthInfo,
         ...AuthInfoModifications,
@@ -76,7 +80,7 @@ describe('org:display', () => {
         return 'badUrl';
       },
     });
-    stubMethod($$.SANDBOX, AuthInfo, 'create').callsFake(async () => authInfoStub);
+    stubMethod(sandbox, AuthInfo, 'create').callsFake(async () => authInfoStub);
   }
 
   test
@@ -206,16 +210,16 @@ describe('org:display', () => {
       await prepareStubs({
         devHubUsername: devHub.username,
       });
-      stubMethod($$.SANDBOX, Org, 'create').resolves(Org.prototype);
-      stubMethod($$.SANDBOX, Org.prototype, 'getUsername').returns('scratch@test.com');
+      stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
+      stubMethod(sandbox, Org.prototype, 'getUsername').returns('scratch@test.com');
 
-      stubMethod($$.SANDBOX, Org.prototype, 'getOrgId').resolves(devHub.id);
-      stubMethod($$.SANDBOX, Org.prototype, 'getDevHubOrg').resolves({
+      stubMethod(sandbox, Org.prototype, 'getOrgId').resolves(devHub.id);
+      stubMethod(sandbox, Org.prototype, 'getDevHubOrg').resolves({
         getUsername: () => devHub.username,
       });
-      stubMethod($$.SANDBOX, Org.prototype, 'getConnection').returns(Connection.prototype);
+      stubMethod(sandbox, Org.prototype, 'getConnection').returns(Connection.prototype);
 
-      stubMethod($$.SANDBOX, Connection.prototype, 'sobject').returns({
+      stubMethod(sandbox, Connection.prototype, 'sobject').returns({
         find: async () => {
           return [
             {
