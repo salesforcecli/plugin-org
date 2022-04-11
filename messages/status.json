@@ -9,7 +9,7 @@
   "flags": {
     "sandboxname": "name of the sandbox org to check status for",
     "wait": "number of minutes to wait while polling for status",
-    "setdefaultusername": "set the created org as the default username",
+    "setdefaultusername": "set the created or cloned org as your default",
     "setalias": "alias for the created org"
   }
 }
