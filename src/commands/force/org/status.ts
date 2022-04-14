@@ -61,6 +61,8 @@ export class OrgStatusCommand extends SfdxCommand {
     });
 
     lifecycle.on(SandboxEvents.EVENT_RESULT, async (results: ResultEvent) => {
+      const resultMsg = `Sandbox ${results.sandboxProcessObj.SandboxName}(${results.sandboxProcessObj.Id}) is ready for use.`;
+      this.ux.log(resultMsg);
       const { data } = SandboxReporter.logSandboxProcessResult(results);
       this.ux.styledHeader('Sandbox Org Status');
       this.ux.table(data, {
