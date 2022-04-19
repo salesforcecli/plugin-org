@@ -48,10 +48,10 @@ describe('org:status', () => {
   // stubs
   let uxTableStub: sinon.SinonStub;
   let cmd: TestOrgStatusCommand;
-  let aliasSetStub: sinon.SinonStub;
   let configSetStub: sinon.SinonStub;
   let configWriteStub: sinon.SinonStub;
   let onStub: sinon.SinonStub;
+  let updateValueStub: sinon.SinonStub;
   let configAggregatorStub;
 
   class TestOrgStatusCommand extends OrgStatusCommand {
@@ -92,22 +92,22 @@ describe('org:status', () => {
     stubMethod(sandbox, Lifecycle, 'getInstance').returns({
       on: onStub,
     });
-    aliasSetStub = stubMethod(sandbox, Aliases.prototype, 'set').returns(sandboxalias);
     uxTableStub = stubMethod(sandbox, UX.prototype, 'table');
+    updateValueStub = stubMethod(sandbox, Aliases.prototype, 'updateValue');
     return cmd.runIt();
   };
 
   it('will return sandbox process object', async () => {
     const res = await runStatusCommand(['--sandboxname', sanboxname]);
     expect(uxTableStub.firstCall.args[0].length).to.equal(12);
-    expect(aliasSetStub.callCount).to.be.equal(0);
+    expect(updateValueStub.callCount).to.be.equal(0);
     expect(configSetStub.callCount).to.be.equal(0);
     expect(configWriteStub.callCount).to.be.equal(0);
     expect(onStub.callCount).to.be.equal(2);
     expect(res).to.deep.equal(sandboxProcessObj);
   });
 
-  it('will set alias and default username', async () => {
+  it('will set alias', async () => {
     const res = await runStatusCommand([
       '--sandboxname',
       sanboxname,
@@ -115,14 +115,19 @@ describe('org:status', () => {
       sandboxalias,
       '--setdefaultusername',
     ]);
-    expect(aliasSetStub.callCount).to.be.equal(1);
-    expect(aliasSetStub.firstCall.args[0]).to.be.equal(sandboxalias);
-    expect(aliasSetStub.firstCall.args[1]).to.be.equal(authUserName);
-    expect(configSetStub.firstCall.args[0]).to.be.equal(Config.DEFAULT_USERNAME);
-    expect(configSetStub.firstCall.args[1]).to.be.equal(authUserName);
+    expect(updateValueStub.firstCall.args).to.deep.equal([sandboxalias, authUserName]);
     expect(onStub.secondCall.firstArg).to.be.equal(SandboxEvents.EVENT_RESULT);
     expect(onStub.callCount).to.be.equal(2);
+    expect(res).to.deep.equal(sandboxProcessObj);
+  });
+
+  it('will set default username', async () => {
+    const res = await runStatusCommand(['--sandboxname', sanboxname, '--setdefaultusername']);
+    expect(configSetStub.firstCall.args[0]).to.be.equal(Config.DEFAULT_USERNAME);
+    expect(configSetStub.firstCall.args[1]).to.be.equal(authUserName);
     expect(configWriteStub.calledOnce).to.be.true;
+    expect(onStub.secondCall.firstArg).to.be.equal(SandboxEvents.EVENT_RESULT);
+    expect(onStub.callCount).to.be.equal(2);
     expect(res).to.deep.equal(sandboxProcessObj);
   });
 

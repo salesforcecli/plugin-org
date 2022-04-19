@@ -73,8 +73,8 @@ export class OrgStatusCommand extends SfdxCommand {
       });
       if (results.sandboxRes?.authUserName) {
         if (this.flags.setalias) {
-          const alias = await Aliases.create({});
-          const result = alias.set(this.flags.setalias, results.sandboxRes.authUserName);
+          const aliases = await Aliases.create(Aliases.getDefaultOptions());
+          const result = await aliases.updateValue(this.flags.setalias, results.sandboxRes.authUserName);
           this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
         }
         if (this.flags.setdefaultusername) {
