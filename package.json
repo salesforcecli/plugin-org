@@ -7,7 +7,7 @@
   "dependencies": {
     "@oclif/config": "^1.18.1",
     "@salesforce/command": "^4.2.2",
-    "@salesforce/core": "^2.35.0",
+    "@salesforce/core": "^2.36.3",
     "@salesforce/kit": "^1.5.17",
     "open": "8.4.0",
     "tslib": "^2"
@@ -43,10 +43,14 @@
     "nyc": "^15.1.0",
     "prettier": "^2.4.1",
     "pretty-quick": "^3.1.0",
+    "shelljs": "^0.8.5",
     "shx": "0.3.4",
     "sinon": "10.0.0",
     "ts-node": "^10.0.0",
     "typescript": "^4.4.4"
+  },
+  "resolutions": {
+    "@salesforce/core": "^2.36.3"
   },
   "config": {
     "commitizen": {
