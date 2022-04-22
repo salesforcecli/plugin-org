@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.12.0](https://github.com/salesforcecli/plugin-org/compare/v1.11.2...v1.12.0) (2022-04-22)
+
+### Features
+
+- new command org:status ([9524fb6](https://github.com/salesforcecli/plugin-org/commit/9524fb67285cf608d4f7a4dd9c11b2475f643866))
+
+### Bug Fixes
+
+- for set alias ([99c77f0](https://github.com/salesforcecli/plugin-org/commit/99c77f0be12df5c03ee8b1f11e7c9425910ec1b1))
+
 ### [1.11.2](https://github.com/salesforcecli/plugin-org/compare/v1.11.1...v1.11.2) (2022-02-21)
 
 ### Bug Fixes
