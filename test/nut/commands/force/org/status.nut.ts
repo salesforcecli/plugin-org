@@ -50,13 +50,14 @@ describe('test sandbox status command', () => {
 
   before(async () => {
     username = ensureString(env.getString('TESTKIT_HUB_USERNAME'));
-    sandboxNameIn = ensureString(env.getString('TESTKIT_SANDBOX_NAME'));
-    const queryStr = `SELECT Id, Status, SandboxName, SandboxInfoId, LicenseType, CreatedDate, CopyProgress, SandboxOrganization, SourceId, Description, EndDate FROM SandboxProcess WHERE SandboxName='${sandboxNameIn}' AND Status != 'D' ORDER BY CreatedDate DESC LIMIT 1`;
+    const queryStr =
+      "SELECT Id, Status, SandboxName, SandboxInfoId, LicenseType, CreatedDate, CopyProgress, SandboxOrganization, SourceId, Description, EndDate FROM SandboxProcess WHERE Status != 'E' and Status != 'D' ORDER BY CreatedDate DESC LIMIT 1";
     const connection = await Connection.create({
       authInfo: await AuthInfo.create({ username }),
     });
     const queryResult = (await connection.tooling.query(queryStr)) as { records: SandboxProcessObject[] };
     expect(queryResult?.records?.length).to.equal(1);
+    sandboxNameIn = queryResult?.records[0]?.SandboxName;
     session = await TestSession.create({
       project: {
         sourceDir: path.join(process.cwd(), 'test', 'nut', 'commands', 'force', 'org'),
@@ -126,7 +127,7 @@ describe('test sandbox status command', () => {
 
     expect(aliases).to.deep.equal({
       orgs: {
-        nodelete: `${username}.${sandboxNameIn}`,
+        [`${sandboxNameIn}`]: `${username}.${sandboxNameIn}`,
       },
     });
   });
