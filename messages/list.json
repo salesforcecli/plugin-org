@@ -7,7 +7,7 @@
   ],
   "verbose": "list more information about each org",
   "all": "include expired, deleted, and unknown-status scratch orgs",
-  "clean": "remove all local org authorizations for non-active orgs",
+  "clean": "remove all local org authorizations for non-active scratch orgs",
   "noPrompt": "do not prompt for confirmation",
   "skipConnectionStatus": "skip retrieving the connection status of non-scratch orgs",
   "prompt": "Found (%s) org configurations to delete. Are you sure (yes/no)?",
