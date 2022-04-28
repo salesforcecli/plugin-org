@@ -4,8 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { $$, expect } from '@salesforce/command/lib/test';
-
+import { expect } from '@salesforce/command/lib/test';
+import * as sinon from 'sinon';
 import { AuthInfo, ConfigAggregator, fs, Aliases, Org } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { OrgListUtil } from '../../src/shared/orgListUtil';
@@ -64,29 +64,30 @@ describe('orgListUtil tests', () => {
   let determineConnectedStatusForNonScratchOrg: sinon.SinonStub;
   let retrieveScratchOrgInfoFromDevHubStub: sinon.SinonStub;
   let checkNonScratchOrgIsDevHub: sinon.SinonStub;
+  const sandbox = sinon.createSandbox();
 
   describe('readLocallyValidatedMetaConfigsGroupedByOrgType', () => {
     afterEach(() => spies.clear());
 
     beforeEach(() => {
-      $$.SANDBOX.stub(AuthInfo, 'create');
+      sandbox.stub(AuthInfo, 'create');
 
-      stubMethod($$.SANDBOX, OrgListUtil, 'readAuthFiles').resolves([orgAuthConfig, expiredAuthConfig, devHubConfig]);
-      aliasListStub = stubMethod($$.SANDBOX, Aliases, 'fetch').resolves();
+      stubMethod(sandbox, OrgListUtil, 'readAuthFiles').resolves([orgAuthConfig, expiredAuthConfig, devHubConfig]);
+      aliasListStub = stubMethod(sandbox, Aliases, 'fetch').resolves();
       determineConnectedStatusForNonScratchOrg = stubMethod(
-        $$.SANDBOX,
+        sandbox,
         OrgListUtil,
         'determineConnectedStatusForNonScratchOrg'
       ).resolves('Connected');
       retrieveScratchOrgInfoFromDevHubStub = stubMethod(
-        $$.SANDBOX,
+        sandbox,
         OrgListUtil,
         'retrieveScratchOrgInfoFromDevHub'
       ).resolves([]);
-      checkNonScratchOrgIsDevHub = stubMethod($$.SANDBOX, OrgListUtil, 'checkNonScratchOrgIsDevHub').resolves(true);
+      checkNonScratchOrgIsDevHub = stubMethod(sandbox, OrgListUtil, 'checkNonScratchOrgIsDevHub').resolves(true);
 
-      spies.set('reduceScratchOrgInfo', $$.SANDBOX.spy(OrgListUtil, 'reduceScratchOrgInfo'));
-      stubMethod($$.SANDBOX, ConfigAggregator, 'create').resolves({
+      spies.set('reduceScratchOrgInfo', sandbox.spy(OrgListUtil, 'reduceScratchOrgInfo'));
+      stubMethod(sandbox, ConfigAggregator, 'create').resolves({
         getConfig: () => {
           return {
             defaultusername: orgAuthConfigFields.username,
@@ -95,14 +96,14 @@ describe('orgListUtil tests', () => {
         },
       });
 
-      $$.SANDBOX.stub(fs, 'readFileSync');
-      stubMethod($$.SANDBOX, fs, 'stat').resolves({ atime: 'test' });
+      sandbox.stub(fs, 'readFileSync');
+      stubMethod(sandbox, fs, 'stat').resolves({ atime: 'test' });
 
-      $$.SANDBOX.stub(utils, 'getAliasByUsername').withArgs('gaz@foo.org').resolves('gaz');
+      sandbox.stub(utils, 'getAliasByUsername').withArgs('gaz@foo.org').resolves('gaz');
     });
 
     afterEach(async () => {
-      $$.SANDBOX.restore();
+      sandbox.restore();
     });
 
     it('readLocallyValidatedMetaConfigsGroupedByOrgType', async () => {
@@ -157,7 +158,7 @@ describe('orgListUtil tests', () => {
     it('execute queries should add information to grouped orgs', async () => {
       retrieveScratchOrgInfoFromDevHubStub.restore();
       retrieveScratchOrgInfoFromDevHubStub = stubMethod(
-        $$.SANDBOX,
+        sandbox,
         OrgListUtil,
         'retrieveScratchOrgInfoFromDevHub'
       ).resolves([
@@ -191,10 +192,10 @@ describe('orgListUtil tests', () => {
 
     it('handles connection errors for non-scratch orgs', async () => {
       determineConnectedStatusForNonScratchOrg.restore();
-      stubMethod($$.SANDBOX, Org, 'create').returns(Org.prototype);
-      stubMethod($$.SANDBOX, Org.prototype, 'getField').returns(undefined);
-      stubMethod($$.SANDBOX, Org.prototype, 'getUsername').returns(devHubConfigFields.username);
-      stubMethod($$.SANDBOX, Org.prototype, 'refreshAuth').rejects({ message: 'bad auth' });
+      stubMethod(sandbox, Org, 'create').returns(Org.prototype);
+      stubMethod(sandbox, Org.prototype, 'getField').returns(undefined);
+      stubMethod(sandbox, Org.prototype, 'getUsername').returns(devHubConfigFields.username);
+      stubMethod(sandbox, Org.prototype, 'refreshAuth').rejects({ message: 'bad auth' });
 
       const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, {});
       expect(orgGroups.nonScratchOrgs).to.have.length(1);
@@ -204,7 +205,7 @@ describe('orgListUtil tests', () => {
 
     it('handles auth file problems for non-scratch orgs', async () => {
       determineConnectedStatusForNonScratchOrg.restore();
-      stubMethod($$.SANDBOX, Org, 'create').rejects({ message: 'bad file' });
+      stubMethod(sandbox, Org, 'create').rejects({ message: 'bad file' });
 
       const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, {});
       expect(orgGroups.nonScratchOrgs).to.have.length(1);
@@ -216,15 +217,15 @@ describe('orgListUtil tests', () => {
   describe('auth file reading tests', () => {
     // mock reading 2 org files
     beforeEach(() => {
-      stubMethod($$.SANDBOX, fs, 'readdir').resolves(['00D000000000000001.json', '00D000000000000002.json']);
+      stubMethod(sandbox, fs, 'readdir').resolves(['00D000000000000001.json', '00D000000000000002.json']);
     });
 
     afterEach(async () => {
-      $$.SANDBOX.restore();
+      sandbox.restore();
     });
 
     it('will return an org with userId without an org file', async () => {
-      stubMethod($$.SANDBOX, AuthInfo, 'create').resolves({
+      stubMethod(sandbox, AuthInfo, 'create').resolves({
         getFields: () => ({ ...orgAuthConfigFields, userId: '005xxxxxxxxxxxxx', orgId: '00D000000000000003' }),
         getConnectionOptions: () => ({ accessToken: orgAuthConfigFields.accessToken }),
         isJwt: () => false,
@@ -237,14 +238,14 @@ describe('orgListUtil tests', () => {
     });
 
     it('will return an org with userId with an org file where the userid is primary', async () => {
-      stubMethod($$.SANDBOX, AuthInfo, 'create').resolves({
+      stubMethod(sandbox, AuthInfo, 'create').resolves({
         getFields: () => ({ ...orgAuthConfigFields, userId: '005xxxxxxxxxxxxx', orgId: '00D000000000000001' }),
         getConnectionOptions: () => ({ accessToken: orgAuthConfigFields.accessToken }),
         isJwt: () => false,
         isOauth: () => false,
         getUsername: () => orgAuthConfigFields.username,
       });
-      stubMethod($$.SANDBOX, fs, 'readJson').resolves({
+      stubMethod(sandbox, fs, 'readJson').resolves({
         usernames: [orgAuthConfigFields.username, 'secondary@user.test'],
       });
       const authFiles = await OrgListUtil.readAuthFiles([`${orgAuthConfigFields.username}.json`]);
@@ -253,14 +254,14 @@ describe('orgListUtil tests', () => {
     });
 
     it('will NOT return an org with userId with an org file where the userid is NOT listed', async () => {
-      stubMethod($$.SANDBOX, AuthInfo, 'create').resolves({
+      stubMethod(sandbox, AuthInfo, 'create').resolves({
         getFields: () => ({ ...orgAuthConfigFields, userId: '005xxxxxxxxxxxxx', orgId: '00D000000000000001' }),
         getConnectionOptions: () => ({ accessToken: orgAuthConfigFields.accessToken }),
         isJwt: () => false,
         isOauth: () => false,
         getUsername: () => orgAuthConfigFields.username,
       });
-      stubMethod($$.SANDBOX, fs, 'readJson').resolves({
+      stubMethod(sandbox, fs, 'readJson').resolves({
         usernames: ['secondary@user.test'],
       });
       const authFiles = await OrgListUtil.readAuthFiles([`${orgAuthConfigFields.username}.json`]);
@@ -268,14 +269,14 @@ describe('orgListUtil tests', () => {
     });
 
     it('will NOT return an org with userId with an org file where the userid is listed but not first', async () => {
-      stubMethod($$.SANDBOX, AuthInfo, 'create').resolves({
+      stubMethod(sandbox, AuthInfo, 'create').resolves({
         getFields: () => ({ ...orgAuthConfigFields, userId: '005xxxxxxxxxxxxx', orgId: '00D000000000000001' }),
         getConnectionOptions: () => ({ accessToken: orgAuthConfigFields.accessToken }),
         isJwt: () => false,
         isOauth: () => false,
         getUsername: () => orgAuthConfigFields.username,
       });
-      stubMethod($$.SANDBOX, fs, 'readJson').resolves({
+      stubMethod(sandbox, fs, 'readJson').resolves({
         usernames: ['secondary@user.test', orgAuthConfigFields.username],
       });
       const authFiles = await OrgListUtil.readAuthFiles([`${orgAuthConfigFields.username}.json`]);

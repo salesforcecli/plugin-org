@@ -692,10 +692,10 @@
     chalk "^2.4.2"
     cli-ux "^4.9.3"
 
-"@salesforce/core@^2.24.0", "@salesforce/core@^2.29.0", "@salesforce/core@^2.31.0", "@salesforce/core@^2.35.0":
-  version "2.36.0"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-2.36.0.tgz#eadade3d663f0a2e11d0cc9f9097c528c182997d"
-  integrity sha512-VsKt7SXArxrOelaJl5Ez21Pmtdp2eU6qimqZ5clxnNaZDZKOySDPYnKHu7AYCt1LUNFN9cfsX8K5yOHxS+wT+w==
+"@salesforce/core@^2.24.0", "@salesforce/core@^2.29.0", "@salesforce/core@^2.31.0", "@salesforce/core@^2.35.0", "@salesforce/core@^2.36.3":
+  version "2.36.3"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-2.36.3.tgz#172a3a0b926ecc9ff626a58cb4f5c6426aeeb55a"
+  integrity sha512-4SiIKpsHEJGK1tyWhLXwCJnZsfuii6gL4PF+aHEcFwxWiDUe67SsYNlN+8pAETK4EtdEOTaxYc+la4c+5/63TA==
   dependencies:
     "@salesforce/bunyan" "^2.0.0"
     "@salesforce/kit" "^1.5.17"
@@ -1329,9 +1329,9 @@ astral-regex@^2.0.0:
   integrity sha512-Z7tMw1ytTXt5jqMcOP+OQteU1VuNK9Y02uuJtKQ1Sv69jXQKKg5cibLwGJow8yzZP+eAc18EmLGPal0bp36rvQ==
 
 async@^3.2.0:
-  version "3.2.1"
-  resolved "https://registry.npmjs.org/async/-/async-3.2.1.tgz#d3274ec66d107a47476a4c49136aacdb00665fc8"
-  integrity sha512-XdD5lRO/87udXCMC9meWdYiR+Nq6ZjUfXidViUZGu2F1MO4T3XwZ1et0hb2++BgLfhyJwy44BGB/yx80ABx8hg==
+  version "3.2.3"
+  resolved "https://registry.yarnpkg.com/async/-/async-3.2.3.tgz#ac53dafd3f4720ee9e8a160628f18ea91df196c9"
+  integrity sha512-spZRyzKL5l5BZQrr/6m/SqFdBN0q3OCI0f9rjfBzCMBIP4p75P620rR3gTmaksNOhmzgdxcaxdNfMy6anrbM0g==
 
 asynckit@^0.4.0:
   version "0.4.0"
