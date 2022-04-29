@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.12.1](https://github.com/salesforcecli/plugin-org/compare/v1.12.0...v1.12.1) (2022-04-29)
+
+### Bug Fixes
+
+- docs for clean flag ([be868ab](https://github.com/salesforcecli/plugin-org/commit/be868ab5ea13099ba2b3f6a90581609eb0c55164))
+
 ## [1.12.0](https://github.com/salesforcecli/plugin-org/compare/v1.11.2...v1.12.0) (2022-04-22)
 
 ### Features
