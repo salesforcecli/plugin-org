@@ -5,7 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as fs from 'fs';
 import * as path from 'path';
 import { TestSession, execCmd } from '@salesforce/cli-plugins-testkit';
 import { expect } from 'chai';
@@ -100,11 +99,12 @@ describe('test sandbox status command', () => {
       }
     ).jsonOutput.result;
     expect(orgStatusResult).to.be.ok;
-
-    const config = JSON.parse(
-      fs.readFileSync(path.join(session.project.dir, '..', '.sfdx', 'sfdx-config.json'), 'utf8')
-    ) as Record<string, string>;
-    expect(config.defaultusername).to.be.equal(`${username}.${sandboxName}`);
+    const execOptions: shell.ExecOptions = {
+      silent: true,
+    };
+    const result = shell.exec('sfdx config:get defaultusername --json', execOptions) as shell.ShellString;
+    expect(result.code).to.equal(0);
+    expect(result.stdout).to.contain(`"${username}.${sandboxName}"`);
   });
 
   it('sandbox status command set alias', async () => {
@@ -115,18 +115,12 @@ describe('test sandbox status command', () => {
       }
     ).jsonOutput.result;
     expect(orgStatusResult).to.be.ok;
-
-    const aliases = JSON.parse(
-      fs.readFileSync(path.join(session.project.dir, '..', '.sfdx', 'alias.json'), 'utf8')
-    ) as {
-      orgs: Record<string, string>;
+    const execOptions: shell.ExecOptions = {
+      silent: true,
     };
-
-    expect(aliases).to.deep.equal({
-      orgs: {
-        [`${sandboxName}`]: `${username}.${sandboxName}`,
-      },
-    });
+    const result = shell.exec('sfdx alias:list --json', execOptions) as shell.ShellString;
+    expect(result.code).to.equal(0);
+    expect(result.stdout).to.contain(`"${sandboxName}"`);
   });
 
   after(async () => {
