@@ -1,6 +1,6 @@
 {
   "success": "The sandbox org cloning process %s is in progress. Run \"sfdx force:org:status -n %s\" to check for status. If the org is ready, checking the status also logs the requesting user in to the sandbox org and authorizes the org for use with Salesforce CLI.",
-  "description": "clone a sandbox org\nThere are two ways to clone a sandbox: either specify a sandbox definition file or provide key=value pairs at the command line. Key-value pairs at the command-line override their equivalent sandbox definition file values. In either case, you must specify both the \"sandboxName\" and \"sourceSandbox\" options. Set the --targetusername (-u) parameter to a production org with sandbox licenses. The --type (-t) parameter is required and must be set to \"sandbox\".",
+  "description": "clone a sandbox org\nThere are two ways to clone a sandbox: either specify a sandbox definition file or provide key=value pairs at the command line. Key-value pairs at the command-line override their equivalent sandbox definition file values. In either case, you must specify both the \"sandboxName\" and \"sourceSandbox\" options. \n\nSet the --targetusername (-u) parameter to a production org with sandbox licenses. The --type (-t) parameter is required and must be set to \"sandbox\".",
   "examples": [
     "$ sfdx force:org:clone -t sandbox -f config/dev-sandbox-def.json -u prodOrg -a MyDevSandbox",
     "$ sfdx force:org:clone -t sandbox SandboxName=DevSbx1 SourceSandboxName=Sbx2Clone -u prodOrg -a MyDevSandbox"
