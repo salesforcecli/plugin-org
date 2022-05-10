@@ -79,6 +79,7 @@ sfdx plugins
 <!-- commands -->
 
 - [`sfdx force:org:beta:create [name=value...] [-t scratch|sandbox] [-f <filepath>] [-n] [-c] [-i <string>] [-s] [-a <string>] [-w <minutes>] [-d <integer>] [-v <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-forceorgbetacreate-namevalue--t-scratchsandbox--f-filepath--n--c--i-string--s--a-string--w-minutes--d-integer--v-string--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
+- [`sfdx force:org:clone [name=value...] -t sandbox [-f <filepath>] [-s] [-a <string>] [-w <minutes>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-forceorgclone-namevalue--t-sandbox--f-filepath--s--a-string--w-minutes--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
 - [`sfdx force:org:delete [-p] [-v <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-forceorgdelete--p--v-string--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
 - [`sfdx force:org:display [-u <string>] [--apiversion <string>] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-forceorgdisplay--u-string---apiversion-string---verbose---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
 - [`sfdx force:org:list [--all] [-p --clean] [--skipconnectionstatus] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`](#sfdx-forceorglist---all--p---clean---skipconnectionstatus---verbose---json---loglevel-tracedebuginfowarnerrorfataltracedebuginfowarnerrorfatal)
@@ -150,7 +151,52 @@ EXAMPLES
   $ sfdx force:org:create -t sandbox -f config/dev-sandbox-def.json -a MyDevSandbox -u prodOrg
 ```
 
-_See code: [src/commands/force/org/beta/create.ts](https://github.com/salesforcecli/plugin-org/blob/v1.12.0/src/commands/force/org/beta/create.ts)_
+_See code: [src/commands/force/org/beta/create.ts](https://github.com/salesforcecli/plugin-org/blob/v1.12.1/src/commands/force/org/beta/create.ts)_
+
+## `sfdx force:org:clone [name=value...] -t sandbox [-f <filepath>] [-s] [-a <string>] [-w <minutes>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
+
+clone a sandbox org
+
+```
+USAGE
+  $ sfdx force:org:clone [name=value...] -t sandbox [-f <filepath>] [-s] [-a <string>] [-w <minutes>] [-u <string>]
+  [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -a, --setalias=setalias                                                           alias for the cloned org
+  -f, --definitionfile=definitionfile                                               path to the sandbox definition file
+  -s, --setdefaultusername                                                          set the cloned org as your default
+  -t, --type=(sandbox)                                                              (required) type of org to create
+
+  -u, --targetusername=targetusername                                               username or alias for the target
+                                                                                    org; overrides default target org
+
+  -w, --wait=wait                                                                   [default: 6 minutes] number of
+                                                                                    minutes to wait while polling for
+                                                                                    status
+
+  --apiversion=apiversion                                                           override the api version used for
+                                                                                    api requests made by this command
+
+  --json                                                                            format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for
+                                                                                    this command invocation
+
+DESCRIPTION
+  There are two ways to clone a sandbox: either specify a sandbox definition file or provide key=value pairs at the
+  command line. Key-value pairs at the command-line override their equivalent sandbox definition file values. In either
+  case, you must specify both the "SandboxName" and "SourceSandboxName" options.
+
+  Set the --targetusername (-u) parameter to a production org with sandbox licenses. The --type (-t) parameter is
+  required and must be set to "sandbox".
+
+EXAMPLES
+  $ sfdx force:org:clone -t sandbox -f config/dev-sandbox-def.json -u prodOrg -a MyDevSandbox
+  $ sfdx force:org:clone -t sandbox SandboxName=DevSbx1 SourceSandboxName=Sbx2Clone -u prodOrg -a MyDevSandbox
+```
+
+_See code: [src/commands/force/org/clone.ts](https://github.com/salesforcecli/plugin-org/blob/v1.12.1/src/commands/force/org/clone.ts)_
 
 ## `sfdx force:org:delete [-p] [-v <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
@@ -186,7 +232,7 @@ EXAMPLES
   $ sfdx force:org:delete -u MyOrgAlias -p
 ```
 
-_See code: [src/commands/force/org/delete.ts](https://github.com/salesforcecli/plugin-org/blob/v1.12.0/src/commands/force/org/delete.ts)_
+_See code: [src/commands/force/org/delete.ts](https://github.com/salesforcecli/plugin-org/blob/v1.12.1/src/commands/force/org/delete.ts)_
 
 ## `sfdx force:org:display [-u <string>] [--apiversion <string>] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
@@ -227,7 +273,7 @@ EXAMPLES
   sfdx force:org:display -u TestOrg1 --json > tmp/MyOrgDesc.json
 ```
 
-_See code: [src/commands/force/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/v1.12.0/src/commands/force/org/display.ts)_
+_See code: [src/commands/force/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/v1.12.1/src/commands/force/org/display.ts)_
 
 ## `sfdx force:org:list [--all] [-p --clean] [--skipconnectionstatus] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
@@ -265,7 +311,7 @@ EXAMPLES
   sfdx force:org:list --verbose --json > tmp/MyOrgList.json
 ```
 
-_See code: [src/commands/force/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/v1.12.0/src/commands/force/org/list.ts)_
+_See code: [src/commands/force/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/v1.12.1/src/commands/force/org/list.ts)_
 
 ## `sfdx force:org:open [-b <string> | -r] [-p <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
@@ -310,7 +356,7 @@ EXAMPLES
   sfdx force:org:open -u me@my.org -b firefox
 ```
 
-_See code: [src/commands/force/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/v1.12.0/src/commands/force/org/open.ts)_
+_See code: [src/commands/force/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/v1.12.1/src/commands/force/org/open.ts)_
 
 ## `sfdx force:org:status -n <string> [-s] [-a <string>] [-w <minutes>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
 
@@ -358,6 +404,6 @@ EXAMPLES
   sfdx force:org:status --sandboxname DevSbx1 --wait 45 --setdefaultusername -u prodOrg
 ```
 
-_See code: [src/commands/force/org/status.ts](https://github.com/salesforcecli/plugin-org/blob/v1.12.0/src/commands/force/org/status.ts)_
+_See code: [src/commands/force/org/status.ts](https://github.com/salesforcecli/plugin-org/blob/v1.12.1/src/commands/force/org/status.ts)_
 
 <!-- commandsstop -->
