@@ -21,9 +21,10 @@ describe('test org:open command', () => {
   it('org:open command', async () => {
     const result = execCmd('force:org:open --urlonly --json', {
       ensureExitCode: 0,
-    }).jsonOutput.result;
+    }).jsonOutput.result as { url: string; orgId: string; username: string };
     expect(result).to.be.ok;
-    expect(result).to.have.key('url').and.to.include('/secur/frontdoor.jsp');
+    expect(result).to.have.keys(['url', 'orgId', 'username']);
+    expect(result?.url).to.include('/secur/frontdoor.jsp');
   });
 
   after(async () => {
