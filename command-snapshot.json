@@ -1,86 +1,72 @@
 [
-    {
-        "command": "force:org:beta:create",
-        "plugin": "@salesforce/plugin-org",
-        "flags": [
-            "apiversion",
-            "clientid",
-            "definitionfile",
-            "durationdays",
-            "json",
-            "loglevel",
-            "noancestors",
-            "nonamespace",
-            "retry",
-            "setalias",
-            "setdefaultusername",
-            "targetdevhubusername",
-            "targetusername",
-            "type",
-            "wait"
-        ]
-    },
-    {
-        "command": "force:org:delete",
-        "plugin": "@salesforce/plugin-org",
-        "flags": [
-            "apiversion",
-            "json",
-            "loglevel",
-            "noprompt",
-            "targetdevhubusername",
-            "targetusername"
-        ]
-    },
-    {
-        "command": "force:org:display",
-        "plugin": "@salesforce/plugin-org",
-        "flags": [
-            "apiversion",
-            "json",
-            "loglevel",
-            "targetusername",
-            "verbose"
-        ]
-    },
-    {
-        "command": "force:org:list",
-        "plugin": "@salesforce/plugin-org",
-        "flags": [
-            "all",
-            "clean",
-            "json",
-            "loglevel",
-            "noprompt",
-            "skipconnectionstatus",
-            "verbose"
-        ]
-    },
-    {
-        "command": "force:org:open",
-        "plugin": "@salesforce/plugin-org",
-        "flags": [
-            "apiversion",
-            "browser",
-            "json",
-            "loglevel",
-            "path",
-            "targetusername",
-            "urlonly"
-        ]
-    },
-    {
-        "command": "force:org:status",
-        "plugin": "@salesforce/plugin-org",
-        "flags": [
-            "apiversion",
-            "json",
-            "loglevel",
-            "sandboxname",
-            "setalias",
-            "setdefaultusername",
-            "targetusername",
-            "wait"
-        ]
-    }
+  {
+    "command": "force:org:beta:create",
+    "plugin": "@salesforce/plugin-org",
+    "flags": [
+      "apiversion",
+      "clientid",
+      "definitionfile",
+      "durationdays",
+      "json",
+      "loglevel",
+      "noancestors",
+      "nonamespace",
+      "retry",
+      "setalias",
+      "setdefaultusername",
+      "targetdevhubusername",
+      "targetusername",
+      "type",
+      "wait"
+    ]
+  },
+  {
+    "command": "force:org:delete",
+    "plugin": "@salesforce/plugin-org",
+    "flags": ["apiversion", "json", "loglevel", "noprompt", "targetdevhubusername", "targetusername"]
+  },
+  {
+    "command": "force:org:display",
+    "plugin": "@salesforce/plugin-org",
+    "flags": ["apiversion", "json", "loglevel", "targetusername", "verbose"]
+  },
+  {
+    "command": "force:org:list",
+    "plugin": "@salesforce/plugin-org",
+    "flags": ["all", "clean", "json", "loglevel", "noprompt", "skipconnectionstatus", "verbose"]
+  },
+  {
+    "command": "force:org:open",
+    "plugin": "@salesforce/plugin-org",
+    "flags": ["apiversion", "browser", "json", "loglevel", "path", "targetusername", "urlonly"]
+  },
+  {
+    "command": "force:org:status",
+    "plugin": "@salesforce/plugin-org",
+    "flags": [
+      "apiversion",
+      "json",
+      "loglevel",
+      "sandboxname",
+      "setalias",
+      "setdefaultusername",
+      "targetusername",
+      "wait"
+    ]
+  },
+  {
+    "command": "force:org:clone",
+    "plugin": "@salesforce/plugin-org",
+    "flags": [
+      "apiversion",
+      "json",
+      "loglevel",
+      "type",
+      "definitionfile",
+      "setalias",
+      "setdefaultusername",
+      "targetusername",
+      "wait"
+    ]
+  }
 ]
