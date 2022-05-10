@@ -238,6 +238,7 @@ describe('open commands', () => {
         spies.set('resolver', stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
       })
       .stdout()
+      .stderr()
       .command(['force:org:open', '--targetusername', username, '--path', testPath, '-b', 'duff'])
       .it('does not call open as passed unknown browser name', () => {
         expect(spies.get('resolver').callCount).to.equal(0);

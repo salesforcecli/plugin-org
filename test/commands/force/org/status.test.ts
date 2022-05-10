@@ -93,6 +93,8 @@ describe('org:status', () => {
       on: onStub,
     });
     uxTableStub = stubMethod(sandbox, UX.prototype, 'table');
+    stubMethod(sandbox, UX.prototype, 'log');
+    stubMethod(sandbox, UX.prototype, 'styledHeader');
     updateValueStub = stubMethod(sandbox, Aliases.prototype, 'updateValue');
     return cmd.runIt();
   };
