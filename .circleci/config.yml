@@ -77,8 +77,6 @@ workflows:
           context: na40-auth-url
       - release-management/run-command-keyword:
           name: sandbox-nuts
-          node_version: lts
-          sfdx_version: latest
           git_key_word: '[sb-nuts]'
           timeout: 1.5h
           command: test:nuts:sandbox
