@@ -18,12 +18,29 @@ let sourceSandboxName: string;
 let sourceSandboxInfoId: string;
 let clonedSandboxName: string;
 
-const randomSandboxName = async () => {
+async function getConnection() {
   const env = new Env();
   const username = ensureString(env.getString('TESTKIT_HUB_USERNAME'));
-  const connection = await Connection.create({
-    authInfo: await AuthInfo.create({ username }),
-  });
+  try {
+    return await Connection.create({
+      authInfo: await AuthInfo.create({ username }),
+    });
+  } catch (err) {
+    throw new Error(`AuthInfo.create failed with error:\n${(err as Error).message}`);
+  }
+}
+
+async function toolingQuery<T>(queryStr: string) {
+  const connection = await getConnection();
+  try {
+    return (await connection.tooling.query(queryStr)) as { records: T[] };
+  } catch (err) {
+    throw new Error(`tooling.query failed with error:\n${(err as Error).message}`);
+  }
+}
+
+async function getRandomSandboxName() {
+  const connection = await getConnection();
   let sandboxName: string;
   let queryResult: { records: SandboxProcessObject[] };
   // Make sure there are no duplicate sandbox names
@@ -36,18 +53,16 @@ const randomSandboxName = async () => {
     queryResult = (await connection.tooling.query(queryStr)) as { records: SandboxProcessObject[] };
   }
   return sandboxName;
-};
+}
 
-const isSandboxClone = async (sandboxName: string, orgSourceId: string) => {
-  const env = new Env();
-  const username = ensureString(env.getString('TESTKIT_HUB_USERNAME'));
-  const connection = await Connection.create({
-    authInfo: await AuthInfo.create({ username }),
-  });
+async function isSandboxClone(sandboxName: string, orgSourceId: string) {
   const queryStr = `SELECT SourceId, SandboxName FROM SandboxProcess WHERE SandboxName = ${sandboxName} AND SourceId = ${orgSourceId} ORDER BY CreatedDate DESC LIMIT 1`;
-  const queryResult = (await connection.tooling.query(queryStr)) as { records: SandboxProcessObject[] };
-  return queryResult?.records?.length === 1;
-};
+  try {
+    return (await toolingQuery<SandboxProcessObject[]>(queryStr))?.records?.length === 1;
+  } catch {
+    return false;
+  }
+}
 
 function unsetAlias() {
   const execOptions: shell.ExecOptions = {
@@ -77,17 +92,12 @@ function deleteSandbox(username: string) {
 }
 
 describe('test sandbox clone command', () => {
-  const env = new Env();
   let username: string;
 
   before(async () => {
-    username = ensureString(env.getString('TESTKIT_HUB_USERNAME'));
     const queryStr =
       "SELECT SandboxInfoId, SandboxName FROM SandboxProcess WHERE Status != 'E' and Status != 'D' AND SourceId = '' ORDER BY CreatedDate DESC LIMIT 1";
-    const connection = await Connection.create({
-      authInfo: await AuthInfo.create({ username }),
-    });
-    const queryResult = (await connection.tooling.query(queryStr)) as { records: SandboxProcessObject[] };
+    const queryResult = await toolingQuery<SandboxProcessObject>(queryStr);
     expect(queryResult?.records?.length).to.equal(1);
     sourceSandboxName = queryResult?.records[0]?.SandboxName;
     sourceSandboxInfoId = queryResult?.records[0]?.SandboxInfoId;
@@ -105,7 +115,7 @@ describe('test sandbox clone command', () => {
   });
 
   it('sandbox status command', async () => {
-    clonedSandboxName = await randomSandboxName();
+    clonedSandboxName = await getRandomSandboxName();
     const orgStatusResult = execCmd<SandboxProcessObject>(
       `force:org:clone -t sandbox SandboxName=${clonedSandboxName} SourceSandboxName=${sourceSandboxName} -u ${username} --json -w 60`,
       {
@@ -117,7 +127,7 @@ describe('test sandbox clone command', () => {
   });
 
   it('sandbox status command sets setdefaultusername', async () => {
-    clonedSandboxName = await randomSandboxName();
+    clonedSandboxName = await getRandomSandboxName();
     const orgStatusResult = execCmd<SandboxProcessObject>(
       `force:org:clone -t sandbox SandboxName=${clonedSandboxName} SourceSandboxName=${sourceSandboxName} -u ${username} -s --json -w 60`,
       {
@@ -135,7 +145,7 @@ describe('test sandbox clone command', () => {
   });
 
   it('sandbox status command set alias', async () => {
-    clonedSandboxName = await randomSandboxName();
+    clonedSandboxName = await getRandomSandboxName();
     const orgStatusResult = execCmd<SandboxProcessObject>(
       `force:org:clone -t sandbox SandboxName=${clonedSandboxName} SourceSandboxName=${sourceSandboxName} -u ${username} -a ${clonedSandboxName} --json -w 60`,
       {
