@@ -39,5 +39,34 @@
     "command": "force:org:open",
     "plugin": "@salesforce/plugin-org",
     "flags": ["apiversion", "browser", "json", "loglevel", "path", "targetusername", "urlonly"]
+  },
+  {
+    "command": "force:org:status",
+    "plugin": "@salesforce/plugin-org",
+    "flags": [
+      "apiversion",
+      "json",
+      "loglevel",
+      "sandboxname",
+      "setalias",
+      "setdefaultusername",
+      "targetusername",
+      "wait"
+    ]
+  },
+  {
+    "command": "force:org:clone",
+    "plugin": "@salesforce/plugin-org",
+    "flags": [
+      "apiversion",
+      "json",
+      "loglevel",
+      "type",
+      "definitionfile",
+      "setalias",
+      "setdefaultusername",
+      "targetusername",
+      "wait"
+    ]
   }
 ]

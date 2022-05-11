@@ -9,7 +9,6 @@ import { EOL } from 'os';
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
 import { AuthInfo, ConfigAggregator, ConfigInfo, Connection, Org, SfdxError, Messages } from '@salesforce/core';
 import { sortBy } from '@salesforce/kit';
-import { Table } from 'cli-ux/lib';
 import { OrgListUtil, identifyActiveOrgByStatus } from '../../../shared/orgListUtil';
 import { getStyledObject } from '../../../shared/orgHighlighter';
 import { ExtendedAuthFields } from '../../../shared/orgTypes';
@@ -160,7 +159,7 @@ export class OrgListCommand extends SfdxCommand {
     }
   }
 
-  private getScratchOrgColumnData(): Array<Partial<Table.TableColumn>> {
+  private getScratchOrgColumnData(): unknown[] {
     // default columns for the scratch org list
     let scratchOrgColumns = [
       { key: 'defaultMarker', label: '' },

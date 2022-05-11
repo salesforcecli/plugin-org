@@ -4,8 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { $$, expect, test } from '@salesforce/command/lib/test';
+import { expect, test } from '@salesforce/command/lib/test';
 import { Org, MyDomainResolver, Messages } from '@salesforce/core';
+import * as sinon from 'sinon';
 import { stubMethod } from '@salesforce/ts-sinon';
 import * as utils from '../../../../src/shared/utils';
 
@@ -30,20 +31,23 @@ const testJsonStructure = (response: Record<string, unknown>) => {
 };
 
 describe('open commands', () => {
+  const sandbox = sinon.createSandbox();
   const spies = new Map();
   afterEach(() => spies.clear());
 
   beforeEach(async function () {
-    $$.SANDBOX.restore();
-    stubMethod($$.SANDBOX, Org, 'create').resolves(Org.prototype);
-    stubMethod($$.SANDBOX, Org.prototype, 'getField').withArgs(Org.Fields.INSTANCE_URL).returns(testInstance);
-    stubMethod($$.SANDBOX, Org.prototype, 'refreshAuth').resolves({});
-    stubMethod($$.SANDBOX, Org.prototype, 'getOrgId').returns(orgId);
-    stubMethod($$.SANDBOX, Org.prototype, 'getUsername').returns(username);
-    stubMethod($$.SANDBOX, Org.prototype, 'getConnection').returns({
+    stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
+    stubMethod(sandbox, Org.prototype, 'getField').withArgs(Org.Fields.INSTANCE_URL).returns(testInstance);
+    stubMethod(sandbox, Org.prototype, 'refreshAuth').resolves({});
+    stubMethod(sandbox, Org.prototype, 'getOrgId').returns(orgId);
+    stubMethod(sandbox, Org.prototype, 'getUsername').returns(username);
+    stubMethod(sandbox, Org.prototype, 'getConnection').returns({
       accessToken,
     });
-    spies.set('open', stubMethod($$.SANDBOX, utils, 'openUrl').resolves());
+    spies.set('open', stubMethod(sandbox, utils, 'openUrl').resolves());
+  });
+  afterEach(() => {
+    sandbox.restore();
   });
 
   describe('url generation', () => {
@@ -88,11 +92,11 @@ describe('open commands', () => {
 
   describe('domain resolution, with callout', () => {
     beforeEach(() => {
-      stubMethod($$.SANDBOX, MyDomainResolver, 'create').resolves(MyDomainResolver.prototype);
+      stubMethod(sandbox, MyDomainResolver, 'create').resolves(MyDomainResolver.prototype);
     });
     test
       .do(() => {
-        spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
+        spies.set('resolver', stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
       })
       .stdout()
       .command(['force:org:open', '--json', '--targetusername', username, '--path', testPath])
@@ -109,7 +113,7 @@ describe('open commands', () => {
       .do(() => {
         spies.set(
           'resolver',
-          stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').throws({ message: 'timeout' })
+          stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').throws({ message: 'timeout' })
         );
       })
       .stdout()
@@ -125,8 +129,8 @@ describe('open commands', () => {
 
   describe('domain resolution, no callout', () => {
     beforeEach(() => {
-      stubMethod($$.SANDBOX, MyDomainResolver, 'create').resolves(MyDomainResolver.prototype);
-      spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
+      stubMethod(sandbox, MyDomainResolver, 'create').resolves(MyDomainResolver.prototype);
+      spies.set('resolver', stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
     });
     it('does not wait for domains on internal urls');
 
@@ -168,7 +172,7 @@ describe('open commands', () => {
   describe('human output', () => {
     test
       .do(() => {
-        spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
+        spies.set('resolver', stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
       })
       .stdout()
       .command(['force:org:open', '--targetusername', username, '--path', testPath])
@@ -180,7 +184,7 @@ describe('open commands', () => {
 
     test
       .do(() => {
-        spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
+        spies.set('resolver', stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
       })
       .stdout()
       .command(['force:org:open', '--targetusername', username, '--path', testPath, '--urlonly'])
@@ -192,7 +196,7 @@ describe('open commands', () => {
       .do(() => {
         spies.set(
           'resolver',
-          stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').throws({ message: 'timeout' })
+          stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').throws({ message: 'timeout' })
         );
       })
       .stderr()
@@ -207,7 +211,7 @@ describe('open commands', () => {
   describe('browser argument', () => {
     test
       .do(() => {
-        spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
+        spies.set('resolver', stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
       })
       .stdout()
       .command(['force:org:open', '--targetusername', username, '--path', testPath])
@@ -219,7 +223,7 @@ describe('open commands', () => {
 
     test
       .do(() => {
-        spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
+        spies.set('resolver', stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
       })
       .stdout()
       .command(['force:org:open', '--targetusername', username, '--path', testPath, '-b', testBrowser])
@@ -231,9 +235,10 @@ describe('open commands', () => {
 
     test
       .do(() => {
-        spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
+        spies.set('resolver', stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
       })
       .stdout()
+      .stderr()
       .command(['force:org:open', '--targetusername', username, '--path', testPath, '-b', 'duff'])
       .it('does not call open as passed unknown browser name', () => {
         expect(spies.get('resolver').callCount).to.equal(0);

@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.13.0](https://github.com/salesforcecli/plugin-org/compare/v1.12.1...v1.13.0) (2022-05-10)
+
+### Features
+
+- clone command ([481b19d](https://github.com/salesforcecli/plugin-org/commit/481b19d3869ed426bc483a256f486bb0823225ac))
+- clone command ([48b2b85](https://github.com/salesforcecli/plugin-org/commit/48b2b85b9bc21856fe35d81b5b2bc595744aa63c))
+
+### Bug Fixes
+
+- bump core ([78186ed](https://github.com/salesforcecli/plugin-org/commit/78186ed0e2f525aab5fa3d741ad67d4e5c4f7f8c))
+- test and snapshot updates ([6b469ea](https://github.com/salesforcecli/plugin-org/commit/6b469ea8301377ec4acad8fcbc98e9a6bb4ba5e0))
+
+### [1.12.1](https://github.com/salesforcecli/plugin-org/compare/v1.12.0...v1.12.1) (2022-04-29)
+
+### Bug Fixes
+
+- docs for clean flag ([be868ab](https://github.com/salesforcecli/plugin-org/commit/be868ab5ea13099ba2b3f6a90581609eb0c55164))
+
+## [1.12.0](https://github.com/salesforcecli/plugin-org/compare/v1.11.2...v1.12.0) (2022-04-22)
+
+### Features
+
+- new command org:status ([9524fb6](https://github.com/salesforcecli/plugin-org/commit/9524fb67285cf608d4f7a4dd9c11b2475f643866))
+
+### Bug Fixes
+
+- for set alias ([99c77f0](https://github.com/salesforcecli/plugin-org/commit/99c77f0be12df5c03ee8b1f11e7c9425910ec1b1))
+
 ### [1.11.2](https://github.com/salesforcecli/plugin-org/compare/v1.11.1...v1.11.2) (2022-02-21)
 
 ### Bug Fixes

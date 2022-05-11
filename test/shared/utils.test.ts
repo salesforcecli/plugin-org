@@ -4,23 +4,25 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { $$, expect } from '@salesforce/command/lib/test';
+import { expect } from '@salesforce/command/lib/test';
+import * as sinon from 'sinon';
 import { Aliases } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { getAliasByUsername } from '../../src/shared/utils';
 
 describe('getAliasByUsername', () => {
+  const sandbox = sinon.createSandbox();
   beforeEach(async () => {
-    stubMethod($$.SANDBOX, Aliases, 'create').resolves(Aliases.prototype);
-    stubMethod($$.SANDBOX, Aliases, 'getDefaultOptions').returns({});
-    stubMethod($$.SANDBOX, Aliases.prototype, 'getKeysByValue')
+    stubMethod(sandbox, Aliases, 'create').resolves(Aliases.prototype);
+    stubMethod(sandbox, Aliases, 'getDefaultOptions').returns({});
+    stubMethod(sandbox, Aliases.prototype, 'getKeysByValue')
       .withArgs('username1')
       .returns(['alias1'])
       .withArgs('username2')
       .returns(['alias2', 'alias2b']);
   });
   afterEach(() => {
-    $$.SANDBOX.restore();
+    sandbox.restore();
   });
 
   it('returns alias for a username that exists', async () => {

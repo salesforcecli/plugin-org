@@ -4,10 +4,11 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { $$, expect, test } from '@salesforce/command/lib/test';
+import { expect, test } from '@salesforce/command/lib/test';
+import { UX } from '@salesforce/command';
 import * as chai from 'chai';
+import * as sinon from 'sinon';
 import * as chaiAsPromised from 'chai-as-promised';
-import cli from 'cli-ux';
 
 chai.use(chaiAsPromised);
 
@@ -18,23 +19,24 @@ import OrgListMock = require('../../../shared/orgListMock');
 import { OrgListUtil } from '../../../../src/shared/orgListUtil';
 
 describe('org_list', () => {
+  const sandbox = sinon.createSandbox();
   beforeEach(async () => {
-    stubMethod($$.SANDBOX, AuthInfo, 'listAllAuthFiles');
+    stubMethod(sandbox, AuthInfo, 'listAllAuthFiles');
   });
   afterEach(() => {
-    $$.SANDBOX.restore();
+    sandbox.restore();
   });
 
   describe('hub org defined', () => {
     beforeEach(async () => {
       // await workspace.configureHubOrg();
-      stubMethod($$.SANDBOX, OrgListUtil, 'readLocallyValidatedMetaConfigsGroupedByOrgType').resolves(
+      stubMethod(sandbox, OrgListUtil, 'readLocallyValidatedMetaConfigsGroupedByOrgType').resolves(
         OrgListMock.AUTH_INFO
       );
     });
 
     afterEach(async () => {
-      $$.SANDBOX.restore();
+      sandbox.restore();
     });
 
     test
@@ -62,18 +64,18 @@ describe('org_list', () => {
     afterEach(() => spies.clear());
 
     beforeEach(() => {
-      $$.SANDBOX.stub(OrgListUtil, 'readLocallyValidatedMetaConfigsGroupedByOrgType').resolves(OrgListMock.AUTH_INFO);
-      const authInfoStub = stubInterface<AuthInfo>($$.SANDBOX, {
+      sandbox.stub(OrgListUtil, 'readLocallyValidatedMetaConfigsGroupedByOrgType').resolves(OrgListMock.AUTH_INFO);
+      const authInfoStub = stubInterface<AuthInfo>(sandbox, {
         getConnectionOptions: () => ({}),
       });
-      stubMethod($$.SANDBOX, Connection, 'create').resolves({});
-      stubMethod($$.SANDBOX, AuthInfo, 'create').resolves(async () => authInfoStub);
-      stubMethod($$.SANDBOX, Org, 'create').resolves(Org.prototype);
-      spies.set('orgRemove', stubMethod($$.SANDBOX, Org.prototype, 'remove').resolves());
+      stubMethod(sandbox, Connection, 'create').resolves({});
+      stubMethod(sandbox, AuthInfo, 'create').resolves(async () => authInfoStub);
+      stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
+      stubMethod(sandbox, UX.prototype, 'confirm').resolves(false);
+      spies.set('orgRemove', stubMethod(sandbox, Org.prototype, 'remove').resolves());
     });
 
     test
-      .stub(cli, 'confirm', () => async () => false)
       .stdout()
       .command(['force:org:list', '--json', '--clean'])
       .it('not cleaned after confirmation false', async () => {
@@ -81,10 +83,9 @@ describe('org_list', () => {
       });
 
     test
-      .stub(cli, 'confirm', () => async () => true)
       .stdout()
-      .command(['force:org:list', '--json', '--clean'])
-      .it('cleaned after confirmation true', async () => {
+      .command(['force:org:list', '--json', '--clean', '--noprompt'])
+      .it('cleans 2 orgs', async () => {
         expect(spies.get('orgRemove').callCount).to.equal(2); // there are 2 expired scratch orgs
       });
   });
