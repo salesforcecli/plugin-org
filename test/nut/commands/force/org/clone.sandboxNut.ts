@@ -15,6 +15,7 @@ import { ensureString } from '@salesforce/ts-types';
 
 let session: TestSession;
 let sourceSandboxName: string;
+let sourceSandboxInfoId: string;
 let clonedSandboxName: string;
 
 const randomSandboxName = async () => {
@@ -29,12 +30,23 @@ const randomSandboxName = async () => {
   while (queryResult?.records?.length !== 1) {
     sandboxName = `sbx${Array(7)
       .fill(0)
-      .map((x) => Math.random().toString(36).charAt(2))
+      .map(() => Math.random().toString(36).charAt(2))
       .join('')}`;
     const queryStr = `SELECT SandboxName FROM SandboxProcess WHERE SandboxName = ${sandboxName} ORDER BY CreatedDate DESC LIMIT 1`;
     queryResult = (await connection.tooling.query(queryStr)) as { records: SandboxProcessObject[] };
   }
   return sandboxName;
+};
+
+const isSandboxClone = async (sandboxName: string, orgSourceId: string) => {
+  const env = new Env();
+  const username = ensureString(env.getString('TESTKIT_HUB_USERNAME'));
+  const connection = await Connection.create({
+    authInfo: await AuthInfo.create({ username }),
+  });
+  const queryStr = `SELECT SourceId, SandboxName FROM SandboxProcess WHERE SandboxName = ${sandboxName} AND SourceId = ${orgSourceId} ORDER BY CreatedDate DESC LIMIT 1`;
+  const queryResult = (await connection.tooling.query(queryStr)) as { records: SandboxProcessObject[] };
+  return queryResult?.records?.length === 1;
 };
 
 function unsetAlias() {
@@ -71,13 +83,14 @@ describe('test sandbox clone command', () => {
   before(async () => {
     username = ensureString(env.getString('TESTKIT_HUB_USERNAME'));
     const queryStr =
-      "SELECT SandboxName FROM SandboxProcess WHERE Status != 'E' and Status != 'D' AND SourceId = '' ORDER BY CreatedDate DESC LIMIT 1";
+      "SELECT SandboxInfoId, SandboxName FROM SandboxProcess WHERE Status != 'E' and Status != 'D' AND SourceId = '' ORDER BY CreatedDate DESC LIMIT 1";
     const connection = await Connection.create({
       authInfo: await AuthInfo.create({ username }),
     });
     const queryResult = (await connection.tooling.query(queryStr)) as { records: SandboxProcessObject[] };
     expect(queryResult?.records?.length).to.equal(1);
     sourceSandboxName = queryResult?.records[0]?.SandboxName;
+    sourceSandboxInfoId = queryResult?.records[0]?.SandboxInfoId;
     session = await TestSession.create({
       project: {
         sourceDir: path.join(process.cwd(), 'test', 'nut', 'commands', 'force', 'org'),
@@ -100,6 +113,7 @@ describe('test sandbox clone command', () => {
       }
     ).jsonOutput.result;
     expect(orgStatusResult).to.be.ok;
+    expect(isSandboxClone(clonedSandboxName, sourceSandboxInfoId)).to.be.true;
   });
 
   it('sandbox status command sets setdefaultusername', async () => {
@@ -111,6 +125,7 @@ describe('test sandbox clone command', () => {
       }
     ).jsonOutput.result;
     expect(orgStatusResult).to.be.ok;
+    expect(isSandboxClone(clonedSandboxName, sourceSandboxInfoId)).to.be.true;
     const execOptions: shell.ExecOptions = {
       silent: true,
     };
@@ -128,7 +143,7 @@ describe('test sandbox clone command', () => {
       }
     ).jsonOutput.result;
     expect(orgStatusResult).to.be.ok;
-
+    expect(isSandboxClone(clonedSandboxName, sourceSandboxInfoId)).to.be.true;
     const execOptions: shell.ExecOptions = {
       silent: true,
     };
