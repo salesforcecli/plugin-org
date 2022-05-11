@@ -95,17 +95,17 @@ describe('test sandbox clone command', () => {
   let username: string;
 
   before(async () => {
+    session = await TestSession.create({
+      project: {
+        sourceDir: path.join(process.cwd(), 'test', 'nut', 'commands', 'force', 'org'),
+      },
+    });
     const queryStr =
       "SELECT SandboxInfoId, SandboxName FROM SandboxProcess WHERE Status != 'E' and Status != 'D' AND SourceId = '' ORDER BY CreatedDate DESC LIMIT 1";
     const queryResult = await toolingQuery<SandboxProcessObject>(queryStr);
     expect(queryResult?.records?.length).to.equal(1);
     sourceSandboxName = queryResult?.records[0]?.SandboxName;
     sourceSandboxInfoId = queryResult?.records[0]?.SandboxInfoId;
-    session = await TestSession.create({
-      project: {
-        sourceDir: path.join(process.cwd(), 'test', 'nut', 'commands', 'force', 'org'),
-      },
-    });
   });
 
   afterEach(() => {
