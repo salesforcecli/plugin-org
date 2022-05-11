@@ -45,6 +45,11 @@ describe('test sandbox status command', () => {
   let username: string;
 
   before(async () => {
+    session = await TestSession.create({
+      project: {
+        sourceDir: path.join(process.cwd(), 'test', 'nut', 'commands', 'force', 'org'),
+      },
+    });
     username = ensureString(env.getString('TESTKIT_HUB_USERNAME'));
     const queryStr =
       "SELECT SandboxName FROM SandboxProcess WHERE Status != 'E' and Status != 'D' ORDER BY CreatedDate DESC LIMIT 1";
@@ -54,11 +59,6 @@ describe('test sandbox status command', () => {
     const queryResult = (await connection.tooling.query(queryStr)) as { records: SandboxProcessObject[] };
     expect(queryResult?.records?.length).to.equal(1);
     sandboxName = queryResult?.records[0]?.SandboxName;
-    session = await TestSession.create({
-      project: {
-        sourceDir: path.join(process.cwd(), 'test', 'nut', 'commands', 'force', 'org'),
-      },
-    });
   });
 
   afterEach(() => {
