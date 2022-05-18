@@ -114,50 +114,59 @@ describe('test sandbox clone command', () => {
   it('sandbox clone command', async () => {
     clonedSandboxName = await getRandomSandboxName();
     const orgStatusResult = execCmd<SandboxProcessObject>(
-      `force:org:clone -t sandbox SandboxName=${clonedSandboxName} SourceSandboxName=${sourceSandboxName} -u ${username} --json -w 60`,
+      `force:org:clone -t sandbox SandboxName=${clonedSandboxName} SourceSandboxName=${sourceSandboxName} -u ${username} -s -a ${clonedSandboxName} -w 60`,
       {
         ensureExitCode: 0,
       }
     ).jsonOutput.result;
     expect(orgStatusResult).to.be.ok;
-    expect(isSandboxClone(clonedSandboxName, sourceSandboxInfoId)).to.be.true;
-  });
-
-  it('sandbox clone command sets setdefaultusername', async () => {
-    clonedSandboxName = await getRandomSandboxName();
-    const orgStatusResult = execCmd<SandboxProcessObject>(
-      `force:org:clone -t sandbox SandboxName=${clonedSandboxName} SourceSandboxName=${sourceSandboxName} -u ${username} -s --json -w 60`,
-      {
-        ensureExitCode: 0,
-      }
-    ).jsonOutput.result;
-    expect(orgStatusResult).to.be.ok;
-    expect(isSandboxClone(clonedSandboxName, sourceSandboxInfoId)).to.be.true;
     const execOptions: shell.ExecOptions = {
       silent: true,
     };
-    const result = shell.exec('sfdx config:get defaultusername --json', execOptions) as shell.ShellString;
+    let result = shell.exec('sfdx config:get defaultusername --json', execOptions) as shell.ShellString;
     expect(result.code).to.equal(0);
     expect(result.stdout).to.contain(`"${username}.${clonedSandboxName}"`);
-  });
-
-  it('sandbox clone command set alias', async () => {
-    clonedSandboxName = await getRandomSandboxName();
-    const orgStatusResult = execCmd<SandboxProcessObject>(
-      `force:org:clone -t sandbox SandboxName=${clonedSandboxName} SourceSandboxName=${sourceSandboxName} -u ${username} -a ${clonedSandboxName} --json -w 60`,
-      {
-        ensureExitCode: 0,
-      }
-    ).jsonOutput.result;
-    expect(orgStatusResult).to.be.ok;
-    expect(isSandboxClone(clonedSandboxName, sourceSandboxInfoId)).to.be.true;
-    const execOptions: shell.ExecOptions = {
-      silent: true,
-    };
-    const result = shell.exec('sfdx alias:list --json', execOptions) as shell.ShellString;
+    result = shell.exec('sfdx alias:list --json', execOptions) as shell.ShellString;
     expect(result.code).to.equal(0);
     expect(result.stdout).to.contain(`"${clonedSandboxName}"`);
+    expect(isSandboxClone(clonedSandboxName, sourceSandboxInfoId)).to.be.true;
   });
+
+  // it('sandbox clone command sets setdefaultusername', async () => {
+  //   clonedSandboxName = await getRandomSandboxName();
+  //   const orgStatusResult = execCmd<SandboxProcessObject>(
+  //     `force:org:clone -t sandbox SandboxName=${clonedSandboxName} SourceSandboxName=${sourceSandboxName} -u ${username} -s --json -w 60`,
+  //     {
+  //       ensureExitCode: 0,
+  //     }
+  //   ).jsonOutput.result;
+  //   expect(orgStatusResult).to.be.ok;
+  //   expect(isSandboxClone(clonedSandboxName, sourceSandboxInfoId)).to.be.true;
+  //   const execOptions: shell.ExecOptions = {
+  //     silent: true,
+  //   };
+  //   const result = shell.exec('sfdx config:get defaultusername --json', execOptions) as shell.ShellString;
+  //   expect(result.code).to.equal(0);
+  //   expect(result.stdout).to.contain(`"${username}.${clonedSandboxName}"`);
+  // });
+
+  // it('sandbox clone command set alias', async () => {
+  //   clonedSandboxName = await getRandomSandboxName();
+  //   const orgStatusResult = execCmd<SandboxProcessObject>(
+  //     `force:org:clone -t sandbox SandboxName=${clonedSandboxName} SourceSandboxName=${sourceSandboxName} -u ${username} -a ${clonedSandboxName} --json -w 60`,
+  //     {
+  //       ensureExitCode: 0,
+  //     }
+  //   ).jsonOutput.result;
+  //   expect(orgStatusResult).to.be.ok;
+  //   expect(isSandboxClone(clonedSandboxName, sourceSandboxInfoId)).to.be.true;
+  //   const execOptions: shell.ExecOptions = {
+  //     silent: true,
+  //   };
+  //   const result = shell.exec('sfdx alias:list --json', execOptions) as shell.ShellString;
+  //   expect(result.code).to.equal(0);
+  //   expect(result.stdout).to.contain(`"${clonedSandboxName}"`);
+  // });
 
   after(async () => {
     await session.zip(undefined, 'artifacts');
