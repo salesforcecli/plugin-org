@@ -9,10 +9,9 @@ import { Duration } from '@salesforce/kit';
 
 export class SandboxReporter {
   public static sandboxProgress(update: StatusEvent): string {
-    const { retries, interval, sandboxProcessObj, waitingOnAuth } = update;
-    const waitTimeInSec = retries * interval;
+    const { remainingWait, interval, sandboxProcessObj, waitingOnAuth } = update;
 
-    const waitTime: string = SandboxReporter.getSecondsToHuman(waitTimeInSec);
+    const waitTime: string = SandboxReporter.getSecondsToHuman(remainingWait);
     const waitTimeMsg = `Sleeping ${interval} seconds. Will wait ${waitTime} more before timing out.`;
     const sandboxIdentifierMsg = `${sandboxProcessObj.SandboxName}(${sandboxProcessObj.Id})`;
     const waitingOnAuthMessage: string = waitingOnAuth ? ', waiting on JWT auth' : '';

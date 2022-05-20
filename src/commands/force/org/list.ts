@@ -7,8 +7,9 @@
 import { EOL } from 'os';
 
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
-import { AuthInfo, ConfigAggregator, ConfigInfo, Connection, Org, SfdxError, Messages } from '@salesforce/core';
+import { AuthInfo, ConfigAggregator, ConfigInfo, Connection, Org, SfError, Messages } from '@salesforce/core';
 import { sortBy } from '@salesforce/kit';
+import { CliUx } from '@oclif/core';
 import { OrgListUtil, identifyActiveOrgByStatus } from '../../../shared/orgListUtil';
 import { getStyledObject } from '../../../shared/orgHighlighter';
 import { ExtendedAuthFields } from '../../../shared/orgTypes';
@@ -43,11 +44,11 @@ export class OrgListCommand extends SfdxCommand {
   public async run(): Promise<unknown> {
     let fileNames: string[] = [];
     try {
-      fileNames = await AuthInfo.listAllAuthFiles();
+      fileNames = (await AuthInfo.listAllAuthorizations()).map((auth) => auth.username);
     } catch (err) {
-      const error = err as SfdxError;
+      const error = err as SfError;
       if (error.name === 'NoAuthInfoFound') {
-        throw new SfdxError(messages.getMessage('noOrgsFound'), 'noOrgsFound', [
+        throw new SfError(messages.getMessage('noOrgsFound'), 'noOrgsFound', [
           messages.getMessage('noOrgsFoundAction'),
         ]);
       } else {
@@ -106,7 +107,7 @@ export class OrgListCommand extends SfdxCommand {
           const org = await Org.create({ aliasOrUsername: fields.username, connection });
           await org.remove();
         } catch (e) {
-          const err = e as SfdxError;
+          const err = e as SfError;
           this.logger.debug(`Error cleaning org ${fields.username}: ${err.message}`);
           this.ux.warn(
             `Unable to clean org with username ${fields.username}.  You can run "sfdx force:org:delete -u ${fields.username}" to remove it.`
@@ -118,21 +119,23 @@ export class OrgListCommand extends SfdxCommand {
 
   protected printOrgTable(nonScratchOrgs: ExtendedAuthFields[], skipconnectionstatus: boolean): void {
     // default columns for the non-scratch org list
-    const nonScratchOrgColumns = [
-      { key: 'defaultMarker', label: '' },
-      { key: 'alias', label: 'ALIAS' },
-      { key: 'username', label: 'USERNAME' },
-      { key: 'orgId', label: 'ORG ID' },
-    ];
+    let nonScratchOrgColumns = {
+      defaultMarker: { header: '' },
+      alias: { header: 'ALIAS' },
+      username: { header: 'USERNAME' },
+      orgId: { header: 'ORG ID' },
+    };
 
     if (!skipconnectionstatus) {
-      nonScratchOrgColumns.push({ key: 'connectedStatus', label: 'CONNECTED STATUS' });
+      nonScratchOrgColumns = Object.assign(nonScratchOrgColumns, {
+        connectedStatus: { header: 'CONNECTED STATUS' },
+      });
     }
 
     if (nonScratchOrgs.length) {
       this.ux.table(
         nonScratchOrgs.map((row) => getStyledObject(row)),
-        { columns: nonScratchOrgColumns }
+        nonScratchOrgColumns
       );
     } else {
       this.ux.log(messages.getMessage('noResultsFound'));
@@ -146,7 +149,7 @@ export class OrgListCommand extends SfdxCommand {
       // One or more rows are available.
       this.ux.table(
         scratchOrgs.map((row) => getStyledObject(row)),
-        { columns: this.getScratchOrgColumnData() }
+        this.getScratchOrgColumnData()
       );
     }
   }
@@ -159,31 +162,34 @@ export class OrgListCommand extends SfdxCommand {
     }
   }
 
-  private getScratchOrgColumnData(): unknown[] {
+  private getScratchOrgColumnData(): Partial<CliUx.Table.table.Columns<Record<string, string>>> {
     // default columns for the scratch org list
-    let scratchOrgColumns = [
-      { key: 'defaultMarker', label: '' },
-      { key: 'alias', label: 'ALIAS' },
-      { key: 'username', label: 'USERNAME' },
-      { key: 'orgId', label: 'ORG ID' },
-    ];
+    let scratchOrgColumns = {
+      defaultMarker: { header: '' },
+      alias: { header: 'ALIAS' },
+      username: { header: 'USERNAME' },
+      orgId: { header: 'ORG ID' },
+    };
 
     if (this.flags.all || this.flags.verbose) {
-      scratchOrgColumns.push({ key: 'status', label: 'STATUS' });
+      scratchOrgColumns = Object.assign(scratchOrgColumns, {
+        status: { header: 'STATUS' },
+      });
     }
 
     // scratch org verbose columns
     if (this.flags.verbose) {
-      scratchOrgColumns = [
-        ...scratchOrgColumns,
-        { key: 'devHubOrgId', label: 'DEV HUB' },
-        { key: 'createdDate', label: 'CREATED DATE' },
-        { key: 'instanceUrl', label: 'INSTANCE URL' },
-      ];
+      scratchOrgColumns = Object.assign(scratchOrgColumns, {
+        devHubOrgId: { header: 'DEV HUB' },
+        createdDate: { header: 'CREATED DATE' },
+        instanceUrl: { header: 'INSTANCE URL' },
+      });
     }
 
     // scratch org expiration date should be on the end.
-    return scratchOrgColumns.concat([{ key: 'expirationDate', label: 'EXPIRATION DATE' }]);
+    return Object.assign(scratchOrgColumns, {
+      expirationDate: { header: 'EXPIRATION DATE' },
+    });
   }
 
   private sortFunction = (orgDetails: ExtendedAuthFields): string[] => {

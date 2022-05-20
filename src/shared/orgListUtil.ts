@@ -5,8 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { basename, join } from 'path';
+import * as fs from 'fs/promises';
 
-import { Org, AuthInfo, fs, sfdc, ConfigAggregator, Global, AuthFields, Logger, SfdxError } from '@salesforce/core';
+import { Org, AuthInfo, sfdc, ConfigAggregator, Global, AuthFields, Logger, SfError } from '@salesforce/core';
 import { Dictionary, JsonMap } from '@salesforce/ts-types';
 import { Record } from 'jsforce';
 import { omit } from '@salesforce/kit/lib';
@@ -20,7 +21,10 @@ type OrgGroups = {
 
 type ExtendedScratchOrgInfo = ScratchOrgInfoSObject & {
   devHubOrgId: string;
-  attributes: Dictionary<string>;
+  attributes: {
+    type: string;
+    url: string;
+  };
 };
 
 export class OrgListUtil {
@@ -103,7 +107,9 @@ export class OrgListUtil {
    * @param fileNames All the filenames in the global hidden folder
    */
   public static async readAuthFiles(fileNames: string[]): Promise<AuthInfo[]> {
-    const orgFileNames = (await fs.readdir(Global.DIR)).filter((filename) => filename.match(/^00D.{15}\.json$/g));
+    const orgFileNames = (await fs.readdir(Global.SFDX_DIR)).filter((filename: string) =>
+      filename.match(/^00D.{15}\.json$/g)
+    );
 
     const allAuths: AuthInfo[] = await Promise.all(
       fileNames.map(async (fileName) => {
@@ -126,13 +132,16 @@ export class OrgListUtil {
           }
           // Theory: within <orgId>.json, if the userId is the first entry, that's the primary username.
           if (orgFileNames.includes(orgFileName)) {
-            const usernames = ((await fs.readJson(join(Global.DIR, orgFileName))) as { usernames: string[] }).usernames;
+            const orgFileContent = JSON.parse(
+              await fs.readFile(join(Global.SFDX_STATE_FOLDER, orgFileName), 'utf8')
+            ) as { usernames: string[] };
+            const usernames = orgFileContent.usernames;
             if (usernames && usernames[0] === auth.getFields().username) {
               return auth;
             }
           }
         } catch (error) {
-          const err = error as SfdxError;
+          const err = error as SfError;
           const logger = await OrgListUtil.retrieveLogger();
           logger.warn(`Problem reading file: ${fileName} skipping`);
           logger.warn(err.message);
@@ -169,7 +178,7 @@ export class OrgListUtil {
 
       const [alias, lastUsed] = await Promise.all([
         getAliasByUsername(currentValue.username),
-        fs.stat(join(Global.DIR, `${currentValue.username}.json`)),
+        fs.stat(join(Global.SFDX_DIR, `${currentValue.username}.json`)),
       ]);
 
       currentValue.alias = alias;
@@ -217,7 +226,7 @@ export class OrgListUtil {
   public static async retrieveScratchOrgInfoFromDevHub(
     devHubUsername: string,
     orgIdsToQuery: string[]
-  ): Promise<Array<Record<ExtendedScratchOrgInfo>>> {
+  ): Promise<Array<Partial<Record> & ExtendedScratchOrgInfo>> {
     const fields = [
       'CreatedDate',
       'Edition',
@@ -247,7 +256,7 @@ export class OrgListUtil {
   }
 
   public static async reduceScratchOrgInfo(
-    updatedContents: Array<Record<ExtendedScratchOrgInfo>>,
+    updatedContents: Array<Partial<Record> & ExtendedScratchOrgInfo>,
     orgs: ExtendedAuthFields[]
   ): Promise<ExtendedAuthFields[]> {
     // Reduce the information to key value pairs with signupUsername as key
@@ -316,14 +325,14 @@ export class OrgListUtil {
         await org.refreshAuth();
         return 'Connected';
       } catch (err) {
-        const error = err as SfdxError;
+        const error = err as SfError;
         const logger = await OrgListUtil.retrieveLogger();
         logger.trace(`error refreshing auth for org: ${org.getUsername()}`);
         logger.trace(error);
         return (error.code ?? error.message) as string;
       }
     } catch (err) {
-      const error = err as SfdxError;
+      const error = err as SfError;
       const logger = await OrgListUtil.retrieveLogger();
       logger.trace(`error refreshing auth for org: ${username}`);
       logger.trace(error);

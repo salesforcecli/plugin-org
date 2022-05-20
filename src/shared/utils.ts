@@ -5,12 +5,12 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { ChildProcess } from 'child_process';
-import { Aliases } from '@salesforce/core';
+import { GlobalInfo } from '@salesforce/core';
 import * as open from 'open';
 
 export const getAliasByUsername = async (username: string): Promise<string> => {
-  const alias = await Aliases.create(Aliases.getDefaultOptions());
-  const keys = alias.getKeysByValue(username);
+  const globalInfo = await GlobalInfo.create();
+  const keys = globalInfo.aliases.getAll(username);
   // use the most recently added alias for that username
   return keys?.length ? keys[keys.length - 1] : undefined;
 };

@@ -11,8 +11,9 @@ import {
   Config,
   Lifecycle,
   Messages,
-  Aliases,
+  GlobalInfo,
   SandboxEvents,
+  SfdxPropertyKeys,
   StatusEvent,
   ResultEvent,
   SandboxProcessObject,
@@ -66,20 +67,18 @@ export class OrgStatusCommand extends SfdxCommand {
       const { data } = SandboxReporter.logSandboxProcessResult(results);
       this.ux.styledHeader('Sandbox Org Status');
       this.ux.table(data, {
-        columns: [
-          { key: 'key', label: 'Name' },
-          { key: 'value', label: 'Value' },
-        ],
+        key: { header: 'Name' },
+        value: { header: 'Value' },
       });
       if (results.sandboxRes?.authUserName) {
         if (this.flags.setalias) {
-          const aliases = await Aliases.create(Aliases.getDefaultOptions());
-          const result = await aliases.updateValue(this.flags.setalias, results.sandboxRes.authUserName);
-          this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
+          const info = await GlobalInfo.create();
+          info.aliases.update(this.flags.setalias, results.sandboxRes.authUserName);
+          this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, results.sandboxRes.authUserName);
         }
         if (this.flags.setdefaultusername) {
           const globalConfig: Config = this.configAggregator.getGlobalConfig();
-          globalConfig.set(Config.DEFAULT_USERNAME, results.sandboxRes.authUserName);
+          globalConfig.set(SfdxPropertyKeys.DEFAULT_USERNAME, results.sandboxRes.authUserName);
           const result = await globalConfig.write();
           this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
         }
