@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.13.2](https://github.com/salesforcecli/plugin-org/compare/v1.13.1...v1.13.2) (2022-05-20)
+
+### Bug Fixes
+
+- add back a long description that got lost ([83a2341](https://github.com/salesforcecli/plugin-org/commit/83a2341f96908f33647b609f7082f0f9e52bc289))
+- update list so the examples render correctly in CLI Ref ([7c024a6](https://github.com/salesforcecli/plugin-org/commit/7c024a6272b70121e32ece4063c17a7c13c080db))
+- update messages so the examples render correctly in CLI Ref ([1329901](https://github.com/salesforcecli/plugin-org/commit/13299011fb917f77008f985af6b70bf005a2f4b6))
+- update open so the examples render correctly in CLI Ref ([73f60ff](https://github.com/salesforcecli/plugin-org/commit/73f60ffeeb934eee1a2af584357aa7b24b62bad6))
+- update status so the examples render correctly in CLI Ref ([0d3792f](https://github.com/salesforcecli/plugin-org/commit/0d3792fa3019eb008e39716c5aacfaebb0a33bc2))
+
 ### [1.13.1](https://github.com/salesforcecli/plugin-org/compare/v1.13.0...v1.13.1) (2022-05-11)
 
 ## [1.13.0](https://github.com/salesforcecli/plugin-org/compare/v1.12.1...v1.13.0) (2022-05-10)
