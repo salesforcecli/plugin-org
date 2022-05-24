@@ -4,9 +4,10 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import * as fs from 'fs/promises';
 import { expect } from '@salesforce/command/lib/test';
 import * as sinon from 'sinon';
-import { AuthInfo, ConfigAggregator, fs, Aliases, Org } from '@salesforce/core';
+import { AuthInfo, ConfigAggregator, Org } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { OrgListUtil } from '../../src/shared/orgListUtil';
 import * as utils from '../../src/shared/utils';
@@ -60,7 +61,6 @@ const fileNames = ['gaz@foo.org', 'test@org.com'];
 
 describe('orgListUtil tests', () => {
   const spies = new Map();
-  let aliasListStub: sinon.SinonStub;
   let determineConnectedStatusForNonScratchOrg: sinon.SinonStub;
   let retrieveScratchOrgInfoFromDevHubStub: sinon.SinonStub;
   let checkNonScratchOrgIsDevHub: sinon.SinonStub;
@@ -73,7 +73,6 @@ describe('orgListUtil tests', () => {
       sandbox.stub(AuthInfo, 'create');
 
       stubMethod(sandbox, OrgListUtil, 'readAuthFiles').resolves([orgAuthConfig, expiredAuthConfig, devHubConfig]);
-      aliasListStub = stubMethod(sandbox, Aliases, 'fetch').resolves();
       determineConnectedStatusForNonScratchOrg = stubMethod(
         sandbox,
         OrgListUtil,
@@ -96,7 +95,6 @@ describe('orgListUtil tests', () => {
         },
       });
 
-      sandbox.stub(fs, 'readFileSync');
       stubMethod(sandbox, fs, 'stat').resolves({ atime: 'test' });
 
       sandbox.stub(utils, 'getAliasByUsername').withArgs('gaz@foo.org').resolves('gaz');
@@ -117,8 +115,6 @@ describe('orgListUtil tests', () => {
       // devhub is updated to be true
       expect(checkNonScratchOrgIsDevHub.called).to.be.true;
       expect(orgs.nonScratchOrgs[0].isDevHub).to.be.true;
-
-      expect(aliasListStub.calledOnce).to.be.false;
       expect(determineConnectedStatusForNonScratchOrg.calledOnce).to.be.true;
       expect(retrieveScratchOrgInfoFromDevHubStub.calledOnce).to.be.true;
     });
@@ -133,8 +129,6 @@ describe('orgListUtil tests', () => {
 
       expect(orgs.nonScratchOrgs.every((nonScratchOrg) => nonScratchOrg.connectedStatus === undefined)).to.be.true;
 
-      expect(aliasListStub.calledOnce).to.be.false;
-      expect(aliasListStub.calledOnce).to.be.false;
       expect(determineConnectedStatusForNonScratchOrg.called).to.be.false;
     });
 
@@ -245,9 +239,11 @@ describe('orgListUtil tests', () => {
         isOauth: () => false,
         getUsername: () => orgAuthConfigFields.username,
       });
-      stubMethod(sandbox, fs, 'readJson').resolves({
-        usernames: [orgAuthConfigFields.username, 'secondary@user.test'],
-      });
+      stubMethod(sandbox, fs, 'readFile').resolves(
+        JSON.stringify({
+          usernames: [orgAuthConfigFields.username, 'secondary@user.test'],
+        })
+      );
       const authFiles = await OrgListUtil.readAuthFiles([`${orgAuthConfigFields.username}.json`]);
       expect(authFiles.length).to.equal(1);
       expect(authFiles[0].getFields()).to.have.property('username').equals(orgAuthConfigFields.username);
@@ -261,9 +257,7 @@ describe('orgListUtil tests', () => {
         isOauth: () => false,
         getUsername: () => orgAuthConfigFields.username,
       });
-      stubMethod(sandbox, fs, 'readJson').resolves({
-        usernames: ['secondary@user.test'],
-      });
+      stubMethod(sandbox, fs, 'readFile').resolves('{"usernames":["secondary@user.test"]}');
       const authFiles = await OrgListUtil.readAuthFiles([`${orgAuthConfigFields.username}.json`]);
       expect(authFiles.length).to.equal(0);
     });
@@ -276,9 +270,11 @@ describe('orgListUtil tests', () => {
         isOauth: () => false,
         getUsername: () => orgAuthConfigFields.username,
       });
-      stubMethod(sandbox, fs, 'readJson').resolves({
-        usernames: ['secondary@user.test', orgAuthConfigFields.username],
-      });
+      stubMethod(sandbox, fs, 'readFile').resolves(
+        JSON.stringify({
+          usernames: ['secondary@user.test', orgAuthConfigFields.username],
+        })
+      );
       const authFiles = await OrgListUtil.readAuthFiles([`${orgAuthConfigFields.username}.json`]);
       expect(authFiles.length).to.equal(0);
     });

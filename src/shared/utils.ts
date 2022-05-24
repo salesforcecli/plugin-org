@@ -9,7 +9,7 @@ import { GlobalInfo } from '@salesforce/core';
 import * as open from 'open';
 
 export const getAliasByUsername = async (username: string): Promise<string> => {
-  const globalInfo = await GlobalInfo.create();
+  const globalInfo = await GlobalInfo.getInstance();
   const keys = globalInfo.aliases.getAll(username);
   // use the most recently added alias for that username
   return keys?.length ? keys[keys.length - 1] : undefined;

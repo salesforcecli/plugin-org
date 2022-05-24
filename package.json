@@ -8,7 +8,7 @@
   "dependencies": {
     "@oclif/core": "^1.7.0",
     "@salesforce/command": "^5.1.0",
-    "@salesforce/core": "^3.18.2",
+    "@salesforce/core": "^3.19.0",
     "@salesforce/kit": "^1.5.17",
     "open": "8.4.0",
     "tslib": "^2"
@@ -112,6 +112,7 @@
     "test:deprecation-policy": "./bin/dev snapshot:compare",
     "test:nuts": "nyc mocha \"**/*.nut.ts\" --slow 4500 --timeout 600000 --parallel",
     "test:nuts:sandbox": "nyc mocha \"**/*.sandboxNut.ts\" --slow 450000 --timeout 7200000",
+    "test:watch": "mocha --watch \"./test/**/*.test.ts\"",
     "version": "oclif readme"
   },
   "publishConfig": {
