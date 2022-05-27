@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { expect, test } from '@salesforce/command/lib/test';
-import { Aliases, AuthInfo, Connection, Org } from '@salesforce/core';
+import { AuthInfo, Connection, Org } from '@salesforce/core';
 import * as sinon from 'sinon';
 import { stubMethod, stubInterface, StubbedType } from '@salesforce/ts-sinon';
 import * as utils from '../../../../src/shared/utils';
@@ -48,11 +48,6 @@ describe('org:display', () => {
   const sandbox = sinon.createSandbox();
 
   beforeEach(async function () {
-    stubMethod(sandbox, Aliases, 'fetch')
-      .withArgs('nonscratchalias')
-      .resolves('nonscratch@test.com')
-      .withArgs('scratchAlias')
-      .resolves('scratch@test.com');
     stubMethod(sandbox, utils, 'getAliasByUsername')
       .withArgs('nonscratch@test.com')
       .resolves('nonscratchalias')

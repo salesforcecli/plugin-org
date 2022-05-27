@@ -16,7 +16,8 @@ import {
 } from '@salesforce/core';
 import { fromStub, stubInterface, stubMethod } from '@salesforce/ts-sinon';
 import * as sinon from 'sinon';
-import { expect, Config as IConfig } from '@salesforce/command/lib/test';
+import { expect } from '@salesforce/command/lib/test';
+import { Config } from '@oclif/core';
 import { UX } from '@salesforce/command';
 import { OrgStatusCommand } from '../../../../src/commands/force/org/status';
 
@@ -51,7 +52,7 @@ describe('org:status', () => {
       loginUrl: 'https://my-login.com',
     },
   };
-  const oclifConfigStub = fromStub(stubInterface<IConfig>(sandbox));
+  const oclifConfigStub = fromStub(stubInterface<Config>(sandbox));
 
   // stubs
   let uxTableStub: sinon.SinonStub;

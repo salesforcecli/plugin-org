@@ -80,11 +80,7 @@ export class OrgOpenCommand extends SfdxCommand {
         const domain = `https://${/https?:\/\/([^.]*)/.exec(url)[1]}.lightning.force.com`;
         const timeout = new Duration(new Env().getNumber('SFDX_DOMAIN_RETRY', 240), Duration.Unit.SECONDS);
         this.logger.debug(`Did not find IP for ${domain} after ${timeout.seconds} seconds`);
-        throw new SfError(
-          messages.getMessage('domainTimeoutError', [messages.getMessage('domainTimeoutError')]),
-          'domainTimeoutError',
-          ['noOrgsFoundAction']
-        );
+        throw new SfError(messages.getMessage('domainTimeoutError'), 'domainTimeoutError');
       }
       throw SfError.wrap(err);
     }

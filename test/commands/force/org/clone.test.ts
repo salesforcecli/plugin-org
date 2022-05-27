@@ -4,10 +4,11 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Org, Aliases, Config, ConfigAggregator, Lifecycle, SandboxEvents } from '@salesforce/core';
+import { Org, Lifecycle, GlobalInfo, SandboxEvents, SfdxConfigAggregator, SfdxPropertyKeys } from '@salesforce/core';
 import { fromStub, stubInterface, stubMethod } from '@salesforce/ts-sinon';
 import * as sinon from 'sinon';
-import { expect, IConfig } from '@salesforce/command/lib/test';
+import { expect } from '@salesforce/command/lib/test';
+import { Config } from '@oclif/core';
 import { UX } from '@salesforce/command';
 import { OrgCloneCommand } from '../../../../src/commands/force/org/clone';
 
@@ -54,14 +55,14 @@ describe('org:clone', () => {
     retries: 0,
     waitingOnAuth: false,
   };
-  const oclifConfigStub = fromStub(stubInterface<IConfig.IConfig>(sandbox));
+  const oclifConfigStub = fromStub(stubInterface<Config>(sandbox));
 
   // stubs
   let uxTableStub: sinon.SinonStub;
   let uxStyledHeaderStub: sinon.SinonStub;
   let uxLogStub: sinon.SinonStub;
   let cmd: TestOrgCloneCommand;
-  let aliasSetStub: sinon.SinonStub;
+  let aliasSetStub: sinon.SinonSpy;
   let configSetStub: sinon.SinonStub;
   let configWriteStub: sinon.SinonStub;
   let onStub: sinon.SinonStub;
@@ -77,7 +78,7 @@ describe('org:clone', () => {
     public setOrg(org: Org) {
       this.org = org;
     }
-    public setConfigAggregator(configAggregator: ConfigAggregator) {
+    public setConfigAggregator(configAggregator: SfdxConfigAggregator) {
       this.configAggregator = configAggregator;
     }
   }
@@ -104,7 +105,7 @@ describe('org:clone', () => {
           write: configWriteStub,
         }),
       };
-      configAggregatorStub = fromStub(stubInterface<ConfigAggregator>(sandbox, configAggregatorStubOptions));
+      configAggregatorStub = fromStub(stubInterface<SfdxConfigAggregator>(sandbox, configAggregatorStubOptions));
       cmd.setConfigAggregator(configAggregatorStub);
     });
     if (!fails) {
@@ -122,7 +123,15 @@ describe('org:clone', () => {
     stubMethod(sandbox, Lifecycle, 'getInstance').returns({
       on: onStub,
     });
-    aliasSetStub = stubMethod(sandbox, Aliases.prototype, 'set').returns(sandboxalias);
+    aliasSetStub = sinon.spy();
+    stubMethod(sandbox, GlobalInfo, 'getInstance').returns({
+      aliases: {
+        set: aliasSetStub,
+        getAll: () => ({
+          sanboxname: sandboxalias,
+        }),
+      },
+    });
     uxTableStub = stubMethod(sandbox, UX.prototype, 'table');
     uxLogStub = stubMethod(sandbox, UX.prototype, 'log');
     uxStyledHeaderStub = stubMethod(sandbox, UX.prototype, 'styledHeader');
@@ -201,7 +210,7 @@ describe('org:clone', () => {
     expect(aliasSetStub.callCount).to.be.equal(1);
     expect(aliasSetStub.firstCall.args[0]).to.be.equal(sandboxalias);
     expect(aliasSetStub.firstCall.args[1]).to.be.equal(authUserName);
-    expect(configSetStub.firstCall.args[0]).to.be.equal(Config.DEFAULT_USERNAME);
+    expect(configSetStub.firstCall.args[0]).to.be.equal(SfdxPropertyKeys.DEFAULT_USERNAME);
     expect(configSetStub.firstCall.args[1]).to.be.equal(authUserName);
     expect(onStub.firstCall.firstArg).to.be.equal(SandboxEvents.EVENT_ASYNC_RESULT);
     expect(onStub.secondCall.firstArg).to.be.equal(SandboxEvents.EVENT_STATUS);

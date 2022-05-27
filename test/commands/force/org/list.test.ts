@@ -21,7 +21,13 @@ import { OrgListUtil } from '../../../../src/shared/orgListUtil';
 describe('org_list', () => {
   const sandbox = sinon.createSandbox();
   beforeEach(async () => {
-    stubMethod(sandbox, AuthInfo, 'listAllAuthFiles');
+    stubMethod(sandbox, AuthInfo, 'listAllAuthorizations').resolves([
+      'Jimi Hendrix',
+      'SRV',
+      'shenderson',
+      'SRV',
+      'foo@example.com',
+    ]);
   });
   afterEach(() => {
     sandbox.restore();
