@@ -710,9 +710,9 @@
     typescript "^4.1.3"
 
 "@salesforce/kit@^1.5.13", "@salesforce/kit@^1.5.17":
-  version "1.5.39"
-  resolved "https://registry.yarnpkg.com/@salesforce/kit/-/kit-1.5.39.tgz#e6778f831524fdc20f703a6fcff1a670f0eb6f91"
-  integrity sha512-TV1ZiNkjk+LC32zIXr7IYisYXmYr0/cof3KyKDaQ8u3ZNQQUvrmbldYbOX2ggT795aehhQjpPltxRJRMwlhHzg==
+  version "1.5.41"
+  resolved "https://registry.yarnpkg.com/@salesforce/kit/-/kit-1.5.41.tgz#3248d4d28fe24ed47827716cfe416c21a2a90651"
+  integrity sha512-nhi7jw3LNITl7rHSnCLnEDTaq6nvolSMFBg7poniG84Q7kJPezgTEj5OKAyQ9hJoRE4u59n5M5bUFvwRoXmJzQ==
   dependencies:
     "@salesforce/ts-types" "^1.5.20"
     shx "^0.3.3"
