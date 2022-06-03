@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import {
-  Aliases,
+  GlobalInfo,
   Config,
   Lifecycle,
   Messages,
@@ -13,11 +13,13 @@ import {
   SandboxEvents,
   SandboxProcessObject,
   SandboxUserAuthResponse,
-  SfdxProject,
+  StatusEvent,
+  SfProject,
 } from '@salesforce/core';
 import { fromStub, stubInterface, stubMethod } from '@salesforce/ts-sinon';
 import * as sinon from 'sinon';
-import { expect, IConfig } from '@salesforce/command/lib/test';
+import { expect } from '@salesforce/command/lib/test';
+import { Config as IConfig } from '@oclif/core';
 import { UX } from '@salesforce/command';
 import { assert } from 'sinon';
 import { Create } from '../../../../src/commands/force/org/beta/create';
@@ -26,7 +28,7 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
 describe('org:create', () => {
   const sandbox = sinon.createSandbox();
-  const oclifConfigStub = fromStub(stubInterface<IConfig.IConfig>(sandbox));
+  const oclifConfigStub = fromStub(stubInterface<IConfig>(sandbox));
 
   // stubs
   let resolveProjectConfigStub: sinon.SinonStub;
@@ -35,6 +37,7 @@ describe('org:create', () => {
   let uxLogStub: sinon.SinonStub;
   let uxTableStub: sinon.SinonStub;
   let uxStyledHeaderStub: sinon.SinonStub;
+  let aliasSetStub: sinon.SinonSpy;
   let cmd: TestCreate;
 
   class TestCreate extends Create {
@@ -45,7 +48,7 @@ describe('org:create', () => {
     public setOrg(org: Org) {
       this.org = org;
     }
-    public setProject(project: SfdxProject) {
+    public setProject(project: SfProject) {
       this.project = project;
     }
   }
@@ -54,7 +57,7 @@ describe('org:create', () => {
     cmd = new TestCreate(params, oclifConfigStub);
     stubMethod(sandbox, cmd, 'assignProject').callsFake(() => {
       const sfdxProjectStub = fromStub(
-        stubInterface<SfdxProject>(sandbox, {
+        stubInterface<SfProject>(sandbox, {
           resolveProjectConfig: resolveProjectConfigStub,
         })
       );
@@ -239,10 +242,10 @@ describe('org:create', () => {
         );
       });
 
-      const data = {
+      const data: StatusEvent = {
         sandboxProcessObj,
         interval: 30,
-        retries: 1,
+        remainingWait: 30,
         waitingOnAuth: false,
       };
 
@@ -266,7 +269,14 @@ describe('org:create', () => {
       });
       stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
       stubMethod(sandbox, Org.prototype, 'createSandbox');
-      const aliasStub = stubMethod(sandbox, Aliases.prototype, 'set');
+
+      aliasSetStub = sinon.spy();
+      stubMethod(sandbox, GlobalInfo, 'getInstance').returns({
+        aliases: {
+          set: aliasSetStub,
+        },
+        write: sinon.stub(),
+      });
       const configStub = stubMethod(sandbox, Config.prototype, 'set');
       await command.runIt();
 
@@ -325,7 +335,7 @@ describe('org:create', () => {
             value: 'newSandboxUsername',
           },
         ]);
-        expect(aliasStub.firstCall.args).to.deep.equal(['sandboxAlias', 'newSandboxUsername']);
+        expect(aliasSetStub.firstCall.args).to.deep.equal(['sandboxAlias', 'newSandboxUsername']);
         expect(configStub.firstCall.args).to.deep.equal(['defaultusername', 'newSandboxUsername']);
       });
 
@@ -342,10 +352,9 @@ describe('org:create', () => {
 
     it('will calculate the correct human readable message (1h 33min 00seconds seconds left)', async () => {
       const data = {
-        // 186*30 = 5580 = 1 hour, 33 min, 0 seconds. so 186 attempts left, at a 30 second polling interval
         sandboxProcessObj,
         interval: 30,
-        retries: 186,
+        remainingWait: 5580,
         waitingOnAuth: false,
       };
       const res = SandboxReporter.sandboxProgress(data);
@@ -355,10 +364,10 @@ describe('org:create', () => {
     });
 
     it('will calculate the correct human readable message (5 min 30seconds seconds left)', async () => {
-      const data = {
+      const data: StatusEvent = {
         sandboxProcessObj,
         interval: 30,
-        retries: 11,
+        remainingWait: 330,
         waitingOnAuth: false,
       };
       const res = SandboxReporter.sandboxProgress(data);
@@ -392,10 +401,10 @@ describe('org:create', () => {
         );
       });
 
-      const data = {
+      const data: StatusEvent = {
         sandboxProcessObj,
         interval: 30,
-        retries: 1,
+        remainingWait: 30,
         waitingOnAuth: false,
       };
 

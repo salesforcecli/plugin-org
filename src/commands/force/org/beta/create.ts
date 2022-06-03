@@ -118,7 +118,7 @@ export class Create extends SfdxCommand {
       throw new SfError(messages.getMessage('requiresUsername'));
     }
     if (this.flags.retry !== 0) {
-      throw new SfError(messages.getMessage('retryIsNotValidForSandboxes'));
+      throw new SfError(messages.getMessage('retryIsNotValidForSandboxes'), 'retryIsNotValidForSandboxes');
     }
 
     if (this.flags.clientid) {
