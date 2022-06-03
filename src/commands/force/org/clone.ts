@@ -58,6 +58,7 @@ export class OrgCloneCommand extends SfdxCommand {
     wait: flags.minutes({
       char: 'w',
       description: messages.getMessage('flags.wait'),
+      longDescription: messages.getMessage('flagsLong.wait'),
       min: Duration.minutes(2),
       default: Duration.minutes(6),
     }),

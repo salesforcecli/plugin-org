@@ -1,9 +1,9 @@
 {
   "description": "list all orgs you’ve created or authenticated to",
   "examples": [
-    "sfdx force:org:list",
-    "sfdx force:org:list --verbose --json",
-    "sfdx force:org:list --verbose --json > tmp/MyOrgList.json"
+    "$ sfdx force:org:list",
+    "$ sfdx force:org:list --verbose --json",
+    "$ sfdx force:org:list --verbose --json > tmp/MyOrgList.json"
   ],
   "verbose": "list more information about each org",
   "all": "include expired, deleted, and unknown-status scratch orgs",
