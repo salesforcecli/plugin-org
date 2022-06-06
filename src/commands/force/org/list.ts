@@ -120,7 +120,10 @@ export class OrgListCommand extends SfdxCommand {
   protected printOrgTable(nonScratchOrgs: ExtendedAuthFields[], skipconnectionstatus: boolean): void {
     // default columns for the non-scratch org list
     let nonScratchOrgColumns = {
-      defaultMarker: { header: '' },
+      defaultMarker: {
+        header: '',
+        get: (data: ExtendedAuthFields): string => data.defaultMarker ?? '',
+      },
       alias: { header: 'ALIAS' },
       username: { header: 'USERNAME' },
       orgId: { header: 'ORG ID' },
@@ -165,7 +168,10 @@ export class OrgListCommand extends SfdxCommand {
   private getScratchOrgColumnData(): Partial<CliUx.Table.table.Columns<Record<string, string>>> {
     // default columns for the scratch org list
     let scratchOrgColumns = {
-      defaultMarker: { header: '' },
+      defaultMarker: {
+        header: '',
+        get: (data: ExtendedAuthFields): string => data.defaultMarker ?? '',
+      },
       alias: { header: 'ALIAS' },
       username: { header: 'USERNAME' },
       orgId: { header: 'ORG ID' },

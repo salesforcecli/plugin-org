@@ -7,7 +7,7 @@
 import { basename, join } from 'path';
 import * as fs from 'fs/promises';
 
-import { Org, AuthInfo, sfdc, ConfigAggregator, Global, AuthFields, Logger, SfError } from '@salesforce/core';
+import { Org, AuthInfo, sfdc, SfdxConfigAggregator, Global, AuthFields, Logger, SfError } from '@salesforce/core';
 import { Dictionary, JsonMap } from '@salesforce/ts-types';
 import { Record } from 'jsforce';
 import { omit } from '@salesforce/kit/lib';
@@ -164,7 +164,7 @@ export class OrgListUtil {
       scratchOrgs: [],
       nonScratchOrgs: [],
     };
-    const config = (await ConfigAggregator.create()).getConfig();
+    const config = (await SfdxConfigAggregator.create()).getConfig();
 
     for (const authInfo of authInfos) {
       let currentValue: ExtendedAuthFields;
@@ -210,14 +210,11 @@ export class OrgListUtil {
 
   /** Identify the default orgs */
   public static identifyDefaultOrgs(orgInfo: ExtendedAuthFields, config: JsonMap): void {
-    if (
-      config.defaultusername &&
-      (orgInfo.username === config.defaultusername || orgInfo.alias === config.defaultusername)
-    ) {
+    if (config['target-org'] && (orgInfo.username === config['target-org'] || orgInfo.alias === config['target-org'])) {
       orgInfo.isDefaultUsername = true;
     } else if (
-      config.defaultdevhubusername &&
-      (orgInfo.username === config.defaultdevhubusername || orgInfo.alias === config.defaultdevhubusername)
+      config['target-dev-hub'] &&
+      (orgInfo.username === config['target-dev-hub'] || orgInfo.alias === config['target-dev-hub'])
     ) {
       orgInfo.isDefaultDevHubUsername = true;
     }
