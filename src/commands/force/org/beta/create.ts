@@ -17,6 +17,7 @@ import {
   Messages,
   Org,
   OrgTypes,
+  OrgConfigProperties,
   ResultEvent,
   SandboxEvents,
   SandboxProcessObject,
@@ -274,7 +275,7 @@ export class Create extends SfdxCommand {
         config = await Config.create({ isGlobal: true });
       }
       const value = globalInfo.aliases.get(username) || username;
-      const result = config.set(SfdxPropertyKeys.DEFAULT_USERNAME, value);
+      const result = config.set(OrgConfigProperties.TARGET_ORG, value);
       await config.write();
       this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
     }

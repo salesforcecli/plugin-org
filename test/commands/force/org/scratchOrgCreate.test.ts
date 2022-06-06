@@ -231,7 +231,7 @@ describe('org:create', () => {
       });
       expect(aliasUpdateStub.firstCall.args).to.deep.equal(['scratchOrgAlias', 'newScratchUsername']);
       expect(aliasGetStub.firstCall.args).to.deep.equal(['newScratchUsername']);
-      expect(configStub.firstCall.args).to.deep.equal(['defaultusername', 'newScratchUsername']);
+      expect(configStub.firstCall.args).to.deep.equal(['target-org', 'newScratchUsername']);
     });
 
     it('will set alias as default', async () => {
@@ -283,7 +283,7 @@ describe('org:create', () => {
       });
       expect(aliasUpdateStub.firstCall.args).to.deep.equal(['scratchOrgAlias', 'newScratchUsername']);
       expect(aliasGetStub.firstCall.args).to.deep.equal(['newScratchUsername']);
-      expect(configStub.firstCall.args).to.deep.equal(['defaultusername', 'scratchOrgAlias']);
+      expect(configStub.firstCall.args).to.deep.equal(['target-org', 'scratchOrgAlias']);
     });
 
     it('will test json output', async () => {
