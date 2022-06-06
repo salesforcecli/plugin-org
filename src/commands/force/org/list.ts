@@ -124,7 +124,10 @@ export class OrgListCommand extends SfdxCommand {
         header: '',
         get: (data: ExtendedAuthFields): string => data.defaultMarker ?? '',
       },
-      alias: { header: 'ALIAS' },
+      alias: {
+        header: 'ALIAS',
+        get: (data: ExtendedAuthFields): string => data.alias ?? '',
+      },
       username: { header: 'USERNAME' },
       orgId: { header: 'ORG ID' },
     };
@@ -172,7 +175,10 @@ export class OrgListCommand extends SfdxCommand {
         header: '',
         get: (data: ExtendedAuthFields): string => data.defaultMarker ?? '',
       },
-      alias: { header: 'ALIAS' },
+      alias: {
+        header: 'ALIAS',
+        get: (data: ExtendedAuthFields): string => data.alias ?? '',
+      },
       username: { header: 'USERNAME' },
       orgId: { header: 'ORG ID' },
     };
