@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Config, GlobalInfo, SfError, Messages, Org, SfProject } from '@salesforce/core';
+import { Config, StateAggregator, SfError, Messages, Org, SfProject } from '@salesforce/core';
 import { fromStub, stubInterface, stubMethod } from '@salesforce/ts-sinon';
 import * as sinon from 'sinon';
 import { expect } from '@salesforce/command/lib/test';
@@ -46,7 +46,6 @@ describe('org:create', () => {
   let promptStub: sinon.SinonStub;
   let aliasGetStub: sinon.SinonStub;
   let aliasSetStub: sinon.SinonSpy;
-  let aliasUpdateStub: sinon.SinonSpy;
   let cmd: TestCreate;
 
   class TestCreate extends Create {
@@ -204,12 +203,10 @@ describe('org:create', () => {
       });
       aliasGetStub = sinon.stub().returns('');
       aliasSetStub = sinon.spy();
-      aliasUpdateStub = sinon.spy();
-      stubMethod(sandbox, GlobalInfo, 'getInstance').returns({
+      stubMethod(sandbox, StateAggregator, 'getInstance').returns({
         aliases: {
           get: aliasGetStub,
           set: aliasSetStub,
-          update: aliasUpdateStub,
         },
       });
       const configStub = stubMethod(sandbox, Config.prototype, 'set');
@@ -229,7 +226,7 @@ describe('org:create', () => {
         retry: 0,
         orgConfig: {},
       });
-      expect(aliasUpdateStub.firstCall.args).to.deep.equal(['scratchOrgAlias', 'newScratchUsername']);
+      expect(aliasSetStub.firstCall.args).to.deep.equal(['scratchOrgAlias', 'newScratchUsername']);
       expect(aliasGetStub.firstCall.args).to.deep.equal(['newScratchUsername']);
       expect(configStub.firstCall.args).to.deep.equal(['target-org', 'newScratchUsername']);
     });
@@ -256,11 +253,11 @@ describe('org:create', () => {
       });
 
       aliasGetStub = sinon.stub().returns('scratchOrgAlias');
-      aliasUpdateStub = sinon.spy();
-      stubMethod(sandbox, GlobalInfo, 'getInstance').returns({
+      aliasSetStub = sinon.spy();
+      stubMethod(sandbox, StateAggregator, 'getInstance').returns({
         aliases: {
           get: aliasGetStub,
-          update: aliasUpdateStub,
+          set: aliasSetStub,
         },
       });
 
@@ -281,7 +278,7 @@ describe('org:create', () => {
         retry: 0,
         orgConfig: {},
       });
-      expect(aliasUpdateStub.firstCall.args).to.deep.equal(['scratchOrgAlias', 'newScratchUsername']);
+      expect(aliasSetStub.firstCall.args).to.deep.equal(['scratchOrgAlias', 'newScratchUsername']);
       expect(aliasGetStub.firstCall.args).to.deep.equal(['newScratchUsername']);
       expect(configStub.firstCall.args).to.deep.equal(['target-org', 'scratchOrgAlias']);
     });

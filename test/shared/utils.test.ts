@@ -6,7 +6,7 @@
  */
 import { expect } from '@salesforce/command/lib/test';
 import * as sinon from 'sinon';
-import { GlobalInfo } from '@salesforce/core';
+import { StateAggregator } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { getAliasByUsername } from '../../src/shared/utils';
 
@@ -17,7 +17,7 @@ describe('getAliasByUsername', () => {
     getAllStub.withArgs('username1').returns(['alias1']);
     getAllStub.withArgs('username2').returns(['alias2', 'alias2b']);
 
-    stubMethod(sandbox, GlobalInfo, 'getInstance').resolves({
+    stubMethod(sandbox, StateAggregator, 'getInstance').resolves({
       aliases: {
         getAll: getAllStub,
       },

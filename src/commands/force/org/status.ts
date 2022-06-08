@@ -11,7 +11,7 @@ import {
   Config,
   Lifecycle,
   Messages,
-  GlobalInfo,
+  StateAggregator,
   SandboxEvents,
   SfdxPropertyKeys,
   StatusEvent,
@@ -72,8 +72,8 @@ export class OrgStatusCommand extends SfdxCommand {
       });
       if (results.sandboxRes?.authUserName) {
         if (this.flags.setalias) {
-          const info = await GlobalInfo.getInstance();
-          info.aliases.update(this.flags.setalias, results.sandboxRes.authUserName);
+          const stateAggregator = await StateAggregator.getInstance();
+          stateAggregator.aliases.set(this.flags.setalias, results.sandboxRes.authUserName);
           this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, results.sandboxRes.authUserName);
         }
         if (this.flags.setdefaultusername) {

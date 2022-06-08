@@ -15,7 +15,7 @@ import {
   Messages,
   OrgTypes,
   SfdxPropertyKeys,
-  GlobalInfo,
+  StateAggregator,
   SandboxEvents,
   SandboxRequest,
   StatusEvent,
@@ -89,9 +89,9 @@ export class OrgCloneCommand extends SfdxCommand {
 
         if (results?.sandboxRes?.authUserName) {
           if (this.flags.setalias) {
-            const globalInfo = await GlobalInfo.getInstance();
-            globalInfo.aliases.set(this.flags.setalias, results.sandboxRes.authUserName);
-            const result = globalInfo.aliases.getAll();
+            const stateAggregator = await StateAggregator.getInstance();
+            stateAggregator.aliases.set(this.flags.setalias, results.sandboxRes.authUserName);
+            const result = stateAggregator.aliases.getAll();
             this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
           }
           if (this.flags.setdefaultusername) {

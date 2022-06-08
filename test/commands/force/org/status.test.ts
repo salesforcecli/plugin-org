@@ -9,7 +9,7 @@ import {
   Org,
   SfdxPropertyKeys,
   SfdxConfigAggregator,
-  GlobalInfo,
+  StateAggregator,
   ConfigAggregator,
   Lifecycle,
   SandboxEvents,
@@ -60,7 +60,7 @@ describe('org:status', () => {
   let configSetStub: sinon.SinonStub;
   let configWriteStub: sinon.SinonStub;
   let onStub: sinon.SinonStub;
-  let updateValueStub: sinon.SinonStub;
+  let aliasSetStub: sinon.SinonStub;
   let configAggregatorStub;
 
   class TestOrgStatusCommand extends OrgStatusCommand {
@@ -104,10 +104,10 @@ describe('org:status', () => {
     uxTableStub = stubMethod(sandbox, UX.prototype, 'table');
     stubMethod(sandbox, UX.prototype, 'log');
     stubMethod(sandbox, UX.prototype, 'styledHeader');
-    updateValueStub = sinon.stub();
-    stubMethod(sandbox, GlobalInfo, 'getInstance').returns({
+    aliasSetStub = sinon.stub();
+    stubMethod(sandbox, StateAggregator, 'getInstance').returns({
       aliases: {
-        update: updateValueStub,
+        set: aliasSetStub,
       },
     });
     return cmd.runIt();
@@ -116,7 +116,7 @@ describe('org:status', () => {
   it('will return sandbox process object', async () => {
     const res = await runStatusCommand(['--sandboxname', sanboxname]);
     expect(uxTableStub.firstCall.args[0].length).to.equal(12);
-    expect(updateValueStub.callCount).to.be.equal(0);
+    expect(aliasSetStub.callCount).to.be.equal(0);
     expect(configSetStub.callCount).to.be.equal(0);
     expect(configWriteStub.callCount).to.be.equal(0);
     expect(onStub.callCount).to.be.equal(2);
@@ -131,7 +131,7 @@ describe('org:status', () => {
       sandboxalias,
       '--setdefaultusername',
     ]);
-    expect(updateValueStub.firstCall.args).to.deep.equal([sandboxalias, authUserName]);
+    expect(aliasSetStub.firstCall.args).to.deep.equal([sandboxalias, authUserName]);
     expect(onStub.secondCall.firstArg).to.be.equal(SandboxEvents.EVENT_RESULT);
     expect(onStub.callCount).to.be.equal(2);
     expect(res).to.deep.equal(sandboxProcessObj);

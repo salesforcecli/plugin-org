@@ -11,7 +11,7 @@ import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
 import { Duration } from '@salesforce/kit';
 import {
   AuthFields,
-  GlobalInfo,
+  StateAggregator,
   Config,
   Lifecycle,
   Messages,
@@ -208,9 +208,9 @@ export class Create extends SfdxCommand {
       });
       if (results.sandboxRes?.authUserName) {
         if (this.flags.setalias) {
-          const globalInfo = await GlobalInfo.getInstance();
-          globalInfo.aliases.set(this.flags.setalias, results.sandboxRes.authUserName);
-          const result = await globalInfo.write();
+          const stateAggregator = await StateAggregator.getInstance();
+          stateAggregator.aliases.set(this.flags.setalias, results.sandboxRes.authUserName);
+          const result = await stateAggregator.aliases.write();
           this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
         }
         if (this.flags.setdefaultusername) {
@@ -235,9 +235,9 @@ export class Create extends SfdxCommand {
       if (err?.message.includes('The org cannot be found')) {
         // there was most likely an issue with DNS when auth'ing to the new sandbox, but it was created.
         if (this.flags.setalias && this.sandboxAuth) {
-          const globalInfo = await GlobalInfo.getInstance();
-          globalInfo.aliases.set(this.flags.setalias, this.sandboxAuth.authUserName);
-          const result = await globalInfo.write();
+          const stateAggregator = await StateAggregator.getInstance();
+          stateAggregator.aliases.set(this.flags.setalias, this.sandboxAuth.authUserName);
+          const result = await stateAggregator.aliases.write();
           this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
         }
         if (this.flags.setdefaultusername && this.sandboxAuth) {
@@ -262,9 +262,9 @@ export class Create extends SfdxCommand {
   }
 
   private async setAliasAndDefaultUsername(username: string): Promise<void> {
-    const globalInfo = await GlobalInfo.getInstance();
+    const stateAggregator = await StateAggregator.getInstance();
     if (this.flags.setalias) {
-      globalInfo.aliases.update(this.flags.setalias, username);
+      stateAggregator.aliases.set(this.flags.setalias, username);
       this.logger.debug('Set Alias: %s result: %s', this.flags.setalias);
     }
     if (this.flags.setdefaultusername) {
@@ -274,7 +274,7 @@ export class Create extends SfdxCommand {
       } catch {
         config = await Config.create({ isGlobal: true });
       }
-      const value = globalInfo.aliases.get(username) || username;
+      const value = stateAggregator.aliases.get(username) || username;
       const result = config.set(OrgConfigProperties.TARGET_ORG, value);
       await config.write();
       this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);

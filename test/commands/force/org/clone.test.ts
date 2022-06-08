@@ -4,7 +4,14 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Org, Lifecycle, GlobalInfo, SandboxEvents, SfdxConfigAggregator, SfdxPropertyKeys } from '@salesforce/core';
+import {
+  Org,
+  Lifecycle,
+  StateAggregator,
+  SandboxEvents,
+  SfdxConfigAggregator,
+  SfdxPropertyKeys,
+} from '@salesforce/core';
 import { fromStub, stubInterface, stubMethod } from '@salesforce/ts-sinon';
 import * as sinon from 'sinon';
 import { expect } from '@salesforce/command/lib/test';
@@ -124,7 +131,7 @@ describe('org:clone', () => {
       on: onStub,
     });
     aliasSetStub = sinon.spy();
-    stubMethod(sandbox, GlobalInfo, 'getInstance').returns({
+    stubMethod(sandbox, StateAggregator, 'getInstance').returns({
       aliases: {
         set: aliasSetStub,
         getAll: () => ({

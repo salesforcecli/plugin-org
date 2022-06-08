@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import {
-  GlobalInfo,
+  StateAggregator,
   Config,
   Lifecycle,
   Messages,
@@ -271,11 +271,11 @@ describe('org:create', () => {
       stubMethod(sandbox, Org.prototype, 'createSandbox');
 
       aliasSetStub = sinon.spy();
-      stubMethod(sandbox, GlobalInfo, 'getInstance').returns({
+      stubMethod(sandbox, StateAggregator, 'getInstance').returns({
         aliases: {
           set: aliasSetStub,
+          write: sinon.stub(),
         },
-        write: sinon.stub(),
       });
       const configStub = stubMethod(sandbox, Config.prototype, 'set');
       await command.runIt();
