@@ -10,11 +10,11 @@ import { TestSession, execCmd } from '@salesforce/cli-plugins-testkit';
 import { expect } from 'chai';
 import * as shell from 'shelljs';
 import { AuthInfo, Connection, SandboxProcessObject } from '@salesforce/core';
-import { Env } from '@salesforce/kit';
-import { ensureString } from '@salesforce/ts-types';
+import { isArray, AnyJson, ensureString } from '@salesforce/ts-types';
 
 let session: TestSession;
 let sandboxName: string;
+let hubOrgUsername: string;
 
 function unsetAlias() {
   const execOptions: shell.ExecOptions = {
@@ -41,20 +41,25 @@ function logoutSandbox(username: string) {
 }
 
 describe('test sandbox status command', () => {
-  const env = new Env();
-  let username: string;
-
   before(async () => {
     session = await TestSession.create({
+      setupCommands: ['sfdx config:get defaultdevhubusername --json'],
       project: {
         sourceDir: path.join(process.cwd(), 'test', 'nut', 'commands', 'force', 'org'),
       },
     });
-    username = ensureString(env.getString('TESTKIT_HUB_USERNAME'));
+    // get default devhub username
+    if (isArray<AnyJson>(session.setup)) {
+      hubOrgUsername = ensureString(
+        (session.setup[0] as { result: [{ key: string; value: string }] }).result.find(
+          (config) => config.key === 'defaultdevhubusername'
+        )?.value
+      );
+    }
     const queryStr =
       "SELECT SandboxName FROM SandboxProcess WHERE Status != 'E' and Status != 'D' ORDER BY CreatedDate DESC LIMIT 1";
     const connection = await Connection.create({
-      authInfo: await AuthInfo.create({ username }),
+      authInfo: await AuthInfo.create({ username: hubOrgUsername }),
     });
     const queryResult = (await connection.tooling.query(queryStr)) as { records: SandboxProcessObject[] };
     expect(queryResult?.records?.length).to.equal(1);
@@ -64,12 +69,12 @@ describe('test sandbox status command', () => {
   afterEach(() => {
     unsetAlias();
     unsetConfig();
-    logoutSandbox(username);
+    logoutSandbox(hubOrgUsername);
   });
 
   it('sandbox status command', async () => {
     const orgStatusResult = execCmd<SandboxProcessObject>(
-      `force:org:status --sandboxname ${sandboxName} -u ${username} --json`,
+      `force:org:status --sandboxname ${sandboxName} -u ${hubOrgUsername} --json`,
       {
         ensureExitCode: 0,
       }
@@ -93,7 +98,7 @@ describe('test sandbox status command', () => {
 
   it('sandbox status command sets setdefaultusername', async () => {
     const orgStatusResult = execCmd<SandboxProcessObject>(
-      `force:org:status --sandboxname ${sandboxName} -u ${username} -s --json`,
+      `force:org:status --sandboxname ${sandboxName} -u ${hubOrgUsername} -s --json`,
       {
         ensureExitCode: 0,
       }
@@ -104,12 +109,12 @@ describe('test sandbox status command', () => {
     };
     const result = shell.exec('sfdx config:get defaultusername --json', execOptions) as shell.ShellString;
     expect(result.code).to.equal(0);
-    expect(result.stdout).to.contain(`"${username}.${sandboxName}"`);
+    expect(result.stdout).to.contain(`"${hubOrgUsername}.${sandboxName}"`);
   });
 
   it('sandbox status command set alias', async () => {
     const orgStatusResult = execCmd<SandboxProcessObject>(
-      `force:org:status --sandboxname ${sandboxName} -u ${username} -a ${sandboxName} --json`,
+      `force:org:status --sandboxname ${sandboxName} -u ${hubOrgUsername} -a ${sandboxName} --json`,
       {
         ensureExitCode: 0,
       }
