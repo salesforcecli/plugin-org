@@ -1051,13 +1051,13 @@
     mv "~2"
     safe-json-stringify "~1"
 
-"@salesforce/cli-plugins-testkit@^1.5.35":
-  version "1.5.35"
-  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-1.5.35.tgz#dd4ab930f67b0334269fe3b2846c51af9c911fae"
-  integrity sha512-vjYvl+5v/HOBpnTaF8dxoqXgFlxdGXmt+ZD39QQ0lECj/4HJD8qS//4PQ5vEWs5RqxrW99SvDzF0K+GavMpAaQ==
+"@salesforce/cli-plugins-testkit@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-2.3.0.tgz#fabc0d60e3d63c158405153d45917464da349482"
+  integrity sha512-96vZC+fpJdcnZGLfj7U1PKKgFxa01+ZcSIxydB5qZFu5XYmWjg3C3ah3nlSlIo7RRcM3qhthmeZWRERLsz04zA==
   dependencies:
-    "@salesforce/core" "^2.24.0"
-    "@salesforce/kit" "^1.5.13"
+    "@salesforce/core" "^3.20.1"
+    "@salesforce/kit" "^1.5.42"
     "@salesforce/ts-types" "^1.5.17"
     archiver "^5.2.0"
     debug "^4.3.1"
@@ -1093,7 +1093,7 @@
     "@salesforce/ts-types" "^1.5.20"
     chalk "^2.4.2"
 
-"@salesforce/core@^2.24.0", "@salesforce/core@^2.35.0", "@salesforce/core@^2.36.4":
+"@salesforce/core@^2.35.0", "@salesforce/core@^2.36.4":
   version "2.37.1"
   resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-2.37.1.tgz#bfb6634e068278c7761d694a15e09a680b407137"
   integrity sha512-Jyppt6fc8uEBQgfD2uIvZlUVSTSkhgU4i+N0B4mQJ+0yeAu5foiGJnn7u6/GPkpLSgof8IZKC6f4crsi/9xyLA==
@@ -1187,7 +1187,7 @@
     typedoc-plugin-missing-exports "0.22.6"
     typescript "^4.1.3"
 
-"@salesforce/kit@^1.5.13", "@salesforce/kit@^1.5.17":
+"@salesforce/kit@^1.5.17", "@salesforce/kit@^1.5.42":
   version "1.5.42"
   resolved "https://registry.yarnpkg.com/@salesforce/kit/-/kit-1.5.42.tgz#2c9f5fe9908723a70b65181526c5199e6bb943c5"
   integrity sha512-40QiPR+bg3iOC2lqCKwVO0iPw29lHCS5KzUZFiTOeu8HDu5SCgDhGc1d1Bj8KK/ZYDrAcNTZ8ObrlQFnme3fdQ==
