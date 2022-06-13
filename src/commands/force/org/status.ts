@@ -74,6 +74,7 @@ export class OrgStatusCommand extends SfdxCommand {
         if (this.flags.setalias) {
           const stateAggregator = await StateAggregator.getInstance();
           stateAggregator.aliases.set(this.flags.setalias, results.sandboxRes.authUserName);
+          await stateAggregator.aliases.write();
           this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, results.sandboxRes.authUserName);
         }
         if (this.flags.setdefaultusername) {
