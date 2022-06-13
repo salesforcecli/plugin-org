@@ -24,7 +24,6 @@ import {
   SandboxRequest,
   SandboxUserAuthResponse,
   SfError,
-  SfdxPropertyKeys,
   StatusEvent,
   ScratchOrgRequest,
   ScratchOrgInfo,
@@ -215,7 +214,7 @@ export class Create extends SfdxCommand {
         }
         if (this.flags.setdefaultusername) {
           const globalConfig: Config = this.configAggregator.getGlobalConfig();
-          globalConfig.set(SfdxPropertyKeys.DEFAULT_USERNAME, results.sandboxRes.authUserName);
+          globalConfig.set(OrgConfigProperties.TARGET_ORG, results.sandboxRes.authUserName);
           const result = await globalConfig.write();
           this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
         }
@@ -242,7 +241,7 @@ export class Create extends SfdxCommand {
         }
         if (this.flags.setdefaultusername && this.sandboxAuth) {
           const globalConfig: Config = this.configAggregator.getGlobalConfig();
-          globalConfig.set(SfdxPropertyKeys.DEFAULT_USERNAME, this.sandboxAuth.authUserName);
+          globalConfig.set(OrgConfigProperties.TARGET_ORG, this.sandboxAuth.authUserName);
           const result = await globalConfig.write();
           this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
         }

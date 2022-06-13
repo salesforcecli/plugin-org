@@ -10,7 +10,7 @@ import {
   StateAggregator,
   SandboxEvents,
   SfdxConfigAggregator,
-  SfdxPropertyKeys,
+  OrgConfigProperties,
 } from '@salesforce/core';
 import { fromStub, stubInterface, stubMethod } from '@salesforce/ts-sinon';
 import * as sinon from 'sinon';
@@ -217,7 +217,7 @@ describe('org:clone', () => {
     expect(aliasSetStub.callCount).to.be.equal(1);
     expect(aliasSetStub.firstCall.args[0]).to.be.equal(sandboxalias);
     expect(aliasSetStub.firstCall.args[1]).to.be.equal(authUserName);
-    expect(configSetStub.firstCall.args[0]).to.be.equal(SfdxPropertyKeys.DEFAULT_USERNAME);
+    expect(configSetStub.firstCall.args[0]).to.be.equal(OrgConfigProperties.TARGET_ORG);
     expect(configSetStub.firstCall.args[1]).to.be.equal(authUserName);
     expect(onStub.firstCall.firstArg).to.be.equal(SandboxEvents.EVENT_ASYNC_RESULT);
     expect(onStub.secondCall.firstArg).to.be.equal(SandboxEvents.EVENT_STATUS);

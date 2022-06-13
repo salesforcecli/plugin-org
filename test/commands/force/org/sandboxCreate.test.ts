@@ -336,7 +336,7 @@ describe('org:create', () => {
           },
         ]);
         expect(aliasSetStub.firstCall.args).to.deep.equal(['sandboxAlias', 'newSandboxUsername']);
-        expect(configStub.firstCall.args).to.deep.equal(['defaultusername', 'newSandboxUsername']);
+        expect(configStub.firstCall.args).to.deep.equal(['target-org', 'newSandboxUsername']);
       });
 
       const sandboxRes: SandboxUserAuthResponse = {

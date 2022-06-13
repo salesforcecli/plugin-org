@@ -13,7 +13,7 @@ import {
   Messages,
   StateAggregator,
   SandboxEvents,
-  SfdxPropertyKeys,
+  OrgConfigProperties,
   StatusEvent,
   ResultEvent,
   SandboxProcessObject,
@@ -78,7 +78,7 @@ export class OrgStatusCommand extends SfdxCommand {
         }
         if (this.flags.setdefaultusername) {
           const globalConfig: Config = this.configAggregator.getGlobalConfig();
-          globalConfig.set(SfdxPropertyKeys.DEFAULT_USERNAME, results.sandboxRes.authUserName);
+          globalConfig.set(OrgConfigProperties.TARGET_ORG, results.sandboxRes.authUserName);
           const result = await globalConfig.write();
           this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
         }

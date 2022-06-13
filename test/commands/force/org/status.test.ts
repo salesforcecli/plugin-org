@@ -7,7 +7,7 @@
 
 import {
   Org,
-  SfdxPropertyKeys,
+  OrgConfigProperties,
   SfdxConfigAggregator,
   StateAggregator,
   ConfigAggregator,
@@ -139,7 +139,7 @@ describe('org:status', () => {
 
   it('will set default username', async () => {
     const res = await runStatusCommand(['--sandboxname', sanboxname, '--setdefaultusername']);
-    expect(configSetStub.firstCall.args[0]).to.be.equal(SfdxPropertyKeys.DEFAULT_USERNAME);
+    expect(configSetStub.firstCall.args[0]).to.be.equal(OrgConfigProperties.TARGET_ORG);
     expect(configSetStub.firstCall.args[1]).to.be.equal(authUserName);
     expect(configWriteStub.calledOnce).to.be.true;
     expect(onStub.secondCall.firstArg).to.be.equal(SandboxEvents.EVENT_RESULT);
