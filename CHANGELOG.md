@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/salesforcecli/plugin-org/compare/v1.13.2...v2.0.0) (2022-06-27)
+
+### Features
+
+- use StateAggregator [sb-nuts] ([8abe9d7](https://github.com/salesforcecli/plugin-org/commit/8abe9d7abe2c8f5fb19fd9c092218a9b5c40e130))
+
+### Bug Fixes
+
+- do not use deprecated config var for org create ([52a3437](https://github.com/salesforcecli/plugin-org/commit/52a3437fd416c843ff6780585241a17575b7bd6a))
+- handle orgs with no alias ([e89ce56](https://github.com/salesforcecli/plugin-org/commit/e89ce56baaa5361398737280d290db0c062b3a25))
+- parking orbit plugin-org ([cb631c9](https://github.com/salesforcecli/plugin-org/commit/cb631c9de35c6805ca16c93217a3932b5f5b1ec8))
+- print defaultmarker for org ([4f95931](https://github.com/salesforcecli/plugin-org/commit/4f959312bf9283c362cc28d647764b025c370105))
+- **status:** write config file after the alias is set [sb-nuts] ([57ae082](https://github.com/salesforcecli/plugin-org/commit/57ae0829af4adc3b39d0a659829afef9e3b54677))
+
 ### [1.13.2](https://github.com/salesforcecli/plugin-org/compare/v1.13.1...v1.13.2) (2022-05-20)
 
 ### Bug Fixes
