@@ -5,10 +5,19 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { Org, Aliases, Config, ConfigAggregator, Lifecycle, SandboxEvents } from '@salesforce/core';
+import {
+  Org,
+  OrgConfigProperties,
+  SfdxConfigAggregator,
+  StateAggregator,
+  ConfigAggregator,
+  Lifecycle,
+  SandboxEvents,
+} from '@salesforce/core';
 import { fromStub, stubInterface, stubMethod } from '@salesforce/ts-sinon';
 import * as sinon from 'sinon';
-import { expect, IConfig } from '@salesforce/command/lib/test';
+import { expect } from '@salesforce/command/lib/test';
+import { Config } from '@oclif/core';
 import { UX } from '@salesforce/command';
 import { OrgStatusCommand } from '../../../../src/commands/force/org/status';
 
@@ -43,7 +52,7 @@ describe('org:status', () => {
       loginUrl: 'https://my-login.com',
     },
   };
-  const oclifConfigStub = fromStub(stubInterface<IConfig.IConfig>(sandbox));
+  const oclifConfigStub = fromStub(stubInterface<Config>(sandbox));
 
   // stubs
   let uxTableStub: sinon.SinonStub;
@@ -51,7 +60,7 @@ describe('org:status', () => {
   let configSetStub: sinon.SinonStub;
   let configWriteStub: sinon.SinonStub;
   let onStub: sinon.SinonStub;
-  let updateValueStub: sinon.SinonStub;
+  let aliasSetStub: sinon.SinonStub;
   let configAggregatorStub;
 
   class TestOrgStatusCommand extends OrgStatusCommand {
@@ -62,7 +71,7 @@ describe('org:status', () => {
     public setOrg(org: Org) {
       this.org = org;
     }
-    public setConfigAggregator(configAggregator: ConfigAggregator) {
+    public setConfigAggregator(configAggregator: SfdxConfigAggregator) {
       this.configAggregator = configAggregator;
     }
   }
@@ -95,14 +104,19 @@ describe('org:status', () => {
     uxTableStub = stubMethod(sandbox, UX.prototype, 'table');
     stubMethod(sandbox, UX.prototype, 'log');
     stubMethod(sandbox, UX.prototype, 'styledHeader');
-    updateValueStub = stubMethod(sandbox, Aliases.prototype, 'updateValue');
+    aliasSetStub = sinon.stub();
+    stubMethod(sandbox, StateAggregator, 'getInstance').returns({
+      aliases: {
+        set: aliasSetStub,
+      },
+    });
     return cmd.runIt();
   };
 
   it('will return sandbox process object', async () => {
     const res = await runStatusCommand(['--sandboxname', sanboxname]);
     expect(uxTableStub.firstCall.args[0].length).to.equal(12);
-    expect(updateValueStub.callCount).to.be.equal(0);
+    expect(aliasSetStub.callCount).to.be.equal(0);
     expect(configSetStub.callCount).to.be.equal(0);
     expect(configWriteStub.callCount).to.be.equal(0);
     expect(onStub.callCount).to.be.equal(2);
@@ -117,7 +131,7 @@ describe('org:status', () => {
       sandboxalias,
       '--setdefaultusername',
     ]);
-    expect(updateValueStub.firstCall.args).to.deep.equal([sandboxalias, authUserName]);
+    expect(aliasSetStub.firstCall.args).to.deep.equal([sandboxalias, authUserName]);
     expect(onStub.secondCall.firstArg).to.be.equal(SandboxEvents.EVENT_RESULT);
     expect(onStub.callCount).to.be.equal(2);
     expect(res).to.deep.equal(sandboxProcessObj);
@@ -125,7 +139,7 @@ describe('org:status', () => {
 
   it('will set default username', async () => {
     const res = await runStatusCommand(['--sandboxname', sanboxname, '--setdefaultusername']);
-    expect(configSetStub.firstCall.args[0]).to.be.equal(Config.DEFAULT_USERNAME);
+    expect(configSetStub.firstCall.args[0]).to.be.equal(OrgConfigProperties.TARGET_ORG);
     expect(configSetStub.firstCall.args[1]).to.be.equal(authUserName);
     expect(configWriteStub.calledOnce).to.be.true;
     expect(onStub.secondCall.firstArg).to.be.equal(SandboxEvents.EVENT_RESULT);

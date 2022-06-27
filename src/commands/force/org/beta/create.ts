@@ -11,18 +11,19 @@ import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
 import { Duration } from '@salesforce/kit';
 import {
   AuthFields,
-  Aliases,
+  StateAggregator,
   Config,
   Lifecycle,
   Messages,
   Org,
   OrgTypes,
+  OrgConfigProperties,
   ResultEvent,
   SandboxEvents,
   SandboxProcessObject,
   SandboxRequest,
   SandboxUserAuthResponse,
-  SfdxError,
+  SfError,
   StatusEvent,
   ScratchOrgRequest,
   ScratchOrgInfo,
@@ -114,10 +115,10 @@ export class Create extends SfdxCommand {
 
   private validateSandboxFlags(): void {
     if (!this.flags.targetusername) {
-      throw SfdxError.create('@salesforce/plugin-org', 'create', 'requiresUsername');
+      throw new SfError(messages.getMessage('requiresUsername'));
     }
     if (this.flags.retry !== 0) {
-      throw SfdxError.create('@salesforce/plugin-org', 'create', 'retryIsNotValidForSandboxes');
+      throw new SfError(messages.getMessage('retryIsNotValidForSandboxes'), 'retryIsNotValidForSandboxes');
     }
 
     if (this.flags.clientid) {
@@ -169,7 +170,7 @@ export class Create extends SfdxCommand {
       this.ux.warn(`No SandboxName defined, generating new SandboxName: ${sandboxReq.SandboxName}`);
     }
     if (!sandboxReq.LicenseType) {
-      throw SfdxError.create('@salesforce/plugin-org', 'create', 'missingLicenseType');
+      throw new SfError(messages.getMessage('missingLicenseType'));
     }
     return sandboxReq;
   }
@@ -201,21 +202,19 @@ export class Create extends SfdxCommand {
       this.ux.log(sandboxReadyForUse);
       this.ux.styledHeader('Sandbox Org Creation Status');
       this.ux.table(data, {
-        columns: [
-          { key: 'key', label: 'Name' },
-          { key: 'value', label: 'Value' },
-        ],
+        key: { header: 'Name' },
+        value: { header: 'Value' },
       });
       if (results.sandboxRes?.authUserName) {
         if (this.flags.setalias) {
-          const alias = await Aliases.create(Aliases.getDefaultOptions());
-          alias.set(this.flags.setalias, results.sandboxRes.authUserName);
-          const result = await alias.write();
+          const stateAggregator = await StateAggregator.getInstance();
+          stateAggregator.aliases.set(this.flags.setalias, results.sandboxRes.authUserName);
+          const result = await stateAggregator.aliases.write();
           this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
         }
         if (this.flags.setdefaultusername) {
           const globalConfig: Config = this.configAggregator.getGlobalConfig();
-          globalConfig.set(Config.DEFAULT_USERNAME, results.sandboxRes.authUserName);
+          globalConfig.set(OrgConfigProperties.TARGET_ORG, results.sandboxRes.authUserName);
           const result = await globalConfig.write();
           this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
         }
@@ -231,18 +230,18 @@ export class Create extends SfdxCommand {
       return prodOrg.createSandbox(sandboxReq, { wait });
     } catch (e) {
       // guaranteed to be SfdxError from core;
-      const err = e as SfdxError;
+      const err = e as SfError;
       if (err?.message.includes('The org cannot be found')) {
         // there was most likely an issue with DNS when auth'ing to the new sandbox, but it was created.
         if (this.flags.setalias && this.sandboxAuth) {
-          const alias = await Aliases.create(Aliases.getDefaultOptions());
-          alias.set(this.flags.setalias, this.sandboxAuth.authUserName);
-          const result = await alias.write();
+          const stateAggregator = await StateAggregator.getInstance();
+          stateAggregator.aliases.set(this.flags.setalias, this.sandboxAuth.authUserName);
+          const result = await stateAggregator.aliases.write();
           this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
         }
         if (this.flags.setdefaultusername && this.sandboxAuth) {
           const globalConfig: Config = this.configAggregator.getGlobalConfig();
-          globalConfig.set(Config.DEFAULT_USERNAME, this.sandboxAuth.authUserName);
+          globalConfig.set(OrgConfigProperties.TARGET_ORG, this.sandboxAuth.authUserName);
           const result = await globalConfig.write();
           this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
         }
@@ -262,9 +261,9 @@ export class Create extends SfdxCommand {
   }
 
   private async setAliasAndDefaultUsername(username: string): Promise<void> {
-    const aliases = await Aliases.create(Aliases.getDefaultOptions());
+    const stateAggregator = await StateAggregator.getInstance();
     if (this.flags.setalias) {
-      await aliases.updateValue(this.flags.setalias, username);
+      stateAggregator.aliases.set(this.flags.setalias, username);
       this.logger.debug('Set Alias: %s result: %s', this.flags.setalias);
     }
     if (this.flags.setdefaultusername) {
@@ -274,8 +273,8 @@ export class Create extends SfdxCommand {
       } catch {
         config = await Config.create({ isGlobal: true });
       }
-      const value = aliases.getKeysByValue(username)[0] || username;
-      const result = config.set(Config.DEFAULT_USERNAME, value);
+      const value = stateAggregator.aliases.get(username) || username;
+      const result = config.set(OrgConfigProperties.TARGET_ORG, value);
       await config.write();
       this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
     }
@@ -283,11 +282,11 @@ export class Create extends SfdxCommand {
   private async createScratchOrg(): Promise<ScratchOrgProcessObject> {
     this.logger.debug('OK, will do scratch org creation');
     if (!this.hubOrg) {
-      throw SfdxError.create('@salesforce/plugin-org', 'create', 'RequiresDevhubUsernameError');
+      throw new SfError(messages.getMessage('RequiresDevhubUsernameError'));
     }
     // Ensure we have an org config input source.
     if (!this.flags.definitionfile && Object.keys(this.varargs).length === 0) {
-      throw new SfdxError(messages.getMessage('noConfig'));
+      throw new SfError(messages.getMessage('noConfig'));
     }
 
     this.logger.debug('validation complete');

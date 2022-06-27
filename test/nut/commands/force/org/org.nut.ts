@@ -9,7 +9,9 @@ import * as querystring from 'querystring';
 import { expect } from '@salesforce/command/lib/test';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { execCmd } from '@salesforce/cli-plugins-testkit';
-import { asDictionary, AnyJson, Dictionary, getString, isArray } from '@salesforce/ts-types';
+import { asDictionary, AnyJson, Dictionary, getString, isArray, ensureString } from '@salesforce/ts-types';
+
+let hubOrgUsername: string;
 
 const verifyHumanResults = (
   lines: string[],
@@ -18,7 +20,7 @@ const verifyHumanResults = (
   verbose = false
 ): void => {
   expect(lines.length).to.have.greaterThan(0);
-  const devHubLine = lines.find((line) => line.includes(process.env.TESTKIT_HUB_USERNAME));
+  const devHubLine = lines.find((line) => line.includes(hubOrgUsername));
   expect(devHubLine).to.be.ok;
   expect(devHubLine).to.include('(D)');
   expect(devHubLine).to.include('Connected');
@@ -44,14 +46,25 @@ describe('Org Command NUT', () => {
   let aliasedUsername: string;
   let defaultUserOrgId: string;
   let aliasUserOrgId: string;
+
   before(async () => {
     session = await TestSession.create({
       project: { name: 'forceOrgList' },
       setupCommands: [
         'sfdx force:org:create -f config/project-scratch-def.json --setdefaultusername --wait 10',
         'sfdx force:org:create -f config/project-scratch-def.json --setalias anAlias --wait 10',
+        'sfdx config:get defaultdevhubusername --json',
       ],
     });
+
+    // get default devhub username
+    if (isArray<AnyJson>(session.setup)) {
+      hubOrgUsername = ensureString(
+        (session.setup[2] as { result: [{ key: string; value: string }] }).result.find(
+          (config) => config.key === 'defaultdevhubusername'
+        )?.value
+      );
+    }
 
     if (isArray<AnyJson>(session.setup)) {
       defaultUsername = getString(session.setup[0], 'result.username');
@@ -89,7 +102,7 @@ describe('Org Command NUT', () => {
       });
       expect(nonScratchOrgs).to.include(
         {
-          username: process.env.TESTKIT_HUB_USERNAME,
+          username: hubOrgUsername,
           defaultMarker: '(D)',
           isDevHub: true,
           connectedStatus: 'Connected',
@@ -103,7 +116,7 @@ describe('Org Command NUT', () => {
       const nonScratchOrgs = asDictionary(listResult.nonScratchOrgs[0]);
       expect(nonScratchOrgs).to.include(
         {
-          username: process.env.TESTKIT_HUB_USERNAME,
+          username: hubOrgUsername,
           defaultMarker: '(D)',
           isDevHub: true,
         },
@@ -124,7 +137,7 @@ describe('Org Command NUT', () => {
       const result = execCmd<Dictionary>('force:org:display --json', { ensureExitCode: 0 }).jsonOutput.result;
       expect(result).to.be.ok;
       expect(result).to.include({
-        devHubId: process.env.TESTKIT_HUB_USERNAME,
+        devHubId: hubOrgUsername,
         username: defaultUsername,
       });
     });
@@ -133,7 +146,7 @@ describe('Org Command NUT', () => {
         .jsonOutput.result;
       expect(result).to.be.ok;
       expect(result).to.include({
-        devHubId: process.env.TESTKIT_HUB_USERNAME,
+        devHubId: hubOrgUsername,
         username: aliasedUsername,
       });
     });

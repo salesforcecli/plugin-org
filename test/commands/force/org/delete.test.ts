@@ -4,10 +4,11 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Messages, Org, SfdxProject } from '@salesforce/core';
+import { Messages, Org, SfProject } from '@salesforce/core';
 import { fromStub, stubInterface, stubMethod } from '@salesforce/ts-sinon';
 import * as sinon from 'sinon';
-import { expect, IConfig } from '@salesforce/command/lib/test';
+import { expect } from '@salesforce/command/lib/test';
+import { Config } from '@oclif/core';
 import { UX } from '@salesforce/command';
 import { Delete } from '../../../../src/commands/force/org/delete';
 
@@ -18,7 +19,7 @@ describe('org:delete', () => {
   const sandbox = sinon.createSandbox();
   const username = 'scratch-test@salesforce.com';
   const orgId = '00D54000000KDltEAG';
-  const oclifConfigStub = fromStub(stubInterface<IConfig.IConfig>(sandbox));
+  const oclifConfigStub = fromStub(stubInterface<Config>(sandbox));
 
   // stubs
   let resolveProjectConfigStub: sinon.SinonStub;
@@ -34,7 +35,7 @@ describe('org:delete', () => {
     public setOrg(org: Org) {
       this.org = org;
     }
-    public setProject(project: SfdxProject) {
+    public setProject(project: SfProject) {
       this.project = project;
     }
   }
@@ -46,7 +47,7 @@ describe('org:delete', () => {
     cmd = new TestDelete(params, oclifConfigStub);
     stubMethod(sandbox, cmd, 'assignProject').callsFake(() => {
       const sfdxProjectStub = fromStub(
-        stubInterface<SfdxProject>(sandbox, {
+        stubInterface<SfProject>(sandbox, {
           resolveProjectConfig: resolveProjectConfigStub,
         })
       );

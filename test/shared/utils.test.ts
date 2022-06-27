@@ -6,20 +6,22 @@
  */
 import { expect } from '@salesforce/command/lib/test';
 import * as sinon from 'sinon';
-import { Aliases } from '@salesforce/core';
+import { StateAggregator } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { getAliasByUsername } from '../../src/shared/utils';
 
 describe('getAliasByUsername', () => {
   const sandbox = sinon.createSandbox();
   beforeEach(async () => {
-    stubMethod(sandbox, Aliases, 'create').resolves(Aliases.prototype);
-    stubMethod(sandbox, Aliases, 'getDefaultOptions').returns({});
-    stubMethod(sandbox, Aliases.prototype, 'getKeysByValue')
-      .withArgs('username1')
-      .returns(['alias1'])
-      .withArgs('username2')
-      .returns(['alias2', 'alias2b']);
+    const getAllStub = sandbox.stub();
+    getAllStub.withArgs('username1').returns(['alias1']);
+    getAllStub.withArgs('username2').returns(['alias2', 'alias2b']);
+
+    stubMethod(sandbox, StateAggregator, 'getInstance').resolves({
+      aliases: {
+        getAll: getAllStub,
+      },
+    });
   });
   afterEach(() => {
     sandbox.restore();

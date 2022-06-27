@@ -7,7 +7,7 @@
 
 import * as os from 'os';
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
-import { AuthInfo, Messages, sfdc, SfdxError } from '@salesforce/core';
+import { AuthInfo, Messages, sfdc, SfError } from '@salesforce/core';
 import { camelCaseToTitleCase } from '@salesforce/kit';
 
 import { OrgDisplayReturn, ScratchOrgFields } from '../../../shared/orgTypes';
@@ -71,12 +71,6 @@ export class OrgDisplayCommand extends SfdxCommand {
 
   private print(result: OrgDisplayReturn): void {
     this.ux.log('');
-    const columns = {
-      columns: [
-        { key: 'key', label: 'KEY' },
-        { key: 'value', label: 'VALUE' },
-      ],
-    };
     const tableRows = Object.keys(result)
       .filter((key) => result[key] !== undefined && result[key] !== null) // some values won't exist
       .sort() // this command always alphabetizes the table rows
@@ -86,7 +80,10 @@ export class OrgDisplayCommand extends SfdxCommand {
       }));
 
     this.ux.styledHeader('Org Description');
-    this.ux.table(tableRows, columns);
+    this.ux.table(tableRows, {
+      key: { header: 'KEY' },
+      value: { header: 'VALUE' },
+    });
   }
 
   private async getScratchOrgInformation(orgId: string): Promise<ScratchOrgFields> {
@@ -106,7 +103,7 @@ export class OrgDisplayCommand extends SfdxCommand {
         createdDate: result.CreatedDate,
       };
     }
-    throw new SfdxError(
+    throw new SfError(
       messages.getMessage('noScratchOrgInfoError', [sfdc.trimTo15(orgId), hubOrg.getUsername()]),
       'NoScratchInfo',
       [messages.getMessage('noScratchOrgInfoAction')]

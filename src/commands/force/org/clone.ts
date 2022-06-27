@@ -9,13 +9,13 @@ import { EOL } from 'os';
 import * as fs from 'fs';
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
 import {
-  SfdxError,
-  SfdxErrorConfig,
+  SfError,
   Config,
   Lifecycle,
   Messages,
   OrgTypes,
-  Aliases,
+  OrgConfigProperties,
+  StateAggregator,
   SandboxEvents,
   SandboxRequest,
   StatusEvent,
@@ -83,21 +83,20 @@ export class OrgCloneCommand extends SfdxCommand {
         this.ux.log(sandboxReadyForUse);
         this.ux.styledHeader('Sandbox Org Cloning Status');
         this.ux.table(data, {
-          columns: [
-            { key: 'key', label: 'Name' },
-            { key: 'value', label: 'Value' },
-          ],
+          key: { header: 'Name' },
+          value: { header: 'Value' },
         });
 
         if (results?.sandboxRes?.authUserName) {
           if (this.flags.setalias) {
-            const alias = await Aliases.create({});
-            const result = alias.set(this.flags.setalias, results.sandboxRes.authUserName);
+            const stateAggregator = await StateAggregator.getInstance();
+            stateAggregator.aliases.set(this.flags.setalias, results.sandboxRes.authUserName);
+            const result = stateAggregator.aliases.getAll();
             this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
           }
           if (this.flags.setdefaultusername) {
             const globalConfig: Config = this.configAggregator.getGlobalConfig();
-            globalConfig.set(Config.DEFAULT_USERNAME, results.sandboxRes.authUserName);
+            globalConfig.set(OrgConfigProperties.TARGET_ORG, results.sandboxRes.authUserName);
             const result = await globalConfig.write();
             this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
           }
@@ -110,10 +109,9 @@ export class OrgCloneCommand extends SfdxCommand {
       const wait = this.flags.wait as Duration;
       return this.org.cloneSandbox(sandboxReq, srcSandboxName, { wait });
     } else {
-      throw SfdxError.create(
-        new SfdxErrorConfig('@salesforce/plugin-org', 'clone', 'commandOrganizationTypeNotSupport', [
-          OrgTypes.Sandbox,
-        ]).addAction('commandOrganizationTypeNotSupportAction', [OrgTypes.Sandbox])
+      throw new SfError(
+        messages.getMessage('commandOrganizationTypeNotSupport', [OrgTypes.Sandbox]),
+        messages.getMessage('commandOrganizationTypeNotSupportAction', [OrgTypes.Sandbox])
       );
     }
   }
@@ -146,10 +144,9 @@ export class OrgCloneCommand extends SfdxCommand {
       delete sandboxReq[OrgCloneCommand.SANDBOXDEF_SRC_SANDBOXNAME];
     } else {
       // error - we need SourceSandboxName to know which sandbox to clone from
-      throw SfdxError.create(
-        new SfdxErrorConfig('@salesforce/plugin-org', 'clone', 'missingSourceSandboxName', [
-          OrgCloneCommand.SANDBOXDEF_SRC_SANDBOXNAME,
-        ]).addAction('missingSourceSandboxNameAction', [OrgCloneCommand.SANDBOXDEF_SRC_SANDBOXNAME])
+      throw new SfError(
+        messages.getMessage('missingSourceSandboxName', [OrgCloneCommand.SANDBOXDEF_SRC_SANDBOXNAME]),
+        messages.getMessage('missingSourceSandboxNameAction', [OrgCloneCommand.SANDBOXDEF_SRC_SANDBOXNAME])
       );
     }
     return { sandboxReq, srcSandboxName };
