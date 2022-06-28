@@ -174,7 +174,8 @@ DESCRIPTION
 
   There are two ways to clone a sandbox: either specify a sandbox definition file or provide key=value pairs at the
   command line. Key-value pairs at the command-line override their equivalent sandbox definition file values. In either
-  case, you must specify both the "SandboxName" and "SourceSandboxName" options.
+  case, you must specify both the "SandboxName" and "SourceSandboxName" options to set the names of the new sandbox and
+  the one being cloned, respectively.
 
   Set the --targetusername (-u) parameter to a production org with sandbox licenses. The --type (-t) parameter is
   required and must be set to "sandbox".
@@ -182,7 +183,7 @@ DESCRIPTION
 EXAMPLES
   $ sfdx force:org:clone -t sandbox -f config/dev-sandbox-def.json -u prodOrg -a MyDevSandbox
 
-  $ sfdx force:org:clone -t sandbox SandboxName=DevSbx1 SourceSandboxName=Sbx2Clone -u prodOrg -a MyDevSandbox
+  $ sfdx force:org:clone -t sandbox SandboxName=NewClonedSandbox SourceSandboxName=ExistingSandbox -u prodOrg -a MyDevSandbox
 ```
 
 _See code: [src/commands/force/org/clone.ts](https://github.com/salesforcecli/plugin-org/blob/v2.0.0/src/commands/force/org/clone.ts)_
