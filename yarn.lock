@@ -1104,10 +1104,10 @@
     semver "^7.3.5"
     ts-retry-promise "^0.6.0"
 
-"@salesforce/core@^3.20.1", "@salesforce/core@^3.22.0":
-  version "3.23.3"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.23.3.tgz#7eb72fb91383f6f36eacedcbd3ad412482f49278"
-  integrity sha512-nLrvvxq1PcrPZ53ylEkCvEVsnMuJLH7SW4F5GERBLNYGxqW6aZxjtoySqsMrYoHk53vCGtycno3j3KhaIYx1FQ==
+"@salesforce/core@^3.20.1", "@salesforce/core@^3.23.6":
+  version "3.23.6"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.23.6.tgz#b784158c63068f958c7bb02b46c211ff06b28594"
+  integrity sha512-bsDzpLta9vNnAncLPbcoGddwmOE4GoGutW/oZ8DW5h/AcnBT1xbP8ySaNE6efk5B5CcVR+D5cTv2xZRp83falQ==
   dependencies:
     "@salesforce/bunyan" "^2.0.0"
     "@salesforce/kit" "^1.5.41"
@@ -3969,19 +3969,7 @@ glob@^6.0.1:
     once "^1.3.0"
     path-is-absolute "^1.0.0"
 
-glob@^8.0.1:
-  version "8.0.1"
-  resolved "https://registry.yarnpkg.com/glob/-/glob-8.0.1.tgz#00308f5c035aa0b2a447cd37ead267ddff1577d3"
-  integrity sha512-cF7FYZZ47YzmCu7dDy50xSRRfO3ErRfrXuLZcNIuyiJEco0XSrGtuilG19L5xp3NcwTx7Gn+X6Tv3fmsUPTbow==
-  dependencies:
-    fs.realpath "^1.0.0"
-    inflight "^1.0.4"
-    inherits "2"
-    minimatch "^5.0.1"
-    once "^1.3.0"
-    path-is-absolute "^1.0.0"
-
-glob@^8.0.3:
+glob@^8.0.1, glob@^8.0.3:
   version "8.0.3"
   resolved "https://registry.yarnpkg.com/glob/-/glob-8.0.3.tgz#415c6eb2deed9e502c68fa44a272e6da6eeca42e"
   integrity sha512-ull455NHSHI/Y1FqGaaYFaLGkNMMJbavMrEGFXG/PGrg6y7sutWHUHrz6gy6WEBH6akM1M414dWKCNs+IhKdiQ==
@@ -5446,14 +5434,7 @@ minimatch@4.2.1:
   dependencies:
     brace-expansion "^1.1.7"
 
-minimatch@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-5.0.1.tgz#fb9022f7528125187c92bd9e9b6366be1cf3415b"
-  integrity sha512-nLDxIFRyhDblz3qMuq+SoRZED4+miJ/G+tdDrjkkkRnjAsBexeGpgjLEQ0blJy7rHhR2b93rhQY4SvyWu9v03g==
-  dependencies:
-    brace-expansion "^2.0.1"
-
-minimatch@^5.1.0:
+minimatch@^5.0.1, minimatch@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-5.1.0.tgz#1717b464f4971b144f6aabe8f2d0b8e4511e09c7"
   integrity sha512-9TPBGGak4nHfGZsPBohm9AWg6NoT7QTCehS3BIJABslyZbzxfV78QM2Y6+i741OPZIafFAaiiEMh5OyIrJPgtg==
