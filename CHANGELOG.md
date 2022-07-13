@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.3](https://github.com/salesforcecli/plugin-org/compare/v2.0.2...v2.0.3) (2022-07-13)
+
+### Bug Fixes
+
+- bump version of @salesforce/core ([1d7a9e4](https://github.com/salesforcecli/plugin-org/commit/1d7a9e4a92e8495b81065a7295190a40329e3a08))
+
 ### [2.0.2](https://github.com/salesforcecli/plugin-org/compare/v2.0.1...v2.0.2) (2022-07-07)
 
 ### [2.0.1](https://github.com/salesforcecli/plugin-org/compare/v2.0.0...v2.0.1) (2022-06-28)
