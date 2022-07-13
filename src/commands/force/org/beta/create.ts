@@ -25,8 +25,8 @@ import {
   SandboxUserAuthResponse,
   SfError,
   StatusEvent,
-  ScratchOrgRequest,
   ScratchOrgInfo,
+  ScratchOrgRequest,
 } from '@salesforce/core';
 import { OrgCreateResult } from '../../../../shared/orgHooks';
 import { SandboxReporter } from '../../../../shared/sandboxReporter';
@@ -260,25 +260,6 @@ export class Create extends SfdxCommand {
     }
   }
 
-  private async setAliasAndDefaultUsername(username: string): Promise<void> {
-    const stateAggregator = await StateAggregator.getInstance();
-    if (this.flags.setalias) {
-      stateAggregator.aliases.set(this.flags.setalias, username);
-      this.logger.debug('Set Alias: %s result: %s', this.flags.setalias);
-    }
-    if (this.flags.setdefaultusername) {
-      let config: Config;
-      try {
-        config = await Config.create({ isGlobal: false });
-      } catch {
-        config = await Config.create({ isGlobal: true });
-      }
-      const value = stateAggregator.aliases.get(username) || username;
-      const result = config.set(OrgConfigProperties.TARGET_ORG, value);
-      await config.write();
-      this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
-    }
-  }
   private async createScratchOrg(): Promise<ScratchOrgProcessObject> {
     this.logger.debug('OK, will do scratch org creation');
     if (!this.hubOrg) {
@@ -291,15 +272,14 @@ export class Create extends SfdxCommand {
 
     this.logger.debug('validation complete');
 
-    let secret: string;
-    if (this.flags.clientid) {
-      // If the user supplied a specific client ID, we have no way of knowing if it's
-      // a certificate-based Connected App or not. Therefore, we have to assume that
-      // we'll need the client secret, so prompt the user for it.
-      secret = await this.ux.prompt(messages.getMessage('secretPrompt'), {
-        type: 'mask',
-      });
-    }
+    // If the user supplied a specific client ID, we have no way of knowing if it's
+    // a certificate-based Connected App or not. Therefore, we have to assume that
+    // we'll need the client secret, so prompt the user for it.
+    const secret = this.flags.clientid
+      ? await this.ux.prompt(messages.getMessage('secretPrompt'), {
+          type: 'mask',
+        })
+      : undefined;
 
     const createCommandOptions: ScratchOrgRequest = {
       connectedAppConsumerKey: this.flags.clientid as string,
@@ -312,13 +292,14 @@ export class Create extends SfdxCommand {
       definitionfile: this.flags.definitionfile as string,
       orgConfig: this.varargs,
       clientSecret: secret,
+      setDefault: (this.flags.setdefaultusername as boolean) === true,
+      alias: this.flags.setalias as string | undefined,
+      tracksSource: true,
     };
 
     const { username, scratchOrgInfo, authFields, warnings } = await this.hubOrg.scratchOrgCreate(createCommandOptions);
 
     await Lifecycle.getInstance().emit('scratchOrgInfo', scratchOrgInfo);
-
-    await this.setAliasAndDefaultUsername(username);
 
     // emit postorgcreate event for hook
     const postOrgCreateHookInfo: OrgCreateResult = [authFields].map((element) => ({
