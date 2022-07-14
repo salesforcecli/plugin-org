@@ -112,7 +112,7 @@ describe('org:create', () => {
         apiversion: undefined,
         clientSecret: undefined,
         connectedAppConsumerKey: undefined,
-        durationDays: undefined,
+        durationDays: 7,
         noancestors: undefined,
         nonamespace: undefined,
         wait: {
@@ -165,7 +165,7 @@ describe('org:create', () => {
         clientSecret,
         connectedAppConsumerKey,
         definitionfile,
-        durationDays: undefined,
+        durationDays: 7,
         noancestors: undefined,
         nonamespace: undefined,
         wait: {
@@ -216,7 +216,7 @@ describe('org:create', () => {
         clientSecret: undefined,
         connectedAppConsumerKey: undefined,
         definitionfile,
-        durationDays: undefined,
+        durationDays: 7,
         noancestors: undefined,
         nonamespace: undefined,
         wait: {
@@ -268,7 +268,7 @@ describe('org:create', () => {
         clientSecret: undefined,
         connectedAppConsumerKey: undefined,
         definitionfile,
-        durationDays: undefined,
+        durationDays: 7,
         noancestors: undefined,
         nonamespace: undefined,
         wait: {
@@ -299,7 +299,7 @@ describe('org:create', () => {
         clientSecret: undefined,
         connectedAppConsumerKey: undefined,
         definitionfile,
-        durationDays: undefined,
+        durationDays: 7,
         noancestors: undefined,
         nonamespace: undefined,
         wait: {
