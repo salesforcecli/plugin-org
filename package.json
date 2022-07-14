@@ -1,14 +1,14 @@
 {
   "name": "@salesforce/plugin-org",
   "description": "Commands to interact with Salesforce orgs",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "author": "Salesforce",
   "main": "lib/index.js",
   "bugs": "https://github.com/forcedotcom/cli/issues",
   "dependencies": {
     "@oclif/core": "^1.7.0",
     "@salesforce/command": "^5.2.0",
-    "@salesforce/core": "^3.23.6",
+    "@salesforce/core": "^3.23.8",
     "@salesforce/kit": "^1.5.17",
     "open": "8.4.0",
     "tslib": "^2"
