@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.5](https://github.com/salesforcecli/plugin-org/compare/v2.0.4...v2.0.5) (2022-07-15)
+
+### Bug Fixes
+
+- set scratch org duration to 7days by default ([1884454](https://github.com/salesforcecli/plugin-org/commit/188445420d753e8c8088e38a87ef045bed3d9c13))
+
 ### [2.0.4](https://github.com/salesforcecli/plugin-org/compare/v2.0.3...v2.0.4) (2022-07-15)
 
 ### Bug Fixes
