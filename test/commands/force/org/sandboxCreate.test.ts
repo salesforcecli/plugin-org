@@ -89,7 +89,7 @@ describe('org:create', () => {
     it('will warn the user when --clientid is passed', async () => {
       const commmand = await createCommand(['--type', 'sandbox', '--clientid', '123', '-u', 'testProdOrg']);
       await commmand.runIt();
-      expect(uxWarnStub.calledOnce).to.be.true;
+      expect(uxWarnStub.calledTwice).to.be.true;
       expect(uxWarnStub.firstCall.args[0]).to.equal(
         '-i | --clientid is not supported for the sandbox org create command. Its value, 123, has been ignored.'
       );
@@ -99,7 +99,7 @@ describe('org:create', () => {
     it('will warn the user when --nonamespace is passed', async () => {
       const commmand = await createCommand(['--type', 'sandbox', '--nonamespace', '-u', 'testProdOrg']);
       await commmand.runIt();
-      expect(uxWarnStub.calledOnce).to.be.true;
+      expect(uxWarnStub.calledTwice).to.be.true;
       expect(uxWarnStub.firstCall.args[0]).to.equal(
         '-n | --nonamespace is not supported for the sandbox org create command. Its value, true, has been ignored.'
       );
@@ -108,7 +108,7 @@ describe('org:create', () => {
     it('will warn the user when --noancestors is passed', async () => {
       const commmand = await createCommand(['--type', 'sandbox', '--noancestors', '-u', 'testProdOrg']);
       await commmand.runIt();
-      expect(uxWarnStub.calledOnce).to.be.true;
+      expect(uxWarnStub.calledTwice).to.be.true;
       expect(uxWarnStub.firstCall.args[0]).to.equal(
         '-c | --noancestors is not supported for the sandbox org create command. Its value, true, has been ignored.'
       );

@@ -90,6 +90,7 @@ export class Create extends SfdxCommand {
       description: messages.getMessage('flags.durationDays'),
       min: 1,
       max: 30,
+      default: 7,
     }),
     retry: flags.number({
       hidden: true,
