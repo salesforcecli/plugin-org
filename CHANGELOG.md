@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.4](https://github.com/salesforcecli/plugin-org/compare/v2.0.3...v2.0.4) (2022-07-15)
+
+### Bug Fixes
+
+- bump version of @salesforce/core ([b435562](https://github.com/salesforcecli/plugin-org/commit/b435562e3dc8a2e1b92c61b4dc4f7711440aaed9))
+- use newer core scratchOrgCreate ([6694302](https://github.com/salesforcecli/plugin-org/commit/6694302a74192d4eedc4e4f5541a423c1c0f965f))
+
 ### [2.0.3](https://github.com/salesforcecli/plugin-org/compare/v2.0.2...v2.0.3) (2022-07-13)
 
 ### Bug Fixes
