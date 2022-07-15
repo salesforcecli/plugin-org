@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Config, StateAggregator, SfError, Messages, Org, SfProject } from '@salesforce/core';
+import { SfError, Messages, Org, SfProject } from '@salesforce/core';
 import { fromStub, stubInterface, stubMethod } from '@salesforce/ts-sinon';
 import * as sinon from 'sinon';
 import { expect } from '@salesforce/command/lib/test';
@@ -44,8 +44,6 @@ describe('org:create', () => {
   let uxLogStub: sinon.SinonStub;
   let uxWarnStub: sinon.SinonStub;
   let promptStub: sinon.SinonStub;
-  let aliasGetStub: sinon.SinonStub;
-  let aliasSetStub: sinon.SinonSpy;
   let cmd: TestCreate;
 
   class TestCreate extends Create {
@@ -109,6 +107,7 @@ describe('org:create', () => {
       const prodOrg = stubMethod(sandbox, Org.prototype, 'scratchOrgCreate').resolves(CREATE_RESULT);
       await command.runIt();
       expect(prodOrg.firstCall.args[0]).to.deep.equal({
+        alias: undefined,
         apiversion: undefined,
         clientSecret: undefined,
         connectedAppConsumerKey: undefined,
@@ -120,6 +119,8 @@ describe('org:create', () => {
           unit: 0,
         },
         retry: 0,
+        setDefault: false,
+        tracksSource: true,
         definitionfile: 'myScratchDef.json',
         orgConfig: {
           licenseType: 'LicenseFromVarargs',
@@ -161,6 +162,7 @@ describe('org:create', () => {
       const prodOrg = stubMethod(sandbox, Org.prototype, 'scratchOrgCreate').resolves(CREATE_RESULT);
       await command.runIt();
       expect(prodOrg.firstCall.args[0]).to.deep.equal({
+        alias: undefined,
         apiversion: undefined,
         clientSecret,
         connectedAppConsumerKey,
@@ -173,6 +175,8 @@ describe('org:create', () => {
           unit: 0,
         },
         retry: 0,
+        setDefault: false,
+        tracksSource: true,
         orgConfig: {},
       });
       expect(promptStub.callCount).to.equal(1);
@@ -201,17 +205,9 @@ describe('org:create', () => {
         ...CREATE_RESULT,
         username: 'newScratchUsername',
       });
-      aliasGetStub = sinon.stub().returns('');
-      aliasSetStub = sinon.spy();
-      stubMethod(sandbox, StateAggregator, 'getInstance').returns({
-        aliases: {
-          get: aliasGetStub,
-          set: aliasSetStub,
-        },
-      });
-      const configStub = stubMethod(sandbox, Config.prototype, 'set');
       await command.runIt();
       expect(prodOrg.firstCall.args[0]).to.deep.equal({
+        alias: 'scratchOrgAlias',
         apiversion: undefined,
         clientSecret: undefined,
         connectedAppConsumerKey: undefined,
@@ -224,11 +220,10 @@ describe('org:create', () => {
           unit: 0,
         },
         retry: 0,
+        setDefault: true,
+        tracksSource: true,
         orgConfig: {},
       });
-      expect(aliasSetStub.firstCall.args).to.deep.equal(['scratchOrgAlias', 'newScratchUsername']);
-      expect(aliasGetStub.firstCall.args).to.deep.equal(['newScratchUsername']);
-      expect(configStub.firstCall.args).to.deep.equal(['target-org', 'newScratchUsername']);
     });
 
     it('will set alias as default', async () => {
@@ -252,18 +247,9 @@ describe('org:create', () => {
         username: 'newScratchUsername',
       });
 
-      aliasGetStub = sinon.stub().returns('scratchOrgAlias');
-      aliasSetStub = sinon.spy();
-      stubMethod(sandbox, StateAggregator, 'getInstance').returns({
-        aliases: {
-          get: aliasGetStub,
-          set: aliasSetStub,
-        },
-      });
-
-      const configStub = stubMethod(sandbox, Config.prototype, 'set');
       await command.runIt();
       expect(prodOrg.firstCall.args[0]).to.deep.equal({
+        alias: 'scratchOrgAlias',
         apiversion: undefined,
         clientSecret: undefined,
         connectedAppConsumerKey: undefined,
@@ -277,10 +263,9 @@ describe('org:create', () => {
         },
         retry: 0,
         orgConfig: {},
+        setDefault: true,
+        tracksSource: true,
       });
-      expect(aliasSetStub.firstCall.args).to.deep.equal(['scratchOrgAlias', 'newScratchUsername']);
-      expect(aliasGetStub.firstCall.args).to.deep.equal(['newScratchUsername']);
-      expect(configStub.firstCall.args).to.deep.equal(['target-org', 'scratchOrgAlias']);
     });
 
     it('will test json output', async () => {
@@ -295,6 +280,7 @@ describe('org:create', () => {
       });
       const result = await command.runIt();
       expect(prodOrg.firstCall.args[0]).to.deep.equal({
+        alias: undefined,
         apiversion: undefined,
         clientSecret: undefined,
         connectedAppConsumerKey: undefined,
@@ -307,6 +293,8 @@ describe('org:create', () => {
           unit: 0,
         },
         retry: 0,
+        tracksSource: true,
+        setDefault: false,
         orgConfig: {},
       });
       expect(result).to.have.keys(['username', 'authFields', 'scratchOrgInfo', 'warnings', 'orgId']);
