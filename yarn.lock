@@ -1104,10 +1104,10 @@
     semver "^7.3.5"
     ts-retry-promise "^0.6.0"
 
-"@salesforce/core@^3.20.1", "@salesforce/core@^3.24.0":
-  version "3.24.0"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.24.0.tgz#ecfa4ae3c23dab37b7431e5d8e7b623db2ba4f12"
-  integrity sha512-PiiJAfCIw0Gj9CUm0Y9C211JXgyJASoywHPmWKe6RY4Ul+WuHkFBDGmdRkuxHLA23P0PVZaclT0Av3CbWwmPSg==
+"@salesforce/core@^3.20.1", "@salesforce/core@^3.24.3":
+  version "3.24.3"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.24.3.tgz#670da803fe14303c1b40a25c6e7fc8979c436011"
+  integrity sha512-EGWZaroNv6GN8IiYGQRoUHgGrEpn7AgOg7RaXATOUzpdFrHKqfrmnFhkI/2ocTgM1wQydgN5oewnussDQ/WTOA==
   dependencies:
     "@salesforce/bunyan" "^2.0.0"
     "@salesforce/kit" "^1.5.41"
@@ -1124,7 +1124,7 @@
     form-data "^4.0.0"
     graceful-fs "^4.2.9"
     js2xmlparser "^4.0.1"
-    jsforce beta
+    jsforce "^2.0.0-beta.16"
     jsonwebtoken "8.5.1"
     mkdirp "1.0.4"
     ts-retry-promise "^0.6.0"
@@ -4834,6 +4834,32 @@ jsforce@^1.11.0:
     readable-stream "^2.1.0"
     request "^2.72.0"
     xml2js "^0.4.16"
+
+jsforce@^2.0.0-beta.16:
+  version "2.0.0-beta.16"
+  resolved "https://registry.yarnpkg.com/jsforce/-/jsforce-2.0.0-beta.16.tgz#3e5bdbe660d3be2be80fa144456380345011584b"
+  integrity sha512-oeeOYiRI/1nkUT7YK3irIhyc+J12Ti2sKkGELmeJkPRvcbR2txIenVsV9zW+Q/Ie2uUulhl3pWXk38IyqySSpA==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    "@babel/runtime-corejs3" "^7.12.5"
+    "@types/node" "^12.19.9"
+    abort-controller "^3.0.0"
+    base64url "^3.0.1"
+    commander "^4.0.1"
+    core-js "^3.6.4"
+    csv-parse "^4.8.2"
+    csv-stringify "^5.3.4"
+    faye "^1.4.0"
+    form-data "^4.0.0"
+    fs-extra "^8.1.0"
+    https-proxy-agent "^5.0.0"
+    inquirer "^7.0.0"
+    multistream "^3.1.0"
+    node-fetch "^2.6.1"
+    open "^7.0.0"
+    regenerator-runtime "^0.13.3"
+    strip-ansi "^6.0.0"
+    xml2js "^0.4.22"
 
 jsforce@beta:
   version "2.0.0-beta.15"
