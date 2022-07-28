@@ -1104,17 +1104,16 @@
     semver "^7.3.5"
     ts-retry-promise "^0.6.0"
 
-"@salesforce/core@^3.20.1", "@salesforce/core@^3.24.3":
-  version "3.24.3"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.24.3.tgz#670da803fe14303c1b40a25c6e7fc8979c436011"
-  integrity sha512-EGWZaroNv6GN8IiYGQRoUHgGrEpn7AgOg7RaXATOUzpdFrHKqfrmnFhkI/2ocTgM1wQydgN5oewnussDQ/WTOA==
+"@salesforce/core@^3.20.1", "@salesforce/core@^3.24.4":
+  version "3.24.4"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.24.4.tgz#9ab5606f9c0253e0ef30a3a27428972686b26d95"
+  integrity sha512-4butme+R24z9Dye9SJk6qNShVz0MpDjcXRDwj0JZrmqc6XBA8TFa7uruSK5WgCpSXrcz8mfqDwiZhwCJyNDRmQ==
   dependencies:
     "@salesforce/bunyan" "^2.0.0"
     "@salesforce/kit" "^1.5.41"
     "@salesforce/schemas" "^1.1.0"
     "@salesforce/ts-types" "^1.5.20"
     "@types/graceful-fs" "^4.1.5"
-    "@types/mkdirp" "^1.0.2"
     "@types/semver" "^7.3.9"
     ajv "^8.11.0"
     archiver "^5.3.0"
@@ -1126,7 +1125,6 @@
     js2xmlparser "^4.0.1"
     jsforce "^2.0.0-beta.16"
     jsonwebtoken "8.5.1"
-    mkdirp "1.0.4"
     ts-retry-promise "^0.6.0"
 
 "@salesforce/dev-config@^3.0.0", "@salesforce/dev-config@^3.0.1":
@@ -1386,7 +1384,7 @@
   resolved "https://registry.yarnpkg.com/@types/minimist/-/minimist-1.2.2.tgz#ee771e2ba4b3dc5b372935d549fd9617bf345b8c"
   integrity sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==
 
-"@types/mkdirp@^1.0.1", "@types/mkdirp@^1.0.2":
+"@types/mkdirp@^1.0.1":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@types/mkdirp/-/mkdirp-1.0.2.tgz#8d0bad7aa793abe551860be1f7ae7f3198c16666"
   integrity sha512-o0K1tSO0Dx5X6xlU5F1D6625FawhC3dU3iqr25lluNv/+/QIVH8RLNEiVokgIZo+mz+87w/3Mkg/VvQS+J51fQ==
