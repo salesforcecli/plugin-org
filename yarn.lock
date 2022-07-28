@@ -4861,32 +4861,6 @@ jsforce@^2.0.0-beta.16:
     strip-ansi "^6.0.0"
     xml2js "^0.4.22"
 
-jsforce@beta:
-  version "2.0.0-beta.15"
-  resolved "https://registry.yarnpkg.com/jsforce/-/jsforce-2.0.0-beta.15.tgz#05255f3b54a001421c973b1a7b4dbb4468ded2a3"
-  integrity sha512-AfwIxG+y+WOsqSGKlezyL3G+4ItmR/zfcvg38x4CDa3eizDD0wWZBAOnJbOQ8U76zAQqrMsyWs+s3ozJzSLtZA==
-  dependencies:
-    "@babel/runtime" "^7.12.5"
-    "@babel/runtime-corejs3" "^7.12.5"
-    "@types/node" "^12.19.9"
-    abort-controller "^3.0.0"
-    base64url "^3.0.1"
-    commander "^4.0.1"
-    core-js "^3.6.4"
-    csv-parse "^4.8.2"
-    csv-stringify "^5.3.4"
-    faye "^1.4.0"
-    form-data "^4.0.0"
-    fs-extra "^8.1.0"
-    https-proxy-agent "^5.0.0"
-    inquirer "^7.0.0"
-    multistream "^3.1.0"
-    node-fetch "^2.6.1"
-    open "^7.0.0"
-    regenerator-runtime "^0.13.3"
-    strip-ansi "^6.0.0"
-    xml2js "^0.4.22"
-
 json-parse-better-errors@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/json-parse-better-errors/-/json-parse-better-errors-1.0.2.tgz#bb867cfb3450e69107c131d1c514bab3dc8bcaa9"
