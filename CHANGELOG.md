@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.7](https://github.com/salesforcecli/plugin-org/compare/v2.0.6...v2.0.7) (2022-07-29)
+
+### Bug Fixes
+
+- bump sfdx-core ([#362](https://github.com/salesforcecli/plugin-org/issues/362)) ([8353f03](https://github.com/salesforcecli/plugin-org/commit/8353f03cc55e2d628e81c7b3c088784482f1061a))
+
 ### [2.0.6](https://github.com/salesforcecli/plugin-org/compare/v2.0.5...v2.0.6) (2022-07-28)
 
 ### Bug Fixes
