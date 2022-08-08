@@ -48,7 +48,7 @@ export class Create extends SfdxCommand {
   public static readonly supportsDevhubUsername = true;
   public static readonly supportsUsername = true;
   public static readonly varargs = true;
-  public static readonly aliases = ['org:beta:create'];
+  public static readonly aliases = ['force:org:beta:create'];
   public static readonly flagsConfig: FlagsConfig = {
     type: flags.enum({
       char: 't',
