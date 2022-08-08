@@ -18,27 +18,70 @@
       "targetusername",
       "type",
       "wait"
-    ]
+    ],
+    "alias": ["force:org:beta:create"]
+  },
+  {
+    "command": "force:org:clone",
+    "plugin": "@salesforce/plugin-org",
+    "flags": [
+      "apiversion",
+      "definitionfile",
+      "json",
+      "loglevel",
+      "setalias",
+      "setdefaultusername",
+      "targetusername",
+      "type",
+      "wait"
+    ],
+    "alias": []
+  },
+  {
+    "command": "force:org:create",
+    "plugin": "@salesforce/plugin-org",
+    "flags": [
+      "apiversion",
+      "clientid",
+      "definitionfile",
+      "durationdays",
+      "json",
+      "loglevel",
+      "noancestors",
+      "nonamespace",
+      "retry",
+      "setalias",
+      "setdefaultusername",
+      "targetdevhubusername",
+      "targetusername",
+      "type",
+      "wait"
+    ],
+    "alias": ["force:org:beta:create"]
   },
   {
     "command": "force:org:delete",
     "plugin": "@salesforce/plugin-org",
-    "flags": ["apiversion", "json", "loglevel", "noprompt", "targetdevhubusername", "targetusername"]
+    "flags": ["apiversion", "json", "loglevel", "noprompt", "targetdevhubusername", "targetusername"],
+    "alias": []
   },
   {
     "command": "force:org:display",
     "plugin": "@salesforce/plugin-org",
-    "flags": ["apiversion", "json", "loglevel", "targetusername", "verbose"]
+    "flags": ["apiversion", "json", "loglevel", "targetusername", "verbose"],
+    "alias": []
   },
   {
     "command": "force:org:list",
     "plugin": "@salesforce/plugin-org",
-    "flags": ["all", "clean", "json", "loglevel", "noprompt", "skipconnectionstatus", "verbose"]
+    "flags": ["all", "clean", "json", "loglevel", "noprompt", "skipconnectionstatus", "verbose"],
+    "alias": []
   },
   {
     "command": "force:org:open",
     "plugin": "@salesforce/plugin-org",
-    "flags": ["apiversion", "browser", "json", "loglevel", "path", "targetusername", "urlonly"]
+    "flags": ["apiversion", "browser", "json", "loglevel", "path", "targetusername", "urlonly"],
+    "alias": []
   },
   {
     "command": "force:org:status",
@@ -52,21 +95,7 @@
       "setdefaultusername",
       "targetusername",
       "wait"
-    ]
-  },
-  {
-    "command": "force:org:clone",
-    "plugin": "@salesforce/plugin-org",
-    "flags": [
-      "apiversion",
-      "json",
-      "loglevel",
-      "type",
-      "definitionfile",
-      "setalias",
-      "setdefaultusername",
-      "targetusername",
-      "wait"
-    ]
+    ],
+    "alias": []
   }
 ]
