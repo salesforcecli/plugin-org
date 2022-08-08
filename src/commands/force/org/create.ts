@@ -28,8 +28,8 @@ import {
   ScratchOrgInfo,
   ScratchOrgRequest,
 } from '@salesforce/core';
-import { OrgCreateResult } from '../../../../shared/orgHooks';
-import { SandboxReporter } from '../../../../shared/sandboxReporter';
+import { OrgCreateResult } from '../../../shared/orgHooks';
+import { SandboxReporter } from '../../../shared/sandboxReporter';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
@@ -48,6 +48,7 @@ export class Create extends SfdxCommand {
   public static readonly supportsDevhubUsername = true;
   public static readonly supportsUsername = true;
   public static readonly varargs = true;
+  public static readonly aliases = ['org:beta:create'];
   public static readonly flagsConfig: FlagsConfig = {
     type: flags.enum({
       char: 't',

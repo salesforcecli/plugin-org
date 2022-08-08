@@ -11,7 +11,7 @@ import { expect } from '@salesforce/command/lib/test';
 import { Config as IConfig } from '@oclif/core';
 import { UX } from '@salesforce/command';
 import { assert } from 'sinon';
-import { Create } from '../../../../src/commands/force/org/beta/create';
+import { Create } from '../../../../src/commands/force/org/create';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
