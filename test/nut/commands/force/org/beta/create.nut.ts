@@ -21,7 +21,7 @@ describe('org:create command', () => {
   });
 
   describe('create with username', () => {
-    const username = `${genUniqueString('orgcreatetests_')}@int-tests.org`;
+    const username = `${genUniqueString('orgCreateTests_')}@int-tests.org`;
 
     it('should create a new scratch org via definitionfile param', () => {
       const result = execCmd<ScratchOrgCreateResult>(
