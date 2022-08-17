@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/salesforcecli/plugin-org/compare/v2.1.7...v2.2.0) (2022-08-17)
+
+### Features
+
+- fix for mixed-case usernames ([#384](https://github.com/salesforcecli/plugin-org/issues/384)) ([6ee7051](https://github.com/salesforcecli/plugin-org/commit/6ee705162852a2a4f5f1dc74a28e31226aaf60fc))
+
 ### [2.1.7](https://github.com/salesforcecli/plugin-org/compare/v2.0.7...v2.1.7) (2022-08-11)
 
 ### [2.0.7](https://github.com/salesforcecli/plugin-org/compare/v2.0.6...v2.0.7) (2022-07-29)
