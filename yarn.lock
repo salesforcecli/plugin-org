@@ -894,7 +894,7 @@
   resolved "https://registry.yarnpkg.com/@oclif/screen/-/screen-3.0.2.tgz#969054308fe98d130c02844a45cc792199b75670"
   integrity sha512-S/SF/XYJeevwIgHFmVDAFRUvM3m+OjhvCAYMk78ZJQCYCQ5wS7j+LTt1ZEv2jpEEGg2tx/F6TYYWxddNAYHrFQ==
 
-"@oclif/test@^2.1.1":
+"@oclif/test@^2.1.0", "@oclif/test@^2.1.1":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@oclif/test/-/test-2.1.1.tgz#140ed05ece651cdf427306b5c878826e273a1722"
   integrity sha512-vuBDXnXbnU073xNUqj+V4Fbrp+6Xhs1sgeWUIMj69SP9qC3pUBPfEPzIoK00ga6/WxZ+2qUgqCBAOPGz3nmTEg==
@@ -1029,13 +1029,14 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.6.0"
 
-"@salesforce/command@^5.1.3", "@salesforce/command@^5.2.0":
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/@salesforce/command/-/command-5.2.1.tgz#b102003252ba89c9894ab93b5d23946dbea88784"
-  integrity sha512-78JWHof7N/bH6hFKj6hQOucnk+YfH9E+9Zcm23ykmk4LPig4q4dkqgTEC563KSjCTZ3wtd7rUqEhy3HOK7sH2g==
+"@salesforce/command@^5.1.3", "@salesforce/command@^5.2.4":
+  version "5.2.4"
+  resolved "https://registry.yarnpkg.com/@salesforce/command/-/command-5.2.4.tgz#bd792e1be780e0ba5f30fa9ae74a8401e69520b5"
+  integrity sha512-ccqGQWpVbi8XjC4xqx6grUmlbEFN5e3UPYBO+GTwyTvbYTEwryIEWsbhWwdDtosjJFxbAy1Xyi84ZUlYeJ6jpA==
   dependencies:
     "@oclif/core" "^1.7.0"
     "@oclif/plugin-help" "^5.1.11"
+    "@oclif/test" "^2.1.0"
     "@salesforce/core" "^3.20.1"
     "@salesforce/kit" "^1.5.34"
     "@salesforce/ts-types" "^1.5.20"
