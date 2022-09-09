@@ -1,18 +1,10 @@
-version: 2
-updates:
-  - package-ecosystem: 'npm'
-    directory: '/'
-    schedule:
-      interval: 'weekly'
-    versioning-strategy: 'increase'
-    labels:
-      - 'dependencies'
-    open-pull-requests-limit: 100
-    pull-request-branch-name:
-      separator: '-'
-    ignore:
-      - dependency-name: 'typescript'
-      - dependency-name: 'sinon'
-      - dependency-name: 'string-ansi'
-      - dependency-name: '*'
-        update-types: ['version-update:semver-major']
+name: automerge
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '42 2,5,8,11 * * *'
+
+jobs:
+  automerge:
+    uses: salesforcecli/github-workflows/.github/workflows/automerge.yml@main
+    secrets: inherit
