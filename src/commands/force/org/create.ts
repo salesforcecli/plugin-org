@@ -28,7 +28,6 @@ import {
   ScratchOrgInfo,
   ScratchOrgRequest,
 } from '@salesforce/core';
-import { OrgCreateResult } from '../../../shared/orgHooks';
 import { SandboxReporter } from '../../../shared/sandboxReporter';
 
 Messages.importMessagesDirectory(__dirname);
@@ -100,7 +99,6 @@ export class Create extends SfdxCommand {
       description: messages.getMessage('flags.retry'),
     }),
   };
-  protected readonly lifecycleEventNames = ['postorgcreate'];
   private sandboxAuth?: SandboxUserAuthResponse;
 
   public async run(): Promise<SandboxProcessObject | ScratchOrgProcessObject> {
@@ -302,22 +300,6 @@ export class Create extends SfdxCommand {
     const { username, scratchOrgInfo, authFields, warnings } = await this.hubOrg.scratchOrgCreate(createCommandOptions);
 
     await Lifecycle.getInstance().emit('scratchOrgInfo', scratchOrgInfo);
-
-    // emit postorgcreate event for hook
-    const postOrgCreateHookInfo: OrgCreateResult = [authFields].map((element) => ({
-      accessToken: element.accessToken,
-      clientId: element.clientId,
-      created: element.created,
-      createdOrgInstance: element.createdOrgInstance,
-      devHubUsername: element.devHubUsername,
-      expirationDate: element.expirationDate,
-      instanceUrl: element.instanceUrl,
-      loginUrl: element.loginUrl,
-      orgId: element.orgId,
-      username: element.username,
-    }))[0];
-
-    await Lifecycle.getInstance().emit('postorgcreate', postOrgCreateHookInfo);
 
     this.logger.debug(`orgConfig.loginUrl: ${authFields.loginUrl}`);
     this.logger.debug(`orgConfig.instanceUrl: ${authFields.instanceUrl}`);
