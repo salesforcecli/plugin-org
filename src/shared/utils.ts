@@ -15,6 +15,4 @@ export const getAliasByUsername = async (username: string): Promise<string> => {
   return keys?.length ? keys[keys.length - 1] : undefined;
 };
 
-export const openUrl = async (url: string, options: open.Options): Promise<ChildProcess> => {
-  return open(url, options);
-};
+export const openUrl = async (url: string, options: open.Options): Promise<ChildProcess> => open(url, options);

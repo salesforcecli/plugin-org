@@ -298,7 +298,7 @@ export class OrgListUtil {
     try {
       const org = await Org.create({ aliasOrUsername: username });
       // true forces a server check instead of relying on AuthInfo file cache
-      return org.determineIfDevHubOrg(true);
+      return await org.determineIfDevHubOrg(true);
     } catch {
       return false;
     }
@@ -338,6 +338,4 @@ export class OrgListUtil {
   }
 }
 
-export const identifyActiveOrgByStatus = (org: ExtendedAuthFields): boolean => {
-  return org.status === 'Active';
-};
+export const identifyActiveOrgByStatus = (org: ExtendedAuthFields): boolean => org.status === 'Active';
