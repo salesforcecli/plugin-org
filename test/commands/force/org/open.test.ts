@@ -4,6 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+
 import { expect, test } from '@salesforce/command/lib/test';
 import { Org, MyDomainResolver, Messages } from '@salesforce/core';
 import * as sinon from 'sinon';
@@ -111,10 +113,7 @@ describe('open commands', () => {
 
     test
       .do(() => {
-        spies.set(
-          'resolver',
-          stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').throws({ message: 'timeout' })
-        );
+        spies.set('resolver', stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').throws(new Error('timeout')));
       })
       .stdout()
       .command(['force:org:open', '--json', '--targetusername', username, '--path', testPath])
@@ -194,10 +193,7 @@ describe('open commands', () => {
 
     test
       .do(() => {
-        spies.set(
-          'resolver',
-          stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').throws({ message: 'timeout' })
-        );
+        spies.set('resolver', stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').throws(new Error('timeout')));
       })
       .stderr()
       .command(['force:org:open', '--targetusername', username, '--path', testPath])

@@ -4,39 +4,38 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import chalk = require('chalk');
+import * as chalk from 'chalk';
 import { ExtendedAuthFields } from './orgTypes';
 
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
-const styledProperties = {
-  status: {
-    Active: 'green',
-    else: 'red',
-  },
-  connectedStatus: {
-    Connected: 'green',
-    else: 'red',
-  },
-};
+const styledProperties = new Map([
+  [
+    'status',
+    new Map([
+      ['Active', chalk.green],
+      ['else', chalk.red],
+    ]),
+  ],
+  [
+    'connectedStatus',
+    new Map([
+      ['Connected', chalk.green],
+      ['else', chalk.red],
+    ]),
+  ],
+]);
 
 export const getStyledValue = (key: string, value: string): string => {
-  if (styledProperties[key] && value) {
-    return styledProperties[key][value]
-      ? chalk[styledProperties[key][value]](value)
-      : chalk[styledProperties[key].else](value);
+  if (!value || !styledProperties.has(key)) {
+    return value;
   }
-  return value;
+  return styledProperties.get(key).has(value)
+    ? styledProperties.get(key).get(value)(value)
+    : styledProperties.get(key).get('else')(value);
 };
 
 export const getStyledObject = (objectToStyle: ExtendedAuthFields): ExtendedAuthFields => {
   const clonedObject = { ...objectToStyle };
-  for (const key of Object.keys(styledProperties)) {
-    if (Reflect.has(clonedObject, key)) {
-      clonedObject[key] = getStyledValue(key, clonedObject[key]);
-    }
-  }
-  return clonedObject;
+  return Object.fromEntries(
+    Object.entries(clonedObject).map(([key, value]) => [key, getStyledValue(key, value as string)])
+  );
 };

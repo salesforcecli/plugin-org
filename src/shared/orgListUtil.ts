@@ -171,11 +171,13 @@ export class OrgListUtil {
       try {
         currentValue = OrgListUtil.removeRestrictedInfoFromConfig(authInfo.getFields(true));
       } catch (error) {
+        // eslint-disable-next-line no-await-in-loop
         const logger = await OrgListUtil.retrieveLogger();
         logger.warn(`Error decrypting ${authInfo.getUsername()}`);
         currentValue = OrgListUtil.removeRestrictedInfoFromConfig(authInfo.getFields());
       }
 
+      // eslint-disable-next-line no-await-in-loop
       const [alias, lastUsed] = await Promise.all([
         getAliasByUsername(currentValue.username),
         fs.stat(join(Global.SFDX_DIR, `${currentValue.username}.json`)),
@@ -279,6 +281,7 @@ export class OrgListUtil {
         scratchOrgInfo.isExpired = updatedOrgInfo.Status === 'Deleted';
         scratchOrgInfo.namespace = updatedOrgInfo.Namespace;
       } else {
+        // eslint-disable-next-line no-await-in-loop
         const logger = await OrgListUtil.retrieveLogger();
         logger.warn(`Can't find ${scratchOrgInfo.username} in the updated contents`);
       }

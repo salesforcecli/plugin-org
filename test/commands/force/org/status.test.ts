@@ -93,6 +93,7 @@ describe('org:status', () => {
         }),
       };
       configAggregatorStub = fromStub(stubInterface<ConfigAggregator>(sandbox, configAggregatorStubOptions));
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       cmd.setConfigAggregator(configAggregatorStub);
     });
     onStub = sandbox.stub().callsArgWith(1, resultObject);

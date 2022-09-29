@@ -73,7 +73,7 @@ export class OrgStatusCommand extends SfdxCommand {
       if (results.sandboxRes?.authUserName) {
         if (this.flags.setalias) {
           const stateAggregator = await StateAggregator.getInstance();
-          stateAggregator.aliases.set(this.flags.setalias, results.sandboxRes.authUserName);
+          stateAggregator.aliases.set(this.flags.setalias as string, results.sandboxRes.authUserName);
           await stateAggregator.aliases.write();
           this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, results.sandboxRes.authUserName);
         }
@@ -87,7 +87,9 @@ export class OrgStatusCommand extends SfdxCommand {
     });
 
     this.logger.debug('Calling auth for SandboxName args: %s ', this.flags.sandboxname);
-    const results = await this.org.sandboxStatus(this.flags.sandboxname, { wait: this.flags.wait as Duration });
+    const results = await this.org.sandboxStatus(this.flags.sandboxname as string, {
+      wait: this.flags.wait as Duration,
+    });
     this.logger.debug('Results for auth call: %s ', results);
     if (!results) {
       this.ux.styledHeader('Sandbox Org Creation Status');

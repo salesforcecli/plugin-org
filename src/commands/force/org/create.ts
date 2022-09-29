@@ -28,6 +28,7 @@ import {
   ScratchOrgInfo,
   ScratchOrgRequest,
 } from '@salesforce/core';
+import { lowerToUpper } from '../../../shared/utils';
 import { SandboxReporter } from '../../../shared/sandboxReporter';
 
 Messages.importMessagesDirectory(__dirname);
@@ -122,31 +123,17 @@ export class Create extends SfdxCommand {
     }
 
     if (this.flags.clientid) {
-      this.ux.warn(messages.getMessage('clientIdNotSupported', [this.flags.clientid]));
+      this.ux.warn(messages.getMessage('clientIdNotSupported', [this.flags.clientid as string]));
     }
     if (this.flags.nonamespace) {
-      this.ux.warn(messages.getMessage('noNamespaceNotSupported', [this.flags.nonamespace]));
+      this.ux.warn(messages.getMessage('noNamespaceNotSupported', [this.flags.nonamespace as boolean]));
     }
     if (this.flags.noancestors) {
-      this.ux.warn(messages.getMessage('noAncestorsNotSupported', [this.flags.noancestors]));
+      this.ux.warn(messages.getMessage('noAncestorsNotSupported', [this.flags.noancestors as boolean]));
     }
     if (this.flags.durationdays) {
-      this.ux.warn(messages.getMessage('durationDaysNotSupported', [this.flags.durationdays]));
+      this.ux.warn(messages.getMessage('durationDaysNotSupported', [this.flags.durationdays as number]));
     }
-  }
-
-  private lowerToUpper(object: Record<string, unknown>): Record<string, unknown> {
-    // the API has keys defined in capital camel case, while the definition schema has them as lower camel case
-    // we need to convert lower camel case to upper before merging options so they will override properly
-    Object.keys(object).map((key) => {
-      const upperCase = key.charAt(0).toUpperCase();
-      if (key.charAt(0) !== upperCase) {
-        const capitalKey = upperCase + key.slice(1);
-        object[capitalKey] = object[key];
-        delete object[key];
-      }
-    });
-    return object;
   }
 
   private createSandboxRequest(): SandboxRequest {
@@ -155,10 +142,10 @@ export class Create extends SfdxCommand {
     let capitalizedVarArgs = {};
 
     if (sandboxDefFileContents) {
-      sandboxDefFileContents = this.lowerToUpper(sandboxDefFileContents);
+      sandboxDefFileContents = lowerToUpper(sandboxDefFileContents);
     }
     if (this.varargs) {
-      capitalizedVarArgs = this.lowerToUpper(this.varargs);
+      capitalizedVarArgs = lowerToUpper(this.varargs);
     }
     // varargs override file input
     const sandboxReq: SandboxRequest = { SandboxName: undefined, ...sandboxDefFileContents, ...capitalizedVarArgs };
@@ -184,7 +171,9 @@ export class Create extends SfdxCommand {
     // `on` doesn't support synchronous methods
     // eslint-disable-next-line @typescript-eslint/require-await
     lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results: SandboxProcessObject) => {
-      this.ux.log(messages.getMessage('sandboxSuccess', [results.Id, results.SandboxName, this.flags.targetusername]));
+      this.ux.log(
+        messages.getMessage('sandboxSuccess', [results.Id, results.SandboxName, this.flags.targetusername as string])
+      );
     });
 
     // eslint-disable-next-line @typescript-eslint/require-await
@@ -208,7 +197,7 @@ export class Create extends SfdxCommand {
       if (results.sandboxRes?.authUserName) {
         if (this.flags.setalias) {
           const stateAggregator = await StateAggregator.getInstance();
-          stateAggregator.aliases.set(this.flags.setalias, results.sandboxRes.authUserName);
+          stateAggregator.aliases.set(this.flags.setalias as string, results.sandboxRes.authUserName);
           const result = await stateAggregator.aliases.write();
           this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
         }
@@ -235,7 +224,7 @@ export class Create extends SfdxCommand {
         // there was most likely an issue with DNS when auth'ing to the new sandbox, but it was created.
         if (this.flags.setalias && this.sandboxAuth) {
           const stateAggregator = await StateAggregator.getInstance();
-          stateAggregator.aliases.set(this.flags.setalias, this.sandboxAuth.authUserName);
+          stateAggregator.aliases.set(this.flags.setalias as string, this.sandboxAuth.authUserName);
           const result = await stateAggregator.aliases.write();
           this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
         }
@@ -256,7 +245,7 @@ export class Create extends SfdxCommand {
     // the -f option
     if (this.flags.definitionfile) {
       this.logger.debug('Reading JSON DefFile %s ', this.flags.definitionfile);
-      return JSON.parse(fs.readFileSync(this.flags.definitionfile, 'utf-8')) as Record<string, unknown>;
+      return JSON.parse(fs.readFileSync(this.flags.definitionfile as string, 'utf-8')) as Record<string, unknown>;
     }
   }
 

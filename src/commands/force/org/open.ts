@@ -73,14 +73,16 @@ export class OrgOpenCommand extends SfdxCommand {
       const sfdcUrl = new SfdcUrl(url);
       await sfdcUrl.checkLightningDomain();
     } catch (err) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,  @typescript-eslint/no-unsafe-call
-      if (err.message?.includes('timeout')) {
-        const domain = `https://${/https?:\/\/([^.]*)/.exec(url)[1]}.lightning.force.com`;
-        const timeout = new Duration(new Env().getNumber('SFDX_DOMAIN_RETRY', 240), Duration.Unit.SECONDS);
-        this.logger.debug(`Did not find IP for ${domain} after ${timeout.seconds} seconds`);
-        throw new SfError(messages.getMessage('domainTimeoutError'), 'domainTimeoutError');
+      if (err instanceof Error) {
+        if (err.message?.includes('timeout')) {
+          const domain = `https://${/https?:\/\/([^.]*)/.exec(url)[1]}.lightning.force.com`;
+          const timeout = new Duration(new Env().getNumber('SFDX_DOMAIN_RETRY', 240), Duration.Unit.SECONDS);
+          this.logger.debug(`Did not find IP for ${domain} after ${timeout.seconds} seconds`);
+          throw new SfError(messages.getMessage('domainTimeoutError'), 'domainTimeoutError');
+        }
+        throw SfError.wrap(err);
       }
-      throw SfError.wrap(err);
+      throw err;
     }
 
     const openOptions =
