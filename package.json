@@ -16,7 +16,7 @@
   "devDependencies": {
     "@oclif/dev-cli": "^1",
     "@oclif/plugin-command-snapshot": "^3.2.0",
-    "@oclif/test": "^2.1.1",
+    "@oclif/test": "^2.2.0",
     "@salesforce/cli-plugins-testkit": "^2.5.2",
     "@salesforce/dev-config": "^3.1.0",
     "@salesforce/dev-scripts": "^2.0.4",
