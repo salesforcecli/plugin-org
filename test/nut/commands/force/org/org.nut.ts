@@ -68,7 +68,7 @@ describe('Org Command NUT', () => {
       ],
     });
 
-    const hubOrg = execCmd<[{ key: string; value: string }]>('config:get defatuldevhubusername --json', {
+    const hubOrg = execCmd<[{ key: string; value: string }]>('config:get defaultdevhubusername --json', {
       cli: 'sfdx',
       ensureExitCode: 0,
     });
@@ -77,9 +77,8 @@ describe('Org Command NUT', () => {
     defaultUsername = session.orgs.get('default').username;
     defaultUserOrgId = session.orgs.get('default').orgId;
 
-    const aliasedOrg = [...session.orgs.values()].find((org) => org.alias === 'anAlias');
-    aliasedUsername = aliasedOrg.username;
-    aliasUserOrgId = aliasedOrg.orgId;
+    aliasedUsername = session.orgs.get('anAlias').username;
+    aliasUserOrgId = session.orgs.get('anAlias').orgId;
   });
 
   after(async () => {

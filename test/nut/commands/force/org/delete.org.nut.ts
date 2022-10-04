@@ -39,9 +39,8 @@ describe('Delete Orgs', () => {
     defaultUsername = session.orgs.get('default').username;
     defaultUserOrgId = session.orgs.get('default').orgId;
 
-    const aliasedOrg = [...session.orgs.values()].find((org) => org.alias === 'anAlias');
-    aliasedUsername = aliasedOrg.username;
-    aliasUserOrgId = aliasedOrg.orgId;
+    aliasedUsername = session.orgs.get('anAlias').username;
+    aliasUserOrgId = session.orgs.get('anAlias').orgId;
   });
 
   after(async () => {

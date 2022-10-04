@@ -21,7 +21,7 @@ describe('Sandbox Orgs', () => {
       project: { name: 'sandboxCreate' },
     });
 
-    const hubOrg = execCmd<[{ key: string; value: string }]>('config:get defatuldevhubusername --json', {
+    const hubOrg = execCmd<[{ key: string; value: string }]>('config:get defaultdevhubusername --json', {
       cli: 'sfdx',
       ensureExitCode: 0,
     });

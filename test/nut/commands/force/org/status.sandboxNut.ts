@@ -46,7 +46,7 @@ describe('test sandbox status command', () => {
         sourceDir: path.join(process.cwd(), 'test', 'nut', 'commands', 'force', 'org'),
       },
     });
-    const hubOrg = execCmd<[{ key: string; value: string }]>('config:get defatuldevhubusername --json', {
+    const hubOrg = execCmd<[{ key: string; value: string }]>('config:get defaultdevhubusername --json', {
       cli: 'sfdx',
       ensureExitCode: 0,
     });
