@@ -4,8 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { join } from 'path';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
-import { AnyJson, getString, isArray } from '@salesforce/ts-types';
 import { expect } from '@salesforce/command/lib/test';
 // these NUTs are separated from org.nuts.ts because deleting orgs may interfere with the other NUTs
 describe('Delete Orgs', () => {
@@ -19,18 +19,29 @@ describe('Delete Orgs', () => {
   before(async () => {
     session = await TestSession.create({
       project: { name: 'forceOrgList' },
-      setupCommands: [
-        'sfdx force:org:create -f config/project-scratch-def.json --setdefaultusername --wait 10',
-        'sfdx force:org:create -f config/project-scratch-def.json --setalias anAlias --wait 10',
+      devhubAuthStrategy: 'AUTO',
+      scratchOrgs: [
+        {
+          executable: 'sfdx',
+          setDefault: true,
+          wait: 10,
+          config: join('config', 'project-scratch-def.json'),
+        },
+        {
+          executable: 'sfdx',
+          alias: 'anAlias',
+          wait: 10,
+          config: join('config', 'project-scratch-def.json'),
+        },
       ],
     });
 
-    if (isArray<AnyJson>(session.setup)) {
-      defaultUsername = getString(session.setup[0], 'result.username');
-      defaultUserOrgId = getString(session.setup[0], 'result.orgId');
-      aliasedUsername = getString(session.setup[1], 'result.username');
-      aliasUserOrgId = getString(session.setup[1], 'result.orgId');
-    }
+    defaultUsername = session.orgs.get('default').username;
+    defaultUserOrgId = session.orgs.get('default').orgId;
+
+    const aliasedOrg = [...session.orgs.values()].find((org) => org.alias === 'anAlias');
+    aliasedUsername = aliasedOrg.username;
+    aliasUserOrgId = aliasedOrg.orgId;
   });
 
   after(async () => {

@@ -6,7 +6,6 @@
  */
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import { Lifecycle, Messages, SandboxEvents, SandboxProcessObject, StatusEvent } from '@salesforce/core';
-import { isArray, AnyJson, ensureString } from '@salesforce/ts-types';
 import { expect } from 'chai';
 
 Messages.importMessagesDirectory(__dirname);
@@ -19,17 +18,14 @@ describe('Sandbox Orgs', () => {
 
   before(async () => {
     session = await TestSession.create({
-      setupCommands: ['sfdx config:get defaultdevhubusername --json'],
       project: { name: 'sandboxCreate' },
     });
-    // get default devhub username
-    if (isArray<AnyJson>(session.setup)) {
-      hubOrgUsername = ensureString(
-        (session.setup[0] as { result: [{ key: string; value: string }] }).result.find(
-          (config) => config.key === 'defaultdevhubusername'
-        )?.value
-      );
-    }
+
+    const hubOrg = execCmd<[{ key: string; value: string }]>('config:get defatuldevhubusername --json', {
+      cli: 'sfdx',
+      ensureExitCode: 0,
+    });
+    hubOrgUsername = hubOrg.jsonOutput.result[0].value;
   });
 
   it('will create a sandbox, verify it can be opened, and then attempt to delete it', async () => {
