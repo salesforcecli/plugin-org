@@ -17,6 +17,7 @@ describe('org:create command', () => {
       project: {
         name: 'orgCreateNut',
       },
+      devhubAuthStrategy: 'AUTO',
     });
   });
 

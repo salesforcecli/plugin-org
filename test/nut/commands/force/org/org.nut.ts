@@ -5,11 +5,12 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { join } from 'path';
 import * as querystring from 'querystring';
 import { expect } from '@salesforce/command/lib/test';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { execCmd } from '@salesforce/cli-plugins-testkit';
-import { asDictionary, AnyJson, Dictionary, getString, isArray, ensureString } from '@salesforce/ts-types';
+import { asDictionary, Dictionary, getString } from '@salesforce/ts-types';
 
 let hubOrgUsername: string;
 
@@ -50,28 +51,34 @@ describe('Org Command NUT', () => {
   before(async () => {
     session = await TestSession.create({
       project: { name: 'forceOrgList' },
-      setupCommands: [
-        'sfdx force:org:create -f config/project-scratch-def.json --setdefaultusername --wait 10',
-        'sfdx force:org:create -f config/project-scratch-def.json --setalias anAlias --wait 10',
-        'sfdx config:get defaultdevhubusername --json',
+      devhubAuthStrategy: 'AUTO',
+      scratchOrgs: [
+        {
+          executable: 'sfdx',
+          config: join('config', 'project-scratch-def.json'),
+          setDefault: true,
+          wait: 10,
+        },
+        {
+          executable: 'sfdx',
+          config: join('config', 'project-scratch-def.json'),
+          alias: 'anAlias',
+          wait: 10,
+        },
       ],
     });
 
-    // get default devhub username
-    if (isArray<AnyJson>(session.setup)) {
-      hubOrgUsername = ensureString(
-        (session.setup[2] as { result: [{ key: string; value: string }] }).result.find(
-          (config) => config.key === 'defaultdevhubusername'
-        )?.value
-      );
-    }
+    const hubOrg = execCmd<[{ key: string; value: string }]>('config:get defaultdevhubusername --json', {
+      cli: 'sfdx',
+      ensureExitCode: 0,
+    });
+    hubOrgUsername = hubOrg.jsonOutput.result[0].value;
 
-    if (isArray<AnyJson>(session.setup)) {
-      defaultUsername = getString(session.setup[0], 'result.username');
-      defaultUserOrgId = getString(session.setup[0], 'result.orgId');
-      aliasedUsername = getString(session.setup[1], 'result.username');
-      aliasUserOrgId = getString(session.setup[1], 'result.orgId');
-    }
+    defaultUsername = session.orgs.get('default').username;
+    defaultUserOrgId = session.orgs.get('default').orgId;
+
+    aliasedUsername = session.orgs.get('anAlias').username;
+    aliasUserOrgId = session.orgs.get('anAlias').orgId;
   });
 
   after(async () => {

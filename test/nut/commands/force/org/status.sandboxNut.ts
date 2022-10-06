@@ -10,7 +10,6 @@ import { TestSession, execCmd } from '@salesforce/cli-plugins-testkit';
 import { expect } from 'chai';
 import * as shell from 'shelljs';
 import { AuthInfo, Connection, SandboxProcessObject } from '@salesforce/core';
-import { isArray, AnyJson, ensureString } from '@salesforce/ts-types';
 
 let session: TestSession;
 let sandboxName: string;
@@ -43,19 +42,16 @@ function logoutSandbox(username: string) {
 describe('test sandbox status command', () => {
   before(async () => {
     session = await TestSession.create({
-      setupCommands: ['sfdx config:get defaultdevhubusername --json'],
       project: {
         sourceDir: path.join(process.cwd(), 'test', 'nut', 'commands', 'force', 'org'),
       },
     });
-    // get default devhub username
-    if (isArray<AnyJson>(session.setup)) {
-      hubOrgUsername = ensureString(
-        (session.setup[0] as { result: [{ key: string; value: string }] }).result.find(
-          (config) => config.key === 'defaultdevhubusername'
-        )?.value
-      );
-    }
+    const hubOrg = execCmd<[{ key: string; value: string }]>('config:get defaultdevhubusername --json', {
+      cli: 'sfdx',
+      ensureExitCode: 0,
+    });
+    hubOrgUsername = hubOrg.jsonOutput.result[0].value;
+
     const queryStr =
       "SELECT SandboxName FROM SandboxProcess WHERE Status != 'E' and Status != 'D' ORDER BY CreatedDate DESC LIMIT 1";
     const connection = await Connection.create({

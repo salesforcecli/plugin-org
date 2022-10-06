@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { join } from 'path';
 import { TestSession, execCmd } from '@salesforce/cli-plugins-testkit';
 import { expect } from 'chai';
 
@@ -14,7 +15,15 @@ describe('test org:open command', () => {
   before(async () => {
     session = await TestSession.create({
       project: { name: 'forceOrgList' },
-      setupCommands: ['sfdx force:org:create -f config/project-scratch-def.json --setdefaultusername --wait 10'],
+      devhubAuthStrategy: 'AUTO',
+      scratchOrgs: [
+        {
+          executable: 'sfdx',
+          config: join('config', 'project-scratch-def.json'),
+          setDefault: true,
+          wait: 10,
+        },
+      ],
     });
   });
 
