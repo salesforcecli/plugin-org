@@ -227,7 +227,7 @@ export class Create extends SfdxCommand {
     const wait = this.flags.wait as Duration;
 
     try {
-      return prodOrg.createSandbox(sandboxReq, { wait });
+      return await prodOrg.createSandbox(sandboxReq, { wait });
     } catch (e) {
       // guaranteed to be SfdxError from core;
       const err = e as SfError;

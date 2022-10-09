@@ -80,9 +80,7 @@ describe('org:status', () => {
     cmd = new TestOrgStatusCommand(params, oclifConfigStub);
     stubMethod(sandbox, cmd, 'assignOrg').callsFake(() => {
       const orgStubOptions = {
-        sandboxStatus: sandbox.stub().callsFake(async () => {
-          return sandboxProcessObj;
-        }),
+        sandboxStatus: sandbox.stub().callsFake(async () => sandboxProcessObj),
       };
       const orgStub = fromStub(stubInterface<Org>(sandbox, orgStubOptions));
       cmd.setOrg(orgStub);

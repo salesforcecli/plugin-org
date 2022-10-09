@@ -35,7 +35,7 @@ describe('open commands', () => {
   const spies = new Map();
   afterEach(() => spies.clear());
 
-  beforeEach(async function () {
+  beforeEach(async () => {
     stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
     stubMethod(sandbox, Org.prototype, 'getField').withArgs(Org.Fields.INSTANCE_URL).returns(testInstance);
     stubMethod(sandbox, Org.prototype, 'refreshAuth').resolves({});

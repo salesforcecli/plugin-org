@@ -31,9 +31,7 @@ export class OrgOpenCommand extends SfdxCommand {
       char: 'p',
       description: messages.getMessage('cliPath'),
       env: 'FORCE_OPEN_URL',
-      parse: (input: string): Promise<string> => {
-        return Promise.resolve(encodeURIComponent(decodeURIComponent(input)));
-      },
+      parse: (input: string): Promise<string> => Promise.resolve(encodeURIComponent(decodeURIComponent(input))),
     }),
     urlonly: flags.boolean({
       char: 'r',

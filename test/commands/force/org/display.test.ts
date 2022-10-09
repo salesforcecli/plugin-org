@@ -47,7 +47,7 @@ describe('org:display', () => {
   let authInfoStub: StubbedType<AuthInfo>;
   const sandbox = sinon.createSandbox();
 
-  beforeEach(async function () {
+  beforeEach(async () => {
     stubMethod(sandbox, utils, 'getAliasByUsername')
       .withArgs('nonscratch@test.com')
       .resolves('nonscratchalias')
@@ -215,8 +215,7 @@ describe('org:display', () => {
       stubMethod(sandbox, Org.prototype, 'getConnection').returns(Connection.prototype);
 
       stubMethod(sandbox, Connection.prototype, 'sobject').returns({
-        find: async () => {
-          return [
+        find: async () => [
             {
               Status: 'Active',
               ExpirationDate: '2021-01-23',
@@ -225,8 +224,7 @@ describe('org:display', () => {
               OrgName: 'MyOrg',
               CreatedDate: '2020-12-24T15:18:55.000+0000',
             },
-          ];
-        },
+          ],
       });
     })
     .stdout()
