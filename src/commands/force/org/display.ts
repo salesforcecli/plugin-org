@@ -9,7 +9,6 @@ import * as os from 'os';
 import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
 import { AuthInfo, Messages, sfdc, SfError } from '@salesforce/core';
 import { camelCaseToTitleCase } from '@salesforce/kit';
-
 import { OrgDisplayReturn, ScratchOrgFields } from '../../../shared/orgTypes';
 import { getAliasByUsername } from '../../../shared/utils';
 import { getStyledValue } from '../../../shared/orgHighlighter';
@@ -76,6 +75,8 @@ export class OrgDisplayCommand extends SfdxCommand {
       .sort() // this command always alphabetizes the table rows
       .map((key) => ({
         key: camelCaseToTitleCase(key),
+        // TS won't infer types of the values of OrgDisplayReturn, even thought it's typed (they're all string or date)
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument
         value: getStyledValue(key, result[key]),
       }));
 

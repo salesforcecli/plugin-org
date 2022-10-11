@@ -87,12 +87,10 @@ describe('orgListUtil tests', () => {
 
       spies.set('reduceScratchOrgInfo', sandbox.spy(OrgListUtil, 'reduceScratchOrgInfo'));
       stubMethod(sandbox, ConfigAggregator, 'create').resolves({
-        getConfig: () => {
-          return {
+        getConfig: () => ({
             defaultusername: orgAuthConfigFields.username,
             defaultdevhubusername: devHubConfigFields.username,
-          };
-        },
+          }),
       });
 
       stubMethod(sandbox, fs, 'stat').resolves({ atime: 'test' });

@@ -80,9 +80,7 @@ describe('org:status', () => {
     cmd = new TestOrgStatusCommand(params, oclifConfigStub);
     stubMethod(sandbox, cmd, 'assignOrg').callsFake(() => {
       const orgStubOptions = {
-        sandboxStatus: sandbox.stub().callsFake(async () => {
-          return sandboxProcessObj;
-        }),
+        sandboxStatus: sandbox.stub().callsFake(async () => sandboxProcessObj),
       };
       const orgStub = fromStub(stubInterface<Org>(sandbox, orgStubOptions));
       cmd.setOrg(orgStub);
@@ -95,6 +93,7 @@ describe('org:status', () => {
         }),
       };
       configAggregatorStub = fromStub(stubInterface<ConfigAggregator>(sandbox, configAggregatorStubOptions));
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       cmd.setConfigAggregator(configAggregatorStub);
     });
     onStub = sandbox.stub().callsArgWith(1, resultObject);

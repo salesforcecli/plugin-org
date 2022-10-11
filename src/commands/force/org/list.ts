@@ -79,7 +79,7 @@ export class OrgListCommand extends SfdxCommand {
     };
     this.ux.styledHeader('Orgs');
 
-    this.printOrgTable(result.nonScratchOrgs, this.flags.skipconnectionstatus);
+    this.printOrgTable(result.nonScratchOrgs, this.flags.skipconnectionstatus as boolean);
     // separate the table by a blank line.
     this.ux.log();
 
@@ -160,6 +160,7 @@ export class OrgListCommand extends SfdxCommand {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private extractDefaultOrgStatus(val: ExtendedAuthFields): void {
     if (val.isDefaultDevHubUsername) {
       val.defaultMarker = '(D)';

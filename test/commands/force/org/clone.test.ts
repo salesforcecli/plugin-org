@@ -113,6 +113,7 @@ describe('org:clone', () => {
         }),
       };
       configAggregatorStub = fromStub(stubInterface<SfdxConfigAggregator>(sandbox, configAggregatorStubOptions));
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       cmd.setConfigAggregator(configAggregatorStub);
     });
     if (!fails) {

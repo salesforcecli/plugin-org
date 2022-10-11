@@ -171,11 +171,13 @@ export class OrgListUtil {
       try {
         currentValue = OrgListUtil.removeRestrictedInfoFromConfig(authInfo.getFields(true));
       } catch (error) {
+        // eslint-disable-next-line no-await-in-loop
         const logger = await OrgListUtil.retrieveLogger();
         logger.warn(`Error decrypting ${authInfo.getUsername()}`);
         currentValue = OrgListUtil.removeRestrictedInfoFromConfig(authInfo.getFields());
       }
 
+      // eslint-disable-next-line no-await-in-loop
       const [alias, lastUsed] = await Promise.all([
         getAliasByUsername(currentValue.username),
         fs.stat(join(Global.SFDX_DIR, `${currentValue.username}.json`)),
@@ -279,6 +281,7 @@ export class OrgListUtil {
         scratchOrgInfo.isExpired = updatedOrgInfo.Status === 'Deleted';
         scratchOrgInfo.namespace = updatedOrgInfo.Namespace;
       } else {
+        // eslint-disable-next-line no-await-in-loop
         const logger = await OrgListUtil.retrieveLogger();
         logger.warn(`Can't find ${scratchOrgInfo.username} in the updated contents`);
       }
@@ -298,7 +301,7 @@ export class OrgListUtil {
     try {
       const org = await Org.create({ aliasOrUsername: username });
       // true forces a server check instead of relying on AuthInfo file cache
-      return org.determineIfDevHubOrg(true);
+      return await org.determineIfDevHubOrg(true);
     } catch {
       return false;
     }
@@ -338,6 +341,4 @@ export class OrgListUtil {
   }
 }
 
-export const identifyActiveOrgByStatus = (org: ExtendedAuthFields): boolean => {
-  return org.status === 'Active';
-};
+export const identifyActiveOrgByStatus = (org: ExtendedAuthFields): boolean => org.status === 'Active';

@@ -22,7 +22,8 @@ import {
   ResultEvent,
   SandboxProcessObject,
 } from '@salesforce/core';
-import { Duration, upperFirst } from '@salesforce/kit';
+import { Duration } from '@salesforce/kit';
+import { lowerToUpper } from '../../../shared/utils';
 import { SandboxReporter } from '../../../shared/sandboxReporter';
 
 Messages.importMessagesDirectory(__dirname);
@@ -90,7 +91,7 @@ export class OrgCloneCommand extends SfdxCommand {
         if (results?.sandboxRes?.authUserName) {
           if (this.flags.setalias) {
             const stateAggregator = await StateAggregator.getInstance();
-            stateAggregator.aliases.set(this.flags.setalias, results.sandboxRes.authUserName);
+            stateAggregator.aliases.set(this.flags.setalias as string, results.sandboxRes.authUserName);
             const result = stateAggregator.aliases.getAll();
             this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
           }
@@ -123,10 +124,10 @@ export class OrgCloneCommand extends SfdxCommand {
     let capitalizedVarArgs = {};
 
     if (sandboxDefFileContents) {
-      sandboxDefFileContents = this.lowerToUpper(sandboxDefFileContents);
+      sandboxDefFileContents = lowerToUpper(sandboxDefFileContents);
     }
     if (this.varargs) {
-      capitalizedVarArgs = this.lowerToUpper(this.varargs);
+      capitalizedVarArgs = lowerToUpper(this.varargs);
     }
 
     // varargs override file input
@@ -152,17 +153,11 @@ export class OrgCloneCommand extends SfdxCommand {
     return { sandboxReq, srcSandboxName };
   }
 
-  private lowerToUpper(object: Record<string, unknown>): Record<string, unknown> {
-    // the API has keys defined in capital camel case, while the definition schema has them as lower camel case
-    // we need to convert lower camel case to upper before merging options so they will override properly
-    return Object.fromEntries(Object.entries(object).map(([key, value]) => [upperFirst(key), value]));
-  }
-
   private readJsonDefFile(): Record<string, unknown> {
     // the -f option
     if (this.flags.definitionfile) {
       this.logger.debug('Reading JSON DefFile %s ', this.flags.definitionfile);
-      return JSON.parse(fs.readFileSync(this.flags.definitionfile, 'utf-8')) as Record<string, unknown>;
+      return JSON.parse(fs.readFileSync(this.flags.definitionfile as string, 'utf-8')) as Record<string, unknown>;
     }
   }
 }
