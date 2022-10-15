@@ -823,10 +823,10 @@
     chalk "^4.1.0"
     tslib "^2.3.1"
 
-"@oclif/plugin-command-snapshot@^3.2.3":
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-3.2.3.tgz#6a59acb88a4c52ef362b345c77f6f635cdc3700d"
-  integrity sha512-GV6asL3JZw8DPlKCMbxE1ZzuvTEvx770fGBpcxn/VbKa/rjlRVcvVtk5u3TmIToEA4W1PdspD8ZNqIiEuW804w==
+"@oclif/plugin-command-snapshot@^3.2.4":
+  version "3.2.4"
+  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-3.2.4.tgz#e8fd173431068972acebb2963fd666b331643140"
+  integrity sha512-UA97d6PC+GCjC1gA1aXKglKjDU2WYTVY5dOL8RYQtGcWb9Pg71qZt5tVy3t7T2syHaBdR8QSa7P9WDkKubu3mg==
   dependencies:
     "@oclif/core" "^1.16.5"
     chalk "^4.1.2"
@@ -1042,7 +1042,7 @@
     "@salesforce/ts-types" "^1.5.21"
     chalk "^2.4.2"
 
-"@salesforce/core@^3.30.12", "@salesforce/core@^3.30.9", "@salesforce/core@^3.31.9":
+"@salesforce/core@^3.30.12", "@salesforce/core@^3.31.9":
   version "3.31.9"
   resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.31.9.tgz#af9161e72a18d2232f17938503376379af725b15"
   integrity sha512-aRgp7m4P2yOMloOnBpamVBv/ykN27/kqm5ZxbQCsMYYHTx9s2/yOs4jCsXElIyYt3G/BvhGYpIzvW7LI/OO64A==
