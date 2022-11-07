@@ -100,6 +100,7 @@ export class Create extends SfdxCommand {
       description: messages.getMessage('flags.retry'),
     }),
   };
+  protected readonly lifecycleEventNames = ['postorgcreate'];
   private sandboxAuth?: SandboxUserAuthResponse;
 
   public async run(): Promise<SandboxProcessObject | ScratchOrgProcessObject> {
@@ -266,8 +267,8 @@ export class Create extends SfdxCommand {
     // we'll need the client secret, so prompt the user for it.
     const secret = this.flags.clientid
       ? await this.ux.prompt(messages.getMessage('secretPrompt'), {
-          type: 'mask',
-        })
+        type: 'mask',
+      })
       : undefined;
 
     const createCommandOptions: ScratchOrgRequest = {
