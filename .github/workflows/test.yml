@@ -24,3 +24,12 @@ jobs:
       fail-fast: false
     with:
       os: ${{ matrix.os }}
+  # conditional nuts based on commit message includes a certain string
+  sandbox-nuts:
+    needs: [nuts, linux-unit-tests, windows-unit-tests]
+    if: contains(github.event.push.head_commit.message,'[sb-nuts]')
+    uses: salesforcecli/github-workflows/.github/workflows/nut.yml@main
+    secrets: inherit
+    with:
+      command: test:nuts:sandbox
+      os: ubuntu-latest
