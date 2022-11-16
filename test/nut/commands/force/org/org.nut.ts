@@ -7,12 +7,13 @@
 
 import { join } from 'path';
 import * as querystring from 'querystring';
-import { expect } from '@salesforce/command/lib/test';
+import { expect, config } from 'chai';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { execCmd } from '@salesforce/cli-plugins-testkit';
 import { asDictionary, Dictionary, getString } from '@salesforce/ts-types';
 
 let hubOrgUsername: string;
+config.truncateThreshold = 0;
 
 const verifyHumanResults = (
   lines: string[],
@@ -68,11 +69,7 @@ describe('Org Command NUT', () => {
       ],
     });
 
-    const hubOrg = execCmd<[{ key: string; value: string }]>('config:get defaultdevhubusername --json', {
-      cli: 'sfdx',
-      ensureExitCode: 0,
-    });
-    hubOrgUsername = hubOrg.jsonOutput.result[0].value;
+    hubOrgUsername = session.hubOrg.username;
 
     defaultUsername = session.orgs.get('default').username;
     defaultUserOrgId = session.orgs.get('default').orgId;
