@@ -6,7 +6,6 @@
  */
 
 import { join } from 'path';
-import * as querystring from 'querystring';
 import { expect, config } from 'chai';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { execCmd } from '@salesforce/cli-plugins-testkit';
@@ -184,7 +183,7 @@ describe('Org Command NUT', () => {
       expect(result).to.include({ orgId: aliasUserOrgId, username: aliasedUsername });
       expect(result)
         .to.property('url')
-        .to.include(`retURL=${querystring.escape('foo/bar/baz')}`);
+        .to.include(`retURL=${encodeURIComponent(decodeURIComponent('foo/bar/baz'))}`);
     });
   });
 });
