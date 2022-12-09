@@ -237,8 +237,9 @@ export class Create extends SfdxCommand {
         }
         err.actions = [messages.getMessage('dnsTimeout'), messages.getMessage('partialSuccess')];
         err.exitCode = 68;
-        throw err;
       }
+
+      throw err;
     }
   }
 
