@@ -33,7 +33,7 @@ export const getStyledValue = (key: string, value: string): string => {
     : styledProperties.get(key).get('else')(value);
 };
 
-export const getStyledObject = (objectToStyle: ExtendedAuthFields): ExtendedAuthFields => {
+export const getStyledObject = (objectToStyle: ExtendedAuthFields): Record<string, string> => {
   const clonedObject = { ...objectToStyle };
   return Object.fromEntries(
     Object.entries(clonedObject).map(([key, value]) => [key, getStyledValue(key, value as string)])

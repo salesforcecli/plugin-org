@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import * as os from 'os';
-import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
+import { Flags, SfCommand, requiredOrgFlagWithDeprecations } from '@salesforce/sf-plugins-core';
 import { Messages } from '@salesforce/core';
 
 Messages.importMessagesDirectory(__dirname);
@@ -16,33 +16,34 @@ type DeleteResult = {
   username: string;
 };
 
-export class Delete extends SfdxCommand {
-  public static readonly requiresUsername = true;
-  public static readonly supportsDevhubUsername = true;
+export class Delete extends SfCommand<DeleteResult> {
+  public static readonly summary = messages.getMessage('description');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessage('examples').split(os.EOL);
-  public static readonly flagsConfig: FlagsConfig = {
-    noprompt: flags.boolean({
+  public static readonly flags = {
+    'target-org': requiredOrgFlagWithDeprecations,
+    noprompt: Flags.boolean({
       char: 'p',
-      description: messages.getMessage('flags.noprompt'),
+      summary: messages.getMessage('flags.noprompt'),
     }),
   };
 
   public async run(): Promise<DeleteResult> {
-    const username = this.org.getUsername();
-    const orgId = this.org.getOrgId();
-    const isSandbox = await this.org.isSandbox();
+    const { flags } = await this.parse(Delete);
+    const username = flags['target-org'].getUsername();
+    const orgId = flags['target-org'].getOrgId();
+    const isSandbox = await flags['target-org'].isSandbox();
     // read the config file for the org to be deleted, if it has a PROD_ORG_USERNAME entry, it's a sandbox
     // we either need permission to proceed without a prompt OR get the user to confirm
     if (
-      this.flags.noprompt ||
-      (await this.ux.confirm(messages.getMessage('confirmDelete', [isSandbox ? 'sandbox' : 'scratch', username])))
+      flags.noprompt ||
+      (await this.confirm(messages.getMessage('confirmDelete', [isSandbox ? 'sandbox' : 'scratch', username])))
     ) {
       let alreadyDeleted = false;
       let successMessageKey = 'commandSandboxSuccess';
       try {
         // will determine if it's a scratch org or sandbox and will delete from the appropriate parent org (DevHub or Production)
-        await this.org.delete();
+        await flags['target-org'].delete();
       } catch (e) {
         if (e instanceof Error && e.name === 'ScratchOrgNotFound') {
           alreadyDeleted = true;
@@ -53,7 +54,7 @@ export class Delete extends SfdxCommand {
         }
       }
 
-      this.ux.log(
+      this.log(
         isSandbox
           ? messages.getMessage(successMessageKey, [username])
           : messages.getMessage(alreadyDeleted ? 'deleteOrgConfigOnlyCommandSuccess' : 'deleteOrgCommandSuccess', [

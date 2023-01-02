@@ -6,8 +6,8 @@
  */
 
 import * as os from 'os';
-import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
-import { AuthInfo, Messages, sfdc, SfError } from '@salesforce/core';
+import { Flags, SfCommand, requiredOrgFlagWithDeprecations } from '@salesforce/sf-plugins-core';
+import { AuthInfo, Messages, Org, sfdc, SfError } from '@salesforce/core';
 import { camelCaseToTitleCase } from '@salesforce/kit';
 import { OrgDisplayReturn, ScratchOrgFields } from '../../../shared/orgTypes';
 import { getAliasByUsername } from '../../../shared/utils';
@@ -17,21 +17,28 @@ import { OrgListUtil } from '../../../shared/orgListUtil';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'display');
 const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
-export class OrgDisplayCommand extends SfdxCommand {
+export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
+  public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessage('examples').split(os.EOL);
-  public static readonly requiresUsername = true;
-  public static readonly flagsConfig: FlagsConfig = {
-    verbose: flags.builtin(),
+
+  public static readonly flags = {
+    'target-org': requiredOrgFlagWithDeprecations,
+    verbose: Flags.boolean({
+      summary: messages.getMessage('flags.verbose'),
+    }),
   };
 
+  private org: Org;
   public async run(): Promise<OrgDisplayReturn> {
+    const { flags } = await this.parse(OrgDisplayCommand);
+    this.org = flags['target-org'];
     try {
       // the auth file might have a stale access token.  We want to refresh it before getting the fields
       await this.org.refreshAuth();
     } catch (error) {
       // even if this fails, we want to display the information we can read from the auth file
-      this.ux.warn('unable to refresh auth for org');
+      this.warn('unable to refresh auth for org');
     }
     // translate to alias if necessary
     const authInfo = await AuthInfo.create({ username: this.org.getUsername() });
@@ -57,19 +64,19 @@ export class OrgDisplayCommand extends SfdxCommand {
       connectedStatus: isScratchOrg
         ? undefined
         : await OrgListUtil.determineConnectedStatusForNonScratchOrg(fields.username),
-      sfdxAuthUrl: this.flags.verbose && fields.refreshToken ? authInfo.getSfdxAuthUrl() : undefined,
+      sfdxAuthUrl: flags.verbose && fields.refreshToken ? authInfo.getSfdxAuthUrl() : undefined,
       alias: await getAliasByUsername(fields.username),
     };
-    this.ux.warn(sharedMessages.getMessage('SecurityWarning'));
+    this.warn(sharedMessages.getMessage('SecurityWarning'));
 
-    if (!this.flags.json) {
+    if (!flags.json) {
       this.print(returnValue);
     }
     return returnValue;
   }
 
   private print(result: OrgDisplayReturn): void {
-    this.ux.log('');
+    this.log('');
     const tableRows = Object.keys(result)
       .filter((key) => result[key] !== undefined && result[key] !== null) // some values won't exist
       .sort() // this command always alphabetizes the table rows
@@ -80,8 +87,8 @@ export class OrgDisplayCommand extends SfdxCommand {
         value: getStyledValue(key, result[key]),
       }));
 
-    this.ux.styledHeader('Org Description');
-    this.ux.table(tableRows, {
+    this.styledHeader('Org Description');
+    this.table(tableRows, {
       key: { header: 'KEY' },
       value: { header: 'VALUE' },
     });

@@ -5,17 +5,22 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as os from 'os';
 import * as fs from 'fs';
-import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
-import { Duration } from '@salesforce/kit';
+import { Interfaces } from '@oclif/core';
+import {
+  Flags,
+  SfCommand,
+  optionalOrgFlagWithDeprecations,
+  orgApiVersionFlagWithDeprecations,
+  parseVarArgs,
+  requiredHubFlagWithDeprecations,
+} from '@salesforce/sf-plugins-core';
 import {
   AuthFields,
   StateAggregator,
   Config,
   Lifecycle,
   Messages,
-  Org,
   OrgTypes,
   OrgConfigProperties,
   ResultEvent,
@@ -27,6 +32,7 @@ import {
   StatusEvent,
   ScratchOrgInfo,
   ScratchOrgRequest,
+  Logger,
 } from '@salesforce/core';
 import { lowerToUpper } from '../../../shared/utils';
 import { SandboxReporter } from '../../../shared/sandboxReporter';
@@ -42,71 +48,84 @@ export interface ScratchOrgProcessObject {
   orgId: string;
 }
 
-export class Create extends SfdxCommand {
+export class Create extends SfCommand<SandboxProcessObject | ScratchOrgProcessObject> {
+  public static readonly summary = messages.getMessage('description');
   public static readonly description = messages.getMessage('description');
-  public static readonly examples = messages.getMessage('examples').split(os.EOL);
-  public static readonly supportsDevhubUsername = true;
-  public static readonly supportsUsername = true;
-  public static readonly varargs = true;
+  public static readonly examples = messages.getMessages('examples');
+  // needed to allow varargs
+  public static readonly strict = false;
+
   public static readonly aliases = ['force:org:beta:create'];
-  public static readonly flagsConfig: FlagsConfig = {
-    type: flags.enum({
+  public static readonly flags = {
+    'target-org': optionalOrgFlagWithDeprecations,
+    'target-dev-hub': { ...requiredHubFlagWithDeprecations, required: false },
+    'api-version': orgApiVersionFlagWithDeprecations,
+    type: Flags.enum({
       char: 't',
-      description: messages.getMessage('flags.type'),
+      summary: messages.getMessage('flags.type'),
       options: [OrgTypes.Scratch, OrgTypes.Sandbox],
       default: OrgTypes.Scratch,
     }),
-    definitionfile: flags.filepath({
+    definitionfile: Flags.file({
+      exists: true,
       char: 'f',
-      description: messages.getMessage('flags.definitionFile'),
+      summary: messages.getMessage('flags.definitionFile'),
     }),
-    nonamespace: flags.boolean({
+    nonamespace: Flags.boolean({
       char: 'n',
-      description: messages.getMessage('flags.noNamespace'),
+      summary: messages.getMessage('flags.noNamespace'),
     }),
-    noancestors: flags.boolean({
+    noancestors: Flags.boolean({
       char: 'c',
-      description: messages.getMessage('flags.noAncestors'),
+      summary: messages.getMessage('flags.noAncestors'),
     }),
-    clientid: flags.string({
+    clientid: Flags.string({
       char: 'i',
-      description: messages.getMessage('flags.clientId'),
+      summary: messages.getMessage('flags.clientId'),
     }),
-    setdefaultusername: flags.boolean({
+    setdefaultusername: Flags.boolean({
       char: 's',
-      description: messages.getMessage('flags.setDefaultUsername'),
+      summary: messages.getMessage('flags.setDefaultUsername'),
     }),
-    setalias: flags.string({
+    setalias: Flags.string({
       char: 'a',
-      description: messages.getMessage('flags.setAlias'),
+      summary: messages.getMessage('flags.setAlias'),
     }),
-    wait: flags.minutes({
+    wait: Flags.duration({
+      unit: 'minutes',
       char: 'w',
-      description: messages.getMessage('flags.wait'),
+      summary: messages.getMessage('flags.wait'),
       min: 6,
-      default: Duration.minutes(6),
+      defaultValue: 6,
     }),
-    durationdays: flags.integer({
+    durationdays: Flags.integer({
       char: 'd',
-      description: messages.getMessage('flags.durationDays'),
+      summary: messages.getMessage('flags.durationDays'),
       min: 1,
       max: 30,
       default: 7,
     }),
-    retry: flags.number({
+    retry: Flags.integer({
       hidden: true,
       default: 0,
       max: 10,
-      description: messages.getMessage('flags.retry'),
+      summary: messages.getMessage('flags.retry'),
     }),
   };
   protected readonly lifecycleEventNames = ['postorgcreate'];
   private sandboxAuth?: SandboxUserAuthResponse;
+  private logger: Logger;
+  private varArgs: Record<string, string> = {};
 
+  private flags: Interfaces.InferredFlags<typeof Create.flags>;
   public async run(): Promise<SandboxProcessObject | ScratchOrgProcessObject> {
-    this.logger.debug('Create started with args %s ', this.flags);
+    const { flags, args, argv } = await this.parse(Create);
+    this.varArgs = parseVarArgs(args, argv);
+    this.flags = flags;
+    this.logger = await Logger.child(this.id);
+    this.logger.debug('Create started with args %s ', flags);
 
-    if (this.flags.type === OrgTypes.Sandbox) {
+    if (flags.type === OrgTypes.Sandbox) {
       this.validateSandboxFlags();
       return this.createSandbox();
     } else {
@@ -116,7 +135,7 @@ export class Create extends SfdxCommand {
   }
 
   private validateSandboxFlags(): void {
-    if (!this.flags.targetusername) {
+    if (!this.flags['target-org']) {
       throw new SfError(messages.getMessage('requiresUsername'));
     }
     if (this.flags.retry !== 0) {
@@ -124,29 +143,29 @@ export class Create extends SfdxCommand {
     }
 
     if (this.flags.clientid) {
-      this.ux.warn(messages.getMessage('clientIdNotSupported', [this.flags.clientid as string]));
+      this.warn(messages.getMessage('clientIdNotSupported', [this.flags.clientid]));
     }
     if (this.flags.nonamespace) {
-      this.ux.warn(messages.getMessage('noNamespaceNotSupported', [this.flags.nonamespace as boolean]));
+      this.warn(messages.getMessage('noNamespaceNotSupported', [this.flags.nonamespace]));
     }
     if (this.flags.noancestors) {
-      this.ux.warn(messages.getMessage('noAncestorsNotSupported', [this.flags.noancestors as boolean]));
+      this.warn(messages.getMessage('noAncestorsNotSupported', [this.flags.noancestors]));
     }
     if (this.flags.durationdays) {
-      this.ux.warn(messages.getMessage('durationDaysNotSupported', [this.flags.durationdays as number]));
+      this.warn(messages.getMessage('durationDaysNotSupported', [this.flags.durationdays]));
     }
   }
 
   private createSandboxRequest(): SandboxRequest {
-    this.logger.debug('Create Varargs: %s ', this.varargs);
+    this.logger.debug('Create Varargs: %s ', this.varArgs);
     let sandboxDefFileContents = this.readJsonDefFile();
     let capitalizedVarArgs = {};
 
     if (sandboxDefFileContents) {
       sandboxDefFileContents = lowerToUpper(sandboxDefFileContents);
     }
-    if (this.varargs) {
-      capitalizedVarArgs = lowerToUpper(this.varargs);
+    if (this.varArgs) {
+      capitalizedVarArgs = lowerToUpper(this.varArgs);
     }
     // varargs override file input
     const sandboxReq: SandboxRequest = { SandboxName: undefined, ...sandboxDefFileContents, ...capitalizedVarArgs };
@@ -155,7 +174,7 @@ export class Create extends SfdxCommand {
       // sandbox names are 10 chars or less, a radix of 36 = [a-z][0-9]
       // technically without querying the production org, the generated name could already exist, but the chances of that are lower than the perf penalty of querying and verifying
       sandboxReq.SandboxName = `sbx${Date.now().toString(36).slice(-7)}`;
-      this.ux.warn(`No SandboxName defined, generating new SandboxName: ${sandboxReq.SandboxName}`);
+      this.warn(`No SandboxName defined, generating new SandboxName: ${sandboxReq.SandboxName}`);
     }
     if (!sandboxReq.LicenseType) {
       throw new SfError(messages.getMessage('missingLicenseType'));
@@ -164,7 +183,6 @@ export class Create extends SfdxCommand {
   }
 
   private async createSandbox(): Promise<SandboxProcessObject> {
-    const prodOrg = await Org.create({ aliasOrUsername: this.flags.targetusername as string });
     const lifecycle = Lifecycle.getInstance();
 
     // register the sandbox event listeners before calling `prodOrg.createSandbox()`
@@ -172,14 +190,14 @@ export class Create extends SfdxCommand {
     // `on` doesn't support synchronous methods
     // eslint-disable-next-line @typescript-eslint/require-await
     lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results: SandboxProcessObject) => {
-      this.ux.log(
-        messages.getMessage('sandboxSuccess', [results.Id, results.SandboxName, this.flags.targetusername as string])
+      this.log(
+        messages.getMessage('sandboxSuccess', [results.Id, results.SandboxName, this.flags['target-org'].getUsername()])
       );
     });
 
     // eslint-disable-next-line @typescript-eslint/require-await
     lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) => {
-      this.ux.log(SandboxReporter.sandboxProgress(results));
+      this.log(SandboxReporter.sandboxProgress(results));
     });
 
     // eslint-disable-next-line @typescript-eslint/require-await
@@ -189,16 +207,16 @@ export class Create extends SfdxCommand {
 
     lifecycle.on(SandboxEvents.EVENT_RESULT, async (results: ResultEvent) => {
       const { sandboxReadyForUse, data } = SandboxReporter.logSandboxProcessResult(results);
-      this.ux.log(sandboxReadyForUse);
-      this.ux.styledHeader('Sandbox Org Creation Status');
-      this.ux.table(data, {
+      this.log(sandboxReadyForUse);
+      this.styledHeader('Sandbox Org Creation Status');
+      this.table(data, {
         key: { header: 'Name' },
         value: { header: 'Value' },
       });
       if (results.sandboxRes?.authUserName) {
         if (this.flags.setalias) {
           const stateAggregator = await StateAggregator.getInstance();
-          stateAggregator.aliases.set(this.flags.setalias as string, results.sandboxRes.authUserName);
+          stateAggregator.aliases.set(this.flags.setalias, results.sandboxRes.authUserName);
           const result = await stateAggregator.aliases.write();
           this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
         }
@@ -214,10 +232,10 @@ export class Create extends SfdxCommand {
     const sandboxReq = this.createSandboxRequest();
 
     this.logger.debug('Calling create with SandboxRequest: %s ', sandboxReq);
-    const wait = this.flags.wait as Duration;
+    const wait = this.flags.wait;
 
     try {
-      return await prodOrg.createSandbox(sandboxReq, { wait });
+      return await this.flags['target-org'].createSandbox(sandboxReq, { wait });
     } catch (e) {
       // guaranteed to be SfdxError from core;
       const err = e as SfError;
@@ -225,7 +243,7 @@ export class Create extends SfdxCommand {
         // there was most likely an issue with DNS when auth'ing to the new sandbox, but it was created.
         if (this.flags.setalias && this.sandboxAuth) {
           const stateAggregator = await StateAggregator.getInstance();
-          stateAggregator.aliases.set(this.flags.setalias as string, this.sandboxAuth.authUserName);
+          stateAggregator.aliases.set(this.flags.setalias, this.sandboxAuth.authUserName);
           const result = await stateAggregator.aliases.write();
           this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
         }
@@ -247,17 +265,17 @@ export class Create extends SfdxCommand {
     // the -f option
     if (this.flags.definitionfile) {
       this.logger.debug('Reading JSON DefFile %s ', this.flags.definitionfile);
-      return JSON.parse(fs.readFileSync(this.flags.definitionfile as string, 'utf-8')) as Record<string, unknown>;
+      return JSON.parse(fs.readFileSync(this.flags.definitionfile, 'utf-8')) as Record<string, unknown>;
     }
   }
 
   private async createScratchOrg(): Promise<ScratchOrgProcessObject> {
     this.logger.debug('OK, will do scratch org creation');
-    if (!this.hubOrg) {
+    if (!this.flags['target-dev-hub']) {
       throw new SfError(messages.getMessage('RequiresDevhubUsernameError'));
     }
     // Ensure we have an org config input source.
-    if (!this.flags.definitionfile && Object.keys(this.varargs).length === 0) {
+    if (!this.flags.definitionfile && Object.keys(this.varArgs).length === 0) {
       throw new SfError(messages.getMessage('noConfig'));
     }
 
@@ -266,40 +284,42 @@ export class Create extends SfdxCommand {
     // If the user supplied a specific client ID, we have no way of knowing if it's
     // a certificate-based Connected App or not. Therefore, we have to assume that
     // we'll need the client secret, so prompt the user for it.
-    const secret = this.flags.clientid
-      ? await this.ux.prompt(messages.getMessage('secretPrompt'), {
-        type: 'mask',
-      })
-      : undefined;
+    const { secret } = this.flags.clientid
+      ? await this.prompt<{ secret: string }>([
+          { name: 'secret', type: 'mask', message: messages.getMessage('secretPrompt') },
+        ])
+      : { secret: undefined };
 
     const createCommandOptions: ScratchOrgRequest = {
-      connectedAppConsumerKey: this.flags.clientid as string,
-      durationDays: this.flags.durationdays as number,
-      nonamespace: this.flags.nonamespace as boolean,
-      noancestors: this.flags.noancestors as boolean,
-      wait: this.flags.wait as Duration,
-      retry: this.flags.retry as number,
-      apiversion: this.flags.apiversion as string,
-      definitionfile: this.flags.definitionfile as string,
-      orgConfig: this.varargs,
+      connectedAppConsumerKey: this.flags.clientid,
+      durationDays: this.flags.durationdays,
+      nonamespace: this.flags.nonamespace,
+      noancestors: this.flags.noancestors,
+      wait: this.flags.wait,
+      retry: this.flags.retry,
+      apiversion: this.flags['api-version'],
+      definitionfile: this.flags.definitionfile,
+      orgConfig: this.varArgs,
       clientSecret: secret,
-      setDefault: (this.flags.setdefaultusername as boolean) === true,
-      alias: this.flags.setalias as string | undefined,
+      setDefault: this.flags.setdefaultusername === true,
+      alias: this.flags.setalias,
       tracksSource: true,
     };
 
-    const { username, scratchOrgInfo, authFields, warnings } = await this.hubOrg.scratchOrgCreate(createCommandOptions);
+    const { username, scratchOrgInfo, authFields, warnings } = await this.flags['target-dev-hub'].scratchOrgCreate(
+      createCommandOptions
+    );
 
     await Lifecycle.getInstance().emit('scratchOrgInfo', scratchOrgInfo);
 
     this.logger.debug(`orgConfig.loginUrl: ${authFields.loginUrl}`);
     this.logger.debug(`orgConfig.instanceUrl: ${authFields.instanceUrl}`);
 
-    this.ux.log(messages.getMessage('scratchOrgCreateSuccess', [authFields.orgId, username]));
+    this.log(messages.getMessage('scratchOrgCreateSuccess', [authFields.orgId, username]));
 
     if (warnings.length > 0) {
       warnings.forEach((warning) => {
-        this.ux.warn(warning);
+        this.warn(warning);
       });
     }
 

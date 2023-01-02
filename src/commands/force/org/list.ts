@@ -6,10 +6,10 @@
  */
 import { EOL } from 'os';
 
-import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
-import { AuthInfo, ConfigAggregator, ConfigInfo, Connection, Org, SfError, Messages } from '@salesforce/core';
+import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
+import { AuthInfo, ConfigAggregator, ConfigInfo, Connection, Org, SfError, Messages, Logger } from '@salesforce/core';
 import { sortBy } from '@salesforce/kit';
-import { CliUx } from '@oclif/core';
+import { CliUx, Interfaces } from '@oclif/core';
 import { OrgListUtil, identifyActiveOrgByStatus } from '../../../shared/orgListUtil';
 import { getStyledObject } from '../../../shared/orgHighlighter';
 import { ExtendedAuthFields } from '../../../shared/orgTypes';
@@ -17,31 +17,35 @@ import { ExtendedAuthFields } from '../../../shared/orgTypes';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'list');
 
-export class OrgListCommand extends SfdxCommand {
+export class OrgListCommand extends SfCommand<unknown> {
+  public static readonly summary = messages.getMessage('description');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessage('examples').split(EOL);
   public static readonly requiresProject = false;
-  public static readonly flagsConfig: FlagsConfig = {
-    verbose: flags.builtin({
-      description: messages.getMessage('verbose'),
+  public static readonly flags = {
+    verbose: Flags.boolean({
+      summary: messages.getMessage('verbose'),
     }),
-    all: flags.boolean({
-      description: messages.getMessage('all'),
+    all: Flags.boolean({
+      summary: messages.getMessage('all'),
     }),
-    clean: flags.boolean({
-      description: messages.getMessage('clean'),
+    clean: Flags.boolean({
+      summary: messages.getMessage('clean'),
     }),
-    noprompt: flags.boolean({
+    noprompt: Flags.boolean({
       char: 'p',
-      description: messages.getMessage('noPrompt'),
+      summary: messages.getMessage('noPrompt'),
       dependsOn: ['clean'],
     }),
-    skipconnectionstatus: flags.boolean({
-      description: messages.getMessage('skipConnectionStatus'),
+    skipconnectionstatus: Flags.boolean({
+      summary: messages.getMessage('skipConnectionStatus'),
     }),
   };
 
+  private flags: Interfaces.InferredFlags<typeof OrgListCommand.flags>;
   public async run(): Promise<unknown> {
+    const { flags } = await this.parse(OrgListCommand);
+    this.flags = flags;
     let fileNames: string[] = [];
     try {
       fileNames = (await AuthInfo.listAllAuthorizations()).map((auth) => auth.username);
@@ -56,32 +60,32 @@ export class OrgListCommand extends SfdxCommand {
       }
     }
 
-    const metaConfigs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, this.flags);
+    const metaConfigs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
     const groupedSortedOrgs = {
       nonScratchOrgs: sortBy(metaConfigs.nonScratchOrgs, this.sortFunction),
       scratchOrgs: sortBy(metaConfigs.scratchOrgs, this.sortFunction),
       expiredScratchOrgs: metaConfigs.scratchOrgs.filter((org) => !identifyActiveOrgByStatus(org)),
     };
 
-    if (this.flags.clean && groupedSortedOrgs.expiredScratchOrgs.length > 0) {
-      await this.cleanScratchOrgs(groupedSortedOrgs.expiredScratchOrgs, !this.flags.noprompt);
+    if (flags.clean && groupedSortedOrgs.expiredScratchOrgs.length > 0) {
+      await this.cleanScratchOrgs(groupedSortedOrgs.expiredScratchOrgs, !flags.noprompt);
     }
 
-    if (groupedSortedOrgs.expiredScratchOrgs.length > 10 && !this.flags.clean) {
-      this.ux.warn(messages.getMessage('deleteOrgs', [groupedSortedOrgs.expiredScratchOrgs.length]));
+    if (groupedSortedOrgs.expiredScratchOrgs.length > 10 && !flags.clean) {
+      this.warn(messages.getMessage('deleteOrgs', [groupedSortedOrgs.expiredScratchOrgs.length]));
     }
 
     const result = {
       nonScratchOrgs: groupedSortedOrgs.nonScratchOrgs,
-      scratchOrgs: this.flags.all
+      scratchOrgs: flags.all
         ? groupedSortedOrgs.scratchOrgs
         : groupedSortedOrgs.scratchOrgs.filter(identifyActiveOrgByStatus),
     };
-    this.ux.styledHeader('Orgs');
+    this.styledHeader('Orgs');
 
-    this.printOrgTable(result.nonScratchOrgs, this.flags.skipconnectionstatus as boolean);
+    this.printOrgTable(result.nonScratchOrgs, flags.skipconnectionstatus);
     // separate the table by a blank line.
-    this.ux.log();
+    this.log();
 
     this.printScratchOrgTable(result.scratchOrgs);
 
@@ -89,7 +93,7 @@ export class OrgListCommand extends SfdxCommand {
   }
 
   protected async cleanScratchOrgs(scratchOrgs: ExtendedAuthFields[], prompt?: boolean): Promise<void> {
-    if (prompt && (await this.ux.confirm(messages.getMessage('prompt', [scratchOrgs.length]))) === false) {
+    if (prompt && (await this.confirm(messages.getMessage('prompt', [scratchOrgs.length]))) === false) {
       return;
     }
 
@@ -108,8 +112,9 @@ export class OrgListCommand extends SfdxCommand {
           await org.remove();
         } catch (e) {
           const err = e as SfError;
-          this.logger.debug(`Error cleaning org ${fields.username}: ${err.message}`);
-          this.ux.warn(
+          const logger = await Logger.child(this.id);
+          logger.debug(`Error cleaning org ${fields.username}: ${err.message}`);
+          this.warn(
             `Unable to clean org with username ${fields.username}.  You can run "sfdx force:org:delete -u ${fields.username}" to remove it.`
           );
         }
@@ -139,21 +144,21 @@ export class OrgListCommand extends SfdxCommand {
     }
 
     if (nonScratchOrgs.length) {
-      this.ux.table(
+      this.table(
         nonScratchOrgs.map((row) => getStyledObject(row)),
         nonScratchOrgColumns
       );
     } else {
-      this.ux.log(messages.getMessage('noResultsFound'));
+      this.log(messages.getMessage('noResultsFound'));
     }
   }
 
   private printScratchOrgTable(scratchOrgs: ExtendedAuthFields[]): void {
     if (scratchOrgs.length === 0) {
-      this.ux.log(messages.getMessage('noActiveScratchOrgs'));
+      this.log(messages.getMessage('noActiveScratchOrgs'));
     } else {
       // One or more rows are available.
-      this.ux.table(
+      this.table(
         scratchOrgs.map((row) => getStyledObject(row)),
         this.getScratchOrgColumnData()
       );
@@ -168,7 +173,6 @@ export class OrgListCommand extends SfdxCommand {
       val.defaultMarker = '(U)';
     }
   }
-
   private getScratchOrgColumnData(): Partial<CliUx.Table.table.Columns<Record<string, string>>> {
     // default columns for the scratch org list
     let scratchOrgColumns = {

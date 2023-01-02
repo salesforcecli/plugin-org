@@ -6,8 +6,13 @@
  */
 import { EOL } from 'os';
 
-import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
-import { Messages, Org, SfdcUrl, SfError } from '@salesforce/core';
+import {
+  Flags,
+  SfCommand,
+  requiredOrgFlagWithDeprecations,
+  orgApiVersionFlagWithDeprecations,
+} from '@salesforce/sf-plugins-core';
+import { Logger, Messages, Org, SfdcUrl, SfError } from '@salesforce/core';
 import { Duration, Env } from '@salesforce/kit';
 import open = require('open');
 import { openUrl } from '../../../shared/utils';
@@ -16,60 +21,66 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
 const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
 
-export class OrgOpenCommand extends SfdxCommand {
+export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
+  public static readonly summary = messages.getMessage('description');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessage('examples').split(EOL);
-  public static readonly requiresUsername = true;
-  public static readonly flagsConfig: FlagsConfig = {
-    browser: flags.string({
+
+  public static readonly flags = {
+    'target-org': requiredOrgFlagWithDeprecations,
+    'api-version': orgApiVersionFlagWithDeprecations,
+    browser: Flags.string({
       char: 'b',
-      description: messages.getMessage('browser'),
+      summary: messages.getMessage('browser'),
       options: ['chrome', 'edge', 'firefox'], // These are ones supported by "open" package
       exclusive: ['urlonly'],
     }),
-    path: flags.string({
+    path: Flags.string({
       char: 'p',
-      description: messages.getMessage('cliPath'),
+      summary: messages.getMessage('cliPath'),
       env: 'FORCE_OPEN_URL',
       parse: (input: string): Promise<string> => Promise.resolve(encodeURIComponent(decodeURIComponent(input))),
     }),
-    urlonly: flags.boolean({
+    urlonly: Flags.boolean({
       char: 'r',
-      description: messages.getMessage('urlonly'),
+      summary: messages.getMessage('urlonly'),
     }),
   };
 
+  private org: Org;
   public async run(): Promise<OrgOpenOutput> {
-    const frontDoorUrl = await this.buildFrontdoorUrl();
-    const url = this.flags.path ? `${frontDoorUrl}&retURL=${this.flags.path as string}` : frontDoorUrl;
+    const { flags } = await this.parse(OrgOpenCommand);
+    this.org = flags['target-org'];
+    const frontDoorUrl = await this.buildFrontdoorUrl(flags['api-version']);
+    const url = flags.path ? `${frontDoorUrl}&retURL=${flags.path}` : frontDoorUrl;
     const orgId = this.org.getOrgId();
     const username = this.org.getUsername();
     const output = { orgId, url, username };
     const containerMode = new Env().getBoolean('SFDX_CONTAINER_MODE');
 
     // security warning only for --json OR --urlonly OR containerMode
-    if (this.flags.urlonly || this.flags.json || containerMode) {
-      this.ux.warn(sharedMessages.getMessage('SecurityWarning'));
-      this.ux.log('');
+    if (flags.urlonly || flags.json || containerMode) {
+      this.warn(sharedMessages.getMessage('SecurityWarning'));
+      this.log('');
     }
 
     if (containerMode) {
       // instruct the user that they need to paste the URL into the browser
-      this.ux.styledHeader('Action Required!');
-      this.ux.log(messages.getMessage('containerAction', [orgId, url]));
+      this.styledHeader('Action Required!');
+      this.log(messages.getMessage('containerAction', [orgId, url]));
       return output;
     }
 
-    if (this.flags.urlonly) {
+    if (flags.urlonly) {
       // this includes the URL
-      this.ux.log(messages.getMessage('humanSuccess', [orgId, username, url]));
+      this.log(messages.getMessage('humanSuccess', [orgId, username, url]));
       return output;
     }
 
-    this.ux.log(messages.getMessage('humanSuccessNoUrl', [orgId, username]));
+    this.log(messages.getMessage('humanSuccessNoUrl', [orgId, username]));
     // we actually need to open the org
     try {
-      this.ux.startSpinner(messages.getMessage('domainWaiting'));
+      this.spinner.start(messages.getMessage('domainWaiting'));
       const sfdcUrl = new SfdcUrl(url);
       await sfdcUrl.checkLightningDomain();
     } catch (err) {
@@ -77,7 +88,8 @@ export class OrgOpenCommand extends SfdxCommand {
         if (err.message?.includes('timeout')) {
           const domain = `https://${/https?:\/\/([^.]*)/.exec(url)[1]}.lightning.force.com`;
           const timeout = new Duration(new Env().getNumber('SFDX_DOMAIN_RETRY', 240), Duration.Unit.SECONDS);
-          this.logger.debug(`Did not find IP for ${domain} after ${timeout.seconds} seconds`);
+          const logger = await Logger.child(this.id);
+          logger.debug(`Did not find IP for ${domain} after ${timeout.seconds} seconds`);
           throw new SfError(messages.getMessage('domainTimeoutError'), 'domainTimeoutError');
         }
         throw SfError.wrap(err);
@@ -86,15 +98,15 @@ export class OrgOpenCommand extends SfdxCommand {
     }
 
     const openOptions =
-      typeof this.flags.browser === 'string' ? { app: { name: open.apps[this.flags.browser] as open.AppName } } : {};
+      typeof flags.browser === 'string' ? { app: { name: open.apps[flags.browser] as open.AppName } } : {};
 
     await openUrl(url, openOptions);
     return output;
   }
 
-  private async buildFrontdoorUrl(): Promise<string> {
+  private async buildFrontdoorUrl(version?: string): Promise<string> {
     await this.org.refreshAuth(); // we need a live accessToken for the frontdoor url
-    const conn = this.org.getConnection();
+    const conn = this.org.getConnection(version);
     const accessToken = conn.accessToken;
     const instanceUrl = this.org.getField<string>(Org.Fields.INSTANCE_URL);
     const instanceUrlClean = instanceUrl.replace(/\/$/, '');
