@@ -4,7 +4,6 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as os from 'os';
 import { Flags, SfCommand, requiredOrgFlagWithDeprecations } from '@salesforce/sf-plugins-core';
 import { Messages } from '@salesforce/core';
 
@@ -19,7 +18,7 @@ type DeleteResult = {
 export class Delete extends SfCommand<DeleteResult> {
   public static readonly summary = messages.getMessage('description');
   public static readonly description = messages.getMessage('description');
-  public static readonly examples = messages.getMessage('examples').split(os.EOL);
+  public static readonly examples = messages.getMessages('examples');
   public static readonly flags = {
     'target-org': requiredOrgFlagWithDeprecations,
     noprompt: Flags.boolean({
@@ -30,7 +29,7 @@ export class Delete extends SfCommand<DeleteResult> {
 
   public async run(): Promise<DeleteResult> {
     const { flags } = await this.parse(Delete);
-    const username = flags['target-org'].getUsername();
+    const username = flags['target-org'].getUsername() ?? 'unknown username';
     const orgId = flags['target-org'].getOrgId();
     const isSandbox = await flags['target-org'].isSandbox();
     // read the config file for the org to be deleted, if it has a PROD_ORG_USERNAME entry, it's a sandbox

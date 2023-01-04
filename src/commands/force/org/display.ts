@@ -5,11 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as os from 'os';
 import { Flags, SfCommand, requiredOrgFlagWithDeprecations } from '@salesforce/sf-plugins-core';
 import { AuthInfo, Messages, Org, sfdc, SfError } from '@salesforce/core';
 import { camelCaseToTitleCase } from '@salesforce/kit';
-import { OrgDisplayReturn, ScratchOrgFields } from '../../../shared/orgTypes';
+import { AuthFieldsFromFS, OrgDisplayReturn, ScratchOrgFields } from '../../../shared/orgTypes';
 import { getAliasByUsername } from '../../../shared/utils';
 import { getStyledValue } from '../../../shared/orgHighlighter';
 import { OrgListUtil } from '../../../shared/orgListUtil';
@@ -20,7 +19,7 @@ const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages
 export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
-  public static readonly examples = messages.getMessage('examples').split(os.EOL);
+  public static readonly examples = messages.getMessages('examples');
 
   public static readonly flags = {
     'target-org': requiredOrgFlagWithDeprecations,
@@ -29,7 +28,8 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
     }),
   };
 
-  private org: Org;
+  private org!: Org;
+
   public async run(): Promise<OrgDisplayReturn> {
     const { flags } = await this.parse(OrgDisplayCommand);
     this.org = flags['target-org'];
@@ -42,10 +42,10 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
     }
     // translate to alias if necessary
     const authInfo = await AuthInfo.create({ username: this.org.getUsername() });
-    const fields = authInfo.getFields(true);
+    const fields = authInfo.getFields(true) as AuthFieldsFromFS;
 
     const isScratchOrg = fields.devHubUsername;
-    const scratchOrgInfo = isScratchOrg ? await this.getScratchOrgInformation(fields.orgId) : {};
+    const scratchOrgInfo = isScratchOrg && fields.orgId ? await this.getScratchOrgInformation(fields.orgId) : {};
 
     const returnValue: OrgDisplayReturn = {
       // renamed properties
@@ -77,14 +77,12 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
 
   private print(result: OrgDisplayReturn): void {
     this.log('');
-    const tableRows = Object.keys(result)
-      .filter((key) => result[key] !== undefined && result[key] !== null) // some values won't exist
+    const tableRows = Object.entries(result)
+      .filter(([, value]) => value !== undefined && value !== null) // some values won't exist
       .sort() // this command always alphabetizes the table rows
-      .map((key) => ({
+      .map(([key, value]) => ({
         key: camelCaseToTitleCase(key),
-        // TS won't infer types of the values of OrgDisplayReturn, even thought it's typed (they're all string or date)
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument
-        value: getStyledValue(key, result[key]),
+        value: typeof value === 'string' ? getStyledValue(key, value) : value,
       }));
 
     this.styledHeader('Org Description');
@@ -96,23 +94,26 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
 
   private async getScratchOrgInformation(orgId: string): Promise<ScratchOrgFields> {
     const hubOrg = await this.org.getDevHubOrg();
-    const result = (
-      await OrgListUtil.retrieveScratchOrgInfoFromDevHub(hubOrg.getUsername(), [sfdc.trimTo15(orgId)])
-    )[0];
+    // we know this is a scratch org so it must have a hubOrg and that'll have a username
+    const hubUsername = hubOrg?.getUsername() as string;
+    const result = // it's a string because orgId is a string.  `as` should disappear once
+      (await OrgListUtil.retrieveScratchOrgInfoFromDevHub(hubUsername, [sfdc.trimTo15(orgId) as string]))[0];
 
     if (result) {
       return {
         status: result.Status,
+        devHubId: result.devHubOrgId,
         expirationDate: result.ExpirationDate,
         createdBy: result.CreatedBy?.Username,
         edition: result.Edition ?? undefined, // null for snapshot orgs, possibly others.  Marking it undefined keeps it out of json output
         namespace: result.Namespace ?? undefined, // may be null on server
         orgName: result.OrgName,
         createdDate: result.CreatedDate,
+        signupUsername: result.SignupUsername,
       };
     }
     throw new SfError(
-      messages.getMessage('noScratchOrgInfoError', [sfdc.trimTo15(orgId), hubOrg.getUsername()]),
+      messages.getMessage('noScratchOrgInfoError', [sfdc.trimTo15(orgId), hubUsername]),
       'NoScratchInfo',
       [messages.getMessage('noScratchOrgInfoAction')]
     );

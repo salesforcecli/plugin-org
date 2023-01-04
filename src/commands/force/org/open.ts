@@ -4,7 +4,6 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { EOL } from 'os';
 
 import {
   Flags,
@@ -24,7 +23,7 @@ const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages
 export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
   public static readonly summary = messages.getMessage('description');
   public static readonly description = messages.getMessage('description');
-  public static readonly examples = messages.getMessage('examples').split(EOL);
+  public static readonly examples = messages.getMessages('examples');
 
   public static readonly flags = {
     'target-org': requiredOrgFlagWithDeprecations,
@@ -47,14 +46,15 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
     }),
   };
 
-  private org: Org;
+  private org!: Org;
   public async run(): Promise<OrgOpenOutput> {
     const { flags } = await this.parse(OrgOpenCommand);
     this.org = flags['target-org'];
     const frontDoorUrl = await this.buildFrontdoorUrl(flags['api-version']);
     const url = flags.path ? `${frontDoorUrl}&retURL=${flags.path}` : frontDoorUrl;
     const orgId = this.org.getOrgId();
-    const username = this.org.getUsername();
+    // TODO: better typings in sfdx-core for orgs read from auth files
+    const username = this.org.getUsername() as string;
     const output = { orgId, url, username };
     const containerMode = new Env().getBoolean('SFDX_CONTAINER_MODE');
 
@@ -85,10 +85,10 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
       await sfdcUrl.checkLightningDomain();
     } catch (err) {
       if (err instanceof Error) {
-        if (err.message?.includes('timeout')) {
-          const domain = `https://${/https?:\/\/([^.]*)/.exec(url)[1]}.lightning.force.com`;
+        if (err.message.includes('timeout')) {
+          const domain = `https://${/https?:\/\/([^.]*)/.exec(url)?.[1]}.lightning.force.com`;
           const timeout = new Duration(new Env().getNumber('SFDX_DOMAIN_RETRY', 240), Duration.Unit.SECONDS);
-          const logger = await Logger.child(this.id);
+          const logger = await Logger.child(this.constructor.name);
           logger.debug(`Did not find IP for ${domain} after ${timeout.seconds} seconds`);
           throw new SfError(messages.getMessage('domainTimeoutError'), 'domainTimeoutError');
         }
@@ -97,8 +97,10 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
       throw err;
     }
 
-    const openOptions =
-      typeof flags.browser === 'string' ? { app: { name: open.apps[flags.browser] as open.AppName } } : {};
+    const openOptions = flags.browser
+      ? // assertion can be removed once oclif option flag typings are fixed
+        { app: { name: open.apps[flags.browser as 'chrome' | 'edge' | 'firefox'] } }
+      : {};
 
     await openUrl(url, openOptions);
     return output;
@@ -114,7 +116,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
   }
 }
 
-interface OrgOpenOutput {
+export interface OrgOpenOutput {
   url: string;
   username: string;
   orgId: string;

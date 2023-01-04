@@ -4,15 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { EOL } from 'os';
 
-import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
+import { Flags, loglevel, SfCommand } from '@salesforce/sf-plugins-core';
 import { AuthInfo, ConfigAggregator, ConfigInfo, Connection, Org, SfError, Messages, Logger } from '@salesforce/core';
-import { sortBy } from '@salesforce/kit';
-import { CliUx, Interfaces } from '@oclif/core';
+import { Interfaces } from '@oclif/core';
 import { OrgListUtil, identifyActiveOrgByStatus } from '../../../shared/orgListUtil';
 import { getStyledObject } from '../../../shared/orgHighlighter';
-import { ExtendedAuthFields } from '../../../shared/orgTypes';
+import { ExtendedAuthFields, FullyPopulatedScratchOrgFields } from '../../../shared/orgTypes';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'list');
@@ -20,7 +18,7 @@ const messages = Messages.loadMessages('@salesforce/plugin-org', 'list');
 export class OrgListCommand extends SfCommand<unknown> {
   public static readonly summary = messages.getMessage('description');
   public static readonly description = messages.getMessage('description');
-  public static readonly examples = messages.getMessage('examples').split(EOL);
+  public static readonly examples = messages.getMessages('examples');
   public static readonly requiresProject = false;
   public static readonly flags = {
     verbose: Flags.boolean({
@@ -40,9 +38,11 @@ export class OrgListCommand extends SfCommand<unknown> {
     skipconnectionstatus: Flags.boolean({
       summary: messages.getMessage('skipConnectionStatus'),
     }),
+    loglevel,
   };
 
-  private flags: Interfaces.InferredFlags<typeof OrgListCommand.flags>;
+  private flags!: Interfaces.InferredFlags<typeof OrgListCommand.flags>;
+
   public async run(): Promise<unknown> {
     const { flags } = await this.parse(OrgListCommand);
     this.flags = flags;
@@ -62,8 +62,8 @@ export class OrgListCommand extends SfCommand<unknown> {
 
     const metaConfigs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
     const groupedSortedOrgs = {
-      nonScratchOrgs: sortBy(metaConfigs.nonScratchOrgs, this.sortFunction),
-      scratchOrgs: sortBy(metaConfigs.scratchOrgs, this.sortFunction),
+      nonScratchOrgs: metaConfigs.nonScratchOrgs.map(decorateWithDefaultStatus).sort(comparator),
+      scratchOrgs: metaConfigs.scratchOrgs.map(decorateWithDefaultStatus).sort(comparator),
       expiredScratchOrgs: metaConfigs.scratchOrgs.filter((org) => !identifyActiveOrgByStatus(org)),
     };
 
@@ -81,11 +81,8 @@ export class OrgListCommand extends SfCommand<unknown> {
         ? groupedSortedOrgs.scratchOrgs
         : groupedSortedOrgs.scratchOrgs.filter(identifyActiveOrgByStatus),
     };
-    this.styledHeader('Orgs');
 
     this.printOrgTable(result.nonScratchOrgs, flags.skipconnectionstatus);
-    // separate the table by a blank line.
-    this.log();
 
     this.printScratchOrgTable(result.scratchOrgs);
 
@@ -112,7 +109,7 @@ export class OrgListCommand extends SfCommand<unknown> {
           await org.remove();
         } catch (e) {
           const err = e as SfError;
-          const logger = await Logger.child(this.id);
+          const logger = await Logger.child('org:list');
           logger.debug(`Error cleaning org ${fields.username}: ${err.message}`);
           this.warn(
             `Unable to clean org with username ${fields.username}.  You can run "sfdx force:org:delete -u ${fields.username}" to remove it.`
@@ -123,94 +120,121 @@ export class OrgListCommand extends SfCommand<unknown> {
   }
 
   protected printOrgTable(nonScratchOrgs: ExtendedAuthFields[], skipconnectionstatus: boolean): void {
-    // default columns for the non-scratch org list
-    let nonScratchOrgColumns = {
-      defaultMarker: {
-        header: '',
-        get: (data: ExtendedAuthFields): string => data.defaultMarker ?? '',
-      },
-      alias: {
-        header: 'ALIAS',
-        get: (data: ExtendedAuthFields): string => data.alias ?? '',
-      },
-      username: { header: 'USERNAME' },
-      orgId: { header: 'ORG ID' },
-    };
-
-    if (!skipconnectionstatus) {
-      nonScratchOrgColumns = Object.assign(nonScratchOrgColumns, {
-        connectedStatus: { header: 'CONNECTED STATUS' },
-      });
-    }
-
-    if (nonScratchOrgs.length) {
-      this.table(
-        nonScratchOrgs.map((row) => getStyledObject(row)),
-        nonScratchOrgColumns
-      );
-    } else {
+    if (!nonScratchOrgs.length) {
       this.log(messages.getMessage('noResultsFound'));
+    } else {
+      const rows = nonScratchOrgs
+        .map((row) => getStyledObject(row))
+        .map((org) =>
+          Object.fromEntries(
+            Object.entries(org).filter(([key]) =>
+              ['defaultMarker', 'alias', 'username', 'orgId', 'connectedStatus'].includes(key)
+            )
+          )
+        );
+
+      this.table(
+        rows,
+        {
+          defaultMarker: {
+            header: '',
+            get: (data): string => data.defaultMarker ?? '',
+          },
+          alias: {
+            header: 'ALIAS',
+            get: (data): string => data.alias ?? '',
+          },
+          username: { header: 'USERNAME' },
+          orgId: { header: 'ORG ID' },
+          ...(!skipconnectionstatus ? { connectedStatus: { header: 'CONNECTED STATUS' } } : {}),
+        },
+        {
+          title: 'Non-scratch orgs',
+        }
+      );
     }
   }
 
-  private printScratchOrgTable(scratchOrgs: ExtendedAuthFields[]): void {
+  private printScratchOrgTable(scratchOrgs: FullyPopulatedScratchOrgFields[]): void {
     if (scratchOrgs.length === 0) {
       this.log(messages.getMessage('noActiveScratchOrgs'));
     } else {
       // One or more rows are available.
+      // we only need a few of the props for our table.  Oclif table doesn't like extra props non-string props.
+      const rows = scratchOrgs
+        .map(getStyledObject)
+        .map((org) =>
+          Object.fromEntries(
+            Object.entries(org).filter(([key]) =>
+              [
+                'defaultMarker',
+                'alias',
+                'username',
+                'orgId',
+                'status',
+                'expirationDate',
+                'devHubOrgId',
+                'createdDate',
+                'instanceUrl',
+              ].includes(key)
+            )
+          )
+        );
       this.table(
-        scratchOrgs.map((row) => getStyledObject(row)),
-        this.getScratchOrgColumnData()
+        rows,
+        {
+          defaultMarker: {
+            header: '',
+            get: (data): string => data.defaultMarker ?? '',
+          },
+          alias: {
+            header: 'ALIAS',
+            get: (data): string => data.alias ?? '',
+          },
+          username: { header: 'USERNAME' },
+          orgId: { header: 'ORG ID' },
+          ...(this.flags.all || this.flags.verbose ? { status: { header: 'STATUS' } } : {}),
+          ...(this.flags.verbose
+            ? {
+                devHubOrgId: { header: 'DEV HUB' },
+                createdDate: { header: 'CREATED DATE' },
+                instanceUrl: { header: 'INSTANCE URL' },
+              }
+            : {}),
+          expirationDate: { header: 'EXPIRATION DATE' },
+        },
+        {
+          title: 'Scratch orgs',
+        }
       );
     }
   }
-
-  // eslint-disable-next-line class-methods-use-this
-  private extractDefaultOrgStatus(val: ExtendedAuthFields): void {
-    if (val.isDefaultDevHubUsername) {
-      val.defaultMarker = '(D)';
-    } else if (val.isDefaultUsername) {
-      val.defaultMarker = '(U)';
-    }
-  }
-  private getScratchOrgColumnData(): Partial<CliUx.Table.table.Columns<Record<string, string>>> {
-    // default columns for the scratch org list
-    let scratchOrgColumns = {
-      defaultMarker: {
-        header: '',
-        get: (data: ExtendedAuthFields): string => data.defaultMarker ?? '',
-      },
-      alias: {
-        header: 'ALIAS',
-        get: (data: ExtendedAuthFields): string => data.alias ?? '',
-      },
-      username: { header: 'USERNAME' },
-      orgId: { header: 'ORG ID' },
-    };
-
-    if (this.flags.all || this.flags.verbose) {
-      scratchOrgColumns = Object.assign(scratchOrgColumns, {
-        status: { header: 'STATUS' },
-      });
-    }
-
-    // scratch org verbose columns
-    if (this.flags.verbose) {
-      scratchOrgColumns = Object.assign(scratchOrgColumns, {
-        devHubOrgId: { header: 'DEV HUB' },
-        createdDate: { header: 'CREATED DATE' },
-        instanceUrl: { header: 'INSTANCE URL' },
-      });
-    }
-
-    // scratch org expiration date should be on the end.
-    return Object.assign(scratchOrgColumns, {
-      expirationDate: { header: 'EXPIRATION DATE' },
-    });
-  }
-
-  private sortFunction = (orgDetails: ExtendedAuthFields): string[] => {
-    this.extractDefaultOrgStatus(orgDetails);
-    return [orgDetails.alias, orgDetails.username];
-  };
 }
+
+const decorateWithDefaultStatus = <T extends ExtendedAuthFields | FullyPopulatedScratchOrgFields>(val: T): T => ({
+  ...val,
+  ...(val.isDefaultDevHubUsername ? { defaultMarker: '(D)' } : {}),
+  ...(val.isDefaultUsername ? { defaultMarker: '(U)' } : {}),
+});
+
+// sort by alias then username
+const comparator = <T extends ExtendedAuthFields | FullyPopulatedScratchOrgFields>(a: T, b: T): number => {
+  const aAlias = (a.alias ?? '').toUpperCase();
+  const bAlias = (b.alias ?? '').toUpperCase();
+
+  if (aAlias < bAlias) {
+    return -1;
+  }
+  if (aAlias > bAlias) {
+    return 1;
+  }
+
+  // alias must match
+  if (a.username < b.username) {
+    return -1;
+  }
+  if (a.username > b.username) {
+    return 1;
+  }
+  return 0;
+};

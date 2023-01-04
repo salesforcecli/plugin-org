@@ -9,7 +9,7 @@ import { upperFirst } from '@salesforce/kit';
 import { StateAggregator } from '@salesforce/core';
 import * as open from 'open';
 
-export const getAliasByUsername = async (username: string): Promise<string> => {
+export const getAliasByUsername = async (username: string): Promise<string | undefined> => {
   const stateAggregator = await StateAggregator.getInstance();
   const keys = stateAggregator.aliases.getAll(username);
   // use the most recently added alias for that username

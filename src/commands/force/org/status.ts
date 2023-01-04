@@ -5,7 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { EOL } from 'os';
 import { Flags, SfCommand, requiredOrgFlagWithDeprecations } from '@salesforce/sf-plugins-core';
 import {
   Config,
@@ -25,7 +24,7 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'status');
 
 export class OrgStatusCommand extends SfCommand<SandboxProcessObject> {
-  public static readonly examples = messages.getMessage('examples').split(EOL);
+  public static readonly examples = messages.getMessages('examples');
   public static readonly summary = messages.getMessage('description');
   public static readonly description = messages.getMessage('description');
   public static readonly requiresProject = false;
@@ -56,7 +55,7 @@ export class OrgStatusCommand extends SfCommand<SandboxProcessObject> {
 
   public async run(): Promise<SandboxProcessObject> {
     const { flags } = await this.parse(OrgStatusCommand);
-    const logger = await Logger.child(this.id);
+    const logger = await Logger.child(this.constructor.name);
     logger.debug('Status started with args %s ', flags);
     const lifecycle = Lifecycle.getInstance();
 

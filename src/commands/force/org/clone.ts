@@ -5,7 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as fs from 'fs';
 import { Flags, SfCommand, requiredOrgFlagWithDeprecations, parseVarArgs } from '@salesforce/sf-plugins-core';
 import {
   SfError,
@@ -16,14 +15,12 @@ import {
   OrgConfigProperties,
   StateAggregator,
   SandboxEvents,
-  SandboxRequest,
   StatusEvent,
   ResultEvent,
   SandboxProcessObject,
   Logger,
 } from '@salesforce/core';
-import { Interfaces } from '@oclif/core';
-import { lowerToUpper } from '../../../shared/utils';
+import { createSandboxRequest } from '../../../shared/sandboxRequest';
 import { SandboxReporter } from '../../../shared/sandboxReporter';
 
 Messages.importMessagesDirectory(__dirname);
@@ -34,6 +31,7 @@ export class OrgCloneCommand extends SfCommand<unknown> {
   public static readonly summary = messages.getMessage('description');
   public static readonly description = messages.getMessage('description');
   public static readonly requiresProject = false;
+  public static readonly strict = false;
 
   public static readonly SANDBOXDEF_SRC_SANDBOXNAME = 'SourceSandboxName';
 
@@ -70,7 +68,7 @@ export class OrgCloneCommand extends SfCommand<unknown> {
 
   public async run(): Promise<unknown> {
     const { flags, args, argv } = await this.parse(OrgCloneCommand);
-    const logger = await Logger.child(this.id);
+    const logger = await Logger.child(this.constructor.name);
     const varargs = parseVarArgs(args, argv);
 
     const lifecycle = Lifecycle.getInstance();
@@ -111,7 +109,7 @@ export class OrgCloneCommand extends SfCommand<unknown> {
         }
       });
 
-      const { sandboxReq, srcSandboxName } = createSandboxRequest(flags, logger, varargs);
+      const { sandboxReq, srcSandboxName } = await createSandboxRequest(true, flags.definitionfile, logger, varargs);
 
       logger.debug('Calling clone with SandboxRequest: %s and SandboxName: %s ', sandboxReq, srcSandboxName);
       const wait = flags.wait;
@@ -124,39 +122,3 @@ export class OrgCloneCommand extends SfCommand<unknown> {
     }
   }
 }
-
-const createSandboxRequest = (
-  flags: Interfaces.InferredFlags<typeof OrgCloneCommand.flags>,
-  logger: Logger,
-  varargs?: Record<string, string>
-): { sandboxReq: SandboxRequest; srcSandboxName: string } => {
-  logger.debug('Clone started with args %s ', flags);
-  logger.debug('Clone Varargs: %s ', varargs);
-
-  const sandboxDefFileContents = flags.definitionfile
-    ? lowerToUpper(JSON.parse(fs.readFileSync(flags.definitionfile, 'utf-8')) as Record<string, unknown>)
-    : {};
-  const capitalizedVarArgs = varargs ? lowerToUpper(varargs) : {};
-
-  // varargs override file input
-  const sandboxReq: SandboxRequest = { SandboxName: undefined, ...sandboxDefFileContents, ...capitalizedVarArgs };
-
-  logger.debug('SandboxRequest after merging DefFile and Varargs: %s ', sandboxReq);
-
-  // try to find the source sandbox name either from the definition file or the commandline arg
-  // NOTE the name and the case "SourceSandboxName" must match exactly
-  const srcSandboxName = sandboxReq[OrgCloneCommand.SANDBOXDEF_SRC_SANDBOXNAME] as string;
-  if (srcSandboxName) {
-    // we have to delete this property from the sandboxRequest object,
-    // because sandboxRequest object represent the POST request to create SandboxInfo bpo,
-    // sandboxInfo does not have a column named  SourceSandboxName, this field will be converted to sourceId in the clone call below
-    delete sandboxReq[OrgCloneCommand.SANDBOXDEF_SRC_SANDBOXNAME];
-  } else {
-    // error - we need SourceSandboxName to know which sandbox to clone from
-    throw new SfError(
-      messages.getMessage('missingSourceSandboxName', [OrgCloneCommand.SANDBOXDEF_SRC_SANDBOXNAME]),
-      messages.getMessage('missingSourceSandboxNameAction', [OrgCloneCommand.SANDBOXDEF_SRC_SANDBOXNAME])
-    );
-  }
-  return { sandboxReq, srcSandboxName };
-};

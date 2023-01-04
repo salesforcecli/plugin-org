@@ -23,7 +23,7 @@ export class SandboxReporter {
   public static logSandboxProcessResult(
     result: ResultEvent
     // sandboxProcessObj.CopyProgress is a number
-  ): { sandboxReadyForUse: string; data: Array<{ key: string; value: string | number }> } {
+  ): { sandboxReadyForUse: string; data: Array<{ key: string; value: string | number | undefined }> } {
     const { sandboxProcessObj, sandboxRes } = result;
     const sandboxReadyForUse = `Sandbox ${sandboxProcessObj.SandboxName}(${sandboxProcessObj.Id}) is ready for use.`;
 

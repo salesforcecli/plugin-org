@@ -5,7 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as fs from 'fs';
 import { Interfaces } from '@oclif/core';
 import {
   Flags,
@@ -26,7 +25,6 @@ import {
   ResultEvent,
   SandboxEvents,
   SandboxProcessObject,
-  SandboxRequest,
   SandboxUserAuthResponse,
   SfError,
   StatusEvent,
@@ -34,7 +32,7 @@ import {
   ScratchOrgRequest,
   Logger,
 } from '@salesforce/core';
-import { lowerToUpper } from '../../../shared/utils';
+import { createSandboxRequest } from '../../../shared/sandboxRequest';
 import { SandboxReporter } from '../../../shared/sandboxReporter';
 
 Messages.importMessagesDirectory(__dirname);
@@ -114,15 +112,15 @@ export class Create extends SfCommand<SandboxProcessObject | ScratchOrgProcessOb
   };
   protected readonly lifecycleEventNames = ['postorgcreate'];
   private sandboxAuth?: SandboxUserAuthResponse;
-  private logger: Logger;
-  private varArgs: Record<string, string> = {};
+  private logger!: Logger;
+  private varArgs: Record<string, string | undefined> = {};
+  private flags!: Interfaces.InferredFlags<typeof Create.flags>;
 
-  private flags: Interfaces.InferredFlags<typeof Create.flags>;
   public async run(): Promise<SandboxProcessObject | ScratchOrgProcessObject> {
     const { flags, args, argv } = await this.parse(Create);
-    this.varArgs = parseVarArgs(args, argv);
     this.flags = flags;
-    this.logger = await Logger.child(this.id);
+    this.varArgs = parseVarArgs(args, argv);
+    this.logger = await Logger.child(this.constructor.name);
     this.logger.debug('Create started with args %s ', flags);
 
     if (flags.type === OrgTypes.Sandbox) {
@@ -135,9 +133,6 @@ export class Create extends SfCommand<SandboxProcessObject | ScratchOrgProcessOb
   }
 
   private validateSandboxFlags(): void {
-    if (!this.flags['target-org']) {
-      throw new SfError(messages.getMessage('requiresUsername'));
-    }
     if (this.flags.retry !== 0) {
       throw new SfError(messages.getMessage('retryIsNotValidForSandboxes'), 'retryIsNotValidForSandboxes');
     }
@@ -156,53 +151,25 @@ export class Create extends SfCommand<SandboxProcessObject | ScratchOrgProcessOb
     }
   }
 
-  private createSandboxRequest(): SandboxRequest {
-    this.logger.debug('Create Varargs: %s ', this.varArgs);
-    let sandboxDefFileContents = this.readJsonDefFile();
-    let capitalizedVarArgs = {};
-
-    if (sandboxDefFileContents) {
-      sandboxDefFileContents = lowerToUpper(sandboxDefFileContents);
-    }
-    if (this.varArgs) {
-      capitalizedVarArgs = lowerToUpper(this.varArgs);
-    }
-    // varargs override file input
-    const sandboxReq: SandboxRequest = { SandboxName: undefined, ...sandboxDefFileContents, ...capitalizedVarArgs };
-
-    if (!sandboxReq.SandboxName) {
-      // sandbox names are 10 chars or less, a radix of 36 = [a-z][0-9]
-      // technically without querying the production org, the generated name could already exist, but the chances of that are lower than the perf penalty of querying and verifying
-      sandboxReq.SandboxName = `sbx${Date.now().toString(36).slice(-7)}`;
-      this.warn(`No SandboxName defined, generating new SandboxName: ${sandboxReq.SandboxName}`);
-    }
-    if (!sandboxReq.LicenseType) {
-      throw new SfError(messages.getMessage('missingLicenseType'));
-    }
-    return sandboxReq;
-  }
-
   private async createSandbox(): Promise<SandboxProcessObject> {
+    if (!this.flags['target-org']) {
+      throw new SfError(messages.getMessage('requiresUsername'));
+    }
     const lifecycle = Lifecycle.getInstance();
-
+    const username = this.flags['target-org'].getUsername();
     // register the sandbox event listeners before calling `prodOrg.createSandbox()`
 
-    // `on` doesn't support synchronous methods
-    // eslint-disable-next-line @typescript-eslint/require-await
-    lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results: SandboxProcessObject) => {
-      this.log(
-        messages.getMessage('sandboxSuccess', [results.Id, results.SandboxName, this.flags['target-org'].getUsername()])
-      );
-    });
+    lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results: SandboxProcessObject) =>
+      Promise.resolve(this.log(messages.getMessage('sandboxSuccess', [results.Id, results.SandboxName, username])))
+    );
 
-    // eslint-disable-next-line @typescript-eslint/require-await
-    lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) => {
-      this.log(SandboxReporter.sandboxProgress(results));
-    });
+    lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) =>
+      Promise.resolve(this.log(SandboxReporter.sandboxProgress(results)))
+    );
 
-    // eslint-disable-next-line @typescript-eslint/require-await
     lifecycle.on(SandboxEvents.EVENT_AUTH, async (results: SandboxUserAuthResponse) => {
       this.sandboxAuth = results;
+      return Promise.resolve();
     });
 
     lifecycle.on(SandboxEvents.EVENT_RESULT, async (results: ResultEvent) => {
@@ -229,7 +196,7 @@ export class Create extends SfCommand<SandboxProcessObject | ScratchOrgProcessOb
       }
     });
 
-    const sandboxReq = this.createSandboxRequest();
+    const { sandboxReq } = await createSandboxRequest(false, this.flags.definitionfile, this.logger, this.varArgs);
 
     this.logger.debug('Calling create with SandboxRequest: %s ', sandboxReq);
     const wait = this.flags.wait;
@@ -258,14 +225,6 @@ export class Create extends SfCommand<SandboxProcessObject | ScratchOrgProcessOb
       }
 
       throw err;
-    }
-  }
-
-  private readJsonDefFile(): Record<string, unknown> {
-    // the -f option
-    if (this.flags.definitionfile) {
-      this.logger.debug('Reading JSON DefFile %s ', this.flags.definitionfile);
-      return JSON.parse(fs.readFileSync(this.flags.definitionfile, 'utf-8')) as Record<string, unknown>;
     }
   }
 
@@ -310,12 +269,19 @@ export class Create extends SfCommand<SandboxProcessObject | ScratchOrgProcessOb
       createCommandOptions
     );
 
+    if (!scratchOrgInfo) {
+      throw new SfError('No scratch org info returned from scratchOrgCreate');
+    }
+    if (!authFields || !authFields.orgId) {
+      throw new SfError('Information missing from authFields');
+    }
+
     await Lifecycle.getInstance().emit('scratchOrgInfo', scratchOrgInfo);
 
-    this.logger.debug(`orgConfig.loginUrl: ${authFields.loginUrl}`);
-    this.logger.debug(`orgConfig.instanceUrl: ${authFields.instanceUrl}`);
+    this.logger.debug(`orgConfig.loginUrl: ${authFields?.loginUrl}`);
+    this.logger.debug(`orgConfig.instanceUrl: ${authFields?.instanceUrl}`);
 
-    this.log(messages.getMessage('scratchOrgCreateSuccess', [authFields.orgId, username]));
+    this.log(messages.getMessage('scratchOrgCreateSuccess', [authFields?.orgId, username]));
 
     if (warnings.length > 0) {
       warnings.forEach((warning) => {
@@ -328,7 +294,7 @@ export class Create extends SfCommand<SandboxProcessObject | ScratchOrgProcessOb
       scratchOrgInfo,
       authFields,
       warnings,
-      orgId: authFields.orgId,
+      orgId: authFields?.orgId,
     };
   }
 }

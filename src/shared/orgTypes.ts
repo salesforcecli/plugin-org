@@ -8,7 +8,7 @@
 import { AuthFields } from '@salesforce/core';
 import { Dictionary } from '@salesforce/ts-types';
 
-export interface OrgDisplayReturn extends Partial<ScratchOrgFields> {
+export type OrgDisplayReturn = Partial<ScratchOrgFields> & {
   username: string;
   id: string;
   accessToken: string;
@@ -21,15 +21,30 @@ export interface OrgDisplayReturn extends Partial<ScratchOrgFields> {
   // non-scratch orgs
   connectedStatus?: string;
   sfdxAuthUrl?: string;
-}
+};
 
-export interface ExtendedAuthFields extends AuthFields, OrgListFields, Partial<ScratchOrgFields> {
-  signupUsername?: string;
+export type AuthFieldsFromFS = Omit<AuthFields, 'expirationDate'> & {
+  // authfields has everything as optional.  In our use cases, we have a username because these come from auth files
+  username: string;
+  orgId: string;
+  accessToken: string;
+  instanceUrl: string;
+  clientId: string;
+  string: string;
+};
+
+export type ExtendedAuthFields = AuthFieldsFromFS & OrgListFields;
+
+export type ExtendedAuthFieldsScratch = ExtendedAuthFields & {
+  expirationDate: string;
+  devHubUsername: string;
   devHubOrgId?: string;
-  isExpired?: boolean;
-  connectedStatus?: string;
-  attributes?: Dictionary<unknown>;
-}
+};
+
+export type FullyPopulatedScratchOrgFields = ScratchOrgFields &
+  ExtendedAuthFieldsScratch & {
+    isExpired: boolean;
+  };
 
 // developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_objects_scratchorginfo.htm
 export interface ScratchOrgInfoSObject {
@@ -42,7 +57,7 @@ export interface ScratchOrgInfoSObject {
   };
   Edition: string;
   Namespace?: string;
-  OrgName?: string;
+  OrgName: string;
   SignupUsername: string;
 }
 
@@ -52,15 +67,19 @@ export interface ScratchOrgFields {
   expirationDate: string;
   orgName: string;
   status: string;
-  devHubId?: string;
+  devHubId: string;
   edition?: string;
   namespace?: string;
   snapshot?: string;
   lastUsed?: Date;
+  signupUsername: string;
 }
 
 export interface OrgListFields {
+  connectedStatus?: string;
   isDefaultUsername?: boolean;
   isDefaultDevHubUsername?: boolean;
   defaultMarker?: '(D)' | '(U)';
+  attributes?: Dictionary<unknown>;
+  lastUsed?: Date;
 }

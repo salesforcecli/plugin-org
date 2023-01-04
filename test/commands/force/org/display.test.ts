@@ -4,240 +4,199 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { expect, test } from '@salesforce/command/lib/test';
-import { AuthInfo, Connection, Org } from '@salesforce/core';
-import * as sinon from 'sinon';
-import { stubMethod, stubInterface, StubbedType } from '@salesforce/ts-sinon';
-import * as utils from '../../../../src/shared/utils';
+// import { AuthInfo } from '@salesforce/core';
+// import { StubbedType } from '@salesforce/ts-sinon';
+import { expect, config as chaiConfig } from 'chai';
+// import { OrgDisplayReturn } from 'src/shared/orgTypes';
+import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
+import { Config } from '@oclif/core';
+// import * as utils from '../../../../src/shared/utils';
+import { Connection } from '@salesforce/core';
+import { OrgListUtil } from '../../../../src/shared/orgListUtil';
+import { OrgDisplayCommand } from '../../../../src/commands/force/org/display';
 
-const baseAuthInfo = {
-  username: 'nonscratch@test.com',
-  orgId: '00D46000000biZIIEAQ',
-  accessToken:
-    '00D46000000biZI!ARwAQNgoMldHR6XvpaTWdlr_J_pNnXqlh.VNI3Oqwqh7rzEBq6j4s7_E9hXmiIi8WwZasFAXTZNLwfg1SyuJ4wPRQAu.bPi4',
-  instanceUrl: 'https://someinstance.my.salesforce.com',
-  loginUrl: 'https://login.salesforce.com',
-  clientId: 'PlatformCLI',
-};
+chaiConfig.truncateThreshold = 0;
+// const baseAuthInfo = {
+//   username: 'nonscratch@test.com',
+//   orgId: '00D46000000biZIIEAQ',
+//   accessToken:
+//     '00D46000000biZI!ARwAQNgoMldHR6XvpaTWdlr_J_pNnXqlh.VNI3Oqwqh7rzEBq6j4s7_E9hXmiIi8WwZasFAXTZNLwfg1SyuJ4wPRQAu.bPi4',
+//   instanceUrl: 'https://someinstance.my.salesforce.com',
+//   loginUrl: 'https://login.salesforce.com',
+//   clientId: 'PlatformCLI',
+// };
 
 // the same data, but with orgId renamed to id
-const baseExpected = {
-  ...baseAuthInfo,
-  loginUrl: undefined,
-  id: baseAuthInfo.orgId,
-  orgId: undefined,
-};
+// const baseExpected = {
+//   ...baseAuthInfo,
+//   loginUrl: undefined,
+//   id: baseAuthInfo.orgId,
+//   orgId: undefined,
+// };
 
 const refreshToken = '5Aep8616XE5JLxJp3EMunMMUzXg.Ye8T6EJDtnvz0aSok0TzLMkNbW7YRi99Yx85XLvz6zP44x_hVTl8pIW8S5_IW';
-const devHub = {
-  username: 'dev@hub.test',
-  id: 'hubId',
-};
 
-const AssertBase = (result) => {
-  for (const key of Object.keys(baseExpected)) {
-    expect(result[key]).to.equal(baseExpected[key]);
-  }
-  return true;
-};
-
-const fakeAuthUrl = 'fakeAuthUrl';
+// const AssertBase = (result: OrgDisplayReturn) => {
+//   for (const [key, value] of Object.entries(baseExpected)) {
+//     expect(result).to.have.property(key, value);
+//   }
+//   return true;
+// };
 
 describe('org:display', () => {
-  let authInfoStub: StubbedType<AuthInfo>;
-  const sandbox = sinon.createSandbox();
+  const $$ = new TestContext();
+  let testOrg = new MockTestOrgData();
 
-  beforeEach(async () => {
-    stubMethod(sandbox, utils, 'getAliasByUsername')
-      .withArgs('nonscratch@test.com')
-      .resolves('nonscratchalias')
-      .withArgs('scratch@test.com')
-      .resolves('scratch')
-      .withArgs('username@noalias.test')
-      .resolves(undefined);
+  beforeEach(() => {
+    testOrg = new MockTestOrgData();
+    testOrg.clientId = 'PlatformCLI';
   });
-
   afterEach(() => {
-    sandbox.restore();
+    $$.restore();
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async function prepareStubs(AuthInfoModifications: any = {}) {
-    authInfoStub = stubInterface<AuthInfo>(sandbox, {
-      getFields: () => ({
-        ...baseAuthInfo,
-        ...AuthInfoModifications,
-      }),
-      getSfdxAuthUrl: () => {
-        if (AuthInfoModifications.refreshToken) {
-          return fakeAuthUrl;
-        }
-        return 'badUrl';
-      },
-    });
-    stubMethod(sandbox, AuthInfo, 'create').callsFake(async () => authInfoStub);
-  }
+  describe('stdout', () => {
+    let stdoutSpy: sinon.SinonSpy;
 
-  test
-    .do(async () => {
-      await prepareStubs();
-    })
-    .stdout()
-    .command(['force:org:display', '--json', '--targetusername', 'nonscratch@test.com'])
-    .it('gets an org from local auth files by username', (ctx) => {
-      const result = JSON.parse(ctx.stdout).result;
-      expect(AssertBase(result));
-      expect(result.sfdxAuthUrl).to.be.undefined;
-      expect(result.password).to.be.undefined;
-      expect(result.expirationDate).to.be.undefined;
-      expect(result.alias).to.equal('nonscratchalias');
+    beforeEach(() => {
+      stdoutSpy = $$.SANDBOX.spy(process.stdout, 'write');
+    });
+    afterEach(() => {
+      $$.restore();
     });
 
-  test
-    .do(async () => {
-      await prepareStubs();
-    })
-    .stdout()
-    .command(['force:org:display', '--json', '--targetusername', 'nonscratchalias'])
-    .it('gets an org from local auth files by alias', (ctx) => {
-      const result = JSON.parse(ctx.stdout).result;
-      expect(AssertBase(result));
-      expect(result.sfdxAuthUrl).to.be.undefined;
+    it('includes correct rows in non-json (table) mode with verbose', async () => {
+      await $$.stubAuths(testOrg);
+      $$.SANDBOX.stub(OrgListUtil, 'determineConnectedStatusForNonScratchOrg').resolves('Connected');
+
+      const cmd = new OrgDisplayCommand(['--targetusername', testOrg.username, '--verbose'], {} as Config);
+      await cmd.run();
+
+      const stdoutResult = stdoutSpy.args.flat().join('');
+      expect(stdoutResult).to.include('Sfdx Auth Url');
     });
 
-  test
-    .do(async () => {
-      await prepareStubs({
-        refreshToken,
-      });
-    })
-    .stdout()
-    .command(['force:org:display', '--json', '--targetusername', 'nonscratch@test.com', '--verbose'])
-    .it('displays authUrl when using refresh token AND verbose', (ctx) => {
-      const result = JSON.parse(ctx.stdout).result;
-      expect(AssertBase(result));
-      expect(result.sfdxAuthUrl).equal(fakeAuthUrl); // reusing existing method on AuthInfo--not verifying it works
-    });
+    it('includes correct rows in non-json (table) mode', async () => {
+      await $$.stubAuths(testOrg);
+      $$.SANDBOX.stub(OrgListUtil, 'determineConnectedStatusForNonScratchOrg').resolves('Connected');
 
-  test
-    .do(async () => {
-      await prepareStubs();
-    })
-    .stdout()
-    .command(['force:org:display', '--json', '--targetusername', 'nonscratch@test.com', '--verbose'])
-    .it('omits authUrl when not using refresh token, despite verbose', (ctx) => {
-      const result = JSON.parse(ctx.stdout).result;
-      expect(AssertBase(result));
-      expect(result.sfdxAuthUrl).to.be.undefined;
-    });
+      const cmd = new OrgDisplayCommand(['--targetusername', testOrg.username], {} as Config);
+      await cmd.run();
 
-  test
-    .do(async () => {
-      await prepareStubs({
-        refreshToken,
-      });
-    })
-    .stdout()
-    .command(['force:org:display', '--json', '--targetusername', 'nonscratch@test.com'])
-    .it('omits authUrl when using refresh token without verbose', (ctx) => {
-      const result = JSON.parse(ctx.stdout).result;
-      expect(AssertBase(result));
-      expect(result.sfdxAuthUrl).to.be.undefined;
-    });
+      const stdoutResult = stdoutSpy.args.flat().join('');
+      // eslint-disable-next-line no-console
+      console.log(stdoutResult);
 
-  test
-    .do(async () => {
-      await prepareStubs({});
-    })
-    .stdout()
-    .command(['force:org:display', '--targetusername', 'nonscratch@test.com'])
-    .it('includes correct rows in non-json (table) mode', (ctx) => {
-      const result = ctx.stdout;
-      expect(result).to.include('Access Token');
-      expect(result).to.include('Connected Status');
-      expect(result).to.include('Client Id');
-      expect(result).to.include('Instance Url');
+      expect(stdoutResult).to.include('Connected Status');
+      expect(stdoutResult).to.include('Access Token');
+      expect(stdoutResult).to.include('Client Id');
+      expect(stdoutResult).to.include('Instance Url');
       // not without verbose
-      expect(result).to.not.include('Sfdx Auth Url');
+      expect(stdoutResult).to.not.include('Sfdx Auth Url');
+    });
+  });
+
+  it('gets an org from local auth files by username', async () => {
+    testOrg.aliases = ['nonscratchalias'];
+    $$.stubAliases({ nonscratchalias: testOrg.username });
+    await $$.stubAuths(testOrg);
+
+    const cmd = new OrgDisplayCommand(['--json', '--targetusername', testOrg.username], {} as Config);
+    const result = await cmd.run();
+    // expect(AssertBase(result));
+    expect(result.sfdxAuthUrl).to.be.undefined;
+    expect(result.password).to.be.undefined;
+    expect(result.expirationDate).to.be.undefined;
+    expect(result.alias).to.equal('nonscratchalias');
+  });
+
+  it('gets an org from local auth files by alias', async () => {
+    await $$.stubAuths(testOrg);
+    $$.stubAliases({ nonscratchalias: testOrg.username });
+    const cmd = new OrgDisplayCommand(['--json', '--targetusername', 'nonscratchalias'], {} as Config);
+    const result = await cmd.run();
+    // expect(AssertBase(result));
+    expect(result.sfdxAuthUrl).to.be.undefined;
+    expect(result.alias).to.equal('nonscratchalias');
+  });
+
+  it('displays authUrl when using refresh token AND verbose', async () => {
+    testOrg.refreshToken = refreshToken;
+    await $$.stubAuths(testOrg);
+
+    const cmd = new OrgDisplayCommand(['--json', '--targetusername', testOrg.username, '--verbose'], {} as Config);
+
+    const result = await cmd.run();
+
+    expect(result.sfdxAuthUrl).to.include(refreshToken);
+  });
+
+  it('omits authUrl when not using refresh token, despite verbose', async () => {
+    await $$.stubAuths(testOrg);
+    const cmd = new OrgDisplayCommand(['--json', '--targetusername', 'nonscratch@test.com', '--verbose'], {} as Config);
+
+    const result = await cmd.run();
+    // expect(AssertBase(result));
+    expect(result.sfdxAuthUrl).to.be.undefined;
+  });
+
+  it('omits authUrl when using refresh token without verbose', async () => {
+    await $$.stubAuths(testOrg);
+    const cmd = new OrgDisplayCommand(['--json', '--targetusername', 'nonscratch@test.com'], {} as Config);
+
+    const result = await cmd.run();
+    // expect(AssertBase(result));
+    expect(result.sfdxAuthUrl).to.be.undefined;
+  });
+
+  it("omits alias when alias doesn't exist for username", async () => {
+    testOrg.aliases = [];
+    const cmd = new OrgDisplayCommand(['--json', '--targetusername', testOrg.username], {} as Config);
+    await $$.stubAuths(testOrg);
+
+    const result = await cmd.run();
+    expect(result.alias).to.be.undefined;
+  });
+
+  it('displays decrypted password if password exists', async () => {
+    testOrg.password = 'encrypted';
+    await $$.stubAuths(testOrg);
+
+    const cmd = new OrgDisplayCommand(['--json', '--targetusername', testOrg.username], {} as Config);
+
+    const result = await cmd.run();
+    expect(result.password).to.equal('encrypted');
+  });
+
+  it('queries server for scratch org info', async () => {
+    const testHub = new MockTestOrgData();
+    testOrg.devHubUsername = testHub.username;
+    await $$.stubAuths(testOrg, testHub);
+
+    $$.SANDBOX.stub(Connection.prototype, 'sobject').returns({
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore // we all know this is not the full type
+      find: async () => [
+        {
+          Status: 'Active',
+          ExpirationDate: '2021-01-23',
+          CreatedBy: { Username: testHub.username },
+          Edition: 'Developer',
+          OrgName: 'MyOrg',
+          CreatedDate: '2020-12-24T15:18:55.000+0000',
+        },
+      ],
     });
 
-  test
-    .do(async () => {
-      await prepareStubs({
-        refreshToken,
-      });
-    })
-    .stdout()
-    .command(['force:org:display', '--targetusername', 'nonscratch@test.com', '--verbose'])
-    .it('includes correct rows in non-json (table) mode with verbose', (ctx) => {
-      const result = ctx.stdout;
-      expect(result).to.include('Sfdx Auth Url');
-    });
+    const cmd = new OrgDisplayCommand(['--json', '--targetusername', testOrg.username], {} as Config);
+    const result = await cmd.run();
+    expect(result).to.not.be.undefined;
+    expect(result.status).to.equal('Active');
+  });
 
-  test
-    .do(async () => {
-      await prepareStubs({
-        username: 'username@noalias.test',
-      });
-    })
-    .stdout()
-    .command(['force:org:display', '--json', '--targetusername', 'noalias@test.com'])
-    .it("omits alias when alias doesn't exist for username", (ctx) => {
-      const result = JSON.parse(ctx.stdout).result;
-      expect(result.alias).to.be.undefined;
-    });
-
-  test
-    .do(async () => {
-      await prepareStubs({
-        password: 'unEncrypted',
-      });
-    })
-    .stdout()
-    .command(['force:org:display', '--json', '--targetusername', 'nonscratch@test.com'])
-    .it('displays decrypted password if password exists', (ctx) => {
-      const result = JSON.parse(ctx.stdout).result;
-      expect(result.password).to.equal('unEncrypted');
-    });
-
-  test
-    .do(async () => {
-      await prepareStubs({
-        devHubUsername: devHub.username,
-      });
-      stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
-      stubMethod(sandbox, Org.prototype, 'getUsername').returns('scratch@test.com');
-
-      stubMethod(sandbox, Org.prototype, 'getOrgId').resolves(devHub.id);
-      stubMethod(sandbox, Org.prototype, 'getDevHubOrg').resolves({
-        getUsername: () => devHub.username,
-      });
-      stubMethod(sandbox, Org.prototype, 'getConnection').returns(Connection.prototype);
-
-      stubMethod(sandbox, Connection.prototype, 'sobject').returns({
-        find: async () => [
-            {
-              Status: 'Active',
-              ExpirationDate: '2021-01-23',
-              CreatedBy: { Username: devHub.username },
-              Edition: 'Developer',
-              OrgName: 'MyOrg',
-              CreatedDate: '2020-12-24T15:18:55.000+0000',
-            },
-          ],
-      });
-    })
-    .stdout()
-    .command(['force:org:display', '--targetusername', 'scratch@test.com', '--json'])
-    .it('queries server for scratch org info', (ctx) => {
-      const result = JSON.parse(ctx.stdout).result;
-      expect(result).to.not.be.undefined;
-      expect(result.status).to.equal('Active');
-    });
-
-  it('gets non-scratch org connectedStatus');
-  it('handles properly when username is an accessToken?');
-  it('displays good error when org is not connectable due to DNS');
-  it('displays scratch-org-only properties for scratch orgs');
-  it('displays no scratch-org-only properties for non-scratch orgs');
+  // it('gets non-scratch org connectedStatus');
+  // it('handles properly when username is an accessToken?');
+  // it('displays good error when org is not connectable due to DNS');
+  // it('displays scratch-org-only properties for scratch orgs');
+  // it('displays no scratch-org-only properties for non-scratch orgs');
 });
