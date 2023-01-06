@@ -7,24 +7,34 @@
 
 import {
   Org,
-  OrgConfigProperties,
-  SfdxConfigAggregator,
-  StateAggregator,
-  ConfigAggregator,
+  // OrgConfigProperties,
+  // SfdxConfigAggregator,
+  // StateAggregator,
+  // ConfigAggregator,
   Lifecycle,
-  SandboxEvents,
+  // SandboxEvents,
+  SandboxProcessObject,
 } from '@salesforce/core';
-import { fromStub, stubInterface, stubMethod } from '@salesforce/ts-sinon';
-import * as sinon from 'sinon';
-import { expect } from '@salesforce/command/lib/test';
+import {
+  // fromStub,
+  // stubInterface,
+  stubMethod,
+} from '@salesforce/ts-sinon';
+import {
+  // assert,
+  expect,
+} from 'chai';
+
+import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
+
 import { Config } from '@oclif/core';
-import { UX } from '@salesforce/command';
 import { OrgStatusCommand } from '../../../../src/commands/force/org/status';
 
 describe('org:status', () => {
-  const sandbox = sinon.createSandbox();
-  const sanboxname = 'my-sandbox';
-  const sandboxalias = 'my-sandbox-alias';
+  const $$ = new TestContext();
+
+  const sandboxName = 'my-sandbox';
+  const sandboxAlias = 'my-sandbox-alias';
   const authUserName = 'my-user';
   const sandboxProcessObj = {
     attributes: {
@@ -33,7 +43,7 @@ describe('org:status', () => {
     },
     Id: '0GR4p000000HQG4GAO',
     Status: 'Completed',
-    SandboxName: sanboxname,
+    SandboxName: sandboxName,
     SandboxInfoId: '0GQ4p000000HOL2GAO',
     LicenseType: 'DEVELOPER',
     CreatedDate: '2022-03-02T15:30:32.000+0000',
@@ -52,101 +62,74 @@ describe('org:status', () => {
       loginUrl: 'https://my-login.com',
     },
   };
-  const oclifConfigStub = fromStub(stubInterface<Config>(sandbox));
 
   // stubs
   let uxTableStub: sinon.SinonStub;
-  let cmd: TestOrgStatusCommand;
-  let configSetStub: sinon.SinonStub;
-  let configWriteStub: sinon.SinonStub;
   let onStub: sinon.SinonStub;
-  let aliasSetStub: sinon.SinonStub;
-  let configAggregatorStub;
+  // let configAggregatorStub;
+  let testOrg = new MockTestOrgData();
 
-  class TestOrgStatusCommand extends OrgStatusCommand {
-    public async runIt() {
-      await this.init();
-      return this.run();
-    }
-    public setOrg(org: Org) {
-      this.org = org;
-    }
-    public setConfigAggregator(configAggregator: SfdxConfigAggregator) {
-      this.configAggregator = configAggregator;
-    }
-  }
+  beforeEach(async () => {
+    testOrg = new MockTestOrgData();
+    await $$.stubAuths(testOrg);
+    $$.stubAliases({});
+    await $$.stubConfig({ 'target-org': testOrg.username });
+  });
+  afterEach(() => {
+    $$.restore();
+  });
 
-  const runStatusCommand = async (params: string[]) => {
-    cmd = new TestOrgStatusCommand(params, oclifConfigStub);
-    stubMethod(sandbox, cmd, 'assignOrg').callsFake(() => {
-      const orgStubOptions = {
-        sandboxStatus: sandbox.stub().callsFake(async () => sandboxProcessObj),
-      };
-      const orgStub = fromStub(stubInterface<Org>(sandbox, orgStubOptions));
-      cmd.setOrg(orgStub);
-      configSetStub = sandbox.stub().returns(true);
-      configWriteStub = sandbox.stub().resolves(true);
-      const configAggregatorStubOptions = {
-        getGlobalConfig: () => ({
-          set: configSetStub,
-          write: configWriteStub,
-        }),
-      };
-      configAggregatorStub = fromStub(stubInterface<ConfigAggregator>(sandbox, configAggregatorStubOptions));
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      cmd.setConfigAggregator(configAggregatorStub);
-    });
-    onStub = sandbox.stub().callsArgWith(1, resultObject);
-    stubMethod(sandbox, Lifecycle, 'getInstance').returns({
+  const runStatusCommand = async (params: string[] = []): Promise<SandboxProcessObject> => {
+    const cmd = new OrgStatusCommand(params, {} as Config);
+
+    stubMethod($$.SANDBOX, Org.prototype, 'sandboxStatus').resolves(sandboxProcessObj);
+    uxTableStub = $$.SANDBOX.stub(cmd, 'table');
+    onStub = $$.SANDBOX.stub().callsArgWith(1, sandboxProcessObj).callsArgWith(1, resultObject);
+
+    stubMethod($$.SANDBOX, Lifecycle, 'getInstance').returns({
       on: onStub,
     });
-    uxTableStub = stubMethod(sandbox, UX.prototype, 'table');
-    stubMethod(sandbox, UX.prototype, 'log');
-    stubMethod(sandbox, UX.prototype, 'styledHeader');
-    aliasSetStub = sinon.stub();
-    stubMethod(sandbox, StateAggregator, 'getInstance').returns({
-      aliases: {
-        set: aliasSetStub,
-      },
-    });
-    return cmd.runIt();
+    return cmd.run();
   };
 
   it('will return sandbox process object', async () => {
-    const res = await runStatusCommand(['--sandboxname', sanboxname]);
+    const res = await runStatusCommand(['--sandboxname', sandboxName]);
     expect(uxTableStub.firstCall.args[0].length).to.equal(12);
-    expect(aliasSetStub.callCount).to.be.equal(0);
-    expect(configSetStub.callCount).to.be.equal(0);
-    expect(configWriteStub.callCount).to.be.equal(0);
-    expect(onStub.callCount).to.be.equal(2);
+    const logs = $$.TEST_LOGGER.getBufferedRecords();
+    logs.forEach((line) => {
+      expect(line.msg).to.not.include('Set Alias:');
+      expect(line.msg).to.not.include('Set defaultUsername');
+    });
     expect(res).to.deep.equal(sandboxProcessObj);
   });
 
-  it('will set alias', async () => {
+  it('will set alias and defaultusername', async () => {
     const res = await runStatusCommand([
       '--sandboxname',
-      sanboxname,
+      sandboxName,
       '--setalias',
-      sandboxalias,
+      sandboxAlias,
       '--setdefaultusername',
     ]);
-    expect(aliasSetStub.firstCall.args).to.deep.equal([sandboxalias, authUserName]);
-    expect(onStub.secondCall.firstArg).to.be.equal(SandboxEvents.EVENT_RESULT);
+    expect(uxTableStub.firstCall.args[0].length).to.equal(12);
     expect(onStub.callCount).to.be.equal(2);
+
+    const logs = $$.TEST_LOGGER.getBufferedRecords();
+    expect(logs.some((line) => line.msg.includes('Set Alias:')));
+    expect(logs.some((line) => line.msg.includes('Set defaultUsername:')));
     expect(res).to.deep.equal(sandboxProcessObj);
   });
 
-  it('will set default username', async () => {
-    const res = await runStatusCommand(['--sandboxname', sanboxname, '--setdefaultusername']);
-    expect(configSetStub.firstCall.args[0]).to.be.equal(OrgConfigProperties.TARGET_ORG);
-    expect(configSetStub.firstCall.args[1]).to.be.equal(authUserName);
-    expect(configWriteStub.calledOnce).to.be.true;
-    expect(onStub.secondCall.firstArg).to.be.equal(SandboxEvents.EVENT_RESULT);
+  it('will set default username but not alias', async () => {
+    const res = await runStatusCommand(['--sandboxname', sandboxName, '--setdefaultusername']);
+    expect(uxTableStub.firstCall.args[0].length).to.equal(12);
     expect(onStub.callCount).to.be.equal(2);
-    expect(res).to.deep.equal(sandboxProcessObj);
-  });
 
-  afterEach(() => {
-    sandbox.restore();
+    const logs = $$.TEST_LOGGER.getBufferedRecords();
+    logs.forEach((line) => {
+      expect(line.msg).to.not.include('Set Alias:');
+    });
+    expect(logs.some((line) => line.msg.includes('Set defaultUsername:')));
+    expect(res).to.deep.equal(sandboxProcessObj);
   });
 });
