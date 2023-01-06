@@ -10,6 +10,7 @@ import { lowerToUpper } from './utils';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
+const cloneMessages = Messages.loadMessages('@salesforce/plugin-org', 'clone');
 
 export const generateSboxName = async (): Promise<string> => {
   // sandbox names are 10 chars or less, a radix of 36 = [a-z][0-9]
@@ -49,7 +50,9 @@ export async function createSandboxRequest(
     ...sandboxDefFileContents,
     ...capitalizedVarArgs,
     SandboxName:
-      (sandboxDefFileContents.SandboxName as string) ?? capitalizedVarArgs.SandboxName ?? (await generateSboxName()),
+      (capitalizedVarArgs.SandboxName as string) ??
+      (sandboxDefFileContents.SandboxName as string) ??
+      (await generateSboxName()),
   };
 
   const { SourceSandboxName, ...sandboxReq } = sandboxReqWithName;
@@ -59,8 +62,8 @@ export async function createSandboxRequest(
     if (!SourceSandboxName) {
       // error - we need SourceSandboxName to know which sandbox to clone from
       throw new SfError(
-        messages.getMessage('missingSourceSandboxName', ['SourceSandboxName']),
-        messages.getMessage('missingSourceSandboxNameAction', ['SourceSandboxName'])
+        cloneMessages.getMessage('missingSourceSandboxName', ['SourceSandboxName']),
+        cloneMessages.getMessage('missingSourceSandboxNameAction', ['SourceSandboxName'])
       );
     }
     return { sandboxReq, srcSandboxName: SourceSandboxName };
