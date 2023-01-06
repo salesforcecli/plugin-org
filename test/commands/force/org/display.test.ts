@@ -4,52 +4,33 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-// import { AuthInfo } from '@salesforce/core';
-// import { StubbedType } from '@salesforce/ts-sinon';
 import { expect, config as chaiConfig } from 'chai';
-// import { OrgDisplayReturn } from 'src/shared/orgTypes';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 import { Config } from '@oclif/core';
-// import * as utils from '../../../../src/shared/utils';
 import { Connection } from '@salesforce/core';
+import { OrgDisplayReturn } from '../../../../src/shared/orgTypes';
 import { OrgListUtil } from '../../../../src/shared/orgListUtil';
 import { OrgDisplayCommand } from '../../../../src/commands/force/org/display';
 
 chaiConfig.truncateThreshold = 0;
-// const baseAuthInfo = {
-//   username: 'nonscratch@test.com',
-//   orgId: '00D46000000biZIIEAQ',
-//   accessToken:
-//     '00D46000000biZI!ARwAQNgoMldHR6XvpaTWdlr_J_pNnXqlh.VNI3Oqwqh7rzEBq6j4s7_E9hXmiIi8WwZasFAXTZNLwfg1SyuJ4wPRQAu.bPi4',
-//   instanceUrl: 'https://someinstance.my.salesforce.com',
-//   loginUrl: 'https://login.salesforce.com',
-//   clientId: 'PlatformCLI',
-// };
-
-// the same data, but with orgId renamed to id
-// const baseExpected = {
-//   ...baseAuthInfo,
-//   loginUrl: undefined,
-//   id: baseAuthInfo.orgId,
-//   orgId: undefined,
-// };
 
 const refreshToken = '5Aep8616XE5JLxJp3EMunMMUzXg.Ye8T6EJDtnvz0aSok0TzLMkNbW7YRi99Yx85XLvz6zP44x_hVTl8pIW8S5_IW';
-
-// const AssertBase = (result: OrgDisplayReturn) => {
-//   for (const [key, value] of Object.entries(baseExpected)) {
-//     expect(result).to.have.property(key, value);
-//   }
-//   return true;
-// };
 
 describe('org:display', () => {
   const $$ = new TestContext();
   let testOrg = new MockTestOrgData();
 
+  const commonAssert = (result: OrgDisplayReturn) => {
+    expect(result).to.have.property('username', testOrg.username);
+    expect(result).to.have.property('id', testOrg.orgId);
+    expect(result).to.have.property('accessToken', testOrg.accessToken);
+    expect(result).to.have.property('instanceUrl', testOrg.instanceUrl);
+    expect(result).to.have.property('clientId', testOrg.clientId);
+  };
+
   beforeEach(() => {
     testOrg = new MockTestOrgData();
-    testOrg.clientId = 'PlatformCLI';
+    testOrg.orgId = '00Dxx0000000000';
   });
   afterEach(() => {
     $$.restore();
@@ -59,7 +40,7 @@ describe('org:display', () => {
     let stdoutSpy: sinon.SinonSpy;
 
     beforeEach(() => {
-      stdoutSpy = $$.SANDBOX.spy(process.stdout, 'write');
+      stdoutSpy = $$.SANDBOX.stub(process.stdout, 'write');
     });
     afterEach(() => {
       $$.restore();
@@ -74,6 +55,7 @@ describe('org:display', () => {
 
       const stdoutResult = stdoutSpy.args.flat().join('');
       expect(stdoutResult).to.include('Sfdx Auth Url');
+      expect(stdoutResult).to.include('Client Id');
     });
 
     it('includes correct rows in non-json (table) mode', async () => {
@@ -84,8 +66,6 @@ describe('org:display', () => {
       await cmd.run();
 
       const stdoutResult = stdoutSpy.args.flat().join('');
-      // eslint-disable-next-line no-console
-      console.log(stdoutResult);
 
       expect(stdoutResult).to.include('Connected Status');
       expect(stdoutResult).to.include('Access Token');
@@ -103,7 +83,7 @@ describe('org:display', () => {
 
     const cmd = new OrgDisplayCommand(['--json', '--targetusername', testOrg.username], {} as Config);
     const result = await cmd.run();
-    // expect(AssertBase(result));
+    expect(commonAssert(result));
     expect(result.sfdxAuthUrl).to.be.undefined;
     expect(result.password).to.be.undefined;
     expect(result.expirationDate).to.be.undefined;
@@ -115,7 +95,7 @@ describe('org:display', () => {
     $$.stubAliases({ nonscratchalias: testOrg.username });
     const cmd = new OrgDisplayCommand(['--json', '--targetusername', 'nonscratchalias'], {} as Config);
     const result = await cmd.run();
-    // expect(AssertBase(result));
+    // expect(commonAssert(result));
     expect(result.sfdxAuthUrl).to.be.undefined;
     expect(result.alias).to.equal('nonscratchalias');
   });
@@ -128,24 +108,25 @@ describe('org:display', () => {
 
     const result = await cmd.run();
 
-    expect(result.sfdxAuthUrl).to.include(refreshToken);
+    expect(result.sfdxAuthUrl).to.include(testOrg.refreshToken);
   });
 
   it('omits authUrl when not using refresh token, despite verbose', async () => {
+    testOrg.refreshToken = undefined;
     await $$.stubAuths(testOrg);
-    const cmd = new OrgDisplayCommand(['--json', '--targetusername', 'nonscratch@test.com', '--verbose'], {} as Config);
+    const cmd = new OrgDisplayCommand(['--json', '--targetusername', testOrg.username, '--verbose'], {} as Config);
 
     const result = await cmd.run();
-    // expect(AssertBase(result));
+    expect(commonAssert(result));
     expect(result.sfdxAuthUrl).to.be.undefined;
   });
 
   it('omits authUrl when using refresh token without verbose', async () => {
     await $$.stubAuths(testOrg);
-    const cmd = new OrgDisplayCommand(['--json', '--targetusername', 'nonscratch@test.com'], {} as Config);
+    const cmd = new OrgDisplayCommand(['--json', '--targetusername', testOrg.username], {} as Config);
 
     const result = await cmd.run();
-    // expect(AssertBase(result));
+    expect(commonAssert(result));
     expect(result.sfdxAuthUrl).to.be.undefined;
   });
 
@@ -155,6 +136,7 @@ describe('org:display', () => {
     await $$.stubAuths(testOrg);
 
     const result = await cmd.run();
+    expect(commonAssert(result));
     expect(result.alias).to.be.undefined;
   });
 
@@ -165,6 +147,7 @@ describe('org:display', () => {
     const cmd = new OrgDisplayCommand(['--json', '--targetusername', testOrg.username], {} as Config);
 
     const result = await cmd.run();
+    expect(commonAssert(result));
     expect(result.password).to.equal('encrypted');
   });
 

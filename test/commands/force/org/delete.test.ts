@@ -4,129 +4,99 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Messages, Org, SfProject } from '@salesforce/core';
-import { fromStub, stubInterface, stubMethod } from '@salesforce/ts-sinon';
-import * as sinon from 'sinon';
-import { expect } from '@salesforce/command/lib/test';
+import { Messages, Org, SfError } from '@salesforce/core';
+import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
+
+import { expect } from 'chai';
 import { Config } from '@oclif/core';
-import { UX } from '@salesforce/command';
 import { Delete } from '../../../../src/commands/force/org/delete';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete');
 
 describe('org:delete', () => {
-  const sandbox = sinon.createSandbox();
-  const username = 'scratch-test@salesforce.com';
-  const orgId = '00D54000000KDltEAG';
-  const oclifConfigStub = fromStub(stubInterface<Config>(sandbox));
-
+  const $$ = new TestContext();
+  const testOrg = new MockTestOrgData();
+  const testHub = new MockTestOrgData();
+  testOrg.devHubUsername = testHub.username;
   // stubs
-  let resolveProjectConfigStub: sinon.SinonStub;
   let uxConfirmStub: sinon.SinonStub;
   let uxLogStub: sinon.SinonStub;
-  let cmd: TestDelete;
 
-  class TestDelete extends Delete {
-    public async runIt() {
-      await this.init();
-      return this.run();
-    }
-    public setOrg(org: Org) {
-      this.org = org;
-    }
-    public setProject(project: SfProject) {
-      this.project = project;
-    }
-  }
+  beforeEach(async () => {
+    await $$.stubAuths(testOrg, testHub);
+    await $$.stubConfig({ 'target-org': testOrg.username });
+  });
 
-  const runDeleteCommand = async (
-    params: string[],
-    options: { isSandbox?: boolean; deleteScratchOrg?: string } = { isSandbox: false }
-  ) => {
-    cmd = new TestDelete(params, oclifConfigStub);
-    stubMethod(sandbox, cmd, 'assignProject').callsFake(() => {
-      const sfdxProjectStub = fromStub(
-        stubInterface<SfProject>(sandbox, {
-          resolveProjectConfig: resolveProjectConfigStub,
-        })
-      );
-      cmd.setProject(sfdxProjectStub);
-    });
-    stubMethod(sandbox, cmd, 'assignOrg').callsFake(() => {
-      const orgStubOptions = {
-        getSandboxOrgConfigField: () => {},
-        delete: () => {},
-        getUsername: () => username,
-        getOrgId: () => orgId,
-        isSandbox: () => options.isSandbox,
-      };
+  afterEach(async () => {
+    $$.restore();
+  });
 
-      if (options.deleteScratchOrg) {
-        orgStubOptions.delete = () => {
-          const e = new Error();
-          e.name = options.deleteScratchOrg;
-          throw e;
-        };
-      }
+  const runDeleteCommand = async (params: string[] = []) => {
+    const cmd = new Delete(params, {} as Config);
 
-      const orgStub = fromStub(stubInterface<Org>(sandbox, orgStubOptions));
-      cmd.setOrg(orgStub);
-    });
-    uxConfirmStub = stubMethod(sandbox, UX.prototype, 'confirm');
-    uxLogStub = stubMethod(sandbox, UX.prototype, 'log');
+    uxConfirmStub = $$.SANDBOX.stub(cmd, 'confirm');
+    uxLogStub = $$.SANDBOX.stub(cmd, 'log');
 
-    return cmd.runIt();
+    return cmd.run();
   };
 
   it('will prompt before attempting to delete', async () => {
     const res = await runDeleteCommand([]);
     expect(uxConfirmStub.calledOnce).to.equal(true);
-    expect(uxConfirmStub.firstCall.args[0]).to.equal(messages.getMessage('confirmDelete', ['scratch', username]));
-    expect(res).to.deep.equal({ orgId, username });
+    expect(uxConfirmStub.firstCall.args[0]).to.equal(
+      messages.getMessage('confirmDelete', ['scratch', testOrg.username])
+    );
+    expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
   });
 
   it('will determine sandbox vs scratch org and delete sandbox', async () => {
-    const res = await runDeleteCommand([], { isSandbox: true });
+    $$.SANDBOX.stub(Org.prototype, 'isSandbox').resolves(true);
+    const res = await runDeleteCommand([]);
     expect(uxConfirmStub.calledOnce).to.equal(true);
-    expect(uxConfirmStub.firstCall.args[0]).to.equal(messages.getMessage('confirmDelete', ['sandbox', username]));
-    expect(res).to.deep.equal({ orgId, username });
+    expect(uxConfirmStub.firstCall.args[0]).to.equal(
+      messages.getMessage('confirmDelete', ['sandbox', testOrg.username])
+    );
+    expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
   });
 
   it('will NOT prompt before deleting scratch org when flag is provided', async () => {
+    $$.SANDBOX.stub(Org.prototype, 'isSandbox').resolves(false);
+    $$.SANDBOX.stub(Org.prototype, 'delete').resolves();
     const res = await runDeleteCommand(['--noprompt']);
     expect(uxConfirmStub.called).to.equal(false);
     expect(uxLogStub.callCount).to.equal(1);
-    expect(uxLogStub.firstCall.args[0]).to.equal(messages.getMessage('deleteOrgCommandSuccess', [username]));
-    expect(res).to.deep.equal({ orgId, username });
+    expect(uxLogStub.firstCall.args[0]).to.equal(messages.getMessage('deleteOrgCommandSuccess', [testOrg.username]));
+    expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
   });
 
   it('will NOT prompt before deleting sandbox when flag is provided', async () => {
-    const res = await runDeleteCommand(['--noprompt'], { isSandbox: true });
+    $$.SANDBOX.stub(Org.prototype, 'isSandbox').resolves(true);
+    $$.SANDBOX.stub(Org.prototype, 'delete').resolves();
+    const res = await runDeleteCommand(['--noprompt']);
     expect(uxConfirmStub.called).to.equal(false);
     expect(uxLogStub.callCount).to.equal(1);
-    expect(uxLogStub.firstCall.args[0]).to.equal(messages.getMessage('commandSandboxSuccess', [username]));
-    expect(res).to.deep.equal({ orgId, username });
+    expect(uxLogStub.firstCall.args[0]).to.equal(messages.getMessage('commandSandboxSuccess', [testOrg.username]));
+    expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
   });
 
   it('will catch the ScratchOrgNotFound and wrap correctly', async () => {
-    const res = await runDeleteCommand(['--noprompt'], { deleteScratchOrg: 'ScratchOrgNotFound' });
+    $$.SANDBOX.stub(Org.prototype, 'isSandbox').resolves(false);
+    $$.SANDBOX.stub(Org.prototype, 'delete').throws(new SfError('bah!', 'ScratchOrgNotFound'));
+    const res = await runDeleteCommand(['--noprompt']);
     expect(uxConfirmStub.called).to.equal(false);
-    expect(res).to.deep.equal({ orgId, username });
-    expect(uxLogStub.firstCall.args[0]).to.equal(messages.getMessage('deleteOrgConfigOnlyCommandSuccess', [username]));
+    expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
+    expect(uxLogStub.firstCall.args[0]).to.equal(
+      messages.getMessage('deleteOrgConfigOnlyCommandSuccess', [testOrg.username])
+    );
   });
 
   it('will catch the SandboxNotFound and wrap correctly', async () => {
-    const res = await runDeleteCommand(['--noprompt'], {
-      deleteScratchOrg: 'SandboxNotFound',
-      isSandbox: true,
-    });
+    $$.SANDBOX.stub(Org.prototype, 'isSandbox').resolves(true);
+    $$.SANDBOX.stub(Org.prototype, 'delete').throws(new SfError('bah!', 'SandboxNotFound'));
+    const res = await runDeleteCommand(['--noprompt']);
     expect(uxConfirmStub.called).to.equal(false);
-    expect(res).to.deep.equal({ orgId, username });
-    expect(uxLogStub.firstCall.args[0]).to.equal(messages.getMessage('sandboxConfigOnlySuccess', [username]));
-  });
-
-  afterEach(() => {
-    sandbox.restore();
+    expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
+    expect(uxLogStub.firstCall.args[0]).to.equal(messages.getMessage('sandboxConfigOnlySuccess', [testOrg.username]));
   });
 });
