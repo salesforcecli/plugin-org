@@ -29,7 +29,7 @@
     "@typescript-eslint/parser": "^5.46.0",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
-    "eslint": "^8.30.0",
+    "eslint": "^8.31.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-salesforce": "^1.1.0",
     "eslint-config-salesforce-license": "^0.1.6",
