@@ -26,7 +26,7 @@ import { SandboxReporter } from '../../../shared/sandboxReporter';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'clone');
 
-export class OrgCloneCommand extends SfCommand<unknown> {
+export class OrgCloneCommand extends SfCommand<SandboxProcessObject> {
   public static readonly examples = messages.getMessages('examples');
   public static readonly summary = messages.getMessage('description');
   public static readonly description = messages.getMessage('description');
@@ -66,7 +66,7 @@ export class OrgCloneCommand extends SfCommand<unknown> {
     }),
   };
 
-  public async run(): Promise<unknown> {
+  public async run(): Promise<SandboxProcessObject> {
     const { flags, args, argv } = await this.parse(OrgCloneCommand);
     const logger = await Logger.child(this.constructor.name);
     const varargs = parseVarArgs(args, argv);
@@ -112,8 +112,7 @@ export class OrgCloneCommand extends SfCommand<unknown> {
       const { sandboxReq, srcSandboxName } = await createSandboxRequest(true, flags.definitionfile, logger, varargs);
 
       logger.debug('Calling clone with SandboxRequest: %s and SandboxName: %s ', sandboxReq, srcSandboxName);
-      const wait = flags.wait;
-      return flags['target-org'].cloneSandbox(sandboxReq, srcSandboxName, { wait });
+      return flags['target-org'].cloneSandbox(sandboxReq, srcSandboxName, { wait: flags.wait });
     } else {
       throw new SfError(
         messages.getMessage('commandOrganizationTypeNotSupport', [OrgTypes.Sandbox]),

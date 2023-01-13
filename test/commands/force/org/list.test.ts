@@ -4,24 +4,27 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { expect, test } from '@salesforce/command/lib/test';
-import { UX } from '@salesforce/command';
-import * as chai from 'chai';
-import * as sinon from 'sinon';
+import { expect, use as ChaiUse } from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
-
-chai.use(chaiAsPromised);
-
+import {
+  // MockTestOrgData,
+  TestContext,
+} from '@salesforce/core/lib/testSetup';
 import { AuthInfo, Connection, Org } from '@salesforce/core';
-import { stubMethod, stubInterface } from '@salesforce/ts-sinon';
-
+import { stubMethod } from '@salesforce/ts-sinon';
+import { Config } from '@oclif/core';
+import { SfCommand } from '@salesforce/sf-plugins-core';
 import OrgListMock = require('../../../shared/orgListMock');
+import { OrgListCommand } from '../../../../src/commands/force/org/list';
 import { OrgListUtil } from '../../../../src/shared/orgListUtil';
 
+ChaiUse(chaiAsPromised);
+
 describe('org_list', () => {
-  const sandbox = sinon.createSandbox();
+  const $$ = new TestContext();
+
   beforeEach(async () => {
-    stubMethod(sandbox, AuthInfo, 'listAllAuthorizations').resolves([
+    stubMethod($$.SANDBOX, AuthInfo, 'listAllAuthorizations').resolves([
       'Jimi Hendrix',
       'SRV',
       'shenderson',
@@ -30,39 +33,35 @@ describe('org_list', () => {
     ]);
   });
   afterEach(() => {
-    sandbox.restore();
+    $$.SANDBOX.restore();
   });
 
   describe('hub org defined', () => {
     beforeEach(async () => {
-      // await workspace.configureHubOrg();
-      stubMethod(sandbox, OrgListUtil, 'readLocallyValidatedMetaConfigsGroupedByOrgType').resolves(
+      stubMethod($$.SANDBOX, OrgListUtil, 'readLocallyValidatedMetaConfigsGroupedByOrgType').resolves(
         OrgListMock.AUTH_INFO
       );
     });
 
     afterEach(async () => {
-      sandbox.restore();
+      $$.SANDBOX.restore();
     });
 
-    test
-      .stdout()
-      .command(['force:org:list', '--json'])
-      .it('should list active orgs', (ctx) => {
-        const orgs = JSON.parse(ctx.stdout).result;
-        expect(orgs.nonScratchOrgs.length).to.equal(1);
-        expect(orgs.nonScratchOrgs[0].username).to.equal('foo@example.com');
-        expect(orgs.nonScratchOrgs[0].isDevHub).to.equal(true);
-        expect(orgs.scratchOrgs.length).to.equal(2); // there are two orgs non-expired
-      });
+    it('should list active orgs', async () => {
+      const cmd = new OrgListCommand(['--json'], {} as Config);
+      const orgs = await cmd.run();
+      expect(orgs.nonScratchOrgs.length).to.equal(1);
+      expect(orgs.nonScratchOrgs[0].username).to.equal('foo@example.com');
+      expect(orgs.nonScratchOrgs[0].isDevHub).to.equal(true);
+      expect(orgs.scratchOrgs.length).to.equal(2); // there are two orgs non-expired
+    });
 
-    test
-      .stdout()
-      .command(['force:org:list', '--json', '--all'])
-      .it('should list all orgs', (ctx) => {
-        const orgs = JSON.parse(ctx.stdout).result;
-        expect(orgs.scratchOrgs.length).to.equal(4); // there are 4 orgs total
-      });
+    it('should list all orgs', async () => {
+      const cmd = new OrgListCommand(['--json', '--all'], {} as Config);
+      const orgs = await cmd.run();
+
+      expect(orgs.scratchOrgs.length).to.equal(4); // there are 4 orgs total
+    });
   });
 
   describe('scratch org cleaning', () => {
@@ -70,29 +69,31 @@ describe('org_list', () => {
     afterEach(() => spies.clear());
 
     beforeEach(() => {
-      sandbox.stub(OrgListUtil, 'readLocallyValidatedMetaConfigsGroupedByOrgType').resolves(OrgListMock.AUTH_INFO);
-      const authInfoStub = stubInterface<AuthInfo>(sandbox, {
-        getConnectionOptions: () => ({}),
-      });
-      stubMethod(sandbox, Connection, 'create').resolves({});
-      stubMethod(sandbox, AuthInfo, 'create').resolves(async () => authInfoStub);
-      stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
-      stubMethod(sandbox, UX.prototype, 'confirm').resolves(false);
-      spies.set('orgRemove', stubMethod(sandbox, Org.prototype, 'remove').resolves());
+      stubMethod($$.SANDBOX, Org, 'create').resolves(Org.prototype);
+      stubMethod($$.SANDBOX, AuthInfo, 'create').resolves(AuthInfo.prototype);
+      stubMethod($$.SANDBOX, Connection, 'create').resolves(Connection.prototype);
+      stubMethod($$.SANDBOX, OrgListUtil, 'readLocallyValidatedMetaConfigsGroupedByOrgType').resolves(
+        OrgListMock.AUTH_INFO
+      );
+      spies.set('orgRemove', stubMethod($$.SANDBOX, Org.prototype, 'remove').resolves());
     });
 
-    test
-      .stdout()
-      .command(['force:org:list', '--json', '--clean'])
-      .it('not cleaned after confirmation false', async () => {
-        expect(spies.get('orgRemove').callCount).to.equal(0);
-      });
+    it('not cleaned after confirmation false', async () => {
+      const promptStub = $$.SANDBOX.stub(SfCommand.prototype, 'confirm').resolves(false);
+      await OrgListCommand.run(['--json', '--clean']);
+      expect(promptStub.callCount).to.equal(1);
+      expect(spies.get('orgRemove').callCount).to.equal(0);
+    });
 
-    test
-      .stdout()
-      .command(['force:org:list', '--json', '--clean', '--noprompt'])
-      .it('cleans 2 orgs', async () => {
-        expect(spies.get('orgRemove').callCount).to.equal(2); // there are 2 expired scratch orgs
-      });
+    it('cleans 2 orgs', async () => {
+      await OrgListCommand.run(['--clean', '--noprompt']);
+      expect(spies.get('orgRemove').callCount).to.equal(2); // there are 2 expired scratch orgs
+    });
+
+    it('cleans 2 orgs', async () => {
+      const cmd = new OrgListCommand(['--json', '--clean', '--noprompt'], {} as Config);
+      await cmd.run();
+      expect(spies.get('orgRemove').callCount).to.equal(2); // there are 2 expired scratch orgs
+    });
   });
 });

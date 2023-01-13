@@ -8,7 +8,7 @@
 import { basename, join } from 'path';
 import * as fs from 'fs/promises';
 
-import { Org, AuthInfo, sfdc, SfdxConfigAggregator, Global, Logger, SfError } from '@salesforce/core';
+import { Org, AuthInfo, SfdxConfigAggregator, Global, Logger, SfError, trimTo15 } from '@salesforce/core';
 import { Dictionary, JsonMap } from '@salesforce/ts-types';
 import { Record } from 'jsforce';
 import { omit } from '@salesforce/kit/lib';
@@ -100,13 +100,12 @@ export class OrgListUtil {
     scratchOrgs.forEach((fields) => {
       orgIdsGroupedByDevHub.set(
         fields.devHubUsername,
-        // assertion should disappear once https://github.com/forcedotcom/sfdx-core/pull/741 is merged
-        (orgIdsGroupedByDevHub.get(fields.devHubUsername) ?? []).concat([sfdc.trimTo15(fields.orgId) as string])
+        (orgIdsGroupedByDevHub.get(fields.devHubUsername) ?? []).concat([trimTo15(fields.orgId)])
       );
     });
     const updatedContents = (
       await Promise.all(
-        Array.from(orgIdsGroupedByDevHub).map(async ([devHubUsername, orgIds]) =>
+        Array.from(orgIdsGroupedByDevHub).map(([devHubUsername, orgIds]) =>
           OrgListUtil.retrieveScratchOrgInfoFromDevHub(devHubUsername, orgIds)
         )
       )

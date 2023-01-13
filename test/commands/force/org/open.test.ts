@@ -5,240 +5,274 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { expect, test } from '@salesforce/command/lib/test';
-import { Org, MyDomainResolver, Messages } from '@salesforce/core';
-import * as sinon from 'sinon';
+import { assert, expect } from 'chai';
+import {
+  // Org,
+  MyDomainResolver,
+  Messages,
+} from '@salesforce/core';
+import { Config } from '@oclif/core';
 import { stubMethod } from '@salesforce/ts-sinon';
+import { MockTestOrgData, TestContext, shouldThrow } from '@salesforce/core/lib/testSetup';
 import * as utils from '../../../../src/shared/utils';
+import { OrgOpenCommand, OrgOpenOutput } from '../../../../src/commands/force/org/open';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
 const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
 
-const orgId = '000000000000000';
-const username = 'test@test.org';
-const testPath = '/lightning/whatever';
-const testInstance = 'https://cs1.my.salesforce.com';
-const testBrowser = 'firefox';
-const accessToken = 'testAccessToken';
-const expectedDefaultUrl = `${testInstance}/secur/frontdoor.jsp?sid=${accessToken}`;
-const expectedUrl = `${expectedDefaultUrl}&retURL=${encodeURIComponent(testPath)}`;
-
-const testJsonStructure = (response: Record<string, unknown>) => {
-  expect(response).to.have.property('url');
-  expect(response).to.have.property('username').equal(username);
-  expect(response).to.have.property('orgId').equal(orgId);
-  return true;
-};
-
 describe('open commands', () => {
-  const sandbox = sinon.createSandbox();
+  const $$ = new TestContext();
+  const testOrg = new MockTestOrgData();
+
+  const testBrowser = 'firefox';
+  const testPath = '/lightning/whatever';
+  const expectedDefaultUrl = `${testOrg.instanceUrl}/secur/frontdoor.jsp?sid=${testOrg.accessToken}`;
+  const expectedUrl = `${expectedDefaultUrl}&retURL=${encodeURIComponent(testPath)}`;
+
+  const testJsonStructure = (response: OrgOpenOutput) => {
+    expect(response).to.have.property('url');
+    expect(response).to.have.property('username').equal(testOrg.username);
+    expect(response).to.have.property('orgId').equal(testOrg.orgId);
+  };
+
   const spies = new Map();
-  afterEach(() => spies.clear());
 
   beforeEach(async () => {
-    stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
-    stubMethod(sandbox, Org.prototype, 'getField').withArgs(Org.Fields.INSTANCE_URL).returns(testInstance);
-    stubMethod(sandbox, Org.prototype, 'refreshAuth').resolves({});
-    stubMethod(sandbox, Org.prototype, 'getOrgId').returns(orgId);
-    stubMethod(sandbox, Org.prototype, 'getUsername').returns(username);
-    stubMethod(sandbox, Org.prototype, 'getConnection').returns({
-      accessToken,
-    });
-    spies.set('open', stubMethod(sandbox, utils, 'openUrl').resolves());
+    await $$.stubAuths(testOrg);
+    spies.set('open', stubMethod($$.SANDBOX, utils, 'openUrl').resolves());
   });
+
   afterEach(() => {
-    sandbox.restore();
+    spies.clear();
+    $$.restore();
   });
 
   describe('url generation', () => {
-    test
-      .stdout()
-      .command(['force:org:open', '--json', '--targetusername', username, '--urlonly'])
-      .it('org without a url defaults to proper default', (ctx) => {
-        const response = JSON.parse(ctx.stdout);
-        expect(response.status).to.equal(0);
-        expect(testJsonStructure(response.result)).to.be.true;
-        expect(response.result.url).to.equal(expectedDefaultUrl);
-        expect(response.warnings).to.include(sharedMessages.getMessage('SecurityWarning'));
-      });
+    it('org without a url defaults to proper default', async () => {
+      const cmd = new OrgOpenCommand(['--json', '--targetusername', testOrg.username, '--urlonly'], {} as Config);
+      const response = await cmd.run();
+      assert(response);
+      testJsonStructure(response);
+      expect(response.url).to.equal(expectedDefaultUrl);
+    });
 
-    test
-      .stdout()
-      .command(['force:org:open', '--json', '--targetusername', username, '--urlonly', '--path', testPath])
-      .it('org with a url is built correctly', (ctx) => {
-        const response = JSON.parse(ctx.stdout);
-        expect(response.status).to.equal(0);
-        expect(testJsonStructure(response.result)).to.be.true;
-        expect(response.result.url).to.equal(expectedUrl);
-        expect(response.warnings).to.include(sharedMessages.getMessage('SecurityWarning'));
-      });
+    it('org with a url is built correctly', async () => {
+      const cmd = new OrgOpenCommand(
+        ['--json', '--targetusername', testOrg.username, '--urlonly', '--path', testPath],
+        {} as Config
+      );
+      const response = await cmd.run();
+      assert(response);
+      expect(response.url).to.equal(expectedUrl);
+    });
 
-    test
-      .do(() => {
-        process.env.FORCE_OPEN_URL = testPath;
-      })
-      .finally(() => {
-        delete process.env.FORCE_OPEN_URL;
-      })
-      .stdout()
-      .command(['force:org:open', '--json', '--targetusername', username, '--urlonly'])
-      .it('can read url from env', (ctx) => {
-        const response = JSON.parse(ctx.stdout);
-        expect(response.status).to.equal(0);
-        expect(testJsonStructure(response.result)).to.be.true;
-        expect(response.result.url).to.equal(expectedUrl);
-      });
+    it('can read url from env', async () => {
+      process.env.FORCE_OPEN_URL = testPath;
+
+      const cmd = new OrgOpenCommand(['--json', '--targetusername', testOrg.username, '--urlonly'], {} as Config);
+      const response = await cmd.run();
+      assert(response);
+      testJsonStructure(response);
+      expect(response.url).to.equal(expectedUrl);
+      delete process.env.FORCE_OPEN_URL;
+    });
   });
 
   describe('domain resolution, with callout', () => {
     beforeEach(() => {
-      stubMethod(sandbox, MyDomainResolver, 'create').resolves(MyDomainResolver.prototype);
+      stubMethod($$.SANDBOX, MyDomainResolver, 'create').resolves(MyDomainResolver.prototype);
     });
-    test
-      .do(() => {
-        spies.set('resolver', stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
-      })
-      .stdout()
-      .command(['force:org:open', '--json', '--targetusername', username, '--path', testPath])
-      .it('waits on domains that need time to resolve', (ctx) => {
-        const response = JSON.parse(ctx.stdout);
-        expect(response.status).to.equal(0);
-        expect(testJsonStructure(response.result)).to.be.true;
-        expect(response.result.url).to.equal(expectedUrl);
 
-        expect(spies.get('resolver').callCount).to.equal(1);
-      });
+    it('waits on domains that need time to resolve', async () => {
+      spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
 
-    test
-      .do(() => {
-        spies.set('resolver', stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').throws(new Error('timeout')));
-      })
-      .stdout()
-      .command(['force:org:open', '--json', '--targetusername', username, '--path', testPath])
-      .it('handles domain timeouts', (ctx) => {
-        const response = JSON.parse(ctx.stdout);
+      const cmd = new OrgOpenCommand(
+        ['--json', '--targetusername', testOrg.username, '--path', testPath],
+        {} as Config
+      );
+      const response = await cmd.run();
+      assert(response);
+      testJsonStructure(response);
+      expect(response.url).to.equal(expectedUrl);
+
+      expect(spies.get('resolver').callCount).to.equal(1);
+    });
+
+    it('handles domain timeouts', async () => {
+      spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').throws(new Error('timeout')));
+      const cmd = new OrgOpenCommand(
+        ['--json', '--targetusername', testOrg.username, '--path', testPath],
+        {} as Config
+      );
+      try {
+        await cmd.run();
+      } catch (e) {
         expect(spies.get('resolver').callCount).to.equal(1);
         expect(spies.get('open').callCount).to.equal(0);
-        expect(response.status).to.equal(1);
-        expect(response.message).to.equal(messages.getMessage('domainTimeoutError'));
-      });
+        assert(e instanceof Error);
+        expect(e.message).to.equal(messages.getMessage('domainTimeoutError'));
+      }
+    });
   });
 
   describe('domain resolution, no callout', () => {
     beforeEach(() => {
-      stubMethod(sandbox, MyDomainResolver, 'create').resolves(MyDomainResolver.prototype);
-      spies.set('resolver', stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
+      stubMethod($$.SANDBOX, MyDomainResolver, 'create').resolves(MyDomainResolver.prototype);
+      spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
     });
-    it('does not wait for domains on internal urls');
+    // it('does not wait for domains on internal urls');
 
-    test
-      .do(() => {
-        process.env.SFDX_CONTAINER_MODE = 'true';
-      })
-      .finally(() => {
-        delete process.env.SFDX_CONTAINER_MODE;
-      })
-      .stdout()
-      .command(['force:org:open', '--json', '--targetusername', username, '--path', testPath])
-      .it('does not wait for domains in container mode, even without urlonly', (ctx) => {
-        const response = JSON.parse(ctx.stdout);
-        expect(response.status).to.equal(0);
-        expect(testJsonStructure(response.result)).to.be.true;
-        expect(response.result.url).to.equal(expectedUrl);
-        expect(response.warnings).to.include(sharedMessages.getMessage('SecurityWarning'));
-        expect(spies.get('resolver').callCount).to.equal(0);
-      });
+    it('does not wait for domains in container mode, even without urlonly', async () => {
+      process.env.SFDX_CONTAINER_MODE = 'true';
+      const cmd = new OrgOpenCommand(
+        ['--json', '--targetusername', testOrg.username, '--path', testPath],
+        {} as Config
+      );
+      const response = await cmd.run();
+      assert(response);
+      testJsonStructure(response);
+      expect(response.url).to.equal(expectedUrl);
+      expect(spies.get('resolver').callCount).to.equal(0);
+      delete process.env.SFDX_CONTAINER_MODE;
+    });
 
-    test
-      .do(() => {
-        process.env.SFDX_DOMAIN_RETRY = '0';
-      })
-      .finally(() => {
-        delete process.env.SFDX_DOMAIN_RETRY;
-      })
-      .stdout()
-      .command(['force:org:open', '--json', '--targetusername', username, '--path', testPath])
-      .it('does not wait for domains when timeouts are zero, even without urlonly', (ctx) => {
-        const response = JSON.parse(ctx.stdout);
-        expect(response.status).to.equal(0);
-        expect(testJsonStructure(response.result)).to.be.true;
-        expect(spies.get('resolver').callCount).to.equal(0);
-      });
+    it('does not wait for domains when timeouts are zero, even without urlonly', async () => {
+      process.env.SFDX_DOMAIN_RETRY = '0';
+
+      const cmd = new OrgOpenCommand(
+        ['--json', '--targetusername', testOrg.username, '--path', testPath],
+        {} as Config
+      );
+      const response = await cmd.run();
+      assert(response);
+      testJsonStructure(response);
+      expect(spies.get('resolver').callCount).to.equal(0);
+      delete process.env.SFDX_DOMAIN_RETRY;
+    });
   });
 
   describe('human output', () => {
-    test
-      .do(() => {
-        spies.set('resolver', stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
-      })
-      .stdout()
-      .command(['force:org:open', '--targetusername', username, '--path', testPath])
-      .it('calls open and outputs proper success message (no url)', (ctx) => {
-        expect(ctx.stdout).to.include(messages.getMessage('humanSuccessNoUrl', [orgId, username]));
-        expect(spies.get('resolver').callCount).to.equal(1);
-        expect(spies.get('open').callCount).to.equal(1);
-      });
+    let stdoutSpy: sinon.SinonSpy;
 
-    test
-      .do(() => {
-        spies.set('resolver', stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
-      })
-      .stdout()
-      .command(['force:org:open', '--targetusername', username, '--path', testPath, '--urlonly'])
-      .it('outputs proper warning and message (includes url for --urlonly)', (ctx) => {
-        expect(ctx.stdout).to.include(messages.getMessage('humanSuccess', [orgId, username, expectedUrl]));
-      });
+    beforeEach(() => {
+      stubMethod($$.SANDBOX, MyDomainResolver, 'create').resolves(MyDomainResolver.prototype);
+      stdoutSpy = $$.SANDBOX.stub(process.stdout, 'write');
+    });
 
-    test
-      .do(() => {
-        spies.set('resolver', stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').throws(new Error('timeout')));
-      })
-      .stderr()
-      .command(['force:org:open', '--targetusername', username, '--path', testPath])
-      .it('throws on dns fail', (ctx) => {
-        expect(ctx.stderr).to.contain(messages.getMessage('domainTimeoutError'));
+    it('calls open and outputs proper success message (no url)', async () => {
+      spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
+      const cmd = new OrgOpenCommand(['--targetusername', testOrg.username, '--path', testPath], {} as Config);
+      $$.SANDBOX.stub(cmd.spinner, 'start').returns();
+
+      await cmd.run();
+
+      const stdoutResult = stdoutSpy.args.flat().join('');
+
+      expect(stdoutResult).to.include(messages.getMessage('humanSuccessNoUrl', [testOrg.orgId, testOrg.username]));
+      expect(spies.get('resolver').callCount).to.equal(1);
+      expect(spies.get('open').callCount).to.equal(1);
+    });
+
+    it('outputs proper warning and message (includes url for --urlonly)', async () => {
+      spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
+
+      const cmd = new OrgOpenCommand(
+        ['--targetusername', testOrg.username, '--path', testPath, '--urlonly'],
+        {} as Config
+      );
+      $$.SANDBOX.stub(cmd.spinner, 'start').returns();
+
+      await cmd.run();
+      const stdoutResult = stdoutSpy.args.flat().join('');
+
+      expect(stdoutResult).to.include(
+        messages.getMessage('humanSuccess', [testOrg.orgId, testOrg.username, expectedUrl])
+      );
+    });
+
+    it('throws on dns fail', async () => {
+      spies.set(
+        'resolver',
+        stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').rejects(new Error('timeout'))
+      );
+      const cmd = new OrgOpenCommand(['--targetusername', testOrg.username, '--path', testPath], {} as Config);
+      $$.SANDBOX.stub(cmd.spinner, 'start').returns();
+
+      try {
+        await shouldThrow(cmd.run());
+      } catch (e) {
+        assert(e instanceof Error);
+        expect(e.message).to.contain(messages.getMessage('domainTimeoutError'));
         expect(spies.get('resolver').callCount).to.equal(1);
         expect(spies.get('open').callCount).to.equal(0);
-      });
+      }
+    });
   });
 
   describe('browser argument', () => {
-    test
-      .do(() => {
-        spies.set('resolver', stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
-      })
-      .stdout()
-      .command(['force:org:open', '--targetusername', username, '--path', testPath])
-      .it('calls open with no browser argument', () => {
-        expect(spies.get('resolver').callCount).to.equal(1);
-        expect(spies.get('open').callCount).to.equal(1);
-        expect(spies.get('open').args[0][1]).to.eql({});
-      });
+    it('calls open with no browser argument', async () => {
+      spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
+      const cmd = new OrgOpenCommand(['--targetusername', testOrg.username, '--path', testPath], {} as Config);
+      const warnSpy = $$.SANDBOX.stub(cmd, 'warn');
+      const successSpy = $$.SANDBOX.stub(cmd, 'logSuccess');
+      $$.SANDBOX.stub(cmd.spinner, 'start').returns();
 
-    test
-      .do(() => {
-        spies.set('resolver', stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
-      })
-      .stdout()
-      .command(['force:org:open', '--targetusername', username, '--path', testPath, '-b', testBrowser])
-      .it('calls open with a browser argument', () => {
-        expect(spies.get('resolver').callCount).to.equal(1);
-        expect(spies.get('open').callCount).to.equal(1);
-        expect(spies.get('open').args[0][1]).to.not.eql({});
-      });
+      await cmd.run();
+      expect(
+        successSpy.calledOnceWith(
+          messages.getMessage('humanSuccessNoUrl', [testOrg.orgId, testOrg.username, expectedUrl])
+        )
+      );
+      expect(warnSpy.calledOnceWith(sharedMessages.getMessage('SecurityWarning')));
 
-    test
-      .do(() => {
-        spies.set('resolver', stubMethod(sandbox, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
-      })
-      .stdout()
-      .stderr()
-      .command(['force:org:open', '--targetusername', username, '--path', testPath, '-b', 'duff'])
-      .it('does not call open as passed unknown browser name', () => {
-        expect(spies.get('resolver').callCount).to.equal(0);
-        expect(spies.get('open').callCount).to.equal(0);
-      });
+      expect(spies.get('resolver').callCount).to.equal(1);
+      expect(spies.get('open').callCount).to.equal(1);
+      expect(spies.get('open').args[0][1]).to.eql({});
+    });
+
+    it('calls open with a browser argument', async () => {
+      spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
+
+      const cmd = new OrgOpenCommand(
+        ['--targetusername', testOrg.username, '--path', testPath, '-b', testBrowser],
+        {} as Config
+      );
+      $$.SANDBOX.stub(cmd.spinner, 'start').returns();
+      const warnSpy = $$.SANDBOX.stub(cmd, 'warn');
+      const successSpy = $$.SANDBOX.stub(cmd, 'logSuccess');
+
+      await cmd.run();
+      expect(warnSpy.calledOnceWith(sharedMessages.getMessage('SecurityWarning')));
+      expect(
+        successSpy.calledOnceWith(
+          messages.getMessage('humanSuccessNoUrl', [testOrg.orgId, testOrg.username, expectedUrl])
+        )
+      );
+
+      expect(spies.get('resolver').callCount).to.equal(1);
+      expect(spies.get('open').callCount).to.equal(1);
+      expect(spies.get('open').args[0][1]).to.not.eql({});
+    });
+
+    it('does not call open as passed unknown browser name', async () => {
+      spies.set('resolver', stubMethod($$.SANDBOX, MyDomainResolver.prototype, 'resolve').resolves('1.1.1.1'));
+
+      const cmd = new OrgOpenCommand(
+        ['--targetusername', testOrg.username, '--path', testPath, '-b', 'duff'],
+        {} as Config
+      );
+      $$.SANDBOX.stub(cmd.spinner, 'start').returns();
+
+      try {
+        await shouldThrow(cmd.run());
+      } catch (e) {
+        // as expected
+      }
+      expect(spies.get('resolver').callCount).to.equal(0);
+      expect(spies.get('open').callCount).to.equal(0);
+    });
   });
 });

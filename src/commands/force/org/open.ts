@@ -73,11 +73,11 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
 
     if (flags.urlonly) {
       // this includes the URL
-      this.log(messages.getMessage('humanSuccess', [orgId, username, url]));
+      this.logSuccess(messages.getMessage('humanSuccess', [orgId, username, url]));
       return output;
     }
 
-    this.log(messages.getMessage('humanSuccessNoUrl', [orgId, username]));
+    this.logSuccess(messages.getMessage('humanSuccessNoUrl', [orgId, username]));
     // we actually need to open the org
     try {
       this.spinner.start(messages.getMessage('domainWaiting'));

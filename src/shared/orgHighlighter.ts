@@ -35,7 +35,7 @@ export const getStyledValue = (key: string, value: string): string => {
 };
 
 export const getStyledObject = (
-  objectToStyle: ExtendedAuthFields | FullyPopulatedScratchOrgFields
+  objectToStyle: ExtendedAuthFields | FullyPopulatedScratchOrgFields | Record<string, string>
 ): Record<string, string> => {
   const clonedObject = { ...objectToStyle };
   return Object.fromEntries(

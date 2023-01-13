@@ -12,7 +12,7 @@ import {
   optionalOrgFlagWithDeprecations,
   orgApiVersionFlagWithDeprecations,
   parseVarArgs,
-  requiredHubFlagWithDeprecations,
+  optionalHubFlagWithDeprecations,
 } from '@salesforce/sf-plugins-core';
 import {
   AuthFields,
@@ -56,7 +56,7 @@ export class Create extends SfCommand<SandboxProcessObject | ScratchOrgProcessOb
   public static readonly aliases = ['force:org:beta:create'];
   public static readonly flags = {
     'target-org': optionalOrgFlagWithDeprecations,
-    'target-dev-hub': { ...requiredHubFlagWithDeprecations, required: false },
+    'target-dev-hub': optionalHubFlagWithDeprecations,
     'api-version': orgApiVersionFlagWithDeprecations,
     type: Flags.enum({
       char: 't',
@@ -243,11 +243,11 @@ export class Create extends SfCommand<SandboxProcessObject | ScratchOrgProcessOb
     // If the user supplied a specific client ID, we have no way of knowing if it's
     // a certificate-based Connected App or not. Therefore, we have to assume that
     // we'll need the client secret, so prompt the user for it.
-    const { secret } = this.flags.clientid
-      ? await this.prompt<{ secret: string }>([
-          { name: 'secret', type: 'mask', message: messages.getMessage('secretPrompt') },
+    const { clientSecret } = this.flags.clientid
+      ? await this.prompt<{ clientSecret: string }>([
+          { name: 'clientSecret', type: 'mask', message: messages.getMessage('secretPrompt') },
         ])
-      : { secret: undefined };
+      : { clientSecret: undefined };
 
     const createCommandOptions: ScratchOrgRequest = {
       connectedAppConsumerKey: this.flags.clientid,
@@ -259,7 +259,7 @@ export class Create extends SfCommand<SandboxProcessObject | ScratchOrgProcessOb
       apiversion: this.flags['api-version'],
       definitionfile: this.flags.definitionfile,
       orgConfig: this.varArgs,
-      clientSecret: secret,
+      clientSecret,
       setDefault: this.flags.setdefaultusername === true,
       alias: this.flags.setalias,
       tracksSource: true,

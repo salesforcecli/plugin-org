@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { Flags, SfCommand, requiredOrgFlagWithDeprecations } from '@salesforce/sf-plugins-core';
-import { AuthInfo, Messages, Org, sfdc, SfError } from '@salesforce/core';
+import { Flags, SfCommand, requiredOrgFlagWithDeprecations, loglevel } from '@salesforce/sf-plugins-core';
+import { AuthInfo, Messages, Org, sfdc, SfError, trimTo15 } from '@salesforce/core';
 import { camelCaseToTitleCase } from '@salesforce/kit';
 import { AuthFieldsFromFS, OrgDisplayReturn, ScratchOrgFields } from '../../../shared/orgTypes';
 import { getAliasByUsername } from '../../../shared/utils';
@@ -23,9 +23,11 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
 
   public static readonly flags = {
     'target-org': requiredOrgFlagWithDeprecations,
+
     verbose: Flags.boolean({
       summary: messages.getMessage('flags.verbose'),
     }),
+    loglevel,
   };
 
   private org!: Org;
@@ -96,8 +98,7 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
     const hubOrg = await this.org.getDevHubOrg();
     // we know this is a scratch org so it must have a hubOrg and that'll have a username
     const hubUsername = hubOrg?.getUsername() as string;
-    const result = // it's a string because orgId is a string.  `as` should disappear once
-      (await OrgListUtil.retrieveScratchOrgInfoFromDevHub(hubUsername, [sfdc.trimTo15(orgId) as string]))[0];
+    const result = (await OrgListUtil.retrieveScratchOrgInfoFromDevHub(hubUsername, [trimTo15(orgId)]))[0];
 
     if (result) {
       return {

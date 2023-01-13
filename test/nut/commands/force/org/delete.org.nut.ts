@@ -6,7 +6,7 @@
  */
 import { join } from 'path';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
-import { expect } from '@salesforce/command/lib/test';
+import { expect } from 'chai';
 // these NUTs are separated from org.nuts.ts because deleting orgs may interfere with the other NUTs
 describe('Delete Orgs', () => {
   let session: TestSession;

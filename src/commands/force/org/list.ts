@@ -15,7 +15,11 @@ import { ExtendedAuthFields, FullyPopulatedScratchOrgFields } from '../../../sha
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'list');
 
-export class OrgListCommand extends SfCommand<unknown> {
+export type OrgListResult = {
+  nonScratchOrgs: ExtendedAuthFields[];
+  scratchOrgs: FullyPopulatedScratchOrgFields[];
+};
+export class OrgListCommand extends SfCommand<OrgListResult> {
   public static readonly summary = messages.getMessage('description');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
@@ -43,23 +47,9 @@ export class OrgListCommand extends SfCommand<unknown> {
 
   private flags!: Interfaces.InferredFlags<typeof OrgListCommand.flags>;
 
-  public async run(): Promise<unknown> {
-    const { flags } = await this.parse(OrgListCommand);
+  public async run(): Promise<OrgListResult> {
+    const [{ flags }, fileNames] = await Promise.all([this.parse(OrgListCommand), getAuthFileNames()]);
     this.flags = flags;
-    let fileNames: string[] = [];
-    try {
-      fileNames = (await AuthInfo.listAllAuthorizations()).map((auth) => auth.username);
-    } catch (err) {
-      const error = err as SfError;
-      if (error.name === 'NoAuthInfoFound') {
-        throw new SfError(messages.getMessage('noOrgsFound'), 'noOrgsFound', [
-          messages.getMessage('noOrgsFoundAction'),
-        ]);
-      } else {
-        throw error;
-      }
-    }
-
     const metaConfigs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
     const groupedSortedOrgs = {
       nonScratchOrgs: metaConfigs.nonScratchOrgs.map(decorateWithDefaultStatus).sort(comparator),
@@ -237,4 +227,16 @@ const comparator = <T extends ExtendedAuthFields | FullyPopulatedScratchOrgField
     return 1;
   }
   return 0;
+};
+const getAuthFileNames = async (): Promise<string[]> => {
+  try {
+    return ((await AuthInfo.listAllAuthorizations()) ?? []).map((auth) => auth.username);
+  } catch (err) {
+    const error = err as SfError;
+    if (error.name === 'NoAuthInfoFound') {
+      throw new SfError(messages.getMessage('noOrgsFound'), 'noOrgsFound', [messages.getMessage('noOrgsFoundAction')]);
+    } else {
+      throw error;
+    }
+  }
 };

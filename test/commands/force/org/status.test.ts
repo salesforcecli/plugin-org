@@ -5,25 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import {
-  Org,
-  // OrgConfigProperties,
-  // SfdxConfigAggregator,
-  // StateAggregator,
-  // ConfigAggregator,
-  Lifecycle,
-  // SandboxEvents,
-  SandboxProcessObject,
-} from '@salesforce/core';
-import {
-  // fromStub,
-  // stubInterface,
-  stubMethod,
-} from '@salesforce/ts-sinon';
-import {
-  // assert,
-  expect,
-} from 'chai';
+import { Org, Lifecycle, SandboxProcessObject } from '@salesforce/core';
+import { stubMethod } from '@salesforce/ts-sinon';
+import { expect } from 'chai';
 
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 
@@ -66,7 +50,6 @@ describe('org:status', () => {
   // stubs
   let uxTableStub: sinon.SinonStub;
   let onStub: sinon.SinonStub;
-  // let configAggregatorStub;
   let testOrg = new MockTestOrgData();
 
   beforeEach(async () => {
