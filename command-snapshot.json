@@ -35,36 +35,36 @@
       "type",
       "wait"
     ],
-    "alias": ["force:org:beta:create"]
+    "alias": []
   },
   {
     "command": "force:org:delete",
     "plugin": "@salesforce/plugin-org",
-    "flags": ["api-version", "json", "loglevel", "noprompt", "target-org"],
-    "alias": []
-  },
-  {
-    "command": "force:org:display",
-    "plugin": "@salesforce/plugin-org",
-    "flags": ["api-version", "json", "loglevel", "target-org", "verbose"],
-    "alias": []
-  },
-  {
-    "command": "force:org:list",
-    "plugin": "@salesforce/plugin-org",
-    "flags": ["all", "clean", "json", "loglevel", "noprompt", "skipconnectionstatus", "verbose"],
-    "alias": []
-  },
-  {
-    "command": "force:org:open",
-    "plugin": "@salesforce/plugin-org",
-    "flags": ["api-version", "browser", "json", "loglevel", "path", "target-org", "urlonly"],
+    "flags": ["api-version", "json", "loglevel", "no-prompt", "target-org"],
     "alias": []
   },
   {
     "command": "force:org:status",
     "plugin": "@salesforce/plugin-org",
     "flags": ["api-version", "json", "loglevel", "sandboxname", "setalias", "setdefaultusername", "target-org", "wait"],
+    "alias": []
+  },
+  {
+    "command": "org:display",
+    "plugin": "@salesforce/plugin-org",
+    "flags": ["api-version", "json", "loglevel", "target-org", "verbose"],
+    "alias": ["force:org:display"]
+  },
+  {
+    "command": "org:list",
+    "plugin": "@salesforce/plugin-org",
+    "flags": ["all", "clean", "json", "loglevel", "no-prompt", "skip-connection-status", "verbose"],
+    "alias": []
+  },
+  {
+    "command": "org:open",
+    "plugin": "@salesforce/plugin-org",
+    "flags": ["api-version", "browser", "json", "loglevel", "path", "target-org", "url-only"],
     "alias": []
   }
 ]

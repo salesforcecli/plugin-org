@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/DeleteResult",
+  "definitions": {
+    "DeleteResult": {
+      "type": "object",
+      "properties": {
+        "errors": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Error"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": ["string", "null"]
+        },
+        "success": {
+          "type": "boolean"
+        }
+      },
+      "required": ["success"],
+      "additionalProperties": false
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "extendedErrorDetails": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ExtendedErrorDetails"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "statusCode": {
+          "type": "string"
+        }
+      },
+      "required": ["message", "statusCode"],
+      "additionalProperties": false
+    },
+    "ExtendedErrorDetails": {
+      "type": "object",
+      "properties": {
+        "extendedErrorCode": {
+          "type": "string"
+        }
+      },
+      "required": ["extendedErrorCode"],
+      "additionalProperties": false
+    }
+  }
+}

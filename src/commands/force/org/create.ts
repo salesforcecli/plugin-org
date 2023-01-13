@@ -47,7 +47,8 @@ export interface ScratchOrgProcessObject {
   orgId: string;
 }
 
-export class Create extends SfCommand<SandboxProcessObject | ScratchOrgProcessObject> {
+export type CreateResult = ScratchOrgProcessObject | SandboxProcessObject;
+export class Create extends SfCommand<CreateResult> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
@@ -122,7 +123,7 @@ export class Create extends SfCommand<SandboxProcessObject | ScratchOrgProcessOb
   private varArgs: Record<string, string | undefined> = {};
   private flags!: Interfaces.InferredFlags<typeof Create.flags>;
 
-  public async run(): Promise<SandboxProcessObject | ScratchOrgProcessObject> {
+  public async run(): Promise<CreateResult> {
     const { flags, args, argv } = await this.parse(Create);
     this.flags = flags;
     this.varArgs = parseVarArgs(args, argv);
