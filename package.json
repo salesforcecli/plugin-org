@@ -1,7 +1,7 @@
 {
   "name": "@salesforce/plugin-org",
   "description": "Commands to interact with Salesforce orgs",
-  "version": "2.2.20",
+  "version": "2.2.22",
   "author": "Salesforce",
   "main": "lib/index.js",
   "bugs": "https://github.com/forcedotcom/cli/issues",
@@ -14,7 +14,7 @@
     "tslib": "^2"
   },
   "devDependencies": {
-    "@oclif/plugin-command-snapshot": "^3.2.13",
+    "@oclif/plugin-command-snapshot": "^3.2.16",
     "@oclif/test": "^2.2.15",
     "@salesforce/cli-plugins-testkit": "^3.2.15",
     "@salesforce/dev-config": "^3.1.0",
@@ -29,7 +29,7 @@
     "@typescript-eslint/parser": "^5.46.0",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
-    "eslint": "^8.30.0",
+    "eslint": "^8.31.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-salesforce": "^1.1.0",
     "eslint-config-salesforce-license": "^0.1.6",
@@ -43,7 +43,7 @@
     "moment": "^2.29.1",
     "nyc": "^15.1.0",
     "oclif": "^3.4.3",
-    "prettier": "^2.8.1",
+    "prettier": "^2.8.2",
     "pretty-quick": "^3.1.0",
     "shelljs": "^0.8.5",
     "shx": "0.3.4",
