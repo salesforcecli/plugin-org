@@ -3,13 +3,13 @@
     "command": "force:org:clone",
     "plugin": "@salesforce/plugin-org",
     "flags": [
-      "apiversion",
+      "api-version",
       "definitionfile",
       "json",
       "loglevel",
       "setalias",
       "setdefaultusername",
-      "targetusername",
+      "target-org",
       "type",
       "wait"
     ],
@@ -19,7 +19,7 @@
     "command": "force:org:create",
     "plugin": "@salesforce/plugin-org",
     "flags": [
-      "apiversion",
+      "api-version",
       "clientid",
       "definitionfile",
       "durationdays",
@@ -30,8 +30,8 @@
       "retry",
       "setalias",
       "setdefaultusername",
-      "targetdevhubusername",
-      "targetusername",
+      "target-dev-hub",
+      "target-org",
       "type",
       "wait"
     ],
@@ -40,13 +40,13 @@
   {
     "command": "force:org:delete",
     "plugin": "@salesforce/plugin-org",
-    "flags": ["apiversion", "json", "loglevel", "noprompt", "targetdevhubusername", "targetusername"],
+    "flags": ["api-version", "json", "loglevel", "noprompt", "target-org"],
     "alias": []
   },
   {
     "command": "force:org:display",
     "plugin": "@salesforce/plugin-org",
-    "flags": ["apiversion", "json", "loglevel", "targetusername", "verbose"],
+    "flags": ["api-version", "json", "loglevel", "target-org", "verbose"],
     "alias": []
   },
   {
@@ -58,22 +58,13 @@
   {
     "command": "force:org:open",
     "plugin": "@salesforce/plugin-org",
-    "flags": ["apiversion", "browser", "json", "loglevel", "path", "targetusername", "urlonly"],
+    "flags": ["api-version", "browser", "json", "loglevel", "path", "target-org", "urlonly"],
     "alias": []
   },
   {
     "command": "force:org:status",
     "plugin": "@salesforce/plugin-org",
-    "flags": [
-      "apiversion",
-      "json",
-      "loglevel",
-      "sandboxname",
-      "setalias",
-      "setdefaultusername",
-      "targetusername",
-      "wait"
-    ],
+    "flags": ["api-version", "json", "loglevel", "sandboxname", "setalias", "setdefaultusername", "target-org", "wait"],
     "alias": []
   }
 ]

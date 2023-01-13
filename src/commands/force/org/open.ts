@@ -10,6 +10,7 @@ import {
   SfCommand,
   requiredOrgFlagWithDeprecations,
   orgApiVersionFlagWithDeprecations,
+  loglevel,
 } from '@salesforce/sf-plugins-core';
 import { Logger, Messages, Org, SfdcUrl, SfError } from '@salesforce/core';
 import { Duration, Env } from '@salesforce/kit';
@@ -44,6 +45,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
       char: 'r',
       summary: messages.getMessage('urlonly'),
     }),
+    loglevel,
   };
 
   private org!: Org;

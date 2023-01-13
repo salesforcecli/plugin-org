@@ -5,7 +5,14 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { Flags, SfCommand, requiredOrgFlagWithDeprecations, parseVarArgs } from '@salesforce/sf-plugins-core';
+import {
+  Flags,
+  SfCommand,
+  requiredOrgFlagWithDeprecations,
+  parseVarArgs,
+  orgApiVersionFlagWithDeprecations,
+  loglevel,
+} from '@salesforce/sf-plugins-core';
 import {
   SfError,
   Config,
@@ -37,6 +44,7 @@ export class OrgCloneCommand extends SfCommand<SandboxProcessObject> {
 
   public static readonly flags = {
     'target-org': requiredOrgFlagWithDeprecations,
+    'api-version': orgApiVersionFlagWithDeprecations,
     type: Flags.enum({
       char: 't',
       summary: messages.getMessage('flags.type'),
@@ -64,6 +72,7 @@ export class OrgCloneCommand extends SfCommand<SandboxProcessObject> {
       min: 2,
       defaultValue: 6,
     }),
+    loglevel,
   };
 
   public async run(): Promise<SandboxProcessObject> {
@@ -112,6 +121,7 @@ export class OrgCloneCommand extends SfCommand<SandboxProcessObject> {
       const { sandboxReq, srcSandboxName } = await createSandboxRequest(true, flags.definitionfile, logger, varargs);
 
       logger.debug('Calling clone with SandboxRequest: %s and SandboxName: %s ', sandboxReq, srcSandboxName);
+      flags['target-org'].getConnection(flags['api-version']);
       return flags['target-org'].cloneSandbox(sandboxReq, srcSandboxName, { wait: flags.wait });
     } else {
       throw new SfError(

@@ -5,7 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { Flags, SfCommand, requiredOrgFlagWithDeprecations, loglevel } from '@salesforce/sf-plugins-core';
+import {
+  Flags,
+  SfCommand,
+  requiredOrgFlagWithDeprecations,
+  loglevel,
+  orgApiVersionFlagWithDeprecations,
+} from '@salesforce/sf-plugins-core';
 import { AuthInfo, Messages, Org, sfdc, SfError, trimTo15 } from '@salesforce/core';
 import { camelCaseToTitleCase } from '@salesforce/kit';
 import { AuthFieldsFromFS, OrgDisplayReturn, ScratchOrgFields } from '../../../shared/orgTypes';
@@ -23,7 +29,7 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
 
   public static readonly flags = {
     'target-org': requiredOrgFlagWithDeprecations,
-
+    'api-version': orgApiVersionFlagWithDeprecations,
     verbose: Flags.boolean({
       summary: messages.getMessage('flags.verbose'),
     }),
@@ -35,6 +41,7 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
   public async run(): Promise<OrgDisplayReturn> {
     const { flags } = await this.parse(OrgDisplayCommand);
     this.org = flags['target-org'];
+    this.org.getConnection(flags['api-version']);
     try {
       // the auth file might have a stale access token.  We want to refresh it before getting the fields
       await this.org.refreshAuth();

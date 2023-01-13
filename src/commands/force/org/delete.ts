@@ -4,7 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Flags, SfCommand, requiredOrgFlagWithDeprecations } from '@salesforce/sf-plugins-core';
+import {
+  Flags,
+  SfCommand,
+  requiredOrgFlagWithDeprecations,
+  orgApiVersionFlagWithDeprecations,
+  loglevel,
+} from '@salesforce/sf-plugins-core';
 import { Messages } from '@salesforce/core';
 
 Messages.importMessagesDirectory(__dirname);
@@ -21,16 +27,20 @@ export class Delete extends SfCommand<DeleteResult> {
   public static readonly examples = messages.getMessages('examples');
   public static readonly flags = {
     'target-org': requiredOrgFlagWithDeprecations,
+    'api-version': orgApiVersionFlagWithDeprecations,
     noprompt: Flags.boolean({
       char: 'p',
       summary: messages.getMessage('flags.noprompt'),
     }),
+    loglevel,
   };
 
   public async run(): Promise<DeleteResult> {
     const { flags } = await this.parse(Delete);
     const username = flags['target-org'].getUsername() ?? 'unknown username';
     const orgId = flags['target-org'].getOrgId();
+    // the connection version can be set before using it to isSandbox and delete
+    flags['target-org'].getConnection(flags['api-version']);
     const isSandbox = await flags['target-org'].isSandbox();
     // read the config file for the org to be deleted, if it has a PROD_ORG_USERNAME entry, it's a sandbox
     // we either need permission to proceed without a prompt OR get the user to confirm

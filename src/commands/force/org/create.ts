@@ -13,6 +13,7 @@ import {
   orgApiVersionFlagWithDeprecations,
   parseVarArgs,
   optionalHubFlagWithDeprecations,
+  loglevel,
 } from '@salesforce/sf-plugins-core';
 import {
   AuthFields,
@@ -58,6 +59,7 @@ export class Create extends SfCommand<SandboxProcessObject | ScratchOrgProcessOb
     'target-org': optionalOrgFlagWithDeprecations,
     'target-dev-hub': optionalHubFlagWithDeprecations,
     'api-version': orgApiVersionFlagWithDeprecations,
+    loglevel,
     type: Flags.enum({
       char: 't',
       summary: messages.getMessage('flags.type'),

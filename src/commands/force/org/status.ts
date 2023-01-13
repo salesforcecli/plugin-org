@@ -5,7 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { Flags, SfCommand, requiredOrgFlagWithDeprecations } from '@salesforce/sf-plugins-core';
+import {
+  Flags,
+  SfCommand,
+  requiredOrgFlagWithDeprecations,
+  orgApiVersionFlagWithDeprecations,
+  loglevel,
+} from '@salesforce/sf-plugins-core';
 import {
   Config,
   Lifecycle,
@@ -31,6 +37,7 @@ export class OrgStatusCommand extends SfCommand<SandboxProcessObject> {
 
   public static readonly flags = {
     'target-org': requiredOrgFlagWithDeprecations,
+    'api-version': orgApiVersionFlagWithDeprecations,
     sandboxname: Flags.string({
       char: 'n',
       summary: messages.getMessage('flags.sandboxname'),
@@ -51,10 +58,12 @@ export class OrgStatusCommand extends SfCommand<SandboxProcessObject> {
       min: 2,
       defaultValue: 6,
     }),
+    loglevel,
   };
 
   public async run(): Promise<SandboxProcessObject> {
     const { flags } = await this.parse(OrgStatusCommand);
+    flags['target-org'].getConnection(flags['api-version']);
     const logger = await Logger.child(this.constructor.name);
     logger.debug('Status started with args %s ', flags);
     const lifecycle = Lifecycle.getInstance();
