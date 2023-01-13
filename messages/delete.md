@@ -4,7 +4,7 @@ Delete a scratch org or sandbox.
 
 # deprecation
 
-The force:org:delete command is deprecated and will be removed in version 63.0 or later. Use org:delete:scratch or org:delete:sandbox.
+The force:org:delete command is deprecated. Use org:delete:scratch or org:delete:sandbox.
 
 # description
 
