@@ -17,7 +17,7 @@ import { Config } from '@oclif/core';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { MockTestOrgData, TestContext, shouldThrow } from '@salesforce/core/lib/testSetup';
 import * as utils from '../../../../src/shared/utils';
-import { OrgOpenCommand, OrgOpenOutput } from '../../../../src/commands/force/org/open';
+import { OrgOpenCommand, OrgOpenOutput } from '../../../../src/commands/org/open';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');

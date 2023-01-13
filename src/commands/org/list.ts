@@ -8,9 +8,9 @@
 import { Flags, loglevel, SfCommand } from '@salesforce/sf-plugins-core';
 import { AuthInfo, ConfigAggregator, ConfigInfo, Connection, Org, SfError, Messages, Logger } from '@salesforce/core';
 import { Interfaces } from '@oclif/core';
-import { OrgListUtil, identifyActiveOrgByStatus } from '../../../shared/orgListUtil';
-import { getStyledObject } from '../../../shared/orgHighlighter';
-import { ExtendedAuthFields, FullyPopulatedScratchOrgFields } from '../../../shared/orgTypes';
+import { OrgListUtil, identifyActiveOrgByStatus } from '../../shared/orgListUtil';
+import { getStyledObject } from '../../shared/orgHighlighter';
+import { ExtendedAuthFields, FullyPopulatedScratchOrgFields } from '../../shared/orgTypes';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'list');
@@ -23,7 +23,7 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
   public static readonly summary = messages.getMessage('description');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
-  public static readonly requiresProject = false;
+
   public static readonly flags = {
     verbose: Flags.boolean({
       summary: messages.getMessage('verbose'),
@@ -34,19 +34,24 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
     clean: Flags.boolean({
       summary: messages.getMessage('clean'),
     }),
-    noprompt: Flags.boolean({
+    'no-prompt': Flags.boolean({
       char: 'p',
       summary: messages.getMessage('noPrompt'),
       dependsOn: ['clean'],
+      aliases: ['noprompt'],
+      deprecateAliases: true,
     }),
-    skipconnectionstatus: Flags.boolean({
+    'skip-connection-status': Flags.boolean({
       summary: messages.getMessage('skipConnectionStatus'),
+      aliases: ['skipconnectionstatus'],
+      deprecateAliases: true,
     }),
     loglevel,
   };
 
   private flags!: Interfaces.InferredFlags<typeof OrgListCommand.flags>;
 
+  // eslint-disable-next-line sf-plugin/should-parse-flags
   public async run(): Promise<OrgListResult> {
     const [{ flags }, fileNames] = await Promise.all([this.parse(OrgListCommand), getAuthFileNames()]);
     this.flags = flags;
@@ -58,7 +63,7 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
     };
 
     if (flags.clean && groupedSortedOrgs.expiredScratchOrgs.length > 0) {
-      await this.cleanScratchOrgs(groupedSortedOrgs.expiredScratchOrgs, !flags.noprompt);
+      await this.cleanScratchOrgs(groupedSortedOrgs.expiredScratchOrgs, !flags['no-prompt']);
     }
 
     if (groupedSortedOrgs.expiredScratchOrgs.length > 10 && !flags.clean) {
@@ -72,7 +77,7 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
         : groupedSortedOrgs.scratchOrgs.filter(identifyActiveOrgByStatus),
     };
 
-    this.printOrgTable(result.nonScratchOrgs, flags.skipconnectionstatus);
+    this.printOrgTable(result.nonScratchOrgs, flags['skip-connection-status']);
 
     this.printScratchOrgTable(result.scratchOrgs);
 

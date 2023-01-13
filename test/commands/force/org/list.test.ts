@@ -15,7 +15,7 @@ import { stubMethod } from '@salesforce/ts-sinon';
 import { Config } from '@oclif/core';
 import { SfCommand } from '@salesforce/sf-plugins-core';
 import OrgListMock = require('../../../shared/orgListMock');
-import { OrgListCommand } from '../../../../src/commands/force/org/list';
+import { OrgListCommand } from '../../../../src/commands/org/list';
 import { OrgListUtil } from '../../../../src/shared/orgListUtil';
 
 ChaiUse(chaiAsPromised);

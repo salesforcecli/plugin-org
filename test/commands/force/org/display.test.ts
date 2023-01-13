@@ -10,7 +10,7 @@ import { Config } from '@oclif/core';
 import { Connection } from '@salesforce/core';
 import { OrgDisplayReturn } from '../../../../src/shared/orgTypes';
 import { OrgListUtil } from '../../../../src/shared/orgListUtil';
-import { OrgDisplayCommand } from '../../../../src/commands/force/org/display';
+import { OrgDisplayCommand } from '../../../../src/commands/org/display';
 
 chaiConfig.truncateThreshold = 0;
 

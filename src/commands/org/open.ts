@@ -15,7 +15,7 @@ import {
 import { Logger, Messages, Org, SfdcUrl, SfError } from '@salesforce/core';
 import { Duration, Env } from '@salesforce/kit';
 import open = require('open');
-import { openUrl } from '../../../shared/utils';
+import { openUrl } from '../../shared/utils';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
@@ -33,7 +33,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
       char: 'b',
       summary: messages.getMessage('browser'),
       options: ['chrome', 'edge', 'firefox'], // These are ones supported by "open" package
-      exclusive: ['urlonly'],
+      exclusive: ['url-only'],
     }),
     path: Flags.string({
       char: 'p',
@@ -41,9 +41,11 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
       env: 'FORCE_OPEN_URL',
       parse: (input: string): Promise<string> => Promise.resolve(encodeURIComponent(decodeURIComponent(input))),
     }),
-    urlonly: Flags.boolean({
+    'url-only': Flags.boolean({
       char: 'r',
       summary: messages.getMessage('urlonly'),
+      aliases: ['urlonly'],
+      deprecateAliases: true,
     }),
     loglevel,
   };
@@ -61,7 +63,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
     const containerMode = new Env().getBoolean('SFDX_CONTAINER_MODE');
 
     // security warning only for --json OR --urlonly OR containerMode
-    if (flags.urlonly || flags.json || containerMode) {
+    if (flags['url-only'] || flags.json || containerMode) {
       this.warn(sharedMessages.getMessage('SecurityWarning'));
       this.log('');
     }
@@ -73,7 +75,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
       return output;
     }
 
-    if (flags.urlonly) {
+    if (flags['url-only']) {
       // this includes the URL
       this.logSuccess(messages.getMessage('humanSuccess', [orgId, username, url]));
       return output;
