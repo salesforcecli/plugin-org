@@ -65,8 +65,10 @@ describe('org:delete', () => {
     $$.SANDBOX.stub(Org.prototype, 'delete').resolves();
     const res = await runDeleteCommand(['--noprompt']);
     expect(uxConfirmStub.called).to.equal(false);
-    expect(uxLogStub.callCount).to.equal(1);
-    expect(uxLogStub.firstCall.args[0]).to.equal(messages.getMessage('deleteOrgCommandSuccess', [testOrg.username]));
+    expect(uxLogStub.callCount).to.equal(2);
+    expect(uxLogStub.getCalls().flatMap((call) => call.args)).to.deep.include(
+      messages.getMessage('deleteOrgCommandSuccess', [testOrg.username])
+    );
     expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
   });
 
@@ -75,8 +77,10 @@ describe('org:delete', () => {
     $$.SANDBOX.stub(Org.prototype, 'delete').resolves();
     const res = await runDeleteCommand(['--noprompt']);
     expect(uxConfirmStub.called).to.equal(false);
-    expect(uxLogStub.callCount).to.equal(1);
-    expect(uxLogStub.firstCall.args[0]).to.equal(messages.getMessage('commandSandboxSuccess', [testOrg.username]));
+    expect(uxLogStub.callCount).to.equal(2);
+    expect(uxLogStub.getCalls().flatMap((call) => call.args)).to.deep.include(
+      messages.getMessage('commandSandboxSuccess', [testOrg.username])
+    );
     expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
   });
 
@@ -86,7 +90,7 @@ describe('org:delete', () => {
     const res = await runDeleteCommand(['--noprompt']);
     expect(uxConfirmStub.called).to.equal(false);
     expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
-    expect(uxLogStub.firstCall.args[0]).to.equal(
+    expect(uxLogStub.getCalls().flatMap((call) => call.args)).to.deep.include(
       messages.getMessage('deleteOrgConfigOnlyCommandSuccess', [testOrg.username])
     );
   });
@@ -97,6 +101,8 @@ describe('org:delete', () => {
     const res = await runDeleteCommand(['--noprompt']);
     expect(uxConfirmStub.called).to.equal(false);
     expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
-    expect(uxLogStub.firstCall.args[0]).to.equal(messages.getMessage('sandboxConfigOnlySuccess', [testOrg.username]));
+    expect(uxLogStub.getCalls().flatMap((call) => call.args)).to.deep.include(
+      messages.getMessage('sandboxConfigOnlySuccess', [testOrg.username])
+    );
   });
 });

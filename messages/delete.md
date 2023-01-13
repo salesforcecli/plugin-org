@@ -1,6 +1,14 @@
+# summary
+
+Delete a scratch org or sandbox.
+
+# deprecation
+
+The force:org:delete command is deprecated and will be removed in version 63.0 or later. Use org:delete:scratch or org:delete:sandbox.
+
 # description
 
-mark a scratch or sandbox org for deletion 
+mark a scratch or sandbox org for deletion
 To mark the org for deletion without being prompted to confirm, specify --noprompt.
 
 # examples
@@ -15,7 +23,7 @@ no prompt to confirm deletion
 
 # confirmDelete
 
-Enqueue %s org with name: %s for deletion?  Are you sure (y/n)?
+Enqueue %s org with name: %s for deletion? Are you sure (y/n)?
 
 # sandboxConfigOnlySuccess
 
@@ -35,4 +43,4 @@ Successfully marked scratch org %s for deletion
 
 # commandSandboxSuccess
 
-The sandbox org %s has been successfully removed from your list of CLI authorized orgs.  If you created the sandbox with one of the force:org commands, it has also been marked for deletion.
+The sandbox org %s has been successfully removed from your list of CLI authorized orgs. If you created the sandbox with one of the force:org commands, it has also been marked for deletion.

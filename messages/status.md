@@ -1,3 +1,7 @@
+# summary
+
+Check the status of a sandbox, and if complete, authenticate to it.
+
 # examples
 
 - $ sfdx force:org:status --sandboxname DevSbx1 --setalias MySandbox -u prodOrg

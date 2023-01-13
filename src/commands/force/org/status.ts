@@ -30,10 +30,14 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'status');
 
 export class OrgStatusCommand extends SfCommand<SandboxProcessObject> {
-  public static readonly examples = messages.getMessages('examples');
-  public static readonly summary = messages.getMessage('description');
+  public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
-  public static readonly requiresProject = false;
+  public static readonly examples = messages.getMessages('examples');
+  public static state = 'deprecated';
+  public static deprecationOptions = {
+    to: 'org:resume:sandbox',
+    version: '60.0',
+  };
 
   public static readonly flags = {
     'target-org': requiredOrgFlagWithDeprecations,

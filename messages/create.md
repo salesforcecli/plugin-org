@@ -1,6 +1,14 @@
+# summary
+
+Create a scratch org or sandbox.
+
+# deprecation
+
+The force:org:create command is deprecated and will be removed in version 63.0 or later. Use org:create:scratch or org:create:sandbox.
+
 # description
 
-create a scratch or sandbox org 
+create a scratch or sandbox org
 Creates a scratch org or a sandbox org using the values specified in a configuration file or key=value pairs that you specify on the command line. Values specified on the command line override values in the configuration file. Specify a configuration file or provide key=value pairs while creating a scratch org or a sandbox. When creating scratch orgs, —targetdevhubusername (-v) must be a Dev Hub org. When creating sandboxes, the --targetusername (-u) must be a production org with sandbox licenses. The —type (-t) is required if creating a sandbox.
 
 # examples
@@ -95,7 +103,7 @@ This command requires a username. Specify it with the -u parameter or with the "
 
 # missingLicenseType
 
-The sandbox license type is required, but you didn't provide a value.  Specify the license type in the sandbox definition file with the "licenseType" option, or specify the option as a name-value pair at the command-line.  See https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_sandbox_definition.htm for more information.
+The sandbox license type is required, but you didn't provide a value. Specify the license type in the sandbox definition file with the "licenseType" option, or specify the option as a name-value pair at the command-line. See https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_sandbox_definition.htm for more information.
 
 # dnsTimeout
 
@@ -103,7 +111,7 @@ The sandbox was successfully created and authenticated. However, the sandbox DNS
 
 # partialSuccess
 
-If you specified the -a or -s parameters, but the sandbox wasn't immediately available, the "force:org:create" command may not have finished setting the alias or defaultusername. If so, set the alias manually with "sfdx alias:set"  and the defaultusername with "sfdx config:set".
+If you specified the -a or -s parameters, but the sandbox wasn't immediately available, the "force:org:create" command may not have finished setting the alias or defaultusername. If so, set the alias manually with "sfdx alias:set" and the defaultusername with "sfdx config:set".
 
 # noConfig
 

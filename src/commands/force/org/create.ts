@@ -48,13 +48,17 @@ export interface ScratchOrgProcessObject {
 }
 
 export class Create extends SfCommand<SandboxProcessObject | ScratchOrgProcessObject> {
-  public static readonly summary = messages.getMessage('description');
+  public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
+  public static state = 'deprecated';
+  public static deprecationOptions = {
+    message: messages.getMessage('deprecation'),
+  };
+
   // needed to allow varargs
   public static readonly strict = false;
 
-  public static readonly aliases = ['force:org:beta:create'];
   public static readonly flags = {
     'target-org': optionalOrgFlagWithDeprecations,
     'target-dev-hub': optionalHubFlagWithDeprecations,
