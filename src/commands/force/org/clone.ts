@@ -37,7 +37,6 @@ export class OrgCloneCommand extends SfCommand<SandboxProcessObject> {
   public static readonly examples = messages.getMessages('examples');
   public static readonly summary = messages.getMessage('description');
   public static readonly description = messages.getMessage('description');
-  public static readonly requiresProject = false;
   public static readonly strict = false;
 
   public static readonly SANDBOXDEF_SRC_SANDBOXNAME = 'SourceSandboxName';

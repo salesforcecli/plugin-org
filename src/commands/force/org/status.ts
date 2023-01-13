@@ -33,7 +33,6 @@ export class OrgStatusCommand extends SfCommand<SandboxProcessObject> {
   public static readonly examples = messages.getMessages('examples');
   public static readonly summary = messages.getMessage('description');
   public static readonly description = messages.getMessage('description');
-  public static readonly requiresProject = false;
 
   public static readonly flags = {
     'target-org': requiredOrgFlagWithDeprecations,
