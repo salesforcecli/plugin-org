@@ -77,6 +77,10 @@
       "@salesforce/plugin-command-reference"
     ],
     "topics": {
+      "org": {
+        "description": "manage your orgs",
+        "longDescription": "Use the org commands to manage the orgs you use with Salesforce CLI. Create and delete scratch orgs, list your created and authorized orgs, and open orgs in your browser."
+      },
       "force": {
         "external": true,
         "subtopics": {
