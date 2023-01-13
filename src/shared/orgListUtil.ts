@@ -205,7 +205,7 @@ export class OrgListUtil {
       ]);
 
       const extendedValue: ExtendedAuthFields | ExtendedAuthFieldsScratch = {
-        ...identifyDefaultOrgs(currentValue, config),
+        ...identifyDefaultOrgs({ ...currentValue, alias }, config),
         lastUsed: lastUsed.atime,
         alias,
       };
@@ -347,11 +347,15 @@ const identifyDefaultOrgs = (
   config: JsonMap
 ): ExtendedAuthFields | ExtendedAuthFieldsScratch => ({
   ...orgInfo,
-  ...(config['target-org'] && (orgInfo.username === config['target-org'] || orgInfo.alias === config['target-org'])
+  ...((config['target-org'] && (orgInfo.username === config['target-org'] || orgInfo.alias === config['target-org'])) ||
+  (config['defaultusername'] &&
+    (orgInfo.username === config['defaultusername'] || orgInfo.alias === config['defaultusername']))
     ? { isDefaultUsername: true }
     : {}),
-  ...(config['target-dev-hub'] &&
-  (orgInfo.username === config['target-dev-hub'] || orgInfo.alias === config['target-dev-hub'])
+  ...((config['target-dev-hub'] &&
+    (orgInfo.username === config['target-dev-hub'] || orgInfo.alias === config['target-dev-hub'])) ||
+  (config['defaultdevhubusername'] &&
+    (orgInfo.username === config['defaultdevhubusername'] || orgInfo.alias === config['defaultdevhubusername']))
     ? { isDefaultDevHubUsername: true }
     : {}),
 });
