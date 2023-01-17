@@ -52,12 +52,15 @@ export class Create extends SfCommand<CreateResult> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
-  public static state = 'deprecated';
-  public static deprecationOptions = {
-    message: messages.getMessage('deprecation'),
-  };
+
+  // TODO: deprecate when oclif bug is fixed
+  // public static state = 'deprecated';
+  // public static deprecationOptions = {
+  //   message: messages.getMessage('deprecation'),
+  // };
 
   // needed to allow varargs
+
   public static readonly strict = false;
 
   public static readonly flags = {
@@ -125,6 +128,7 @@ export class Create extends SfCommand<CreateResult> {
 
   public async run(): Promise<CreateResult> {
     const { flags, args, argv } = await this.parse(Create);
+
     this.flags = flags;
     this.varArgs = parseVarArgs(args, argv);
     this.logger = await Logger.child(this.constructor.name);
