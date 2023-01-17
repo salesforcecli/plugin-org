@@ -4,11 +4,11 @@ list all orgs you’ve created or authenticated to
 
 # examples
 
-- $ sfdx force:org:list
+- $ <%= config.bin %> <%= command.id %>
 
-- $ sfdx force:org:list --verbose --json
+- $ <%= config.bin %> <%= command.id %> --verbose --json
 
-- $ sfdx force:org:list --verbose --json > tmp/MyOrgList.json
+- $ <%= config.bin %> <%= command.id %> --verbose --json > tmp/MyOrgList.json
 
 # verbose
 
@@ -20,7 +20,7 @@ include expired, deleted, and unknown-status scratch orgs
 
 # clean
 
-remove all local org authorizations for non-active scratch orgs.  Use auth:logout to remove non-scratch orgs
+remove all local org authorizations for non-active scratch orgs. Use auth:logout to remove non-scratch orgs
 
 # noPrompt
 
@@ -40,7 +40,7 @@ No active scratch orgs found. Specify --all to see all scratch orgs
 
 # deleteOrgs
 
-You have %s expired or deleted local scratch org authorizations. To remove authorizations for inactive orgs, run force:org:list --clean.
+You have %s expired or deleted local scratch org authorizations. To remove authorizations for inactive orgs, run org:list --clean.
 
 # noOrgsFound
 
@@ -48,7 +48,7 @@ No orgs can be found.
 
 # noOrgsFoundAction
 
-Use one of the auth commands or force:org:create to add or create a scratch org.
+Use one of the auth commands or org:create:scratch to add or create a scratch org.
 
 # noResultsFound
 

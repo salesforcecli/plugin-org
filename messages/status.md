@@ -4,9 +4,9 @@ Check the status of a sandbox, and if complete, authenticate to it.
 
 # examples
 
-- $ sfdx force:org:status --sandboxname DevSbx1 --setalias MySandbox -u prodOrg
+- $ <%= config.bin %> <%= command.id %> --sandboxname DevSbx1 --setalias MySandbox -u prodOrg
 
-- $ sfdx force:org:status --sandboxname DevSbx1 --wait 45 --setdefaultusername -u prodOrg
+- $ <%= config.bin %> <%= command.id %> --sandboxname DevSbx1 --wait 45 --setdefaultusername -u prodOrg
 
 # description
 

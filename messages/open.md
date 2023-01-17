@@ -8,15 +8,15 @@ To open in a specific browser, use the --browser parameter. Supported browsers a
 
 # examples
 
-- $ sfdx force:org:open
+- $ <%= config.bin %> <%= command.id %>
 
-- $ sfdx force:org:open -u me@my.org
+- $ <%= config.bin %> <%= command.id %> -u me@my.org
 
-- $ sfdx force:org:open -u MyTestOrg1
+- $ <%= config.bin %> <%= command.id %> -u MyTestOrg1
 
-- $ sfdx force:org:open -r -p lightning
+- $ <%= config.bin %> <%= command.id %> -r -p lightning
 
-- $ sfdx force:org:open -u me@my.org -b firefox
+- $ <%= config.bin %> <%= command.id %> -u me@my.org -b firefox
 
 # browser
 
@@ -54,4 +54,4 @@ The Lightning Experience-enabled custom domain is unavailable.
 
 # domainTimeoutAction
 
-The Lightning Experience-enabled custom domain may take a few more minutes to resolve. Try the "force:org:open" command again.
+The Lightning Experience-enabled custom domain may take a few more minutes to resolve. Try the "org:open" command again.

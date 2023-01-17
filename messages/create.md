@@ -13,13 +13,13 @@ Creates a scratch org or a sandbox org using the values specified in a configura
 
 # examples
 
-- $ sfdx force:org:create -f config/enterprise-scratch-def.json -a MyScratchOrg
+- $ <%= config.bin %> <%= command.id %> -f config/enterprise-scratch-def.json -a MyScratchOrg
 
-- $ sfdx force:org:create edition=Developer -a MyScratchOrg -s -v devHub
+- $ <%= config.bin %> <%= command.id %> edition=Developer -a MyScratchOrg -s -v devHub
 
-- $ sfdx force:org:create -f config/enterprise-scratch-def.json -a ScratchOrgWithOverrides username=testuser1@mycompany.org
+- $ <%= config.bin %> <%= command.id %> -f config/enterprise-scratch-def.json -a ScratchOrgWithOverrides username=testuser1@mycompany.org
 
-- $ sfdx force:org:create -t sandbox -f config/dev-sandbox-def.json -a MyDevSandbox -u prodOrg
+- $ <%= config.bin %> <%= command.id %> -t sandbox -f config/dev-sandbox-def.json -a MyDevSandbox -u prodOrg
 
 # flags.clientId
 
@@ -107,7 +107,7 @@ The sandbox license type is required, but you didn't provide a value. Specify th
 
 # dnsTimeout
 
-The sandbox was successfully created and authenticated. However, the sandbox DNS records aren't ready yet and so the sandbox may not be available. Run "force:org:list" and check if the sandbox is listed correctly. If it isn't listed, run "force:org:status" to view its status and, if necessary, authenticate to it again. If this issue happens frequently, try setting the SFDX_DNS_TIMEOUT environment variable to a larger number; the default value is 3 seconds.
+The sandbox was successfully created and authenticated. However, the sandbox DNS records aren't ready yet and so the sandbox may not be available. Run "org:list" and check if the sandbox is listed correctly. If it isn't listed, run "force:org:status" to view its status and, if necessary, authenticate to it again. If this issue happens frequently, try setting the SFDX_DNS_TIMEOUT environment variable to a larger number; the default value is 3 seconds.
 
 # partialSuccess
 

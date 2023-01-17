@@ -13,9 +13,9 @@ To mark the org for deletion without being prompted to confirm, specify --noprom
 
 # examples
 
-- $ sfdx force:org:delete -u me@my.org
+- $ <%= config.bin %> <%= command.id %> -u me@my.org
 
-- $ sfdx force:org:delete -u MyOrgAlias -p
+- $ <%= config.bin %> <%= command.id %> -u MyOrgAlias -p
 
 # flags.noprompt
 

@@ -15,13 +15,13 @@ display the sfdxAuthUrl property
 
 # examples
 
-- $ sfdx force:org:display
+- $ <%= config.bin %> <%= command.id %>
 
-- $ sfdx force:org:display -u me@my.org
+- $ <%= config.bin %> <%= command.id %> -u me@my.org
 
-- $ sfdx force:org:display -u TestOrg1 --json
+- $ <%= config.bin %> <%= command.id %> -u TestOrg1 --json
 
-- $ sfdx force:org:display -u TestOrg1 --json > tmp/MyOrgDesc.json
+- $ <%= config.bin %> <%= command.id %> -u TestOrg1 --json > tmp/MyOrgDesc.json
 
 # noScratchOrgInfoError
 
