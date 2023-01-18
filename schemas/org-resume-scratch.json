@@ -1,18 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$ref": "#/definitions/CreateResult",
+  "$ref": "#/definitions/ScratchCreateResponse",
   "definitions": {
-    "CreateResult": {
-      "anyOf": [
-        {
-          "$ref": "#/definitions/ScratchOrgProcessObject"
-        },
-        {
-          "$ref": "#/definitions/SandboxProcessObject"
-        }
-      ]
-    },
-    "ScratchOrgProcessObject": {
+    "ScratchCreateResponse": {
       "type": "object",
       "properties": {
         "username": {
@@ -34,8 +24,9 @@
           "type": "string"
         }
       },
-      "required": ["scratchOrgInfo", "warnings", "orgId"],
-      "additionalProperties": false
+      "required": ["warnings"],
+      "additionalProperties": false,
+      "description": "If the scratch org is resumed, but doesn't get very far in the process, it won't have much information on it"
     },
     "ScratchOrgInfo": {
       "type": "object",
@@ -327,49 +318,6 @@
       },
       "additionalProperties": false,
       "description": "Fields for authorization, org, and local information."
-    },
-    "SandboxProcessObject": {
-      "type": "object",
-      "properties": {
-        "Id": {
-          "type": "string"
-        },
-        "Status": {
-          "type": "string"
-        },
-        "SandboxName": {
-          "type": "string"
-        },
-        "SandboxInfoId": {
-          "type": "string"
-        },
-        "LicenseType": {
-          "type": "string"
-        },
-        "CreatedDate": {
-          "type": "string"
-        },
-        "SandboxOrganization": {
-          "type": "string"
-        },
-        "CopyProgress": {
-          "type": "number"
-        },
-        "SourceId": {
-          "type": "string"
-        },
-        "Description": {
-          "type": "string"
-        },
-        "ApexClassId": {
-          "type": "string"
-        },
-        "EndDate": {
-          "type": "string"
-        }
-      },
-      "required": ["Id", "Status", "SandboxName", "SandboxInfoId", "LicenseType", "CreatedDate"],
-      "additionalProperties": false
     }
   }
 }
