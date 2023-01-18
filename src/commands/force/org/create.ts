@@ -120,7 +120,6 @@ export class Create extends SfCommand<CreateResult> {
       summary: messages.getMessage('flags.retry'),
     }),
   };
-  protected readonly lifecycleEventNames = ['postorgcreate'];
   private sandboxAuth?: SandboxUserAuthResponse;
   private logger!: Logger;
   private varArgs: Record<string, string | undefined> = {};

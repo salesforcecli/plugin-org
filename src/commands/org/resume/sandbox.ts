@@ -71,8 +71,6 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxProcessObje
     }),
   };
   public static readonly state = 'beta';
-  // TODO: remove lifecycle stuff since sfCommand does it automatically
-  protected readonly lifecycleEventNames = ['postorgcreate'];
   private flags!: Interfaces.InferredFlags<typeof ResumeSandbox.flags>;
 
   public async run(): Promise<SandboxProcessObject> {

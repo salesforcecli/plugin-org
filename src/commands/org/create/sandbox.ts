@@ -116,7 +116,6 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
     }),
   };
   public static readonly state = 'beta';
-  protected readonly lifecycleEventNames = ['postorgcreate'];
   private flags!: Interfaces.InferredFlags<typeof CreateSandbox.flags>;
 
   public async run(): Promise<SandboxProcessObject> {
