@@ -9,11 +9,11 @@ import * as path from 'path';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import { expect } from 'chai';
 import { AuthFields, Messages, Global, StateAggregator } from '@salesforce/core';
-import { secretTimeout } from '../../../../src/commands/env/create/scratch';
-import { ScratchCreateResponse } from '../../../../src/types';
+import { secretTimeout } from '../../src/commands/org/create/scratch';
+import { ScratchCreateResponse } from '../../src/shared/orgTypes';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/plugin-env', 'create_scratch', ['prompt.secret']);
+const messages = Messages.load('@salesforce/plugin-org', 'create_scratch', ['prompt.secret']);
 describe('env create scratch NUTs', () => {
   let session: TestSession;
 

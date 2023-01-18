@@ -15,7 +15,7 @@ import {
   formatRequest,
   formatStage,
   formatUsername,
-} from '../../../../src/shared/scratchOrgOutput';
+} from '../../src/shared/scratchOrgOutput';
 
 describe('human output', () => {
   describe('stage formatter', () => {
@@ -43,7 +43,6 @@ describe('human output', () => {
       SignupUsername: 'test-uluqhj7qu9k2@example.com',
       LoginUrl: 'https://ut.my.salesforce.com',
       AuthCode: 'x',
-      Snapshot: null,
       Username: 'test-uluqhj7qu9k2@example.com',
       SignupEmail: 'x',
       Status: 'Active',

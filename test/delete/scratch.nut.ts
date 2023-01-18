@@ -9,7 +9,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import { expect } from 'chai';
-import { ScratchDeleteResponse } from '../../../../src/commands/env/delete/scratch';
+import { ScratchDeleteResponse } from '../../src/commands/org/delete/scratch';
 
 describe('env delete scratch NUTs', () => {
   const scratchOrgAlias = 'scratch-org';

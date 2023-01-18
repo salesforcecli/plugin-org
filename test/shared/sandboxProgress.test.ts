@@ -7,7 +7,7 @@
 import { expect } from 'chai';
 import { Duration } from '@salesforce/cli-plugins-testkit';
 import { SandboxProcessObject, StatusEvent } from '@salesforce/core';
-import { SandboxProgress } from '../../src/shared/sandboxProgress';
+import { SandboxProgress, getTableDataFromProcessObj, getSandboxTableAsText } from '../../src/shared/sandboxProgress';
 
 const sandboxProcessObj: SandboxProcessObject = {
   Id: '0GR4p000000U8EMXXX',
@@ -62,7 +62,7 @@ describe('sandbox progress', () => {
 
   describe('getTableDataFromProcessObj', () => {
     it('getTableDataFromProcessObj should work', () => {
-      const tableData = sandboxProgress.getTableDataFromProcessObj('admin@prod.org.sandbox', sandboxProcessObj);
+      const tableData = getTableDataFromProcessObj(sandboxProcessObj, 'admin@prod.org.sandbox');
       expect(tableData.find((r) => r.key === 'Authorized Sandbox Username')).to.have.property(
         'value',
         'admin@prod.org.sandbox'
@@ -72,7 +72,7 @@ describe('sandbox progress', () => {
   });
   describe('getSandboxTableAsText', () => {
     it('getSandboxTableAsText should work', () => {
-      const tableData = sandboxProgress.getSandboxTableAsText('admin@prod.org.sandbox', sandboxProcessObj);
+      const tableData = getSandboxTableAsText('admin@prod.org.sandbox', sandboxProcessObj);
       expect(tableData.find((r) => r.includes('Authorized Sandbox Username') && r.includes('admin@prod.org.sandbox')))
         .to.be.ok;
     });

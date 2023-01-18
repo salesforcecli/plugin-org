@@ -13,7 +13,7 @@ import { AuthFields, Global, ScratchOrgCache } from '@salesforce/core';
 import { JsonMap } from '@salesforce/ts-types';
 import { CachedOptions } from '@salesforce/core/lib/org/scratchOrgCache';
 import { Duration, sleep } from '@salesforce/kit';
-import { ScratchCreateResponse } from '../../../../src/types';
+import { ScratchCreateResponse } from '../../src/shared/orgTypes';
 
 describe('env create scratch async/resume', () => {
   let session: TestSession;
