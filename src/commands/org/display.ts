@@ -55,7 +55,7 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
     const authInfo = await AuthInfo.create({ username: this.org.getUsername() });
     const fields = authInfo.getFields(true) as AuthFieldsFromFS;
 
-    const isScratchOrg = fields.devHubUsername;
+    const isScratchOrg = Boolean(fields.devHubUsername);
     const scratchOrgInfo = isScratchOrg && fields.orgId ? await this.getScratchOrgInformation(fields.orgId) : {};
 
     const returnValue: OrgDisplayReturn = {
@@ -112,7 +112,7 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
     if (result) {
       return {
         status: result.Status,
-        devHubId: result.devHubOrgId,
+        devHubId: hubUsername,
         expirationDate: result.ExpirationDate,
         createdBy: result.CreatedBy?.Username,
         edition: result.Edition ?? undefined, // null for snapshot orgs, possibly others.  Marking it undefined keeps it out of json output

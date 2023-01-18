@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import * as path from 'path';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { TestSession, execCmd, genUniqueString } from '@salesforce/cli-plugins-testkit';
 import { ScratchOrgCreateResult, Messages } from '@salesforce/core';
 
@@ -30,7 +30,8 @@ describe('org:create command', () => {
         {
           ensureExitCode: 0,
         }
-      ).jsonOutput.result;
+      ).jsonOutput?.result;
+      assert(result);
       expect(result).to.have.all.keys(['username', 'authFields', 'orgId', 'scratchOrgInfo', 'warnings']);
       expect(result.username).to.equal(username.toLowerCase());
     });
@@ -58,7 +59,7 @@ describe('org:create command', () => {
         {
           ensureExitCode: 0,
         }
-      ).jsonOutput.result;
+      ).jsonOutput?.result;
       expect(result).to.have.all.keys(['username', 'authFields', 'orgId', 'scratchOrgInfo', 'warnings']);
     });
 
@@ -69,7 +70,7 @@ describe('org:create command', () => {
           {
             ensureExitCode: 0,
           }
-        ).jsonOutput.result;
+        ).jsonOutput?.result;
         expect(result).to.have.all.keys(['username', 'authFields', 'orgId', 'scratchOrgInfo', 'warnings']);
       });
     });

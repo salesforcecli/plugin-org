@@ -16,7 +16,7 @@ import { Messages } from '@salesforce/core';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete');
 
-type DeleteResult = {
+export type DeleteResult = {
   orgId: string;
   username: string;
 };

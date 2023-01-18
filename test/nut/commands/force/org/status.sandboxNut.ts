@@ -7,7 +7,7 @@
 
 import * as path from 'path';
 import { TestSession, execCmd } from '@salesforce/cli-plugins-testkit';
-import { expect } from 'chai';
+import { expect, assert } from 'chai';
 import * as shell from 'shelljs';
 import { AuthInfo, Connection, SandboxProcessObject } from '@salesforce/core';
 
@@ -50,7 +50,8 @@ describe('test sandbox status command', () => {
       cli: 'sfdx',
       ensureExitCode: 0,
     });
-    hubOrgUsername = hubOrg.jsonOutput.result[0].value;
+    assert(hubOrg.jsonOutput?.result[0].value);
+    hubOrgUsername = hubOrg.jsonOutput?.result[0].value;
 
     const queryStr =
       "SELECT SandboxName FROM SandboxProcess WHERE Status != 'E' and Status != 'D' ORDER BY CreatedDate DESC LIMIT 1";
@@ -74,7 +75,7 @@ describe('test sandbox status command', () => {
       {
         ensureExitCode: 0,
       }
-    ).jsonOutput.result;
+    ).jsonOutput?.result;
     expect(orgStatusResult).to.be.a('object');
     expect(orgStatusResult).to.have.all.keys([
       'attributes',
@@ -98,7 +99,7 @@ describe('test sandbox status command', () => {
       {
         ensureExitCode: 0,
       }
-    ).jsonOutput.result;
+    ).jsonOutput?.result;
     expect(orgStatusResult).to.be.ok;
     const execOptions: shell.ExecOptions = {
       silent: true,
@@ -114,7 +115,7 @@ describe('test sandbox status command', () => {
       {
         ensureExitCode: 0,
       }
-    ).jsonOutput.result;
+    ).jsonOutput?.result;
     expect(orgStatusResult).to.be.ok;
     const execOptions: shell.ExecOptions = {
       silent: true,

@@ -7,7 +7,7 @@
   "bugs": "https://github.com/forcedotcom/cli/issues",
   "dependencies": {
     "@oclif/core": "^1.23.1",
-    "@salesforce/core": "^3.32.13",
+    "@salesforce/core": "^3.32.14",
     "@salesforce/kit": "^1.8.2",
     "@salesforce/sf-plugins-core": "^1.22.1",
     "open": "8.4.0",
@@ -16,9 +16,9 @@
   "devDependencies": {
     "@oclif/plugin-command-snapshot": "^3.2.16",
     "@oclif/test": "^2.2.15",
-    "@salesforce/cli-plugins-testkit": "^3.2.15",
+    "@salesforce/cli-plugins-testkit": "^3.2.18",
     "@salesforce/dev-config": "^3.1.0",
-    "@salesforce/dev-scripts": "^3.1.0",
+    "@salesforce/dev-scripts": "^4.0.0-beta.1",
     "@salesforce/plugin-command-reference": "^2.2.8",
     "@salesforce/prettier-config": "^0.0.2",
     "@salesforce/ts-sinon": "1.4.2",
@@ -49,7 +49,8 @@
     "shx": "0.3.4",
     "sinon": "10.0.0",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.4",
+    "wireit": "^0.9.3"
   },
   "engines": {
     "node": ">=14.0.0"
@@ -79,7 +80,18 @@
     "topics": {
       "org": {
         "description": "manage your orgs",
-        "longDescription": "Use the org commands to manage the orgs you use with Salesforce CLI. Create and delete scratch orgs, list your created and authorized orgs, and open orgs in your browser."
+        "longDescription": "Use the org commands to manage the orgs you use with Salesforce CLI. Create and delete scratch orgs, list your created and authorized orgs, and open orgs in your browser.",
+        "subtopics": {
+          "create": {
+            "description": "create scratch orgs, sandboxes, org shapes, and org snapshots"
+          },
+          "resume": {
+            "description": "resume an org creation that was started asynchronously, timed out, or was interrupted"
+          },
+          "delete": {
+            "description": "delete scratch orgs, sandboxes, org shapes, and org snapshots"
+          }
+        }
       },
       "force": {
         "external": true,
@@ -94,28 +106,124 @@
   },
   "repository": "salesforcecli/plugin-org",
   "scripts": {
-    "build": "sf-build",
+    "build": "wireit",
     "clean": "sf-clean",
     "clean-all": "sf-clean all",
     "clean:lib": "shx rm -rf lib && shx rm -rf coverage && shx rm -rf .nyc_output && shx rm -f oclif.manifest.json",
-    "compile": "sf-compile",
+    "compile": "wireit",
     "docs": "sf-docs",
-    "format": "sf-format",
-    "lint": "sf-lint",
+    "format": "wireit",
+    "lint": "wireit",
     "postpack": "shx rm -f oclif.manifest.json",
-    "posttest": "yarn lint && yarn test:deprecation-policy && yarn test:command-reference",
     "prepack": "sf-prepack",
     "prepare": "sf-install",
-    "pretest": "sf-compile-test",
-    "test": "sf-test",
-    "test:command-reference": "./bin/dev commandreference:generate --erroronwarnings",
-    "test:deprecation-policy": "./bin/dev snapshot:compare",
+    "test": "wireit",
+    "test-compile": "wireit",
+    "test-only": "wireit",
+    "test:command-reference": "wireit",
+    "test:deprecation-policy": "wireit",
+    "test:json-schema": "wireit",
     "test:nuts": "nyc mocha \"**/*.nut.ts\" --slow 4500 --timeout 600000 --parallel",
     "test:nuts:sandbox": "nyc mocha \"**/*.sandboxNut.ts\" --slow 450000 --timeout 7200000",
+    "test:one": "wireit",
     "test:watch": "mocha --watch \"./test/**/*.test.ts\"",
     "version": "oclif readme"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "wireit": {
+    "build": {
+      "dependencies": [
+        "compile",
+        "lint"
+      ]
+    },
+    "compile": {
+      "command": "tsc --build --pretty ",
+      "files": [
+        "src/**/*.ts",
+        "tsconfig.json"
+      ],
+      "output": [
+        "lib/**",
+        ".tsbuildinfo"
+      ],
+      "clean": "if-file-deleted"
+    },
+    "format": {
+      "command": "prettier --write \"+(src|test|schemas)/**/*.+(ts|js|json)|command-snapshot.json\""
+    },
+    "lint": {
+      "command": "eslint --color --cache --cache-location .eslintcache",
+      "files": [
+        "src/**/*.ts",
+        "test/**/*.ts",
+        ".eslintignore",
+        ".eslintrc.js"
+      ],
+      "output": []
+    },
+    "test-compile": {
+      "command": "tsc -p ./test --pretty",
+      "files": [
+        "test/**/*.ts",
+        "tsconfig.json",
+        "test/tsconfig.json"
+      ],
+      "output": []
+    },
+    "test:one": {
+      "command": "mocha"
+    },
+    "test": {
+      "dependencies": [
+        "test-only",
+        "test:command-reference",
+        "test:deprecation-policy",
+        "lint",
+        "test:json-schema"
+      ]
+    },
+    "test-only": {
+      "command": "nyc mocha test/**/*.test.ts",
+      "dependencies": [
+        "test-compile"
+      ],
+      "files": [
+        "test/**/*.ts",
+        "src/**/*.ts",
+        "tsconfig.json",
+        "test/tsconfig.json"
+      ],
+      "output": []
+    },
+    "test:command-reference": {
+      "command": "./bin/dev commandreference:generate --erroronwarnings",
+      "files": [
+        "src/**/*.ts",
+        "messages"
+      ],
+      "output": [
+        "tmp/root"
+      ]
+    },
+    "test:deprecation-policy": {
+      "command": "./bin/dev snapshot:compare",
+      "files": [
+        "src/**/*.ts"
+      ],
+      "output": [],
+      "dependencies": [
+        "compile"
+      ]
+    },
+    "test:json-schema": {
+      "command": "./bin/dev schema:compare",
+      "files": [
+        "src/**/*.ts",
+        "schemas"
+      ]
+    }
   }
 }

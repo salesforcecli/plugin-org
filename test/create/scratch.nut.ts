@@ -7,7 +7,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { AuthFields, Messages, Global, StateAggregator } from '@salesforce/core';
 import { secretTimeout } from '../../src/commands/org/create/scratch';
 import { ScratchCreateResponse } from '../../src/shared/orgTypes';
@@ -69,8 +69,9 @@ describe('env create scratch NUTs', () => {
     it('creates an org from edition flag only and sets tracking to true by default', async () => {
       const resp = execCmd<ScratchCreateResponse>('env create scratch --edition developer --json  --wait 60', {
         ensureExitCode: 0,
-      }).jsonOutput.result;
+      }).jsonOutput?.result;
       expect(resp).to.have.all.keys(keys);
+      assert(resp?.username);
       const stateAggregator = await StateAggregator.create();
       expect(await stateAggregator.orgs.read(resp.username)).to.have.property('tracksSource', true);
       StateAggregator.clearInstance();
@@ -81,7 +82,7 @@ describe('env create scratch NUTs', () => {
         {
           ensureExitCode: 0,
         }
-      ).jsonOutput.result;
+      ).jsonOutput?.result;
       expect(resp).to.have.all.keys(keys);
     });
     it('creates an org with tracking disabled ', async () => {
@@ -90,8 +91,10 @@ describe('env create scratch NUTs', () => {
         {
           ensureExitCode: 0,
         }
-      ).jsonOutput.result;
+      ).jsonOutput?.result;
       expect(resp).to.have.all.keys(keys);
+      assert(resp?.username);
+
       const stateAggregator = await StateAggregator.create();
       expect(await stateAggregator.orgs.read(resp.username)).to.have.property('tracksSource', false);
       StateAggregator.clearInstance();
@@ -103,8 +106,9 @@ describe('env create scratch NUTs', () => {
         {
           ensureExitCode: 0,
         }
-      ).jsonOutput.result;
+      ).jsonOutput?.result;
       expect(resp).to.have.all.keys(keys);
+      assert(resp?.username);
 
       expect(
         JSON.parse(await fs.promises.readFile(path.join(session.project.dir, '.sf', 'config.json'), 'utf8'))
@@ -117,8 +121,9 @@ describe('env create scratch NUTs', () => {
         {
           ensureExitCode: 0,
         }
-      ).jsonOutput.result;
+      ).jsonOutput?.result;
       expect(resp).to.have.all.keys(keys);
+      assert(resp?.username);
 
       const authFile = await readAuthFile(resp.username);
       expect(authFile).to.include.keys(['orgId', 'devHubUsername', 'accessToken']);

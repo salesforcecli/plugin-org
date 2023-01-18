@@ -8,7 +8,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { ScratchDeleteResponse } from '../../src/commands/org/delete/scratch';
 
 describe('env delete scratch NUTs', () => {
@@ -57,25 +57,28 @@ describe('env delete scratch NUTs', () => {
 
   it('should see default username in help', () => {
     const output = execCmd<ScratchDeleteResponse>('env delete scratch --help', { ensureExitCode: 0 }).shellOutput;
-    expect(output).to.include(session.orgs.get('default').username);
+    expect(output).to.include(session.orgs.get('default')?.username);
   });
 
   it('should delete the 1st scratch org by alias', () => {
     const command = `env delete scratch --target-org ${scratchOrgAlias} --no-prompt --json`;
-    const output = execCmd<ScratchDeleteResponse>(command, { ensureExitCode: 0 }).jsonOutput.result;
-    expect(output.username).to.equal(session.orgs.get(scratchOrgAlias).username);
+    const output = execCmd<ScratchDeleteResponse>(command, { ensureExitCode: 0 }).jsonOutput?.result;
+    assert(output);
+    expect(output.username).to.equal(session.orgs.get(scratchOrgAlias)?.username);
   });
 
   it('should delete the 2nd scratch org by username', () => {
-    const username = session.orgs.get(scratchOrgAlias2).username;
+    const username = session.orgs.get(scratchOrgAlias2)?.username;
     const command = `env delete scratch --target-org ${username} --no-prompt --json`;
-    const output = execCmd<ScratchDeleteResponse>(command, { ensureExitCode: 0 }).jsonOutput.result;
-    expect(output.username).to.equal(session.orgs.get(scratchOrgAlias2).username);
+    const output = execCmd<ScratchDeleteResponse>(command, { ensureExitCode: 0 }).jsonOutput?.result;
+    assert(output);
+    expect(output.username).to.equal(session.orgs.get(scratchOrgAlias2)?.username);
   });
 
   it('should delete the 3rd scratch org because it is the default', () => {
     const command = 'env delete scratch --no-prompt --json';
-    const output = execCmd<ScratchDeleteResponse>(command, { ensureExitCode: 0 }).jsonOutput.result;
-    expect(output.username).to.equal(session.orgs.get('default').username);
+    const output = execCmd<ScratchDeleteResponse>(command, { ensureExitCode: 0 }).jsonOutput?.result;
+    assert(output);
+    expect(output.username).to.equal(session.orgs.get('default')?.username);
   });
 });

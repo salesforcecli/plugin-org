@@ -20,6 +20,8 @@ export default class EnvDeleteScratch extends SfCommand<ScratchDeleteResponse> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
+  public static readonly aliases = ['env:delete:scratch'];
+  public static readonly deprecateAliases = true;
   public static readonly flags = {
     'target-org': Flags.requiredOrg({
       char: 'o',

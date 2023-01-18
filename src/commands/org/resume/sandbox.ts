@@ -30,7 +30,8 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxProcessObje
   public static summary = messages.getMessage('summary');
   public static description = messages.getMessage('description');
   public static examples = messages.getMessages('examples');
-
+  public static readonly aliases = ['env:resume:sandbox'];
+  public static readonly deprecateAliases = true;
   public static flags = {
     wait: Flags.duration({
       char: 'w',

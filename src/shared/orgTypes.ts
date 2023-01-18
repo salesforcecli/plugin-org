@@ -61,6 +61,7 @@ export interface ScratchOrgInfoSObject {
   SignupUsername: string;
 }
 
+/** fields in the  */
 export interface ScratchOrgFields {
   createdBy: string;
   createdDate: string;

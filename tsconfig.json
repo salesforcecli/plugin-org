@@ -5,9 +5,10 @@
     "rootDir": "src",
     "baseUrl": ".",
     "skipLibCheck": true,
+    "incremental": true,
+    "sourceMap": true,
     "paths": {
-      "@salesforce/kit": ["node_modules/@salesforce/kit"],
-      "@salesforce/core": ["node_modules/@salesforce/core"]
+      "@salesforce/kit": ["node_modules/@salesforce/kit"]
     }
   },
   "include": ["./src/**/*.ts"]

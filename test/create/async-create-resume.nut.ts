@@ -8,7 +8,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { AuthFields, Global, ScratchOrgCache } from '@salesforce/core';
 import { JsonMap } from '@salesforce/ts-types';
 import { CachedOptions } from '@salesforce/core/lib/org/scratchOrgCache';
@@ -53,8 +53,10 @@ describe('env create scratch async/resume', () => {
     it('requests org', () => {
       const resp = execCmd<ScratchCreateResponse>('env create scratch --edition developer --json --async', {
         ensureExitCode: 0,
-      }).jsonOutput.result;
+      }).jsonOutput?.result;
       expect(resp).to.have.all.keys(asyncKeys);
+      assert(resp?.username);
+      assert(resp?.scratchOrgInfo?.Id);
       soiId = resp.scratchOrgInfo.Id;
       username = resp.username;
     });
@@ -68,6 +70,7 @@ describe('env create scratch async/resume', () => {
       let done = false;
       while (!done) {
         const resp = execCmd<ScratchCreateResponse>(`env resume scratch --job-id ${soiId} --json`).jsonOutput;
+        assert(resp);
         if (resp.status === 0) {
           done = true;
           expect(resp.result).to.have.all.keys(completeKeys);
@@ -100,8 +103,10 @@ describe('env create scratch async/resume', () => {
         {
           ensureExitCode: 0,
         }
-      ).jsonOutput.result;
+      ).jsonOutput?.result;
       expect(resp).to.have.all.keys(asyncKeys);
+      assert(resp?.username);
+      assert(resp?.scratchOrgInfo?.Id);
       soiId = resp.scratchOrgInfo.Id;
       username = resp.username;
     });
@@ -121,6 +126,7 @@ describe('env create scratch async/resume', () => {
       let done = false;
       while (!done) {
         const resp = execCmd<ScratchCreateResponse>('env resume scratch --use-most-recent --json').jsonOutput;
+        assert(resp);
         if (resp.status === 0) {
           done = true;
           expect(resp.result).to.have.all.keys(completeKeys);
