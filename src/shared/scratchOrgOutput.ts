@@ -33,8 +33,8 @@ export const formatStage = (currentStage: ScratchOrgLifecycleEvent['stage']): st
 export const formatRequest = (baseUrl: string, id?: string): string =>
   `${id ? `${chalk.bold(id)} (${baseUrl}/${id})` : ''}`;
 
-export const formatUsername = (username: string): string => `${username ? `${boldBlue(username)} ` : ''}`;
-export const formatOrgId = (id: string): string => `${id ? `${boldBlue(id)} ` : ''}`;
+export const formatUsername = (username?: string): string => `${username ? `${boldBlue(username)} ` : ''}`;
+export const formatOrgId = (id?: string): string => `${id ? `${boldBlue(id)} ` : ''}`;
 
 export const formatCurrentStage = (stage: string): string => boldPurple(capitalCase(stage));
 export const formatCompletedStage = (stage: string): string => StandardColors.success.bold(`✓ ${capitalCase(stage)}`);

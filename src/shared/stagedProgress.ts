@@ -7,31 +7,28 @@
 import * as os from 'os';
 import * as chalk from 'chalk';
 import { StandardColors } from '@salesforce/sf-plugins-core';
-const compareStages = ([, aValue], [, bValue]): number =>
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+import { SfError } from '@salesforce/core';
+
+const compareStages = ([, aValue]: [string, StageAttributes], [, bValue]: [string, StageAttributes]): number =>
   aValue.index - bValue.index;
+
 export const boldPurple = chalk.rgb(157, 129, 221).bold;
 
-export enum State {
-  'inProgress' = 'inProgress',
-  'completed' = 'completed',
-  'failed' = 'failed',
-  'unknown' = 'unknown',
-}
+export type State = 'inProgress' | 'completed' | 'failed' | 'unknown';
 
 export type StageAttributes = {
   state: State;
   char: string;
   color: chalk.Chalk;
-  index?: number;
+  index: number;
   visited: boolean;
 };
 
-export const StateConstants: { [stage: string]: StageAttributes } = {
-  inProgress: { color: boldPurple, char: '…', visited: false, state: State.inProgress },
-  completed: { color: StandardColors.success, char: '✓', visited: false, state: State.completed },
-  failed: { color: chalk.bold.red, char: '✖', visited: false, state: State.failed },
-  unknown: { color: chalk.dim, char: '…', visited: false, state: State.unknown },
+export const StateConstants: { [stage: string]: Omit<StageAttributes, 'index'> } = {
+  inProgress: { color: boldPurple, char: '…', visited: false, state: 'inProgress' },
+  completed: { color: StandardColors.success, char: '✓', visited: false, state: 'completed' },
+  failed: { color: chalk.bold.red, char: '✖', visited: false, state: 'failed' },
+  unknown: { color: chalk.dim, char: '…', visited: false, state: 'unknown' },
 };
 
 export type Stage = {
@@ -39,24 +36,25 @@ export type Stage = {
 };
 
 export abstract class StagedProgress<T> {
-  private dataForTheStatus: T;
+  private dataForTheStatus: T | undefined;
   private theStages: Stage;
-  private currentStage: string;
-  private previousStage: string;
+  private currentStage?: string;
+  private previousStage?: string;
   public constructor(stages: string[]) {
     this.theStages = stages
       .map((stage, index) => ({
-        [stage]: { ...StateConstants[State.unknown], index: (index + 1) * 10 },
+        [stage]: { ...StateConstants['unknown'], index: (index + 1) * 10 },
       }))
       .reduce<Stage>((m, b) => Object.assign(m, b), {});
   }
 
-  public get statusData(): T {
+  public get statusData(): T | undefined {
     return this.dataForTheStatus;
   }
-  public set statusData(statusData: T) {
+  public set statusData(statusData: T | undefined) {
     this.dataForTheStatus = statusData;
   }
+
   public formatStages(): string {
     return Object.entries(this.theStages)
       .sort(compareStages)
@@ -64,10 +62,10 @@ export abstract class StagedProgress<T> {
       .join(os.EOL);
   }
 
-  public transitionStages(currentStage: string, newState?: State): void {
+  public transitionStages(currentStage: string, newState: State): void {
     currentStage = this.mapCurrentStage(currentStage);
     if (this.previousStage && this.previousStage !== currentStage) {
-      this.updateStages(this.previousStage, State.completed);
+      this.updateStages(this.previousStage, 'completed');
     }
 
     // mark all previous stages as visited and completed
@@ -79,15 +77,20 @@ export abstract class StagedProgress<T> {
   }
 
   public markPreviousStagesAsCompleted(currentStage?: string): void {
-    currentStage = this.mapCurrentStage(currentStage);
+    if (currentStage) {
+      currentStage = this.mapCurrentStage(currentStage);
+    }
     Object.entries(this.theStages).forEach(([stage, stageState]) => {
       if (!currentStage || stageState.index < this.theStages[currentStage].index) {
-        this.updateStages(stage, State.completed);
+        this.updateStages(stage, 'completed');
       }
     });
   }
 
   public updateCurrentStage(newState: State): void {
+    if (!this.currentStage) {
+      throw new SfError('transitionStages must be called before updateCurrentStage');
+    }
     this.updateStages(this.currentStage, newState);
   }
 
@@ -105,9 +108,11 @@ export abstract class StagedProgress<T> {
       this.theStages = Object.assign(this.theStages, newEntry);
     }
     this.theStages[currentStage].visited = true;
-    this.theStages[currentStage].state = newState || State.inProgress;
+    this.theStages[currentStage].state = newState ?? 'inProgress';
     this.theStages[currentStage].char = StateConstants[this.theStages[currentStage].state].char;
-    this.theStages[currentStage].color = StateConstants[newState.toString()].color;
+    if (newState) {
+      this.theStages[currentStage].color = StateConstants[newState.toString()].color;
+    }
   }
 
   public getStages(): Stage {

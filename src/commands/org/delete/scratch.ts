@@ -9,7 +9,7 @@ import { Messages } from '@salesforce/core';
 import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.loadMessages('@salesforce/plugin-env', 'delete_scratch');
+const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete_scratch');
 
 export interface ScratchDeleteResponse {
   orgId: string;
@@ -24,6 +24,7 @@ export default class EnvDeleteScratch extends SfCommand<ScratchDeleteResponse> {
     'target-org': Flags.requiredOrg({
       char: 'o',
       summary: messages.getMessage('flags.target-org.summary'),
+      required: true,
     }),
     'no-prompt': Flags.boolean({
       char: 'p',
@@ -47,8 +48,7 @@ export default class EnvDeleteScratch extends SfCommand<ScratchDeleteResponse> {
           throw e;
         }
       }
-
-      return { username: org.getUsername(), orgId: org.getOrgId() };
     }
+    return { username: org.getUsername() as string, orgId: org.getOrgId() };
   }
 }

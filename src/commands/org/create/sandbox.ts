@@ -5,40 +5,15 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as fs from 'fs';
 import { Flags } from '@salesforce/sf-plugins-core';
-import {
-  Lifecycle,
-  Messages,
-  Org,
-  SandboxEvents,
-  SandboxProcessObject,
-  SandboxRequest,
-  SfError,
-} from '@salesforce/core';
-import { Duration } from '@salesforce/kit';
+import { Lifecycle, Messages, SandboxEvents, SandboxProcessObject, SandboxRequest, SfError } from '@salesforce/core';
 import { Ux } from '@salesforce/sf-plugins-core/lib/ux';
 import * as Interfaces from '@oclif/core/lib/interfaces';
+import { createSandboxRequest } from '../../../shared/sandboxRequest';
 import { SandboxCommandBase } from '../../../shared/sandboxCommandBase';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.loadMessages('@salesforce/plugin-env', 'create.sandbox');
-
-type CmdFlags = {
-  'definition-file': string;
-  'set-default': boolean;
-  alias: string;
-  async: boolean;
-  'poll-interval': Duration;
-  wait: Duration;
-  name: string;
-  'license-type': string;
-  'no-prompt': boolean;
-  'target-org': Org;
-  clone: string;
-  json: boolean;
-  'no-track-source': boolean;
-};
+const messages = Messages.loadMessages('@salesforce/plugin-org', 'create.sandbox');
 
 export enum SandboxLicenseType {
   developer = 'Developer',
@@ -55,9 +30,11 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
   public static summary = messages.getMessage('summary');
   public static description = messages.getMessage('description');
   public static examples = messages.getMessages('examples');
+  public static readonly aliases = ['env:create:sandbox'];
+  public static readonly deprecateAliases = true;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public static flags: Interfaces.FlagInput<Omit<CmdFlags, 'json'>> = {
+  public static flags = {
     // needs to change when new flags are available
     'definition-file': Flags.file({
       exists: true,
@@ -128,6 +105,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
       char: 'o',
       summary: messages.getMessage('flags.targetOrg.summary'),
       description: messages.getMessage('flags.targetOrg.description'),
+      required: true,
     }),
     'no-prompt': Flags.boolean({
       summary: messages.getMessage('flags.noPrompt.summary'),
@@ -140,71 +118,48 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
   };
   public static readonly state = 'beta';
   protected readonly lifecycleEventNames = ['postorgcreate'];
-  private flags: CmdFlags;
+  private flags!: Interfaces.InferredFlags<typeof CreateSandbox.flags>;
 
   public async run(): Promise<SandboxProcessObject> {
     this.sandboxRequestConfig = await this.getSandboxRequestConfig();
-    this.flags = (await this.parse(CreateSandbox)).flags as CmdFlags;
+    this.flags = (await this.parse(CreateSandbox)).flags;
     this.debug('Create started with args %s ', this.flags);
     this.validateFlags();
     return this.createSandbox();
   }
 
   protected getCheckSandboxStatusParams(): string[] {
-    return [this.latestSandboxProgressObj.Id, this.flags['target-org'].getUsername()];
+    return [
+      ...(this.latestSandboxProgressObj ? [this.latestSandboxProgressObj.Id] : []),
+      this.flags['target-org'].getUsername() as string,
+    ];
   }
 
-  private async createSandboxRequest(prodOrg: Org): Promise<SandboxRequest> {
-    let sandboxDefFileContents = this.readJsonDefFile() || {};
-
-    if (sandboxDefFileContents) {
-      sandboxDefFileContents = lowerToUpper(sandboxDefFileContents);
-    }
-
-    // build sandbox request from data provided
-    const sandboxReq: SandboxRequest = {
-      SandboxName: undefined,
-      ...sandboxDefFileContents,
-      ...Object.assign({}, this.flags.name ? { SandboxName: this.flags.name } : {}),
-      ...Object.assign(
-        {},
-        sandboxDefFileContents['LicenseType']
-          ? { LicenseType: sandboxDefFileContents['LicenseType'] as string }
-          : { LicenseType: this.flags['license-type'] }
-      ),
+  private async createSandboxRequest(): Promise<SandboxRequest> {
+    // reuse the existing sandbox request generator, with this command's flags as the varargs
+    const { sandboxReq } = await createSandboxRequest(false, this.flags['definition-file'], undefined, {
+      ...(this.flags.name ? { SandboxName: this.flags.name } : {}),
+      ...(!this.flags.clone && this.flags['license-type'] ? { LicenseType: this.flags['license-type'] } : {}),
+    });
+    return {
+      ...sandboxReq,
+      ...(this.flags.clone ? { SourceId: await this.getSourceId() } : {}),
     };
-
-    if (!sandboxReq.SandboxName) {
-      // sandbox names are 10 chars or less, a radix of 36 = [a-z][0-9]
-      // see https://help.salesforce.com/s/articleView?id=sf.data_sandbox_create.htm&type=5 for sandbox naming criteria
-      // technically without querying the production org, the generated name could already exist,
-      // but the chances of that are lower than the perf penalty of querying and verifying
-      sandboxReq.SandboxName = `sbx${Date.now().toString(36).slice(-7)}`;
-      this.info(messages.createWarning('warning.NoSandboxNameDefined', [sandboxReq.SandboxName]));
-    }
-
-    const sourceId = await this.getSourceId(prodOrg);
-    if (sourceId) {
-      sandboxReq.SourceId = sourceId;
-      delete sandboxReq.LicenseType;
-    }
-    return sandboxReq;
   }
 
   private async createSandbox(): Promise<SandboxProcessObject> {
-    this.prodOrg = this.flags['target-org'];
     const lifecycle = Lifecycle.getInstance();
 
     this.registerLifecycleListeners(lifecycle, {
       isAsync: this.flags.async,
       setDefault: this.flags['set-default'],
       alias: this.flags.alias,
-      prodOrg: this.prodOrg,
+      prodOrg: this.flags['target-org'],
       tracksSource: this.flags['no-track-source'] === true ? false : undefined,
     });
-    const sandboxReq = await this.createSandboxRequest(this.prodOrg);
+    const sandboxReq = await this.createSandboxRequest();
     await this.confirmSandboxReq({ ...sandboxReq, ...(this.flags.clone ? { CloneSource: this.flags.clone } : {}) });
-    this.initSandboxProcessData(this.prodOrg, sandboxReq);
+    this.initSandboxProcessData(sandboxReq);
 
     if (!this.flags.async) {
       this.spinner.start('Sandbox Create');
@@ -213,7 +168,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
     this.debug('Calling create with SandboxRequest: %s ', sandboxReq);
 
     try {
-      const sandboxProcessObject = await this.prodOrg.createSandbox(sandboxReq, {
+      const sandboxProcessObject = await this.flags['target-org'].createSandbox(sandboxReq, {
         wait: this.flags.wait,
         interval: this.flags['poll-interval'],
         async: this.flags.async,
@@ -226,12 +181,15 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
       return sandboxProcessObject;
     } catch (err) {
       this.spinner.stop();
-      const error = err as SfError;
-      if (this.pollingTimeOut) {
+      if (this.pollingTimeOut && this.latestSandboxProgressObj) {
         void lifecycle.emit(SandboxEvents.EVENT_ASYNC_RESULT, undefined);
         process.exitCode = 68;
         return this.latestSandboxProgressObj;
-      } else if (error.name === 'SandboxCreateNotCompleteError') {
+      } else if (
+        err instanceof SfError &&
+        err.name === 'SandboxCreateNotCompleteError' &&
+        this.latestSandboxProgressObj
+      ) {
         void lifecycle.emit(SandboxEvents.EVENT_ASYNC_RESULT, undefined);
         process.exitCode = 68;
         return this.latestSandboxProgressObj;
@@ -240,22 +198,20 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
     }
   }
 
-  private initSandboxProcessData(prodOrg: Org, sandboxReq: SandboxRequest): void {
-    this.sandboxRequestData.alias = this.flags.alias;
-    this.sandboxRequestData.setDefault = this.flags['set-default'];
-    this.sandboxRequestData.prodOrgUsername = prodOrg.getUsername();
-    this.sandboxRequestData.sandboxProcessObject.SandboxName = sandboxReq.SandboxName;
-    this.sandboxRequestData.sandboxRequest = sandboxReq;
-    this.sandboxRequestData.tracksSource = this.flags['no-track-source'] === true ? false : undefined;
-    this.saveSandboxProgressConfig();
-  }
+  private initSandboxProcessData(sandboxReq: SandboxRequest): void {
+    this.sandboxRequestData = {
+      ...this.sandboxRequestData,
+      alias: this.flags.alias,
+      setDefault: this.flags['set-default'],
+      prodOrgUsername: this.flags['target-org'].getUsername() as string,
+      sandboxProcessObject: {
+        SandboxName: sandboxReq.SandboxName,
+      },
+      sandboxRequest: sandboxReq,
+      tracksSource: this.flags['no-track-source'] === true ? false : undefined,
+    };
 
-  private readJsonDefFile(): Record<string, unknown> {
-    // the -f option
-    if (this.flags['definition-file']) {
-      this.debug('Reading JSON DefFile %s ', this.flags['definition-file']);
-      return JSON.parse(fs.readFileSync(this.flags['definition-file'], 'utf-8')) as Record<string, unknown>;
-    }
+    this.saveSandboxProgressConfig();
   }
 
   private async confirmSandboxReq(sandboxReq: SandboxConfirmData): Promise<void> {
@@ -286,6 +242,9 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
   }
 
   private validateFlags(): void {
+    if (!this.flags['poll-interval'] || !this.flags.wait) {
+      return;
+    }
     if (this.flags['poll-interval'].seconds > this.flags.wait.seconds) {
       throw messages.createError('error.pollIntervalGreaterThanWait', [
         this.flags['poll-interval'].seconds,
@@ -294,18 +253,15 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
     }
   }
 
-  private async getSourceId(prodOrg: Org): Promise<string> {
+  private async getSourceId(): Promise<string | undefined> {
     if (!this.flags.clone) {
       return undefined;
     }
     try {
-      const sourceOrg = await prodOrg.querySandboxProcessBySandboxName(this.flags.clone);
+      const sourceOrg = await this.flags['target-org'].querySandboxProcessBySandboxName(this.flags.clone);
       return sourceOrg.SandboxInfoId;
     } catch (err) {
       throw messages.createError('error.noCloneSource', [this.flags.clone], [], err as Error);
     }
   }
 }
-
-const lowerToUpper = (object: Record<string, unknown>): Record<string, unknown> =>
-  Object.fromEntries(Object.entries(object).map(([k, v]) => [`${k.charAt(0).toUpperCase()}${k.slice(1)}`, v]));

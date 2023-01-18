@@ -4,11 +4,11 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Messages } from '@salesforce/core';
+import { Messages, SfError } from '@salesforce/core';
 import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.loadMessages('@salesforce/plugin-env', 'delete_sandbox');
+const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete_sandbox');
 
 export interface SandboxDeleteResponse {
   orgId: string;
@@ -22,6 +22,7 @@ export default class EnvDeleteSandbox extends SfCommand<SandboxDeleteResponse> {
     'target-org': Flags.requiredOrg({
       summary: messages.getMessage('flags.target-org.summary'),
       char: 'o',
+      required: true,
     }),
     'no-prompt': Flags.boolean({
       char: 'p',
@@ -33,24 +34,27 @@ export default class EnvDeleteSandbox extends SfCommand<SandboxDeleteResponse> {
   public async run(): Promise<SandboxDeleteResponse> {
     const flags = (await this.parse(EnvDeleteSandbox)).flags;
     const org = flags['target-org'];
-
-    if (!(await org.isSandbox())) {
-      throw messages.createError('error.isNotSandbox', [org.getUsername()]);
+    const username = org.getUsername();
+    if (!username) {
+      throw new SfError('The org does not have a username.');
     }
 
-    if (flags['no-prompt'] || (await this.confirm(messages.getMessage('prompt.confirm', [org.getUsername()])))) {
+    if (!(await org.isSandbox())) {
+      throw messages.createError('error.isNotSandbox', [username]);
+    }
+
+    if (flags['no-prompt'] || (await this.confirm(messages.getMessage('prompt.confirm', [username])))) {
       try {
         await org.delete();
-        this.logSuccess(messages.getMessage('success', [org.getUsername()]));
+        this.logSuccess(messages.getMessage('success', [username]));
       } catch (e) {
         if (e instanceof Error && e.name === 'SandboxNotFound') {
-          this.logSuccess(messages.getMessage('success.Idempotent', [org.getUsername()]));
+          this.logSuccess(messages.getMessage('success.Idempotent', [username]));
         } else {
           throw e;
         }
       }
-
-      return { username: org.getUsername(), orgId: org.getOrgId() };
     }
+    return { username, orgId: org.getOrgId() };
   }
 }

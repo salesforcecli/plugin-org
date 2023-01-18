@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { AuthFields } from '@salesforce/core';
+import { AuthFields, ScratchOrgInfo } from '@salesforce/core';
 import { Dictionary } from '@salesforce/ts-types';
 
 export type OrgDisplayReturn = Partial<ScratchOrgFields> & {
@@ -82,4 +82,13 @@ export interface OrgListFields {
   defaultMarker?: '(D)' | '(U)';
   attributes?: Dictionary<unknown>;
   lastUsed?: Date;
+}
+
+/** If the scratch org is resumed, but doesn't get very far in the process, it won't have much information on it */
+export interface ScratchCreateResponse {
+  username?: string;
+  scratchOrgInfo?: ScratchOrgInfo;
+  authFields?: AuthFields;
+  warnings: string[];
+  orgId?: string;
 }

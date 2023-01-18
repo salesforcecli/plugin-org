@@ -24,22 +24,16 @@ import { SandboxProgress, SandboxStatusData } from './sandboxProgress';
 import { State } from './stagedProgress';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.loadMessages('@salesforce/plugin-env', 'sandboxbase');
+const messages = Messages.loadMessages('@salesforce/plugin-org', 'sandboxbase');
 export abstract class SandboxCommandBase<T> extends SfCommand<T> {
   protected sandboxProgress: SandboxProgress;
-  protected latestSandboxProgressObj: SandboxProcessObject;
+  protected latestSandboxProgressObj?: SandboxProcessObject;
   protected sandboxAuth?: SandboxUserAuthResponse;
-  protected prodOrg: Org;
+  protected prodOrg?: Org;
   protected pollingTimeOut = false;
-  protected sandboxRequestConfig: SandboxRequestCache;
-  protected sandboxRequestData: SandboxRequestCacheEntry = {
-    alias: '',
-    setDefault: false,
-    prodOrgUsername: '',
-    sandboxProcessObject: {},
-    sandboxRequest: {},
-    tracksSource: false,
-  };
+  // initialized at top of run method
+  protected sandboxRequestConfig!: SandboxRequestCache;
+  protected sandboxRequestData: SandboxRequestCacheEntry | undefined;
   public constructor(argv: string[], config: Config) {
     super(argv, config);
     this.sandboxProgress = new SandboxProgress();
@@ -53,19 +47,25 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
 
   protected async calculateTrackingSetting(tracking = true): Promise<boolean> {
     // sandbox types that don't support tracking
-    if (['Partial', 'Full'].includes(this.sandboxRequestData.sandboxRequest.LicenseType)) {
+    if (
+      this.sandboxRequestData?.sandboxRequest.LicenseType &&
+      ['Partial', 'Full'].includes(this.sandboxRequestData.sandboxRequest.LicenseType)
+    ) {
       return false;
     }
     // returns false for a sandbox type that supports it but user has opted out
     if (tracking === false) {
       return false;
     }
-    // if user hasn't opted out of tracking, and sandbox type supports it, verify that prod org supports tracking-enabled sandboxes
-    const sourceTrackingSettings = await this.prodOrg
-      .getConnection()
-      .metadata.read('SourceTrackingSettings', 'SourceTrackingSettings');
-    if (sourceTrackingSettings.enableSourceTrackingSandboxes !== true) {
-      return false;
+    // on a resume, we might not have a prod org...it's optional?
+    if (this.prodOrg) {
+      // if user hasn't opted out of tracking, and sandbox type supports it, verify that prod org supports tracking-enabled sandboxes
+      const sourceTrackingSettings = await this.prodOrg
+        .getConnection()
+        .metadata.read('SourceTrackingSettings', 'SourceTrackingSettings');
+      if (sourceTrackingSettings.enableSourceTrackingSandboxes !== true) {
+        return false;
+      }
     }
     // default for Dev/DevPro when prod org has feature enabled for sandboxes
     return true;
@@ -73,58 +73,60 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
 
   protected registerLifecycleListeners(
     lifecycle: Lifecycle,
-    options: { isAsync: boolean; alias: string; setDefault: boolean; prodOrg?: Org; tracksSource?: boolean }
+    options: { isAsync: boolean; alias?: string; setDefault: boolean; prodOrg?: Org; tracksSource?: boolean }
   ): void {
-    // eslint-disable-next-line @typescript-eslint/require-await
     lifecycle.on('POLLING_TIME_OUT', async () => {
       this.pollingTimeOut = true;
-      this.updateSandboxRequestData();
+      return Promise.resolve(this.updateSandboxRequestData());
     });
 
-    // eslint-disable-next-line @typescript-eslint/require-await
     lifecycle.on(SandboxEvents.EVENT_RESUME, async (results: SandboxProcessObject) => {
       this.latestSandboxProgressObj = results;
       this.sandboxProgress.markPreviousStagesAsCompleted(
         results.Status !== 'Completed' ? results.Status : 'Authenticating'
       );
-      this.updateSandboxRequestData();
+      return Promise.resolve(this.updateSandboxRequestData());
     });
 
-    // eslint-disable-next-line @typescript-eslint/require-await
     lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results?: SandboxProcessObject) => {
-      this.latestSandboxProgressObj = results || this.latestSandboxProgressObj;
+      this.latestSandboxProgressObj = results ?? this.latestSandboxProgressObj;
       this.updateSandboxRequestData();
       if (!options.isAsync) {
         this.spinner.stop();
       }
-      const progress = this.sandboxProgress.getSandboxProgress({
-        sandboxProcessObj: this.latestSandboxProgressObj,
-        sandboxRes: undefined,
-      });
-      const currentStage = progress.status;
-      this.sandboxProgress.markPreviousStagesAsCompleted(currentStage);
-      this.updateStage(currentStage, State.inProgress);
-      this.updateProgress({ sandboxProcessObj: this.latestSandboxProgressObj, sandboxRes: undefined }, options.isAsync);
+      // things that require data on latestSandboxProgressObj
+      if (this.latestSandboxProgressObj) {
+        const progress = this.sandboxProgress.getSandboxProgress({
+          sandboxProcessObj: this.latestSandboxProgressObj,
+          sandboxRes: undefined,
+        });
+        const currentStage = progress.status;
+        this.sandboxProgress.markPreviousStagesAsCompleted(currentStage);
+        this.updateStage(currentStage, 'inProgress');
+        this.updateProgress(
+          { sandboxProcessObj: this.latestSandboxProgressObj, sandboxRes: undefined },
+          options.isAsync
+        );
+      }
       if (this.pollingTimeOut) {
         this.warn(messages.getMessage('warning.ClientTimeoutWaitingForSandboxCreate'));
       }
       this.log(this.sandboxProgress.formatProgressStatus(false));
-      this.info(messages.getMessage('checkSandboxStatus', this.getCheckSandboxStatusParams()));
+      return Promise.resolve(this.info(messages.getMessage('checkSandboxStatus', this.getCheckSandboxStatusParams())));
     });
 
-    // eslint-disable-next-line @typescript-eslint/require-await
     lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) => {
       this.latestSandboxProgressObj = results.sandboxProcessObj;
       this.updateSandboxRequestData();
       const progress = this.sandboxProgress.getSandboxProgress(results);
       const currentStage = progress.status;
-      this.updateStage(currentStage, State.inProgress);
-      this.updateProgress(results, options.isAsync);
+      this.updateStage(currentStage, 'inProgress');
+      return Promise.resolve(this.updateProgress(results, options.isAsync));
     });
 
-    // eslint-disable-next-line @typescript-eslint/require-await
     lifecycle.on(SandboxEvents.EVENT_AUTH, async (results: SandboxUserAuthResponse) => {
       this.sandboxAuth = results;
+      return Promise.resolve();
     });
 
     lifecycle.on(SandboxEvents.EVENT_RESULT, async (results: ResultEvent) => {
@@ -140,7 +142,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
         await authInfo.handleAliasAndDefaultSettings({
           alias: options.alias,
           setDefault: options.setDefault,
-          setDefaultDevHub: undefined,
+          setDefaultDevHub: false,
           setTracksSource: await this.calculateTrackingSetting(options.tracksSource),
         });
       }
@@ -165,7 +167,10 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     );
   }
 
-  protected updateProgress(event: ResultEvent | StatusEvent, isAsync: boolean): void {
+  protected updateProgress(
+    event: StatusEvent | (Omit<ResultEvent, 'sandboxRes'> & { sandboxRes?: ResultEvent['sandboxRes'] }),
+    isAsync: boolean
+  ): void {
     const sandboxProgress = this.sandboxProgress.getSandboxProgress(event);
     const sandboxData = {
       sandboxUsername: (event as ResultEvent).sandboxRes?.authUserName,
@@ -185,18 +190,24 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
   }
 
   protected updateSandboxRequestData(): void {
-    this.sandboxRequestData.sandboxProcessObject = this.latestSandboxProgressObj;
+    if (this.sandboxRequestData && this.latestSandboxProgressObj) {
+      this.sandboxRequestData.sandboxProcessObject = this.latestSandboxProgressObj;
+    }
     this.saveSandboxProgressConfig();
   }
 
   protected saveSandboxProgressConfig(): void {
-    this.sandboxRequestConfig.set(this.sandboxRequestData.sandboxProcessObject.SandboxName, this.sandboxRequestData);
-    this.sandboxRequestConfig.writeSync();
+    if (this.sandboxRequestData?.sandboxProcessObject.SandboxName && this.sandboxRequestData) {
+      this.sandboxRequestConfig.set(this.sandboxRequestData.sandboxProcessObject.SandboxName, this.sandboxRequestData);
+      this.sandboxRequestConfig.writeSync();
+    }
   }
 
   private removeSandboxProgressConfig(): void {
-    this.sandboxRequestConfig.unset(this.latestSandboxProgressObj.SandboxName);
-    this.sandboxRequestConfig.writeSync();
+    if (this.latestSandboxProgressObj?.SandboxName) {
+      this.sandboxRequestConfig.unset(this.latestSandboxProgressObj.SandboxName);
+      this.sandboxRequestConfig.writeSync();
+    }
   }
 
   protected abstract getCheckSandboxStatusParams(): string[];

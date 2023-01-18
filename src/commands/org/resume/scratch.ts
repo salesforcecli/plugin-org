@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { strict as assert } from 'node:assert';
 import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
 import {
   Messages,
@@ -14,11 +15,11 @@ import {
   ScratchOrgLifecycleEvent,
   scratchOrgLifecycleEventName,
 } from '@salesforce/core';
-import { ScratchCreateResponse } from '../../../types';
+import { ScratchCreateResponse } from '../../../shared/orgTypes';
 import { buildStatus } from '../../../shared/scratchOrgOutput';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.loadMessages('@salesforce/plugin-env', 'resume_scratch');
+const messages = Messages.loadMessages('@salesforce/plugin-org', 'resume_scratch');
 
 export default class EnvResumeScratch extends SfCommand<ScratchCreateResponse> {
   public static readonly summary = messages.getMessage('summary');
@@ -47,8 +48,10 @@ export default class EnvResumeScratch extends SfCommand<ScratchCreateResponse> {
     const jobId = flags['use-most-recent'] ? cache.getLatestKey() : flags['job-id'];
     if (!jobId && flags['use-most-recent']) throw messages.createError('error.NoRecentJobId');
 
+    // oclif doesn't know that the exactlyOne flag will ensure that one of these is set, and there we definitely have a jobID.
+    assert(jobId);
     const { hubBaseUrl } = cache.get(jobId);
-    let lastStatus: string;
+    let lastStatus: string | undefined;
 
     // eslint-disable-next-line @typescript-eslint/require-await
     lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
@@ -64,6 +67,6 @@ export default class EnvResumeScratch extends SfCommand<ScratchCreateResponse> {
 
     this.log();
     this.logSuccess(messages.getMessage('success'));
-    return { username, scratchOrgInfo, authFields, warnings, orgId: scratchOrgInfo.Id };
+    return { username, scratchOrgInfo, authFields, warnings, orgId: scratchOrgInfo?.Id };
   }
 }

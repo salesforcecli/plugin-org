@@ -19,9 +19,9 @@ import {
 } from '@salesforce/core';
 import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
 import { buildStatus } from '../../../shared/scratchOrgOutput';
-import { ScratchCreateResponse } from '../../../types';
+import { ScratchCreateResponse } from '../../../shared/orgTypes';
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.loadMessages('@salesforce/plugin-env', 'create_scratch');
+const messages = Messages.loadMessages('@salesforce/plugin-org', 'create_scratch');
 
 export const secretTimeout = 60000;
 
@@ -56,6 +56,7 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
       char: 'v',
       summary: messages.getMessage('flags.target-hub.summary'),
       description: messages.getMessage('flags.target-hub.description'),
+      required: true,
     }),
     'no-ancestors': Flags.boolean({
       char: 'c',
@@ -117,7 +118,10 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
   public async run(): Promise<ScratchCreateResponse> {
     const lifecycle = Lifecycle.getInstance();
     const { flags } = await this.parse(EnvCreateScratch);
-    const baseUrl = flags['target-dev-hub'].getField(Org.Fields.INSTANCE_URL).toString();
+    const baseUrl = flags['target-dev-hub'].getField(Org.Fields.INSTANCE_URL)?.toString();
+    if (!baseUrl) {
+      throw new SfError('No instance URL found for the dev hub');
+    }
     const orgConfig = flags['definition-file']
       ? (JSON.parse(await fs.promises.readFile(flags['definition-file'], 'utf-8')) as Record<string, unknown>)
       : { edition: flags.edition };
@@ -126,7 +130,7 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
       hubOrg: flags['target-dev-hub'],
       clientSecret: flags['client-id'] ? await this.clientSecretPrompt() : undefined,
       connectedAppConsumerKey: flags['client-id'],
-      durationDays: flags['duration-days'].days,
+      durationDays: (flags['duration-days'] as Duration).days,
       nonamespace: flags['no-namespace'],
       noancestors: flags['no-ancestors'],
       wait: flags.async ? Duration.minutes(0) : flags.wait,
@@ -137,7 +141,7 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
       tracksSource: flags['track-source'],
     };
 
-    let lastStatus: string;
+    let lastStatus: string | undefined;
 
     if (!flags.async) {
       // eslint-disable-next-line @typescript-eslint/require-await
@@ -155,6 +159,9 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
       const { username, scratchOrgInfo, authFields, warnings } = await scratchOrgCreate(createCommandOptions);
 
       this.spinner.stop(lastStatus);
+      if (!scratchOrgInfo) {
+        throw new SfError('The scratch org did not return with any information');
+      }
       this.log();
       if (flags.async) {
         this.info(messages.getMessage('action.resume', [scratchOrgInfo.Id]));
