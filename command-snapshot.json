@@ -50,6 +50,59 @@
     "alias": []
   },
   {
+    "command": "org:create:sandbox",
+    "plugin": "@salesforce/plugin-org",
+    "flags": [
+      "alias",
+      "async",
+      "clone",
+      "definition-file",
+      "json",
+      "license-type",
+      "name",
+      "no-prompt",
+      "no-track-source",
+      "poll-interval",
+      "set-default",
+      "target-org",
+      "wait"
+    ],
+    "alias": ["env:create:sandbox"]
+  },
+  {
+    "command": "org:create:scratch",
+    "plugin": "@salesforce/plugin-org",
+    "flags": [
+      "alias",
+      "api-version",
+      "async",
+      "client-id",
+      "definition-file",
+      "duration-days",
+      "edition",
+      "json",
+      "no-ancestors",
+      "no-namespace",
+      "set-default",
+      "target-dev-hub",
+      "track-source",
+      "wait"
+    ],
+    "alias": []
+  },
+  {
+    "command": "org:delete:sandbox",
+    "plugin": "@salesforce/plugin-org",
+    "flags": ["json", "no-prompt", "target-org"],
+    "alias": []
+  },
+  {
+    "command": "org:delete:scratch",
+    "plugin": "@salesforce/plugin-org",
+    "flags": ["json", "no-prompt", "target-org"],
+    "alias": []
+  },
+  {
     "command": "org:display",
     "plugin": "@salesforce/plugin-org",
     "flags": ["api-version", "json", "loglevel", "target-org", "verbose"],
@@ -65,6 +118,18 @@
     "command": "org:open",
     "plugin": "@salesforce/plugin-org",
     "flags": ["api-version", "browser", "json", "loglevel", "path", "target-org", "url-only"],
+    "alias": []
+  },
+  {
+    "command": "org:resume:sandbox",
+    "plugin": "@salesforce/plugin-org",
+    "flags": ["job-id", "json", "name", "target-org", "use-most-recent", "wait"],
+    "alias": []
+  },
+  {
+    "command": "org:resume:scratch",
+    "plugin": "@salesforce/plugin-org",
+    "flags": ["job-id", "json", "use-most-recent"],
     "alias": []
   }
 ]
