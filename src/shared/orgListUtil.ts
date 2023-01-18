@@ -173,50 +173,45 @@ export class OrgListUtil {
    * @private
    */
   public static async groupOrgs(authInfos: AuthInfo[]): Promise<OrgGroups> {
-    const output: OrgGroups = {
-      scratchOrgs: [],
-      nonScratchOrgs: [],
-    };
     const config = (await SfdxConfigAggregator.create()).getConfig();
 
-    for (const authInfo of authInfos) {
-      let currentValue: AuthFieldsFromFS;
-      try {
-        // we're going to assert that these have a username/orgId because they came from the auth files
-        currentValue = removeRestrictedInfoFromConfig(authInfo.getFields(true) as AuthFieldsFromFS);
-      } catch (error) {
-        // eslint-disable-next-line no-await-in-loop
-        const logger = await OrgListUtil.retrieveLogger();
-        logger.warn(`Error decrypting ${authInfo.getUsername()}`);
-        currentValue = removeRestrictedInfoFromConfig(authInfo.getFields() as AuthFieldsFromFS);
-      }
+    const results = await Promise.all(
+      authInfos.map(async (authInfo): Promise<ExtendedAuthFields | ExtendedAuthFieldsScratch> => {
+        // for (const authInfo of authInfos) {
+        let currentValue: AuthFieldsFromFS;
+        try {
+          // we're going to assert that these have a username/orgId because they came from the auth files
+          currentValue = removeRestrictedInfoFromConfig(authInfo.getFields(true) as AuthFieldsFromFS);
+        } catch (error) {
+          const logger = await OrgListUtil.retrieveLogger();
+          logger.warn(`Error decrypting ${authInfo.getUsername()}`);
+          currentValue = removeRestrictedInfoFromConfig(authInfo.getFields() as AuthFieldsFromFS);
+        }
 
-      if (!currentValue.username) {
-        throw new SfError('Missing username in auth file');
-      }
-      if (!currentValue.orgId) {
-        throw new SfError('Missing orgId in auth file');
-      }
+        if (!currentValue.username) {
+          throw new SfError('Missing username in auth file');
+        }
+        if (!currentValue.orgId) {
+          throw new SfError('Missing orgId in auth file');
+        }
 
-      // eslint-disable-next-line no-await-in-loop
-      const [alias, lastUsed] = await Promise.all([
-        getAliasByUsername(currentValue.username),
-        fs.stat(join(Global.SFDX_DIR, `${currentValue.username}.json`)),
-      ]);
+        const [alias, lastUsed] = await Promise.all([
+          getAliasByUsername(currentValue.username),
+          fs.stat(join(Global.SFDX_DIR, `${currentValue.username}.json`)),
+        ]);
 
-      const extendedValue: ExtendedAuthFields | ExtendedAuthFieldsScratch = {
-        ...identifyDefaultOrgs({ ...currentValue, alias }, config),
-        lastUsed: lastUsed.atime,
-        alias,
-      };
+        return {
+          ...identifyDefaultOrgs({ ...currentValue, alias }, config),
+          lastUsed: lastUsed.atime,
+          alias,
+        };
+      })
+    );
 
-      if ('expirationDate' in extendedValue) {
-        output.scratchOrgs.push(extendedValue);
-      } else {
-        output.nonScratchOrgs.push(extendedValue);
-      }
-    }
-    return output;
+    return {
+      scratchOrgs: results.filter((result) => 'expirationDate' in result) as ExtendedAuthFieldsScratch[],
+      nonScratchOrgs: results.filter((result) => !('expirationDate' in result)),
+    };
   }
 
   public static async retrieveScratchOrgInfoFromDevHub(
