@@ -8,8 +8,18 @@
 import { basename, join } from 'path';
 import * as fs from 'fs/promises';
 
-import { Org, AuthInfo, SfdxConfigAggregator, Global, Logger, SfError, trimTo15 } from '@salesforce/core';
-import { Dictionary, JsonMap } from '@salesforce/ts-types';
+import {
+  Org,
+  AuthInfo,
+  SfdxConfigAggregator,
+  Global,
+  Logger,
+  SfError,
+  trimTo15,
+  ConfigAggregator,
+  OrgConfigProperties,
+} from '@salesforce/core';
+import { Dictionary } from '@salesforce/ts-types';
 import { Record } from 'jsforce';
 import { omit } from '@salesforce/kit/lib';
 import { getAliasByUsername } from './utils';
@@ -173,7 +183,7 @@ export class OrgListUtil {
    * @private
    */
   public static async groupOrgs(authInfos: AuthInfo[]): Promise<OrgGroups> {
-    const config = (await SfdxConfigAggregator.create()).getConfig();
+    const configAggregator = await SfdxConfigAggregator.create();
 
     const results = await Promise.all(
       authInfos.map(async (authInfo): Promise<ExtendedAuthFields | ExtendedAuthFieldsScratch> => {
@@ -188,20 +198,13 @@ export class OrgListUtil {
           currentValue = removeRestrictedInfoFromConfig(authInfo.getFields() as AuthFieldsFromFS);
         }
 
-        if (!currentValue.username) {
-          throw new SfError('Missing username in auth file');
-        }
-        if (!currentValue.orgId) {
-          throw new SfError('Missing orgId in auth file');
-        }
-
         const [alias, lastUsed] = await Promise.all([
           getAliasByUsername(currentValue.username),
           fs.stat(join(Global.SFDX_DIR, `${currentValue.username}.json`)),
         ]);
 
         return {
-          ...identifyDefaultOrgs({ ...currentValue, alias }, config),
+          ...identifyDefaultOrgs({ ...currentValue, alias }, configAggregator),
           lastUsed: lastUsed.atime,
           alias,
         };
@@ -339,21 +342,16 @@ export const identifyActiveOrgByStatus = (org: FullyPopulatedScratchOrgFields): 
 /** Identify the default orgs */
 const identifyDefaultOrgs = (
   orgInfo: AuthFieldsFromFS,
-  config: JsonMap
-): ExtendedAuthFields | ExtendedAuthFieldsScratch => ({
-  ...orgInfo,
-  ...((config['target-org'] && (orgInfo.username === config['target-org'] || orgInfo.alias === config['target-org'])) ||
-  (config['defaultusername'] &&
-    (orgInfo.username === config['defaultusername'] || orgInfo.alias === config['defaultusername']))
-    ? { isDefaultUsername: true }
-    : {}),
-  ...((config['target-dev-hub'] &&
-    (orgInfo.username === config['target-dev-hub'] || orgInfo.alias === config['target-dev-hub'])) ||
-  (config['defaultdevhubusername'] &&
-    (orgInfo.username === config['defaultdevhubusername'] || orgInfo.alias === config['defaultdevhubusername']))
-    ? { isDefaultDevHubUsername: true }
-    : {}),
-});
+  config: ConfigAggregator
+): ExtendedAuthFields | ExtendedAuthFieldsScratch => {
+  // remove undefined, since the config might also be undefined
+  const possibleDefaults = [orgInfo.alias, orgInfo.username].filter(Boolean);
+  return {
+    ...orgInfo,
+    isDefaultDevHubUsername: possibleDefaults.includes(config.getPropertyValue(OrgConfigProperties.TARGET_DEV_HUB)),
+    isDefaultUsername: possibleDefaults.includes(config.getPropertyValue(OrgConfigProperties.TARGET_ORG)),
+  };
+};
 
 /**
  * Helper utility to remove sensitive information from a scratch org auth config. By default refreshTokens and client secrets are removed.
