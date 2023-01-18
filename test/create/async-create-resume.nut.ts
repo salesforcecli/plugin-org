@@ -15,7 +15,7 @@ import { CachedOptions } from '@salesforce/core/lib/org/scratchOrgCache';
 import { Duration, sleep } from '@salesforce/kit';
 import { ScratchCreateResponse } from '../../src/shared/orgTypes';
 
-describe('env create scratch async/resume', () => {
+describe('env:create:scratch async/resume', () => {
   let session: TestSession;
   let cacheFilePath: string;
   let soiId: string;
@@ -51,7 +51,7 @@ describe('env create scratch async/resume', () => {
 
   describe('just edition', () => {
     it('requests org', () => {
-      const resp = execCmd<ScratchCreateResponse>('env create scratch --edition developer --json --async', {
+      const resp = execCmd<ScratchCreateResponse>('env:create:scratch --edition developer --json --async', {
         ensureExitCode: 0,
       }).jsonOutput?.result;
       expect(resp).to.have.all.keys(asyncKeys);
@@ -69,7 +69,7 @@ describe('env create scratch async/resume', () => {
     it('resumes org using id', async () => {
       let done = false;
       while (!done) {
-        const resp = execCmd<ScratchCreateResponse>(`env resume scratch --job-id ${soiId} --json`).jsonOutput;
+        const resp = execCmd<ScratchCreateResponse>(`env:resume:scratch --job-id ${soiId} --json`).jsonOutput;
         assert(resp);
         if (resp.status === 0) {
           done = true;
@@ -96,7 +96,7 @@ describe('env create scratch async/resume', () => {
     const testAlias = 'testAlias';
     it('requests org', () => {
       const resp = execCmd<ScratchCreateResponse>(
-        `env create scratch --json --async -f ${path.join(
+        `env:create:scratch --json --async -f ${path.join(
           'config',
           'project-scratch-def.json'
         )} --set-default --alias ${testAlias}`,
@@ -125,7 +125,7 @@ describe('env create scratch async/resume', () => {
     it('resumes org using latest', async () => {
       let done = false;
       while (!done) {
-        const resp = execCmd<ScratchCreateResponse>('env resume scratch --use-most-recent --json').jsonOutput;
+        const resp = execCmd<ScratchCreateResponse>('env:resume:scratch --use-most-recent --json').jsonOutput;
         assert(resp);
         if (resp.status === 0) {
           done = true;
