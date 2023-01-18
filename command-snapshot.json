@@ -88,19 +88,19 @@
       "track-source",
       "wait"
     ],
-    "alias": []
+    "alias": ["env:create:scratch"]
   },
   {
     "command": "org:delete:sandbox",
     "plugin": "@salesforce/plugin-org",
     "flags": ["json", "no-prompt", "target-org"],
-    "alias": []
+    "alias": ["env:delete:sandbox"]
   },
   {
     "command": "org:delete:scratch",
     "plugin": "@salesforce/plugin-org",
     "flags": ["json", "no-prompt", "target-org"],
-    "alias": []
+    "alias": ["env:delete:scratch"]
   },
   {
     "command": "org:display",
@@ -112,24 +112,24 @@
     "command": "org:list",
     "plugin": "@salesforce/plugin-org",
     "flags": ["all", "clean", "json", "loglevel", "no-prompt", "skip-connection-status", "verbose"],
-    "alias": []
+    "alias": ["force:org:list"]
   },
   {
     "command": "org:open",
     "plugin": "@salesforce/plugin-org",
     "flags": ["api-version", "browser", "json", "loglevel", "path", "target-org", "url-only"],
-    "alias": []
+    "alias": ["force:org:open"]
   },
   {
     "command": "org:resume:sandbox",
     "plugin": "@salesforce/plugin-org",
     "flags": ["job-id", "json", "name", "target-org", "use-most-recent", "wait"],
-    "alias": []
+    "alias": ["env:resume:sandbox"]
   },
   {
     "command": "org:resume:scratch",
     "plugin": "@salesforce/plugin-org",
     "flags": ["job-id", "json", "use-most-recent"],
-    "alias": []
+    "alias": ["env:resume:scratch"]
   }
 ]
