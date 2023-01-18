@@ -107,9 +107,7 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
           const err = e as SfError;
           const logger = await Logger.child('org:list');
           logger.debug(`Error cleaning org ${fields.username}: ${err.message}`);
-          this.warn(
-            `Unable to clean org with username ${fields.username}.  You can run "sfdx force:org:delete -u ${fields.username}" to remove it.`
-          );
+          this.warn(messages.getMessage('cleanWarning', [fields.username]));
         }
       })
     );

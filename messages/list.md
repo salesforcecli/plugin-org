@@ -53,3 +53,7 @@ Use one of the auth commands or org:create:scratch to add or create a scratch or
 # noResultsFound
 
 No non-scratch orgs found.
+
+# cleanWarning
+
+Unable to clean org with username ${fields.username}. You can run "sfdx org:delete:scratch -o ${fields.username}" to remove it.`
