@@ -80,7 +80,6 @@ describe('stagedProgress', () => {
       const formattedStages = stagedProgress.formatStages();
       expect(formattedStages).to.be.ok;
       expect(formattedStages).to.include(StateConstants.unknown.char);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       expect(formattedStages).to.include(
         StateConstants.inProgress.color(`${StateConstants.inProgress.char} - Pending`)
       );

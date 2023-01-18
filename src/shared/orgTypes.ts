@@ -23,8 +23,12 @@ export type OrgDisplayReturn = Partial<ScratchOrgFields> & {
   sfdxAuthUrl?: string;
 };
 
+/** Convenience type for the fields that are in the auth file
+ *
+ * core's AuthFields has everything as optional.
+ *
+ * In this case, we have a username because these come from auth files */
 export type AuthFieldsFromFS = Omit<AuthFields, 'expirationDate'> & {
-  // authfields has everything as optional.  In our use cases, we have a username because these come from auth files
   username: string;
   orgId: string;
   accessToken: string;

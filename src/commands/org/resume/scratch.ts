@@ -55,10 +55,10 @@ export default class EnvResumeScratch extends SfCommand<ScratchCreateResponse> {
     const { hubBaseUrl } = cache.get(jobId);
     let lastStatus: string | undefined;
 
-    // eslint-disable-next-line @typescript-eslint/require-await
     lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
       lastStatus = buildStatus(data, hubBaseUrl);
       this.spinner.status = lastStatus;
+      return Promise.resolve();
     });
 
     this.log();

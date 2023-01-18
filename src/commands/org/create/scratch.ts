@@ -146,10 +146,10 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
     let lastStatus: string | undefined;
 
     if (!flags.async) {
-      // eslint-disable-next-line @typescript-eslint/require-await
       lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
         lastStatus = buildStatus(data, baseUrl);
         this.spinner.status = lastStatus;
+        return Promise.resolve();
       });
     }
     this.log();

@@ -101,9 +101,7 @@ describe('env:create:sandbox', () => {
 
       await command.runIt();
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(createStub.firstCall.args[0].SandboxName).includes('mysandboxx');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(createStub.firstCall.args[0].SandboxName.length).equals(10);
 
       Lifecycle.getInstance().on(SandboxEvents.EVENT_ASYNC_RESULT, async (result) => {

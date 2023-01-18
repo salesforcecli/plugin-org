@@ -33,7 +33,6 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
   public static readonly aliases = ['env:create:sandbox'];
   public static readonly deprecateAliases = true;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static flags = {
     // needs to change when new flags are available
     'definition-file': Flags.file({
