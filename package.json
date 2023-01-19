@@ -200,6 +200,9 @@
     },
     "test:command-reference": {
       "command": "./bin/dev commandreference:generate --erroronwarnings",
+      "env": {
+        "COMSPEC": "C:\\Program Files\\PowerShell\\7\\pwsh.EXE"
+      },
       "files": [
         "src/**/*.ts",
         "messages"
