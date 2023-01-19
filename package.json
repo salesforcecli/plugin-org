@@ -199,7 +199,10 @@
       "output": []
     },
     "test:command-reference": {
-      "command": "bin/dev commandreference:generate --erroronwarnings",
+      "env": {
+        "comspec": "pwsh"
+      },
+      "command": "./bin/dev commandreference:generate --erroronwarnings",
       "files": [
         "src/**/*.ts",
         "messages"
@@ -209,7 +212,7 @@
       ]
     },
     "test:deprecation-policy": {
-      "command": "bin/dev snapshot:compare",
+      "command": "./bin/dev snapshot:compare",
       "files": [
         "src/**/*.ts"
       ],
@@ -219,7 +222,7 @@
       ]
     },
     "test:json-schema": {
-      "command": "bin/dev schema:compare",
+      "command": "./bin/dev schema:compare",
       "files": [
         "src/**/*.ts",
         "schemas"
