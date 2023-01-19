@@ -214,7 +214,7 @@ const decorateWithDefaultStatus = <T extends ExtendedAuthFields | FullyPopulated
 // sort by alias then username
 const comparator = <T extends ExtendedAuthFields | FullyPopulatedScratchOrgFields>(a: T, b: T): number => {
   const aliasCompareResult = (a.alias ?? '').localeCompare(b.alias ?? '');
-  return aliasCompareResult !== 0 ? aliasCompareResult : a.username.localeCompare(b.username);
+  return aliasCompareResult !== 0 ? aliasCompareResult : (a.username ?? '').localeCompare(b.username);
 };
 
 const getAuthFileNames = async (): Promise<string[]> => {
