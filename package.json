@@ -200,7 +200,7 @@
     },
     "test:command-reference": {
       "env": {
-        "COMSPEC": "C:\\Program Files\\PowerShell\\7\\pwsh.EXE"
+        "ComSpec": "C:\\Program Files\\PowerShell\\7\\pwsh.EXE"
       },
       "command": "./bin/dev commandreference:generate --erroronwarnings",
       "files": [
