@@ -18,7 +18,7 @@
     "@oclif/test": "^2.2.15",
     "@salesforce/cli-plugins-testkit": "^3.2.18",
     "@salesforce/dev-config": "^3.1.0",
-    "@salesforce/dev-scripts": "^4.0.0-beta.1",
+    "@salesforce/dev-scripts": "^4.0.0-beta.3",
     "@salesforce/plugin-command-reference": "^2.2.8",
     "@salesforce/prettier-config": "^0.0.2",
     "@salesforce/ts-sinon": "1.4.2",
@@ -147,7 +147,7 @@
       ],
       "output": [
         "lib/**",
-        ".tsbuildinfo"
+        "*.tsbuildinfo"
       ],
       "clean": "if-file-deleted"
     },
