@@ -182,14 +182,12 @@
         "test:command-reference",
         "test:deprecation-policy",
         "lint",
-        "test:json-schema"
+        "test:json-schema",
+        "test-compile"
       ]
     },
     "test-only": {
       "command": "nyc mocha test/**/*.test.ts",
-      "dependencies": [
-        "test-compile"
-      ],
       "files": [
         "test/**/*.ts",
         "src/**/*.ts",
