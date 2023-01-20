@@ -1,0 +1,15 @@
+name: sandboxNuts
+on:
+  workflow_dispatch:
+
+jobs:
+  sandbox-nuts:
+    uses: salesforcecli/github-workflows/.github/workflows/nut.yml@main
+    secrets: inherit
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+      fail-fast: false
+    with:
+      os: ${{ matrix.os }}
+      command: yarn test:nuts:sandbox
