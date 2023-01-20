@@ -49,8 +49,9 @@ describe('test sandbox status command', () => {
     });
     assert(session.hubOrg.username);
     hubOrgUsername = session.hubOrg.username;
+    // use ascending to avoid looking at recent sandboxes from other NUTs because they be might be deleted while this test is running
     const queryStr =
-      "SELECT SandboxName FROM SandboxProcess WHERE Status != 'E' and Status != 'D' ORDER BY CreatedDate DESC LIMIT 1";
+      "SELECT SandboxName FROM SandboxProcess WHERE Status != 'E' and Status != 'D' ORDER BY CreatedDate ASC LIMIT 1";
 
     const connection = await Connection.create({
       authInfo: await AuthInfo.create({ username: session.hubOrg.username }),
