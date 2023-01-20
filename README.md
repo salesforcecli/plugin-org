@@ -74,6 +74,10 @@ sfdx plugins:link .
 sfdx plugins
 ```
 
+### Sandbox NUTs
+
+Sandboxes are pretty slow, and there's a constraint to how many we can have. So if your changes might impact sandboxes, and you want to check those in the real world, run the [SandboxNuts](https://github.com/salesforcecli/plugin-org/actions/workflows/sandboxNuts.yml) Github Action.
+
 ## Commands
 
 <!-- commands -->
