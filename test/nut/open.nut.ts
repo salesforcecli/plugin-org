@@ -8,7 +8,7 @@
 import { join } from 'path';
 import { TestSession, execCmd } from '@salesforce/cli-plugins-testkit';
 import { expect } from 'chai';
-import { OrgOpenOutput } from '../../../../../src/commands/org/open';
+import { OrgOpenOutput } from '../../src/commands/org/open';
 
 let session: TestSession;
 

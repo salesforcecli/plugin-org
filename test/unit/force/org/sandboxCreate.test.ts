@@ -185,6 +185,7 @@ describe('org:create (sandbox paths)', () => {
       expect(uxStyledHeaderStub.callCount).to.equal(1);
       Lifecycle.getInstance().removeAllListeners(SandboxEvents.EVENT_RESULT);
       const configAggregator = await ConfigAggregator.create();
+      await configAggregator.reload();
       expect(configAggregator.getPropertyValue(OrgConfigProperties.TARGET_ORG)).to.equal('newSandboxUsername');
     });
 

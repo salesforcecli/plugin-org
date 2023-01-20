@@ -7,7 +7,7 @@
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import { Lifecycle, Messages, SandboxEvents, SandboxProcessObject, SfError, StatusEvent } from '@salesforce/core';
 import { assert, expect } from 'chai';
-import { OrgOpenOutput } from '../../../../../src/commands/org/open';
+import { OrgOpenOutput } from '../../src/commands/org/open';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');

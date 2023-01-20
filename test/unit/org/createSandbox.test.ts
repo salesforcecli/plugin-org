@@ -12,8 +12,8 @@ import * as sinon from 'sinon';
 import { expect, config } from 'chai';
 import { Ux } from '@salesforce/sf-plugins-core/lib/ux';
 import { OrgAccessor } from '@salesforce/core/lib/stateAggregator';
-import CreateSandbox from '../../src/commands/org/create/sandbox';
-import { SandboxProgress } from '../../src/shared/sandboxProgress';
+import CreateSandbox from '../../../src/commands/org/create/sandbox';
+import { SandboxProgress } from '../../../src/shared/sandboxProgress';
 
 config.truncateThreshold = 0;
 
@@ -115,6 +115,7 @@ describe('env:create:sandbox', () => {
       });
 
       await Lifecycle.getInstance().emit(SandboxEvents.EVENT_ASYNC_RESULT, sandboxProcessObj);
+      Lifecycle.getInstance().removeAllListeners(SandboxEvents.EVENT_ASYNC_RESULT);
     });
   });
 

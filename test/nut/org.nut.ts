@@ -10,9 +10,9 @@ import { expect, config, assert } from 'chai';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { execCmd } from '@salesforce/cli-plugins-testkit';
 import { getString } from '@salesforce/ts-types';
-import { OrgListResult } from '../../../../../src/commands/org/list';
-import { OrgOpenOutput } from '../../../../../src/commands/org/open';
-import { OrgDisplayReturn } from '../../../../../src/shared/orgTypes';
+import { OrgListResult } from '../../src/commands/org/list';
+import { OrgOpenOutput } from '../../src/commands/org/open';
+import { OrgDisplayReturn } from '../../src/shared/orgTypes';
 
 let hubOrgUsername: string;
 config.truncateThreshold = 0;
