@@ -5,32 +5,32 @@ on:
   workflow_dispatch:
 
 jobs:
-  # yarn-lockfile-check:
-  #   uses: salesforcecli/github-workflows/.github/workflows/lockFileCheck.yml@main
+  yarn-lockfile-check:
+    uses: salesforcecli/github-workflows/.github/workflows/lockFileCheck.yml@main
   # Since the Windows unit tests take much longer, we run the linux unit tests first and then run the windows unit tests in parallel with NUTs
   linux-unit-tests:
-    # needs: yarn-lockfile-check
-    uses: salesforcecli/github-workflows/.github/workflows/unitTestsLinux.yml@main
+    needs: yarn-lockfile-check
+    uses: salesforcecli/github-workflows/.github/workflows/unitTestsLinux.yml@wireit
   windows-unit-tests:
-    # needs: linux-unit-tests
+    needs: linux-unit-tests
     # TODO: use main
-    uses: salesforcecli/github-workflows/.github/workflows/unitTestsWindows.yml@main
-  # nuts:
-  #   needs: linux-unit-tests
-  #   uses: salesforcecli/github-workflows/.github/workflows/nut.yml@main
-  #   secrets: inherit
-  #   strategy:
-  #     matrix:
-  #       os: [ubuntu-latest, windows-latest]
-  #     fail-fast: false
-  #   with:
-  #     os: ${{ matrix.os }}
-  # # conditional nuts based on commit message includes a certain string
-  # sandbox-nuts:
-  #   needs: [nuts, linux-unit-tests, windows-unit-tests]
-  #   if: contains(github.event.push.head_commit.message,'[sb-nuts]')
-  #   uses: salesforcecli/github-workflows/.github/workflows/nut.yml@main
-  #   secrets: inherit
-  #   with:
-  #     command: test:nuts:sandbox
-  #     os: ubuntu-latest
+    uses: salesforcecli/github-workflows/.github/workflows/unitTestsWindows.yml@wireit
+  nuts:
+    needs: linux-unit-tests
+    uses: salesforcecli/github-workflows/.github/workflows/nut.yml@wireit
+    secrets: inherit
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+      fail-fast: false
+    with:
+      os: ${{ matrix.os }}
+  # conditional nuts based on commit message includes a certain string
+  sandbox-nuts:
+    needs: [nuts, linux-unit-tests, windows-unit-tests]
+    if: contains(github.event.push.head_commit.message,'[sb-nuts]')
+    uses: salesforcecli/github-workflows/.github/workflows/nut.yml@wireit
+    secrets: inherit
+    with:
+      command: test:nuts:sandbox
+      os: ubuntu-latest
