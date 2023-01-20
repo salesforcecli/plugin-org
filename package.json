@@ -18,7 +18,7 @@
     "@oclif/test": "^2.2.15",
     "@salesforce/cli-plugins-testkit": "^3.2.18",
     "@salesforce/dev-config": "^3.1.0",
-    "@salesforce/dev-scripts": "^4.0.0-beta.3",
+    "@salesforce/dev-scripts": "^4.0.0-beta.4",
     "@salesforce/plugin-command-reference": "^2.2.8",
     "@salesforce/prettier-config": "^0.0.2",
     "@salesforce/ts-sinon": "1.4.2",
@@ -121,11 +121,12 @@
     "test-compile": "wireit",
     "test-only": "wireit",
     "test:command-reference": "wireit",
+    "test:compile": "wireit",
     "test:deprecation-policy": "wireit",
     "test:json-schema": "wireit",
     "test:nuts": "nyc mocha \"**/*.nut.ts\" --slow 4500 --timeout 1200000 --parallel",
     "test:nuts:sandbox": "nyc mocha \"**/*.sandboxNut.ts\" --slow 450000 --timeout 7200000",
-    "test:one": "wireit",
+    "test:only": "wireit",
     "test:watch": "mocha --watch \"./test/**/*.test.ts\"",
     "version": "oclif readme"
   },
@@ -178,12 +179,12 @@
     },
     "test": {
       "dependencies": [
-        "test-only",
+        "test:compile",
+        "test:only",
         "test:command-reference",
         "test:deprecation-policy",
         "lint",
-        "test:json-schema",
-        "test-compile"
+        "test:json-schema"
       ]
     },
     "test-only": {
@@ -221,7 +222,27 @@
       "files": [
         "src/**/*.ts",
         "schemas"
-      ]
+      ],
+      "output": []
+    },
+    "test:compile": {
+      "command": "tsc -p ./test --pretty",
+      "files": [
+        "test/**/*.ts",
+        "tsconfig.json",
+        "test/tsconfig.json"
+      ],
+      "output": []
+    },
+    "test:only": {
+      "command": "nyc mocha test/**/*.test.ts",
+      "files": [
+        "test/**/*.ts",
+        "src/**/*.ts",
+        "tsconfig.json",
+        "test/tsconfig.json"
+      ],
+      "output": []
     }
   }
 }
