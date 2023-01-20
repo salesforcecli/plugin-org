@@ -22,15 +22,17 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
+        command: ['yarn test:nuts', 'yarn test:nuts:legacy']
       fail-fast: false
     with:
       os: ${{ matrix.os }}
+      command:
   # conditional nuts based on commit message includes a certain string
   sandbox-nuts:
-    needs: [nuts, linux-unit-tests, windows-unit-tests]
+    needs: [linux-unit-tests, windows-unit-tests]
     if: contains(github.event.push.head_commit.message,'[sb-nuts]')
     uses: salesforcecli/github-workflows/.github/workflows/nut.yml@wireit
     secrets: inherit
     with:
-      command: test:nuts:sandbox
+      command: yarn test:nuts:sandbox
       os: ubuntu-latest
