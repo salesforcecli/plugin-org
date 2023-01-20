@@ -5,15 +5,15 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as path from 'path';
 import { TestSession, execCmd } from '@salesforce/cli-plugins-testkit';
-import { expect, assert } from 'chai';
+import { expect, assert, config } from 'chai';
 import * as shell from 'shelljs';
 import { AuthInfo, Connection, SandboxProcessObject } from '@salesforce/core';
 
 let session: TestSession;
 let sandboxName: string;
 let hubOrgUsername: string;
+config.truncateThreshold = 0;
 
 function unsetAlias() {
   const execOptions: shell.ExecOptions = {
@@ -43,20 +43,17 @@ describe('test sandbox status command', () => {
   before(async () => {
     session = await TestSession.create({
       project: {
-        sourceDir: path.join(process.cwd(), 'test', 'nut', 'commands', 'force', 'org'),
+        name: 'legacy-sandbox-nut',
       },
+      devhubAuthStrategy: 'AUTO',
     });
-    const hubOrg = execCmd<[{ key: string; value: string }]>('config:get defaultdevhubusername --json', {
-      cli: 'sfdx',
-      ensureExitCode: 0,
-    });
-    assert(hubOrg.jsonOutput?.result[0].value);
-    hubOrgUsername = hubOrg.jsonOutput?.result[0].value;
-
+    assert(session.hubOrg.username);
+    hubOrgUsername = session.hubOrg.username;
     const queryStr =
       "SELECT SandboxName FROM SandboxProcess WHERE Status != 'E' and Status != 'D' ORDER BY CreatedDate DESC LIMIT 1";
+
     const connection = await Connection.create({
-      authInfo: await AuthInfo.create({ username: hubOrgUsername }),
+      authInfo: await AuthInfo.create({ username: session.hubOrg.username }),
     });
     const queryResult = (await connection.tooling.query(queryStr)) as { records: SandboxProcessObject[] };
     expect(queryResult?.records?.length).to.equal(1);
@@ -106,7 +103,7 @@ describe('test sandbox status command', () => {
     };
     const result = shell.exec('sfdx config:get defaultusername --json', execOptions) as shell.ShellString;
     expect(result.code).to.equal(0);
-    expect(result.stdout).to.contain(`"${hubOrgUsername}.${sandboxName}"`);
+    expect(result.stdout).to.contain(`"${hubOrgUsername}.${sandboxName.toLowerCase()}"`);
   });
 
   it('sandbox status command set alias', async () => {
@@ -126,7 +123,7 @@ describe('test sandbox status command', () => {
   });
 
   after(async () => {
-    await session.zip(undefined, 'artifacts');
-    await session.clean();
+    await session?.zip(undefined, 'artifacts');
+    await session?.clean();
   });
 });

@@ -6,18 +6,23 @@
  */
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import { Lifecycle, Messages, SandboxEvents, SandboxProcessObject, StatusEvent } from '@salesforce/core';
-import { expect, assert } from 'chai';
+import { expect, assert, config } from 'chai';
+
+config.truncateThreshold = 0;
 
 Messages.importMessagesDirectory(__dirname);
 
 describe('Sandbox Orgs', () => {
   let session: TestSession;
+  let hubOrgUsername: string;
 
   before(async () => {
     session = await TestSession.create({
       project: { name: 'sandboxCreate' },
       devhubAuthStrategy: 'AUTO',
     });
+    assert(session.hubOrg.username);
+    hubOrgUsername = session.hubOrg.username;
   });
 
   it('will create a sandbox, verify it can be opened, and then attempt to delete it', async () => {
@@ -28,7 +33,7 @@ describe('Sandbox Orgs', () => {
         console.log('sandbox copy progress', results.sandboxProcessObj.CopyProgress);
       });
       let rawResult = execCmd(
-        `env:create:sandbox -a mySandbox -s -l Developer -o ${process.env.TESTKIT_HUB_USERNAME} --no-prompt --json --async`,
+        `env:create:sandbox -a mySandbox -s -l Developer -o ${hubOrgUsername} --no-prompt --json --async`,
         { timeout: 3600000 }
       );
       result = rawResult.jsonOutput?.result as SandboxProcessObject;
@@ -36,7 +41,7 @@ describe('Sandbox Orgs', () => {
       expect(result).to.be.ok;
       expect(result.SandboxName.startsWith('sbx'), 'env:create:sandbox').to.be.true;
       rawResult = execCmd<SandboxProcessObject>(
-        `env:resume:sandbox --name ${result.SandboxName} -o ${process.env.TESTKIT_HUB_USERNAME} -w 60 --json`,
+        `env:resume:sandbox --name ${result.SandboxName} -o ${hubOrgUsername} -w 60 --json`,
         { timeout: 3600000 }
       );
       result = rawResult.jsonOutput?.result as SandboxProcessObject;
@@ -46,9 +51,9 @@ describe('Sandbox Orgs', () => {
     }
 
     assert(result);
-    const sandboxUsername = `${process.env.TESTKIT_HUB_USERNAME}.${result.SandboxName}`;
+    const sandboxUsername = `${hubOrgUsername}.${result.SandboxName}`;
     // even if a DNS issue occurred, the sandbox should still be present and available.
-    const openResult = execCmd<{ url: string }>('env:open -e mySandbox --url-only --json', {
+    const openResult = execCmd<{ url: string }>('org:open -o mySandbox --url-only --json', {
       ensureExitCode: 0,
     }).jsonOutput?.result;
     assert(openResult, 'env:open');

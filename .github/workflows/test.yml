@@ -26,7 +26,7 @@ jobs:
       fail-fast: false
     with:
       os: ${{ matrix.os }}
-      command:
+      command: ${{ matrix.command }}
   # conditional nuts based on commit message includes a certain string
   sandbox-nuts:
     needs: [linux-unit-tests, windows-unit-tests]
