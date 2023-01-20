@@ -10,14 +10,14 @@ jobs:
   # Since the Windows unit tests take much longer, we run the linux unit tests first and then run the windows unit tests in parallel with NUTs
   linux-unit-tests:
     needs: yarn-lockfile-check
-    uses: salesforcecli/github-workflows/.github/workflows/unitTestsLinux.yml@wireit
+    uses: salesforcecli/github-workflows/.github/workflows/unitTestsLinux.yml@main
   windows-unit-tests:
     needs: linux-unit-tests
     # TODO: use main
-    uses: salesforcecli/github-workflows/.github/workflows/unitTestsWindows.yml@wireit
+    uses: salesforcecli/github-workflows/.github/workflows/unitTestsWindows.yml@main
   nuts:
     needs: linux-unit-tests
-    uses: salesforcecli/github-workflows/.github/workflows/nut.yml@wireit
+    uses: salesforcecli/github-workflows/.github/workflows/nut.yml@main
     secrets: inherit
     strategy:
       matrix:
@@ -31,7 +31,7 @@ jobs:
   sandbox-nuts:
     needs: [linux-unit-tests, windows-unit-tests]
     if: contains(github.event.push.head_commit.message,'[sb-nuts]')
-    uses: salesforcecli/github-workflows/.github/workflows/nut.yml@wireit
+    uses: salesforcecli/github-workflows/.github/workflows/nut.yml@main
     secrets: inherit
     with:
       command: yarn test:nuts:sandbox
