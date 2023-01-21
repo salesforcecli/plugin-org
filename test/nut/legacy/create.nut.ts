@@ -26,7 +26,7 @@ describe('org:create command', () => {
 
     it('should create a new scratch org via definitionfile param', () => {
       const result = execCmd<ScratchOrgCreateResult>(
-        `force:org:create -f ${path.join('config', 'project-scratch-def.json')} --json username=${username} -d 1`,
+        `force:org:create -f ${path.join('config', 'project-scratch-def.json')} --json username=${username} -d 1 -w 60`,
         {
           ensureExitCode: 0,
         }
@@ -39,7 +39,7 @@ describe('org:create command', () => {
     it('should return duplicate username error C-1007', () => {
       expect(process.env.SFDX_JSON_TO_STDOUT).to.not.equal('false');
       const errorOutput = execCmd(
-        `force:org:create -f ${path.join('config', 'project-scratch-def.json')} --json username=${username} -d 1`,
+        `force:org:create -f ${path.join('config', 'project-scratch-def.json')} --json username=${username} -d 1 -w 60`,
         {
           ensureExitCode: 1,
         }
@@ -55,7 +55,7 @@ describe('org:create command', () => {
 
     it('should create a new scratch org using an alias', () => {
       const result = execCmd<ScratchOrgCreateResult>(
-        `force:org:create -f ${path.join('config', 'project-scratch-def.json')} --json -a ${alias} -d 1`,
+        `force:org:create -f ${path.join('config', 'project-scratch-def.json')} --json -a ${alias} -d 1 -w 60`,
         {
           ensureExitCode: 0,
         }
@@ -66,7 +66,7 @@ describe('org:create command', () => {
     describe('create and delete by project default', () => {
       it('should create a new scratch org', () => {
         const result = execCmd<ScratchOrgCreateResult>(
-          `force:org:create -f ${path.join('config', 'project-scratch-def.json')} --json -d 1 -s`,
+          `force:org:create -f ${path.join('config', 'project-scratch-def.json')} --json -d 1 -s -w 60`,
           {
             ensureExitCode: 0,
           }
