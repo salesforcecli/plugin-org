@@ -28,21 +28,18 @@ describe('env:delete:scratch NUTs', () => {
           alias: scratchOrgAlias,
           duration: 1,
           config: path.join('config', 'project-scratch-def.json'),
-          wait: 60,
         },
         {
           executable: 'sf',
           alias: scratchOrgAlias2,
           duration: 1,
           config: path.join('config', 'project-scratch-def.json'),
-          wait: 60,
         },
         {
           executable: 'sf',
           setDefault: true,
           duration: 1,
           config: path.join('config', 'project-scratch-def.json'),
-          wait: 60,
         },
       ],
     });

@@ -26,13 +26,11 @@ describe('Delete Orgs', () => {
         {
           executable: 'sfdx',
           setDefault: true,
-          wait: 60,
           config: join('config', 'project-scratch-def.json'),
         },
         {
           executable: 'sfdx',
           alias: 'anAlias',
-          wait: 60,
           config: join('config', 'project-scratch-def.json'),
         },
       ],

@@ -22,7 +22,6 @@ describe('test org:open command', () => {
           executable: 'sfdx',
           config: join('config', 'project-scratch-def.json'),
           setDefault: true,
-          wait: 60,
         },
       ],
     });

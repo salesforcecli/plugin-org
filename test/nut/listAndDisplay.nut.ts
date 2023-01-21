@@ -60,13 +60,11 @@ describe('Org Command NUT', () => {
           executable: 'sfdx',
           config: join('config', 'project-scratch-def.json'),
           setDefault: true,
-          wait: 60,
         },
         {
           executable: 'sfdx',
           config: join('config', 'project-scratch-def.json'),
           alias: 'anAlias',
-          wait: 60,
         },
       ],
     });
