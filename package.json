@@ -9,7 +9,7 @@
     "@oclif/core": "^1.25.0",
     "@salesforce/command": "^5.2.30",
     "@salesforce/core": "^3.32.12",
-    "@salesforce/kit": "^1.8.0",
+    "@salesforce/kit": "^1.8.3",
     "open": "8.4.0",
     "tslib": "^2"
   },
