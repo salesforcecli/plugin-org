@@ -1,3 +1,12 @@
+## [2.2.24](https://github.com/salesforcecli/plugin-org/compare/2.2.23...2.2.24) (2023-01-22)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/kit from 1.8.0 to 1.8.3 ([5a92799](https://github.com/salesforcecli/plugin-org/commit/5a9279924d72d77af7921aa2d2abc6300355cbe9))
+
+
+
 ## [2.2.23](https://github.com/salesforcecli/plugin-org/compare/2.2.22...2.2.23) (2023-01-22)
 
 
