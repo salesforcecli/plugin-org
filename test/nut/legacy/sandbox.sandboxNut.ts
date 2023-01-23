@@ -32,7 +32,7 @@ describe('Sandbox Orgs via legacy org:create', () => {
         console.log('sandbox copy progress', results.sandboxProcessObj.CopyProgress);
       });
       result = execCmd<SandboxProcessObject>(
-        `force:org:create -a mySandbox -t sandbox -s licenseType='Developer' -w 60 -u ${session.hubOrg.username} --json`,
+        `force:org:create -a mySandbox -t sandbox -s licenseType="Developer" -w 60 -u ${session.hubOrg.username} --json`,
         { timeout: 3_600_000, ensureExitCode: 0 }
       ).jsonOutput?.result;
     } catch (e) {
