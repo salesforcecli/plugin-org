@@ -45,6 +45,12 @@ describe('org:create command', () => {
         }
       ).jsonOutput as unknown as { message: string };
 
+      Messages.importMessagesDirectory(
+        // 'messages' is appended to the path
+        path.join(__dirname, '..', '..', '..', 'node_modules', '@salesforce', 'core'),
+        false,
+        '@salesforce/core'
+      );
       const messages = Messages.loadMessages('@salesforce/core', 'scratchOrgErrorCodes');
       expect(errorOutput.message).to.be.a('string').and.to.include(messages.getMessage('C-1007'));
     });
