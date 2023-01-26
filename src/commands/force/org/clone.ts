@@ -35,7 +35,7 @@ const messages = Messages.loadMessages('@salesforce/plugin-org', 'clone');
 
 export class OrgCloneCommand extends SfCommand<SandboxProcessObject> {
   public static readonly examples = messages.getMessages('examples');
-  public static readonly summary = messages.getMessage('description');
+  public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly strict = false;
   public static state = 'deprecated';

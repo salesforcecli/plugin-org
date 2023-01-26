@@ -4,6 +4,8 @@ Delete a sandbox.
 
 # description
 
+Deleting a sandbox org is a two-part process. Salesforce CLI first deletes all local references to the org from your computer. It then it marks the org for deletion in the production org that contains the sandbox licenses.
+
 Specify a sandbox with either the username you used when you logged into it with "sf login", or the alias you gave the sandbox when you created it. Run "sf env list" to view all your environments, including sandboxes, and their aliases.
 
 # examples

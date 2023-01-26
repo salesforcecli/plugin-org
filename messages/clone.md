@@ -1,10 +1,13 @@
+# summary
+
+Clone a sandbox org.
+
 # success
 
 The sandbox org cloning process %s is in progress. Run "sfdx force:org:status -n %s" to check for status. If the org is ready, checking the status also logs the requesting user in to the sandbox org and authorizes the org for use with Salesforce CLI.
 
 # description
 
-clone a sandbox org
 There are two ways to clone a sandbox: either specify a sandbox definition file or provide key=value pairs at the command line. Key-value pairs at the command-line override their equivalent sandbox definition file values. In either case, you must specify both the "SandboxName" and "SourceSandboxName" options to set the names of the new sandbox and the one being cloned, respectively.
 
 Set the --targetusername (-u) parameter to a production org with sandbox licenses. The --type (-t) parameter is required and must be set to "sandbox".
@@ -17,23 +20,23 @@ Set the --targetusername (-u) parameter to a production org with sandbox license
 
 # flags.type
 
-type of org to create
+Type of org to create.
 
 # flags.wait
 
-number of minutes to wait while polling for status
+Number of minutes to wait while polling for status.
 
 # flags.setdefaultusername
 
-set the cloned org as your default
+Set the cloned org as your default.
 
 # flags.setalias
 
-alias for the cloned org
+Alias for the cloned org.
 
 # flags.definitionfile
 
-path to the sandbox definition file
+Path to the sandbox definition file.
 
 # flagsLong.wait
 

@@ -4,6 +4,8 @@ Delete a scratch org.
 
 # description
 
+Deleting a scratch org is a two-part process. Salesforce CLI first deletes all local references to the org from your computer. It then it marks the org for deletion in the Dev Hub org.
+
 Specify a scratch org with either the username you used when you logged into it with "sf login", or the alias you gave the scratch org when you created it. Run "sf env list" to view all your environments, including scratch orgs, and their aliases.
 
 # examples

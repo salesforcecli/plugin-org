@@ -8,7 +8,6 @@ The force:org:create command is deprecated. Use org:create:scratch or org:create
 
 # description
 
-create a scratch or sandbox org
 Creates a scratch org or a sandbox org using the values specified in a configuration file or key=value pairs that you specify on the command line. Values specified on the command line override values in the configuration file. Specify a configuration file or provide key=value pairs while creating a scratch org or a sandbox. When creating scratch orgs, —targetdevhubusername (-v) must be a Dev Hub org. When creating sandboxes, the --targetusername (-u) must be a production org with sandbox licenses. The —type (-t) is required if creating a sandbox.
 
 # examples
@@ -23,43 +22,43 @@ Creates a scratch org or a sandbox org using the values specified in a configura
 
 # flags.clientId
 
-connected app consumer key; not supported for sandbox org creation
+Connected app consumer key; not supported for sandbox org creation.
 
 # flags.setDefaultUsername
 
-set the created org as the default username
+Set the created org as the default username.
 
 # flags.setAlias
 
-alias for the created org
+Alias for the created org.
 
 # flags.definitionFile
 
-path to an org definition file
+Path to an org definition file.
 
 # flags.definitionJson
 
-org definition in JSON format
+Org definition in JSON format.
 
 # flags.noNamespace
 
-create the scratch org with no namespace
+Create the scratch org with no namespace.
 
 # flags.noAncestors
 
-do not include second-generation package ancestors in the scratch org
+Do not include second-generation package ancestors in the scratch org.
 
 # flags.env
 
-environment where the scratch org is created: %s
+Environment where the scratch org is created: %s.
 
 # flags.type
 
-type of org to create
+Type of org to create.
 
 # flags.durationDays
 
-duration of the scratch org (in days) (default:7, min:1, max:30)
+Duration of the scratch org (in days) (default:7, min:1, max:30).
 
 # flags.retry
 
@@ -67,7 +66,7 @@ Number of scratch org auth retries after scratch org is successfully signed up.
 
 # flags.wait
 
-the streaming client socket timeout (in minutes)
+Streaming client socket timeout (in minutes).
 
 # scratchOrgCreateSuccess
 
