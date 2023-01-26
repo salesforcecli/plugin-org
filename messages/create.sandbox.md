@@ -116,7 +116,7 @@ The sandbox request configuration isn't acceptable.
 
 # error.pollIntervalGreaterThanWait
 
-The poll interval (%d seconds) c
+The poll interval (%d seconds) can't be larger that wait (%d in seconds)
 
 # error.noCloneSource
 
