@@ -1,3 +1,15 @@
+## [2.2.24](https://github.com/salesforcecli/plugin-org/compare/2.2.23...2.2.24) (2023-01-22)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/kit from 1.8.0 to 1.8.3 ([5a92799](https://github.com/salesforcecli/plugin-org/commit/5a9279924d72d77af7921aa2d2abc6300355cbe9))
+
+## [2.2.23](https://github.com/salesforcecli/plugin-org/compare/2.2.22...2.2.23) (2023-01-22)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/core from 1.23.1 to 1.25.0 ([e9b4cf9](https://github.com/salesforcecli/plugin-org/commit/e9b4cf99135a5259cdc91028762932b159353c85))
+
 ## [2.2.22](https://github.com/salesforcecli/plugin-org/compare/2.2.21...2.2.22) (2023-01-08)
 
 ### Bug Fixes
