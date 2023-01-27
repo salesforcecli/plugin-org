@@ -52,7 +52,7 @@ Request the org, but don't wait for it to complete.
 
 # flags.async.description
 
-The command immediately displays the job ID and returns control of the terminal to you. This way, you can continue to use the CLI. To resume the scratch org creation, run "sf env resume scratch".
+The command immediately displays the job ID and returns control of the terminal to you. This way, you can continue to use the CLI. To resume the scratch org creation, run "<%= config.bin %> org resume scratch".
 
 # flags.edition.description
 
@@ -76,7 +76,7 @@ Number of minutes to wait for the scratch org to be ready.
 
 # flags.wait.description
 
-If the command continues to run after the wait period, the CLI returns control of the terminal to you and displays the job ID. To resume the scratch org creation, run the env resume scratch command and pass it the job ID.
+If the command continues to run after the wait period, the CLI returns control of the terminal to you and displays the job ID. To resume the scratch org creation, run the org resume scratch command and pass it the job ID.
 
 # flags.track-source.summary
 
@@ -106,4 +106,4 @@ Your scratch org is ready.
 
 # action.resume
 
-Resume scratch org creation by running sf env resume scratch --job-id %s
+Resume scratch org creation by running org resume scratch --job-id %s

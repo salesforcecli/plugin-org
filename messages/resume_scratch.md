@@ -4,7 +4,7 @@ Resume the creation of an incomplete scratch org.
 
 # description
 
-When the original "sf env create scratch" command either times out or is run with the --async flag, it displays a job ID.
+When the original "<%= config.bin %> org create scratch" command either times out or is run with the --async flag, it displays a job ID.
 
 Run this command by either passing it a job ID or using the --use-most-recent flag to specify the most recent incomplete scratch org.
 
@@ -30,7 +30,7 @@ The job ID is valid for 24 hours after you start the scratch org creation.
 
 # flags.use-most-recent.summary
 
-Use the job ID of the most recent incomplete scratch org. 
+Use the job ID of the most recent incomplete scratch org.
 
 # error.NoRecentJobId
 

@@ -4,7 +4,7 @@ Check the status of a sandbox creation, and log in to it if it's ready.
 
 # description
 
-Sandbox creation can take a long time. If the original "sf env create sandbox" command either times out, or you specified the --async flag, the command displays a job ID. Use this job ID to check whether the sandbox creation is complete, and if it is, the command then logs into it.
+Sandbox creation can take a long time. If the original "<%= config.bin %> org create sandbox" command either times out, or you specified the --async flag, the command displays a job ID. Use this job ID to check whether the sandbox creation is complete, and if it is, the command then logs into it.
 
 You can also use the sandbox name to check the status or the --use-most-recent flag to use the job ID of the most recent sandbox creation.
 
