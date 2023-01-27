@@ -8,7 +8,7 @@ The force:org:delete command is deprecated. Use org:delete:scratch or org:delete
 
 # description
 
-Deleting a scratch or sandbox org is a two-part process. Salesforce CLI first deletes all local references to the org from your computer. It then it marks the org for deletion in either the Dev Hub org (for scratch orgs) or production org (for sandboxes.)
+Salesforce CLI marks the org for deletion in either the Dev Hub org (for scratch orgs) or production org (for sandboxes) and then deletes all local references to the org from your computer.
 
 To mark the org for deletion without being prompted to confirm, specify --noprompt.
 
