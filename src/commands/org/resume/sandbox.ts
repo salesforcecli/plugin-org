@@ -82,6 +82,7 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxProcessObje
 
   protected getCheckSandboxStatusParams(): string[] {
     return [
+      this.config.bin,
       ...(this.latestSandboxProgressObj ? [this.latestSandboxProgressObj.Id] : []),
       ...(this.flags['target-org']?.getUsername() ? [this.flags['target-org'].getUsername() as string] : []),
     ];

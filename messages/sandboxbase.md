@@ -5,12 +5,11 @@ The sandbox org creation was successful.
 # sandboxSuccess.actions
 
 The username for the sandbox is %s.
-You can open the org by running
-org open -e %s
+You can open the org by running "%s org open -e %s"
 
 # checkSandboxStatus
 
-Run "org resume sandbox --job-id %s -o %s" to check for status.
+Run "%s org resume sandbox --job-id %s -o %s" to check for status.
 If the org is ready, checking the status also authorizes the org for use with Salesforce CLI.
 
 # warning.ClientTimeoutWaitingForSandboxCreate

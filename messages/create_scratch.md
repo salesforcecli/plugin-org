@@ -106,4 +106,4 @@ Your scratch org is ready.
 
 # action.resume
 
-Resume scratch org creation by running org resume scratch --job-id %s
+Resume scratch org creation by running "%s org resume scratch --job-id %s"

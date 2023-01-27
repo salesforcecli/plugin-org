@@ -128,6 +128,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
 
   protected getCheckSandboxStatusParams(): string[] {
     return [
+      this.config.bin,
       ...(this.latestSandboxProgressObj ? [this.latestSandboxProgressObj.Id] : []),
       this.flags['target-org'].getUsername() as string,
     ];
