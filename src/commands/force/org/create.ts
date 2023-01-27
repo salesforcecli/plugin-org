@@ -53,14 +53,12 @@ export class Create extends SfCommand<CreateResult> {
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
 
-  // TODO: deprecate when oclif bug is fixed
-  // public static state = 'deprecated';
-  // public static deprecationOptions = {
-  //   message: messages.getMessage('deprecation'),
-  // };
+  public static state = 'deprecated';
+  public static deprecationOptions = {
+    message: messages.getMessage('deprecation'),
+  };
 
   // needed to allow varargs
-
   public static readonly strict = false;
 
   public static readonly flags = {
