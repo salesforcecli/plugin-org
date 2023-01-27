@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/OrgDisplayReturn",
+  "definitions": {
+    "OrgDisplayReturn": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "accessToken": {
+          "type": "string"
+        },
+        "instanceUrl": {
+          "type": "string"
+        },
+        "clientId": {
+          "type": "string"
+        },
+        "alias": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "connectedStatus": {
+          "type": "string"
+        },
+        "sfdxAuthUrl": {
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "createdDate": {
+          "type": "string"
+        },
+        "expirationDate": {
+          "type": "string"
+        },
+        "orgName": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "devHubId": {
+          "type": "string"
+        },
+        "edition": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "snapshot": {
+          "type": "string"
+        },
+        "lastUsed": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "signupUsername": {
+          "type": "string"
+        }
+      },
+      "required": ["accessToken", "clientId", "id", "instanceUrl", "username"]
+    }
+  }
+}

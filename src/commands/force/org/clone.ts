@@ -35,10 +35,14 @@ const messages = Messages.loadMessages('@salesforce/plugin-org', 'clone');
 
 export class OrgCloneCommand extends SfCommand<SandboxProcessObject> {
   public static readonly examples = messages.getMessages('examples');
-  public static readonly summary = messages.getMessage('description');
+  public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly strict = false;
-
+  public static state = 'deprecated';
+  public static deprecationOptions = {
+    to: 'org:create:sandbox',
+    version: '60.0',
+  };
   public static readonly SANDBOXDEF_SRC_SANDBOXNAME = 'SourceSandboxName';
 
   public static readonly flags = {
@@ -81,16 +85,14 @@ export class OrgCloneCommand extends SfCommand<SandboxProcessObject> {
 
     const lifecycle = Lifecycle.getInstance();
     if (flags.type === OrgTypes.Sandbox) {
-      // eslint-disable-next-line @typescript-eslint/require-await
-      lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results: SandboxProcessObject) => {
+      lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results: SandboxProcessObject) =>
         // Keep all console output in the command
-        this.log(messages.getMessage('commandSuccess', [results.Id, results.SandboxName]));
-      });
+        Promise.resolve(this.log(messages.getMessage('commandSuccess', [results.Id, results.SandboxName])))
+      );
 
-      // eslint-disable-next-line @typescript-eslint/require-await
-      lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) => {
-        this.log(SandboxReporter.sandboxProgress(results));
-      });
+      lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) =>
+        Promise.resolve(this.log(SandboxReporter.sandboxProgress(results)))
+      );
 
       lifecycle.on(SandboxEvents.EVENT_RESULT, async (results: ResultEvent) => {
         const { sandboxReadyForUse, data } = SandboxReporter.logSandboxProcessResult(results);

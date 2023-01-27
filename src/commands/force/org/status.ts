@@ -30,9 +30,14 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'status');
 
 export class OrgStatusCommand extends SfCommand<SandboxProcessObject> {
-  public static readonly examples = messages.getMessages('examples');
-  public static readonly summary = messages.getMessage('description');
+  public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
+  public static readonly examples = messages.getMessages('examples');
+  public static state = 'deprecated';
+  public static deprecationOptions = {
+    to: 'org:resume:sandbox',
+    version: '60.0',
+  };
 
   public static readonly flags = {
     'target-org': requiredOrgFlagWithDeprecations,
@@ -67,10 +72,9 @@ export class OrgStatusCommand extends SfCommand<SandboxProcessObject> {
     logger.debug('Status started with args %s ', flags);
     const lifecycle = Lifecycle.getInstance();
 
-    // eslint-disable-next-line @typescript-eslint/require-await
-    lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) => {
-      this.log(SandboxReporter.sandboxProgress(results));
-    });
+    lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) =>
+      Promise.resolve(this.log(SandboxReporter.sandboxProgress(results)))
+    );
 
     lifecycle.on(SandboxEvents.EVENT_RESULT, async (results: ResultEvent) => {
       const resultMsg = `Sandbox ${results.sandboxProcessObj.SandboxName}(${results.sandboxProcessObj.Id}) is ready for use.`;

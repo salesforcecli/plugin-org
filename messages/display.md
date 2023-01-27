@@ -1,27 +1,28 @@
 # summary
 
-display information about an org
+Display information about an org.
 
 # description
 
-get the description for the current or target org
 Output includes your access token, client Id, connected status, org ID, instance URL, username, and alias, if applicable.
+
 Use --verbose to include the SFDX auth URL. WARNING: The SFDX auth URL contains sensitive information, such as a refresh token that can be used to access an org. Don't share or distribute this URL or token.
-Including --verbose displays the sfdxAuthUrl property only if you authenticated to the org using auth:web:login (not auth:jwt:grant)
 
-# flags.verbose
+Including --verbose displays the sfdxAuthUrl property only if you authenticated to the org using auth:web:login (not auth:jwt:grant).
 
-display the sfdxAuthUrl property
+# flags.verbose.summary
+
+Display the sfdxAuthUrl property.
 
 # examples
 
-- $ sfdx force:org:display
+- Display information about your default org:
 
-- $ sfdx force:org:display -u me@my.org
+  $ <%= config.bin %> <%= command.id %>
 
-- $ sfdx force:org:display -u TestOrg1 --json
+- Display information, including the sfdxAuthUrl property, about the org with alias TestOrg1:
 
-- $ sfdx force:org:display -u TestOrg1 --json > tmp/MyOrgDesc.json
+  $ <%= config.bin %> <%= command.id %> --target-org TestOrg1 --verbose
 
 # noScratchOrgInfoError
 

@@ -1,21 +1,30 @@
+# summary
+
+Delete a scratch or sandbox org.
+
+# deprecation
+
+The force:org:delete command is deprecated. Use org:delete:scratch or org:delete:sandbox.
+
 # description
 
-mark a scratch or sandbox org for deletion 
+Salesforce CLI marks the org for deletion in either the Dev Hub org (for scratch orgs) or production org (for sandboxes) and then deletes all local references to the org from your computer.
+
 To mark the org for deletion without being prompted to confirm, specify --noprompt.
 
 # examples
 
-- $ sfdx force:org:delete -u me@my.org
+- $ <%= config.bin %> <%= command.id %> -u me@my.org
 
-- $ sfdx force:org:delete -u MyOrgAlias -p
+- $ <%= config.bin %> <%= command.id %> -u MyOrgAlias -p
 
 # flags.noprompt
 
-no prompt to confirm deletion
+No prompt to confirm deletion.
 
 # confirmDelete
 
-Enqueue %s org with name: %s for deletion?  Are you sure (y/n)?
+Enqueue %s org with name: %s for deletion? Are you sure (y/n)?
 
 # sandboxConfigOnlySuccess
 
@@ -35,4 +44,4 @@ Successfully marked scratch org %s for deletion
 
 # commandSandboxSuccess
 
-The sandbox org %s has been successfully removed from your list of CLI authorized orgs.  If you created the sandbox with one of the force:org commands, it has also been marked for deletion.
+The sandbox org %s has been successfully removed from your list of CLI authorized orgs. If you created the sandbox with one of the force:org commands, it has also been marked for deletion.

@@ -16,21 +16,27 @@ import { Messages } from '@salesforce/core';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete');
 
-type DeleteResult = {
+export type DeleteResult = {
   orgId: string;
   username: string;
 };
 
 export class Delete extends SfCommand<DeleteResult> {
-  public static readonly summary = messages.getMessage('description');
+  public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
+  public static state = 'deprecated';
+  public static deprecationOptions = {
+    message: messages.getMessage('deprecation'),
+  };
   public static readonly flags = {
     'target-org': requiredOrgFlagWithDeprecations,
     'api-version': orgApiVersionFlagWithDeprecations,
-    noprompt: Flags.boolean({
+    'no-prompt': Flags.boolean({
       char: 'p',
       summary: messages.getMessage('flags.noprompt'),
+      deprecateAliases: true,
+      aliases: ['noprompt'],
     }),
     loglevel,
   };
@@ -45,7 +51,7 @@ export class Delete extends SfCommand<DeleteResult> {
     // read the config file for the org to be deleted, if it has a PROD_ORG_USERNAME entry, it's a sandbox
     // we either need permission to proceed without a prompt OR get the user to confirm
     if (
-      flags.noprompt ||
+      flags['no-prompt'] ||
       (await this.confirm(messages.getMessage('confirmDelete', [isSandbox ? 'sandbox' : 'scratch', username])))
     ) {
       let alreadyDeleted = false;

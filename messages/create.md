@@ -1,57 +1,64 @@
+# summary
+
+Create a scratch org or sandbox.
+
+# deprecation
+
+The force:org:create command is deprecated. Use org:create:scratch or org:create:sandbox.
+
 # description
 
-create a scratch or sandbox org 
 Creates a scratch org or a sandbox org using the values specified in a configuration file or key=value pairs that you specify on the command line. Values specified on the command line override values in the configuration file. Specify a configuration file or provide key=value pairs while creating a scratch org or a sandbox. When creating scratch orgs, —targetdevhubusername (-v) must be a Dev Hub org. When creating sandboxes, the --targetusername (-u) must be a production org with sandbox licenses. The —type (-t) is required if creating a sandbox.
 
 # examples
 
-- $ sfdx force:org:create -f config/enterprise-scratch-def.json -a MyScratchOrg
+- $ <%= config.bin %> <%= command.id %> -f config/enterprise-scratch-def.json -a MyScratchOrg
 
-- $ sfdx force:org:create edition=Developer -a MyScratchOrg -s -v devHub
+- $ <%= config.bin %> <%= command.id %> edition=Developer -a MyScratchOrg -s -v devHub
 
-- $ sfdx force:org:create -f config/enterprise-scratch-def.json -a ScratchOrgWithOverrides username=testuser1@mycompany.org
+- $ <%= config.bin %> <%= command.id %> -f config/enterprise-scratch-def.json -a ScratchOrgWithOverrides username=testuser1@mycompany.org
 
-- $ sfdx force:org:create -t sandbox -f config/dev-sandbox-def.json -a MyDevSandbox -u prodOrg
+- $ <%= config.bin %> <%= command.id %> -t sandbox -f config/dev-sandbox-def.json -a MyDevSandbox -u prodOrg
 
 # flags.clientId
 
-connected app consumer key; not supported for sandbox org creation
+Connected app consumer key; not supported for sandbox org creation.
 
 # flags.setDefaultUsername
 
-set the created org as the default username
+Set the created org as the default username.
 
 # flags.setAlias
 
-alias for the created org
+Alias for the created org.
 
 # flags.definitionFile
 
-path to an org definition file
+Path to an org definition file.
 
 # flags.definitionJson
 
-org definition in JSON format
+Org definition in JSON format.
 
 # flags.noNamespace
 
-create the scratch org with no namespace
+Create the scratch org with no namespace.
 
 # flags.noAncestors
 
-do not include second-generation package ancestors in the scratch org
+Do not include second-generation package ancestors in the scratch org.
 
 # flags.env
 
-environment where the scratch org is created: %s
+Environment where the scratch org is created: %s.
 
 # flags.type
 
-type of org to create
+Type of org to create.
 
 # flags.durationDays
 
-duration of the scratch org (in days) (default:7, min:1, max:30)
+Duration of the scratch org (in days) (default:7, min:1, max:30).
 
 # flags.retry
 
@@ -59,7 +66,7 @@ Number of scratch org auth retries after scratch org is successfully signed up.
 
 # flags.wait
 
-the streaming client socket timeout (in minutes)
+Streaming client socket timeout (in minutes).
 
 # scratchOrgCreateSuccess
 
@@ -95,15 +102,15 @@ This command requires a username. Specify it with the -u parameter or with the "
 
 # missingLicenseType
 
-The sandbox license type is required, but you didn't provide a value.  Specify the license type in the sandbox definition file with the "licenseType" option, or specify the option as a name-value pair at the command-line.  See https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_sandbox_definition.htm for more information.
+The sandbox license type is required, but you didn't provide a value. Specify the license type in the sandbox definition file with the "licenseType" option, or specify the option as a name-value pair at the command-line. See https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_sandbox_definition.htm for more information.
 
 # dnsTimeout
 
-The sandbox was successfully created and authenticated. However, the sandbox DNS records aren't ready yet and so the sandbox may not be available. Run "force:org:list" and check if the sandbox is listed correctly. If it isn't listed, run "force:org:status" to view its status and, if necessary, authenticate to it again. If this issue happens frequently, try setting the SFDX_DNS_TIMEOUT environment variable to a larger number; the default value is 3 seconds.
+The sandbox was successfully created and authenticated. However, the sandbox DNS records aren't ready yet and so the sandbox may not be available. Run "org:list" and check if the sandbox is listed correctly. If it isn't listed, run "force:org:status" to view its status and, if necessary, authenticate to it again. If this issue happens frequently, try setting the SFDX_DNS_TIMEOUT environment variable to a larger number; the default value is 3 seconds.
 
 # partialSuccess
 
-If you specified the -a or -s parameters, but the sandbox wasn't immediately available, the "force:org:create" command may not have finished setting the alias or defaultusername. If so, set the alias manually with "sfdx alias:set"  and the defaultusername with "sfdx config:set".
+If you specified the -a or -s parameters, but the sandbox wasn't immediately available, the "force:org:create" command may not have finished setting the alias or defaultusername. If so, set the alias manually with "sfdx alias:set" and the defaultusername with "sfdx config:set".
 
 # noConfig
 

@@ -1,34 +1,40 @@
-# description
+# summary
 
-list all orgs you’ve created or authenticated to
+List all orgs you’ve created or authenticated to.
 
 # examples
 
-- $ sfdx force:org:list
+- List all orgs you've created or authenticated to:
 
-- $ sfdx force:org:list --verbose --json
+  $ <%= config.bin %> <%= command.id %>
 
-- $ sfdx force:org:list --verbose --json > tmp/MyOrgList.json
+- List all orgs, including expired, deleted, and unknown-status orgs; don't include the connection status:
 
-# verbose
+  $ <%= config.bin %> <%= command.id %> --skip-connection-status --all
 
-list more information about each org
+- List orgs and remove local org authorization info about non-active scratch orgs:
 
-# all
+  $ <%= config.bin %> <%= command.id %> --clean
 
-include expired, deleted, and unknown-status scratch orgs
+# flags.verbose.summary
 
-# clean
+List more information about each org.
 
-remove all local org authorizations for non-active scratch orgs.  Use auth:logout to remove non-scratch orgs
+# flags.all.summary
 
-# noPrompt
+Include expired, deleted, and unknown-status scratch orgs.
 
-do not prompt for confirmation
+# flags.clean.summary
 
-# skipConnectionStatus
+Remove all local org authorizations for non-active scratch orgs. Use auth:logout to remove non-scratch orgs.
 
-skip retrieving the connection status of non-scratch orgs
+# flags.noPrompt.summary
+
+Don't prompt for confirmation.
+
+# flags.skipConnectionStatus.summary
+
+Skip retrieving the connection status of non-scratch orgs.
 
 # prompt
 
@@ -36,11 +42,11 @@ Found (%s) org configurations to delete. Are you sure (yes/no)?
 
 # noActiveScratchOrgs
 
-No active scratch orgs found. Specify --all to see all scratch orgs
+No active scratch orgs found. Specify --all to see all scratch orgs.
 
 # deleteOrgs
 
-You have %s expired or deleted local scratch org authorizations. To remove authorizations for inactive orgs, run force:org:list --clean.
+You have %s expired or deleted local scratch org authorizations. To remove authorizations for inactive orgs, run org:list --clean.
 
 # noOrgsFound
 
@@ -48,8 +54,12 @@ No orgs can be found.
 
 # noOrgsFoundAction
 
-Use one of the auth commands or force:org:create to add or create a scratch org.
+Use one of the auth commands or org:create:scratch to add or create a scratch org.
 
 # noResultsFound
 
 No non-scratch orgs found.
+
+# cleanWarning
+
+Unable to clean org with username %s. You can run "sfdx org:delete:scratch -o %s" to remove it.`

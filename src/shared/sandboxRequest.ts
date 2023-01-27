@@ -23,27 +23,30 @@ export const generateSboxName = async (): Promise<string> => {
 export async function createSandboxRequest(
   isClone: true,
   definitionFile: string | undefined,
-  logger: Logger,
-  varargs?: Record<string, string | undefined>
+  logger?: Logger | undefined,
+  properties?: Record<string, string | undefined>
 ): Promise<{ sandboxReq: SandboxRequest; srcSandboxName: string }>;
 export async function createSandboxRequest(
   isClone: false,
   definitionFile: string | undefined,
-  logger: Logger,
-  varargs?: Record<string, string | undefined>
+  logger?: Logger | undefined,
+  properties?: Record<string, string | undefined>
 ): Promise<{ sandboxReq: SandboxRequest }>;
 export async function createSandboxRequest(
   isClone = false,
   definitionFile: string | undefined,
-  logger: Logger,
-  varargs?: Record<string, string | undefined>
+  logger?: Logger | undefined,
+  properties?: Record<string, string | undefined>
 ): Promise<{ sandboxReq: SandboxRequest; srcSandboxName?: string }> {
-  logger.debug('Varargs: %s ', varargs);
+  if (!logger) {
+    logger = await Logger.child('createSandboxRequest');
+  }
+  logger.debug('Varargs: %s ', properties);
 
   const sandboxDefFileContents = definitionFile
     ? lowerToUpper(JSON.parse(fs.readFileSync(definitionFile, 'utf-8')) as Record<string, unknown>)
     : {};
-  const capitalizedVarArgs = varargs ? lowerToUpper(varargs) : {};
+  const capitalizedVarArgs = properties ? lowerToUpper(properties) : {};
 
   // varargs override file input
   const sandboxReqWithName: SandboxRequest & { SourceSandboxName?: string } = {

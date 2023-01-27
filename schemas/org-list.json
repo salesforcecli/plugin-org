@@ -1,0 +1,336 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/OrgListResult",
+  "definitions": {
+    "OrgListResult": {
+      "type": "object",
+      "properties": {
+        "nonScratchOrgs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ExtendedAuthFields"
+          }
+        },
+        "scratchOrgs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FullyPopulatedScratchOrgFields"
+          }
+        }
+      },
+      "required": ["nonScratchOrgs", "scratchOrgs"],
+      "additionalProperties": false
+    },
+    "ExtendedAuthFields": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "connectedStatus": {
+          "type": "string"
+        },
+        "isDefaultUsername": {
+          "type": "boolean"
+        },
+        "isDefaultDevHubUsername": {
+          "type": "boolean"
+        },
+        "defaultMarker": {
+          "type": "string",
+          "enum": ["(D)", "(U)"]
+        },
+        "attributes": {
+          "$ref": "#/definitions/Dictionary%3Cunknown%3E"
+        },
+        "lastUsed": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "username": {
+          "type": "string"
+        },
+        "orgId": {
+          "type": "string"
+        },
+        "accessToken": {
+          "type": "string"
+        },
+        "instanceUrl": {
+          "type": "string"
+        },
+        "clientId": {
+          "type": "string"
+        },
+        "string": {
+          "type": "string"
+        },
+        "alias": {
+          "type": "string"
+        },
+        "authCode": {
+          "type": "string"
+        },
+        "clientSecret": {
+          "type": "string"
+        },
+        "created": {
+          "type": "string"
+        },
+        "createdOrgInstance": {
+          "type": "string"
+        },
+        "devHubUsername": {
+          "type": "string"
+        },
+        "instanceApiVersion": {
+          "type": "string"
+        },
+        "instanceApiVersionLastRetrieved": {
+          "type": "string"
+        },
+        "isDevHub": {
+          "type": "boolean"
+        },
+        "loginUrl": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "privateKey": {
+          "type": "string"
+        },
+        "refreshToken": {
+          "type": "string"
+        },
+        "scratchAdminUsername": {
+          "type": "string"
+        },
+        "snapshot": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "usernames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "userProfileName": {
+          "type": "string"
+        },
+        "tracksSource": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "instanceName": {
+          "type": "string"
+        },
+        "namespacePrefix": {
+          "type": ["string", "null"]
+        },
+        "isSandbox": {
+          "type": "boolean"
+        },
+        "isScratch": {
+          "type": "boolean"
+        },
+        "trailExpirationDate": {
+          "type": ["string", "null"]
+        }
+      },
+      "required": ["accessToken", "clientId", "instanceUrl", "orgId", "string", "username"]
+    },
+    "Dictionary<unknown>": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/Optional%3Cunknown%3E"
+      },
+      "description": "An object with arbitrary string-indexed values of an optional generic type `Optional<T>`. `T` defaults to `unknown` when not explicitly supplied. For convenient iteration of definitely assigned (i.e. non-nullable) entries, keys, and values, see the following functions:  {@link  definiteEntriesOf  } ,  {@link  definiteKeysOf  } , and\n {@link  definiteValuesOf  } ."
+    },
+    "Optional<unknown>": {
+      "anyOf": [
+        {},
+        {
+          "not": {}
+        }
+      ],
+      "description": "A union type for either the parameterized type `T` or `undefined` -- the opposite of  {@link  NonOptional  } ."
+    },
+    "FullyPopulatedScratchOrgFields": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "isExpired": {
+          "type": "boolean"
+        },
+        "expirationDate": {
+          "type": "string"
+        },
+        "devHubUsername": {
+          "type": "string"
+        },
+        "devHubOrgId": {
+          "type": "string"
+        },
+        "connectedStatus": {
+          "type": "string"
+        },
+        "isDefaultUsername": {
+          "type": "boolean"
+        },
+        "isDefaultDevHubUsername": {
+          "type": "boolean"
+        },
+        "defaultMarker": {
+          "type": "string",
+          "enum": ["(D)", "(U)"]
+        },
+        "attributes": {
+          "$ref": "#/definitions/Dictionary%3Cunknown%3E"
+        },
+        "lastUsed": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "username": {
+          "type": "string"
+        },
+        "orgId": {
+          "type": "string"
+        },
+        "accessToken": {
+          "type": "string"
+        },
+        "instanceUrl": {
+          "type": "string"
+        },
+        "clientId": {
+          "type": "string"
+        },
+        "string": {
+          "type": "string"
+        },
+        "alias": {
+          "type": "string"
+        },
+        "authCode": {
+          "type": "string"
+        },
+        "clientSecret": {
+          "type": "string"
+        },
+        "created": {
+          "type": "string"
+        },
+        "createdOrgInstance": {
+          "type": "string"
+        },
+        "instanceApiVersion": {
+          "type": "string"
+        },
+        "instanceApiVersionLastRetrieved": {
+          "type": "string"
+        },
+        "isDevHub": {
+          "type": "boolean"
+        },
+        "loginUrl": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "privateKey": {
+          "type": "string"
+        },
+        "refreshToken": {
+          "type": "string"
+        },
+        "scratchAdminUsername": {
+          "type": "string"
+        },
+        "snapshot": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "usernames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "userProfileName": {
+          "type": "string"
+        },
+        "tracksSource": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "instanceName": {
+          "type": "string"
+        },
+        "namespacePrefix": {
+          "type": ["string", "null"]
+        },
+        "isSandbox": {
+          "type": "boolean"
+        },
+        "isScratch": {
+          "type": "boolean"
+        },
+        "trailExpirationDate": {
+          "type": ["string", "null"]
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "createdDate": {
+          "type": "string"
+        },
+        "orgName": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "devHubId": {
+          "type": "string"
+        },
+        "edition": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "signupUsername": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "accessToken",
+        "clientId",
+        "createdBy",
+        "createdDate",
+        "devHubId",
+        "devHubUsername",
+        "expirationDate",
+        "instanceUrl",
+        "isExpired",
+        "orgId",
+        "orgName",
+        "signupUsername",
+        "status",
+        "string",
+        "username"
+      ]
+    }
+  }
+}
