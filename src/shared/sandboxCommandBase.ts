@@ -160,6 +160,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
       [
         messages.getMessage('sandboxSuccess'),
         messages.getMessages('sandboxSuccess.actions', [
+          this.config.bin,
           results.sandboxRes?.authUserName,
           results.sandboxRes?.authUserName,
         ]),

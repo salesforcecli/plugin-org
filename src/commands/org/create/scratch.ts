@@ -166,7 +166,7 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
       }
       this.log();
       if (flags.async) {
-        this.info(messages.getMessage('action.resume', [scratchOrgInfo.Id]));
+        this.info(messages.getMessage('action.resume', [this.config.bin, scratchOrgInfo.Id]));
       } else {
         this.logSuccess(messages.getMessage('success'));
       }
@@ -176,7 +176,7 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
       if (error instanceof SfError && error.name === 'ScratchOrgInfoTimeoutError') {
         this.spinner.stop(lastStatus);
         const scratchOrgInfoId = (error.data as { scratchOrgInfoId: string }).scratchOrgInfoId;
-        const resumeMessage = messages.getMessage('action.resume', [scratchOrgInfoId]);
+        const resumeMessage = messages.getMessage('action.resume', [this.config.bin, scratchOrgInfoId]);
 
         this.info(resumeMessage);
         this.error('The scratch org did not complete within your wait time', { code: '69', exit: 69 });
