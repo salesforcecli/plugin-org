@@ -215,11 +215,7 @@ describe('open commands', () => {
       $$.SANDBOX.stub(cmd.spinner, 'start').returns();
 
       await cmd.run();
-      expect(
-        successSpy.calledOnceWith(
-          messages.getMessage('humanSuccessNoUrl', [testOrg.orgId, testOrg.username, expectedUrl])
-        )
-      );
+      expect(successSpy.calledOnceWith(messages.getMessage('humanSuccessNoUrl', [testOrg.orgId, testOrg.username])));
       expect(warnSpy.calledOnceWith(sharedMessages.getMessage('SecurityWarning')));
 
       expect(spies.get('resolver').callCount).to.equal(1);
@@ -240,11 +236,7 @@ describe('open commands', () => {
 
       await cmd.run();
       expect(warnSpy.calledOnceWith(sharedMessages.getMessage('SecurityWarning')));
-      expect(
-        successSpy.calledOnceWith(
-          messages.getMessage('humanSuccessNoUrl', [testOrg.orgId, testOrg.username, expectedUrl])
-        )
-      );
+      expect(successSpy.calledOnceWith(messages.getMessage('humanSuccessNoUrl', [testOrg.orgId, testOrg.username])));
 
       expect(spies.get('resolver').callCount).to.equal(1);
       expect(spies.get('open').callCount).to.equal(1);
