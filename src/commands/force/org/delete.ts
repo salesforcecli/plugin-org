@@ -16,13 +16,13 @@ import { Messages } from '@salesforce/core';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete');
 
-type DeleteResult = {
+export type DeleteResult = {
   orgId: string;
   username: string;
 };
 
 export class Delete extends SfCommand<DeleteResult> {
-  public static readonly summary = messages.getMessage('description');
+  public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
   public static state = 'deprecated';

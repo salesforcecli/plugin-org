@@ -20,28 +20,29 @@ export type OrgListResult = {
   scratchOrgs: FullyPopulatedScratchOrgFields[];
 };
 export class OrgListCommand extends SfCommand<OrgListResult> {
-  public static readonly summary = messages.getMessage('description');
-  public static readonly description = messages.getMessage('description');
+  public static readonly summary = messages.getMessage('summary');
   public static readonly examples = messages.getMessages('examples');
+  public static aliases = ['force:org:list'];
+  public static deprecateAliases = true;
   public static readonly flags = {
     verbose: Flags.boolean({
-      summary: messages.getMessage('verbose'),
+      summary: messages.getMessage('flags.verbose.summary'),
     }),
     all: Flags.boolean({
-      summary: messages.getMessage('all'),
+      summary: messages.getMessage('flags.all.summary'),
     }),
     clean: Flags.boolean({
-      summary: messages.getMessage('clean'),
+      summary: messages.getMessage('flags.clean.summary'),
     }),
     'no-prompt': Flags.boolean({
       char: 'p',
-      summary: messages.getMessage('noPrompt'),
+      summary: messages.getMessage('flags.noPrompt.summary'),
       dependsOn: ['clean'],
       aliases: ['noprompt'],
       deprecateAliases: true,
     }),
     'skip-connection-status': Flags.boolean({
-      summary: messages.getMessage('skipConnectionStatus'),
+      summary: messages.getMessage('flags.skipConnectionStatus.summary'),
       aliases: ['skipconnectionstatus'],
       deprecateAliases: true,
     }),
@@ -105,9 +106,7 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
           const err = e as SfError;
           const logger = await Logger.child('org:list');
           logger.debug(`Error cleaning org ${fields.username}: ${err.message}`);
-          this.warn(
-            `Unable to clean org with username ${fields.username}.  You can run "sfdx force:org:delete -u ${fields.username}" to remove it.`
-          );
+          this.warn(messages.getMessage('cleanWarning', [fields.username, fields.username]));
         }
       })
     );
@@ -213,25 +212,10 @@ const decorateWithDefaultStatus = <T extends ExtendedAuthFields | FullyPopulated
 
 // sort by alias then username
 const comparator = <T extends ExtendedAuthFields | FullyPopulatedScratchOrgFields>(a: T, b: T): number => {
-  const aAlias = (a.alias ?? '').toUpperCase();
-  const bAlias = (b.alias ?? '').toUpperCase();
-
-  if (aAlias < bAlias) {
-    return -1;
-  }
-  if (aAlias > bAlias) {
-    return 1;
-  }
-
-  // alias must match
-  if (a.username < b.username) {
-    return -1;
-  }
-  if (a.username > b.username) {
-    return 1;
-  }
-  return 0;
+  const aliasCompareResult = (a.alias ?? '').localeCompare(b.alias ?? '');
+  return aliasCompareResult !== 0 ? aliasCompareResult : (a.username ?? '').localeCompare(b.username);
 };
+
 const getAuthFileNames = async (): Promise<string[]> => {
   try {
     return ((await AuthInfo.listAllAuthorizations()) ?? []).map((auth) => auth.username);

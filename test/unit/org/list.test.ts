@@ -6,17 +6,14 @@
  */
 import { expect, use as ChaiUse } from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
-import {
-  // MockTestOrgData,
-  TestContext,
-} from '@salesforce/core/lib/testSetup';
+import { TestContext } from '@salesforce/core/lib/testSetup';
 import { AuthInfo, Connection, Org } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { Config } from '@oclif/core';
 import { SfCommand } from '@salesforce/sf-plugins-core';
-import OrgListMock = require('../../../shared/orgListMock');
-import { OrgListCommand } from '../../../../src/commands/org/list';
-import { OrgListUtil } from '../../../../src/shared/orgListUtil';
+import OrgListMock = require('../../shared/orgListMock');
+import { OrgListCommand } from '../../../src/commands/org/list';
+import { OrgListUtil } from '../../../src/shared/orgListUtil';
 
 ChaiUse(chaiAsPromised);
 

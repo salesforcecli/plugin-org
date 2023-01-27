@@ -8,6 +8,7 @@
 import { join } from 'path';
 import { TestSession, execCmd } from '@salesforce/cli-plugins-testkit';
 import { expect } from 'chai';
+import { OrgOpenOutput } from '../../src/commands/org/open';
 
 let session: TestSession;
 
@@ -21,16 +22,15 @@ describe('test org:open command', () => {
           executable: 'sfdx',
           config: join('config', 'project-scratch-def.json'),
           setDefault: true,
-          wait: 10,
         },
       ],
     });
   });
 
   it('org:open command', async () => {
-    const result = execCmd('force:org:open --urlonly --json', {
+    const result = execCmd<OrgOpenOutput>('force:org:open --urlonly --json', {
       ensureExitCode: 0,
-    }).jsonOutput.result as { url: string; orgId: string; username: string };
+    }).jsonOutput?.result;
     expect(result).to.be.ok;
     expect(result).to.have.keys(['url', 'orgId', 'username']);
     expect(result?.url).to.include('/secur/frontdoor.jsp');

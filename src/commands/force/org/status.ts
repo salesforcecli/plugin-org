@@ -72,10 +72,9 @@ export class OrgStatusCommand extends SfCommand<SandboxProcessObject> {
     logger.debug('Status started with args %s ', flags);
     const lifecycle = Lifecycle.getInstance();
 
-    // eslint-disable-next-line @typescript-eslint/require-await
-    lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) => {
-      this.log(SandboxReporter.sandboxProgress(results));
-    });
+    lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) =>
+      Promise.resolve(this.log(SandboxReporter.sandboxProgress(results)))
+    );
 
     lifecycle.on(SandboxEvents.EVENT_RESULT, async (results: ResultEvent) => {
       const resultMsg = `Sandbox ${results.sandboxProcessObj.SandboxName}(${results.sandboxProcessObj.Id}) is ready for use.`;

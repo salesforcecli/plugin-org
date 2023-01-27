@@ -156,16 +156,7 @@
           "additionalProperties": false
         }
       },
-      "required": [
-        "LoginUrl",
-        "AuthCode",
-        "Snapshot",
-        "Status",
-        "SignupEmail",
-        "SignupUsername",
-        "SignupInstance",
-        "Username"
-      ],
+      "required": ["LoginUrl", "AuthCode", "Status", "SignupEmail", "SignupUsername", "SignupInstance", "Username"],
       "additionalProperties": false
     },
     "ObjectSetting": {

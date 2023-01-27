@@ -6,10 +6,13 @@
  */
 
 import { join } from 'path';
-import { expect, config } from 'chai';
+import { expect, config, assert } from 'chai';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { execCmd } from '@salesforce/cli-plugins-testkit';
-import { asDictionary, Dictionary, getString } from '@salesforce/ts-types';
+import { getString } from '@salesforce/ts-types';
+import { OrgListResult } from '../../src/commands/org/list';
+import { OrgOpenOutput } from '../../src/commands/org/open';
+import { OrgDisplayReturn } from '../../src/shared/orgTypes';
 
 let hubOrgUsername: string;
 config.truncateThreshold = 0;
@@ -22,14 +25,14 @@ const verifyHumanResults = (
 ): void => {
   expect(lines.length).to.have.greaterThan(0);
   const devHubLine = lines.find((line) => line.includes(hubOrgUsername));
-  expect(devHubLine).to.be.ok;
+  assert(devHubLine);
   expect(devHubLine).to.include('(D)');
   expect(devHubLine).to.include('Connected');
   const defaultUserLine = lines.find((line) => line.includes(defaultUsername));
-  expect(defaultUserLine).to.be.ok;
+  assert(defaultUserLine);
   expect(defaultUserLine).to.include('(U)');
   const aliasUserLine = lines.find((line) => line.includes(aliasedUsername));
-  expect(aliasUserLine).to.be.ok;
+  assert(aliasUserLine);
   expect(aliasUserLine).to.include('anAlias');
   // verbose mode should display sractch org Id and dev hub org Id
   if (verbose) {
@@ -57,24 +60,31 @@ describe('Org Command NUT', () => {
           executable: 'sfdx',
           config: join('config', 'project-scratch-def.json'),
           setDefault: true,
-          wait: 10,
         },
         {
           executable: 'sfdx',
           config: join('config', 'project-scratch-def.json'),
           alias: 'anAlias',
-          wait: 10,
         },
       ],
     });
 
+    assert(session.hubOrg.username);
     hubOrgUsername = session.hubOrg.username;
 
-    defaultUsername = session.orgs.get('default').username;
-    defaultUserOrgId = session.orgs.get('default').orgId;
+    const defaultOrg = session.orgs.get('default');
+    const aliasOrg = session.orgs.get('anAlias');
 
-    aliasedUsername = session.orgs.get('anAlias').username;
-    aliasUserOrgId = session.orgs.get('anAlias').orgId;
+    assert(defaultOrg?.username);
+    assert(defaultOrg?.orgId);
+    assert(aliasOrg?.username);
+    assert(aliasOrg?.orgId);
+
+    defaultUsername = defaultOrg.username;
+    defaultUserOrgId = defaultOrg.orgId;
+
+    aliasedUsername = aliasOrg?.username;
+    aliasUserOrgId = aliasOrg?.orgId;
   });
 
   after(async () => {
@@ -83,40 +93,41 @@ describe('Org Command NUT', () => {
 
   describe('List Orgs', () => {
     it('should list all orgs', () => {
-      const listResult = execCmd<Dictionary>('force:org:list --json', { ensureExitCode: 0 }).jsonOutput.result;
+      const listResult = execCmd<OrgListResult>('force:org:list --json', { ensureExitCode: 0 }).jsonOutput?.result;
+      assert(listResult);
       expect(listResult).to.have.property('nonScratchOrgs');
       expect(listResult.nonScratchOrgs).to.have.length(1);
       expect(listResult).to.have.property('scratchOrgs');
       expect(listResult.scratchOrgs).to.have.length(2);
-      const nonScratchOrgs = asDictionary(listResult.nonScratchOrgs[0]);
-      const scratchOrgs = listResult.scratchOrgs as unknown[];
+      const scratchOrgs = listResult.scratchOrgs;
       expect(scratchOrgs.map((scratchOrg) => getString(scratchOrg, 'username'))).to.deep.equal([
         defaultUsername,
         aliasedUsername,
       ]);
-      expect(scratchOrgs.map((org) => asDictionary(org)).find((org) => org.username === defaultUsername)).to.include({
+      expect(scratchOrgs.find((org) => org.username === defaultUsername)).to.include({
         defaultMarker: '(U)',
         isDefaultUsername: true,
         namespace: null,
       });
-      expect(scratchOrgs.map((org) => asDictionary(org)).find((org) => org.username === aliasedUsername)).to.include({
+      expect(scratchOrgs.find((org) => org.username === aliasedUsername)).to.include({
         alias: 'anAlias',
         namespace: null,
       });
-      expect(nonScratchOrgs).to.include(
+      expect(listResult.nonScratchOrgs[0]).to.include(
         {
           username: hubOrgUsername,
           defaultMarker: '(D)',
           isDevHub: true,
           connectedStatus: 'Connected',
         },
-        JSON.stringify(nonScratchOrgs)
+        JSON.stringify(listResult.nonScratchOrgs[0])
       );
     });
     it('should list orgs - skipconnectionstatus', () => {
-      const listResult = execCmd<Dictionary>('force:org:list --skipconnectionstatus --json', { ensureExitCode: 0 })
-        .jsonOutput.result;
-      const nonScratchOrgs = asDictionary(listResult.nonScratchOrgs[0]);
+      const listResult = execCmd<OrgListResult>('force:org:list --skipconnectionstatus --json', { ensureExitCode: 0 })
+        .jsonOutput?.result;
+      assert(listResult);
+      const nonScratchOrgs = listResult.nonScratchOrgs[0];
       expect(nonScratchOrgs).to.include(
         {
           username: hubOrgUsername,
@@ -137,7 +148,7 @@ describe('Org Command NUT', () => {
   });
   describe('Org Display', () => {
     it('should display org information for default username', () => {
-      const result = execCmd<Dictionary>('force:org:display --json', { ensureExitCode: 0 }).jsonOutput.result;
+      const result = execCmd<OrgListResult>('force:org:display --json', { ensureExitCode: 0 }).jsonOutput?.result;
       expect(result).to.be.ok;
       expect(result).to.include({
         devHubId: hubOrgUsername,
@@ -145,8 +156,8 @@ describe('Org Command NUT', () => {
       });
     });
     it('should display scratch org information for alias', () => {
-      const result = execCmd<Dictionary>(`force:org:display -u ${aliasedUsername} --json`, { ensureExitCode: 0 })
-        .jsonOutput.result;
+      const result = execCmd<OrgListResult>(`force:org:display -u ${aliasedUsername} --json`, { ensureExitCode: 0 })
+        .jsonOutput?.result;
       expect(result).to.be.ok;
       expect(result).to.include({
         devHubId: hubOrgUsername,
@@ -154,7 +165,9 @@ describe('Org Command NUT', () => {
       });
     });
     it('should display human readable org information for default username', () => {
-      const lines = execCmd<Dictionary>('force:org:display', { ensureExitCode: 0 }).shellOutput.stdout.split('\n');
+      const lines = execCmd<OrgDisplayReturn>('force:org:display', { ensureExitCode: 0 }).shellOutput.stdout.split(
+        '\n'
+      );
       expect(lines.length).to.have.greaterThan(0);
       const usernameLine = lines.find((line) => line.includes('Username'));
       expect(usernameLine).to.include(defaultUsername);
@@ -170,15 +183,19 @@ describe('Org Command NUT', () => {
   });
   describe('Org Open', () => {
     it('should produce the URL for an org in json', () => {
-      const result = execCmd<Dictionary>(`force:org:open -u ${defaultUsername} --urlonly --json`, { ensureExitCode: 0 })
-        .jsonOutput.result;
+      const result = execCmd<OrgOpenOutput>(`force:org:open -u ${defaultUsername} --urlonly --json`, {
+        ensureExitCode: 0,
+      }).jsonOutput?.result;
       expect(result).to.be.ok;
       expect(result).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
     });
     it('should produce the URL with given path for an org in json', () => {
-      const result = execCmd(`force:org:open -u ${aliasedUsername} --urlonly --path "foo/bar/baz" --json`, {
-        ensureExitCode: 0,
-      }).jsonOutput.result;
+      const result = execCmd<OrgOpenOutput>(
+        `force:org:open -u ${aliasedUsername} --urlonly --path "foo/bar/baz" --json`,
+        {
+          ensureExitCode: 0,
+        }
+      ).jsonOutput?.result;
       expect(result).to.be.ok;
       expect(result).to.include({ orgId: aliasUserOrgId, username: aliasedUsername });
       expect(result)

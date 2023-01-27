@@ -1,12 +1,12 @@
 {
-  "extends": "@salesforce/dev-config/tsconfig-test",
+  "extends": "@salesforce/dev-config/tsconfig-test-strict",
   "include": ["./**/*.ts"],
   "compilerOptions": {
     "skipLibCheck": true,
     "baseUrl": "../",
+    "sourceMap": true,
     "paths": {
-      "@salesforce/kit": ["node_modules/@salesforce/kit"],
-      "@salesforce/core": ["node_modules/@salesforce/core"]
+      "@salesforce/kit": ["node_modules/@salesforce/kit"]
     }
   }
 }

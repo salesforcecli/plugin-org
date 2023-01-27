@@ -22,28 +22,30 @@ const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
 const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
 
 export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
-  public static readonly summary = messages.getMessage('description');
+  public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
+  public static readonly aliases = ['force:org:open'];
+  public static depreprecateAliases = true;
 
   public static readonly flags = {
     'target-org': requiredOrgFlagWithDeprecations,
     'api-version': orgApiVersionFlagWithDeprecations,
     browser: Flags.string({
       char: 'b',
-      summary: messages.getMessage('browser'),
+      summary: messages.getMessage('flags.browser.summary'),
       options: ['chrome', 'edge', 'firefox'], // These are ones supported by "open" package
       exclusive: ['url-only'],
     }),
     path: Flags.string({
       char: 'p',
-      summary: messages.getMessage('cliPath'),
+      summary: messages.getMessage('flags.path.summary'),
       env: 'FORCE_OPEN_URL',
       parse: (input: string): Promise<string> => Promise.resolve(encodeURIComponent(decodeURIComponent(input))),
     }),
     'url-only': Flags.boolean({
       char: 'r',
-      summary: messages.getMessage('urlonly'),
+      summary: messages.getMessage('flags.url-only.summary'),
       aliases: ['urlonly'],
       deprecateAliases: true,
     }),

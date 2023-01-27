@@ -6,7 +6,9 @@
  */
 import { join } from 'path';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
+import { DeleteResult } from '../../../src/commands/force/org/delete';
+
 // these NUTs are separated from org.nuts.ts because deleting orgs may interfere with the other NUTs
 describe('Delete Orgs', () => {
   let session: TestSession;
@@ -24,23 +26,29 @@ describe('Delete Orgs', () => {
         {
           executable: 'sfdx',
           setDefault: true,
-          wait: 10,
           config: join('config', 'project-scratch-def.json'),
         },
         {
           executable: 'sfdx',
           alias: 'anAlias',
-          wait: 10,
           config: join('config', 'project-scratch-def.json'),
         },
       ],
     });
 
-    defaultUsername = session.orgs.get('default').username;
-    defaultUserOrgId = session.orgs.get('default').orgId;
+    const defaultOrg = session.orgs.get('default');
+    const aliasOrg = session.orgs.get('anAlias');
 
-    aliasedUsername = session.orgs.get('anAlias').username;
-    aliasUserOrgId = session.orgs.get('anAlias').orgId;
+    assert(defaultOrg?.username);
+    assert(defaultOrg?.orgId);
+    assert(aliasOrg?.username);
+    assert(aliasOrg?.orgId);
+
+    defaultUsername = defaultOrg.username;
+    defaultUserOrgId = defaultOrg.orgId;
+
+    aliasedUsername = aliasOrg?.username;
+    aliasUserOrgId = aliasOrg?.orgId;
   });
 
   after(async () => {
@@ -55,15 +63,15 @@ describe('Delete Orgs', () => {
   it('delete scratch orgs via config', () => {
     const result = execCmd('force:org:delete --noprompt --json', {
       ensureExitCode: 0,
-    }).jsonOutput.result;
+    }).jsonOutput?.result;
     expect(result).to.be.ok;
     expect(result).to.deep.equal({ orgId: defaultUserOrgId, username: defaultUsername });
   });
 
   it('delete scratch orgs via alias', () => {
-    const result = execCmd('force:org:delete --targetusername anAlias --noprompt --json', {
+    const result = execCmd<DeleteResult>('force:org:delete --targetusername anAlias --noprompt --json', {
       ensureExitCode: 0,
-    }).jsonOutput.result;
+    }).jsonOutput?.result;
     expect(result).to.be.ok;
     expect(result).to.deep.equal({ orgId: aliasUserOrgId, username: aliasedUsername });
   });

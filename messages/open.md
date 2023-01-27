@@ -1,34 +1,40 @@
+# summary
+
+Open your default scratch org, or another specified org, in a browser.
+
 # description
 
-open your default scratch org, or another specified org
-To open a specific page, specify the portion of the URL after "https://MyDomainName.my.salesforce.com/" as --path.
-For example, specify "--path lightning" to open Lightning Experience, or specify "--path /apex/YourPage" to open a Visualforce page.
-To generate a URL but not launch it in your browser, specify --urlonly.
-To open in a specific browser, use the --browser parameter. Supported browsers are "chrome", "edge", and "firefox". If you don't specify --browser, the org opens in your default browser.
+To open a specific page, specify the portion of the URL after "https://MyDomainName.my.salesforce.com/" as the value for the --path flag. For example, specify "--path lightning" to open Lightning Experience, or specify "--path /apex/YourPage" to open a Visualforce page.
+
+To generate a URL but not launch it in your browser, specify --url-only.
+
+To open in a specific browser, use the --browser flag. Supported browsers are "chrome", "edge", and "firefox". If you don't specify --browser, the org opens in your default browser.
 
 # examples
 
-- $ <%= config.bin %> <%= command.id %>
+- Open your default org in your default browser:
 
-- $ <%= config.bin %> <%= command.id %> -u me@my.org
+  $ <%= config.bin %> <%= command.id %>
 
-- $ <%= config.bin %> <%= command.id %> -u MyTestOrg1
+- Open the org with alias MyTestOrg1 in the Firefox browser:
 
-- $ <%= config.bin %> <%= command.id %> -r -p lightning
+  $ <%= config.bin %> <%= command.id %> --target-org MyTestOrg1 --browser firefox
 
-- $ <%= config.bin %> <%= command.id %> -u me@my.org -b firefox
+- Display the navigation URL for the Lightning Experience page for your default org, but don't open the page in a browser:
 
-# browser
+  $ <%= config.bin %> <%= command.id %> --url-only --path lightning
 
-browser where the org opens
+# flags.browser.summary
 
-# cliPath
+Browser where the org opens.
 
-navigation URL path
+# flags.path.summary
 
-# urlonly
+Navigation URL path to open a specific page.
 
-display navigation URL, but don’t launch browser
+# flags.url-only.summary
+
+Display navigation URL, but don’t launch browser.
 
 # containerAction
 

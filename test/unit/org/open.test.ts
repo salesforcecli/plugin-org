@@ -4,20 +4,14 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { assert, expect } from 'chai';
-import {
-  // Org,
-  MyDomainResolver,
-  Messages,
-} from '@salesforce/core';
+import { MyDomainResolver, Messages } from '@salesforce/core';
 import { Config } from '@oclif/core';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { MockTestOrgData, TestContext, shouldThrow } from '@salesforce/core/lib/testSetup';
-import * as utils from '../../../../src/shared/utils';
-import { OrgOpenCommand, OrgOpenOutput } from '../../../../src/commands/org/open';
+import * as utils from '../../../src/shared/utils';
+import { OrgOpenCommand, OrgOpenOutput } from '../../../src/commands/org/open';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
@@ -221,11 +215,7 @@ describe('open commands', () => {
       $$.SANDBOX.stub(cmd.spinner, 'start').returns();
 
       await cmd.run();
-      expect(
-        successSpy.calledOnceWith(
-          messages.getMessage('humanSuccessNoUrl', [testOrg.orgId, testOrg.username, expectedUrl])
-        )
-      );
+      expect(successSpy.calledOnceWith(messages.getMessage('humanSuccessNoUrl', [testOrg.orgId, testOrg.username])));
       expect(warnSpy.calledOnceWith(sharedMessages.getMessage('SecurityWarning')));
 
       expect(spies.get('resolver').callCount).to.equal(1);
@@ -246,11 +236,7 @@ describe('open commands', () => {
 
       await cmd.run();
       expect(warnSpy.calledOnceWith(sharedMessages.getMessage('SecurityWarning')));
-      expect(
-        successSpy.calledOnceWith(
-          messages.getMessage('humanSuccessNoUrl', [testOrg.orgId, testOrg.username, expectedUrl])
-        )
-      );
+      expect(successSpy.calledOnceWith(messages.getMessage('humanSuccessNoUrl', [testOrg.orgId, testOrg.username])));
 
       expect(spies.get('resolver').callCount).to.equal(1);
       expect(spies.get('open').callCount).to.equal(1);
