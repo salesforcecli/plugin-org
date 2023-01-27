@@ -22,7 +22,7 @@ export type DeleteResult = {
 };
 
 export class Delete extends SfCommand<DeleteResult> {
-  public static readonly summary = messages.getMessage('description');
+  public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
   public static state = 'deprecated';

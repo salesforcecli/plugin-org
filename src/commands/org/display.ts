@@ -33,7 +33,7 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
     'target-org': requiredOrgFlagWithDeprecations,
     'api-version': orgApiVersionFlagWithDeprecations,
     verbose: Flags.boolean({
-      summary: messages.getMessage('flags.verbose'),
+      summary: messages.getMessage('flags.verbose.summary'),
     }),
     loglevel,
   };

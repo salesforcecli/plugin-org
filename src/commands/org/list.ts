@@ -20,30 +20,29 @@ export type OrgListResult = {
   scratchOrgs: FullyPopulatedScratchOrgFields[];
 };
 export class OrgListCommand extends SfCommand<OrgListResult> {
-  public static readonly summary = messages.getMessage('description');
-  public static readonly description = messages.getMessage('description');
+  public static readonly summary = messages.getMessage('summary');
   public static readonly examples = messages.getMessages('examples');
   public static aliases = ['force:org:list'];
   public static deprecateAliases = true;
   public static readonly flags = {
     verbose: Flags.boolean({
-      summary: messages.getMessage('verbose'),
+      summary: messages.getMessage('flags.verbose.summary'),
     }),
     all: Flags.boolean({
-      summary: messages.getMessage('all'),
+      summary: messages.getMessage('flags.all.summary'),
     }),
     clean: Flags.boolean({
-      summary: messages.getMessage('clean'),
+      summary: messages.getMessage('flags.clean.summary'),
     }),
     'no-prompt': Flags.boolean({
       char: 'p',
-      summary: messages.getMessage('noPrompt'),
+      summary: messages.getMessage('flags.noPrompt.summary'),
       dependsOn: ['clean'],
       aliases: ['noprompt'],
       deprecateAliases: true,
     }),
     'skip-connection-status': Flags.boolean({
-      summary: messages.getMessage('skipConnectionStatus'),
+      summary: messages.getMessage('flags.skipConnectionStatus.summary'),
       aliases: ['skipconnectionstatus'],
       deprecateAliases: true,
     }),
