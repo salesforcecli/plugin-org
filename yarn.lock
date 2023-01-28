@@ -1078,15 +1078,15 @@
     "@salesforce/ts-types" "^1.7.1"
     chalk "^2.4.2"
 
-"@salesforce/core@^3.32.12":
-  version "3.32.12"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.32.12.tgz#853cc5b6a5f95d4896b2d34a40a6042ef9aa6d2c"
-  integrity sha512-27rqSiQWul7b/OkJs19FYDv2M/S4oI4efiGv+6sR7UWv7D7CG1P+0XpgLS3d9xRYF30h98n6VQr4W2a+BWFRvA==
+"@salesforce/core@^3.32.12", "@salesforce/core@^3.33.0":
+  version "3.33.1"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-3.33.1.tgz#3dd0a44ba22763e8e0c2c97df03393e5c2c845d9"
+  integrity sha512-jaed8rK+NhSxB6MjYUN8f/2VkvtbFN/Ce/l6JvgFE+cvOf2g+lPv1pSsnKKlaSiiYcXkOvIRDT9d9ns1RLJzUw==
   dependencies:
     "@salesforce/bunyan" "^2.0.0"
     "@salesforce/kit" "^1.8.0"
     "@salesforce/schemas" "^1.4.0"
-    "@salesforce/ts-types" "^1.5.21"
+    "@salesforce/ts-types" "^1.7.2"
     "@types/graceful-fs" "^4.1.5"
     "@types/semver" "^7.3.13"
     ajv "^8.11.2"
@@ -1154,13 +1154,13 @@
     shx "^0.3.3"
     tslib "^2.2.0"
 
-"@salesforce/plugin-command-reference@^1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-1.6.0.tgz#d521a619a5d3a2e2cbc6d7ebe109937de6e5864f"
-  integrity sha512-f69yXN3uSJW2xukRsOPhdCrb0QPnRKwVMTDiCKav5jw3/sdMsHdqQvPJ4mHBHgfH4Qm1qPWNS6sVkY1Y9tE2tg==
+"@salesforce/plugin-command-reference@^1.6.1":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-1.6.1.tgz#6d70c0565c155e3193d0248832558396c15e92a4"
+  integrity sha512-sLyy0gQiprP3BJkgpQ5UFqNHDeG1S4lJOkrUc0sO+/0V7csyxxGbeSwqb6MX6p70Twb0uoefwSP0/cJpgUbEyA==
   dependencies:
     "@salesforce/command" "^5.2.39"
-    "@salesforce/core" "^3.32.12"
+    "@salesforce/core" "^3.33.0"
     "@types/lodash.uniqby" "^4.7.7"
     chalk "^3.0.0"
     handlebars "4.7.7"
