@@ -89,6 +89,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
       this.spinner.start(messages.getMessage('domainWaiting'));
       const sfdcUrl = new SfdcUrl(url);
       await sfdcUrl.checkLightningDomain();
+      this.spinner.stop();
     } catch (err) {
       if (err instanceof Error) {
         if (err.message.includes('timeout')) {
