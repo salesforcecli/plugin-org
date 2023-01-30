@@ -19,7 +19,7 @@ import {
   ConfigAggregator,
   OrgConfigProperties,
 } from '@salesforce/core';
-import { Dictionary } from '@salesforce/ts-types';
+import { Dictionary, isObject } from '@salesforce/ts-types';
 import { Record } from 'jsforce';
 import { omit } from '@salesforce/kit/lib';
 import { getAliasByUsername } from './utils';
@@ -171,7 +171,7 @@ export class OrgListUtil {
         }
       })
     );
-    return allAuths.filter((auth) => auth !== undefined) as AuthInfo[];
+    return allAuths.filter(isObject<AuthInfo>);
   }
 
   /**
