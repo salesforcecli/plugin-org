@@ -48,11 +48,12 @@ export class OrgCloneCommand extends SfCommand<SandboxProcessObject> {
   public static readonly flags = {
     'target-org': requiredOrgFlagWithDeprecations,
     'api-version': orgApiVersionFlagWithDeprecations,
-    type: Flags.enum({
+    type: Flags.custom<'sandbox'>({
+      options: ['sandbox'],
+    })({
       char: 't',
       summary: messages.getMessage('flags.type'),
       required: true,
-      options: ['sandbox'],
     }),
     definitionfile: Flags.file({
       char: 'f',
@@ -81,7 +82,7 @@ export class OrgCloneCommand extends SfCommand<SandboxProcessObject> {
   public async run(): Promise<SandboxProcessObject> {
     const { flags, args, argv } = await this.parse(OrgCloneCommand);
     const logger = await Logger.child(this.constructor.name);
-    const varargs = parseVarArgs(args, argv);
+    const varargs = parseVarArgs(args, argv as string[]);
 
     const lifecycle = Lifecycle.getInstance();
     if (flags.type === OrgTypes.Sandbox) {

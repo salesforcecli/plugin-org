@@ -7,7 +7,7 @@
 import * as os from 'os';
 import { StatusEvent, ResultEvent, SandboxProcessObject } from '@salesforce/core';
 import { Ux } from '@salesforce/sf-plugins-core/lib/ux';
-import { CliUx } from '@oclif/core';
+import { ux } from '@oclif/core';
 import { getClockForSeconds } from '../shared/timeUtils';
 import { StagedProgress } from './stagedProgress';
 
@@ -118,7 +118,7 @@ export const getSandboxTableAsText = (sandboxUsername?: string, sandboxProgress?
     return [];
   }
   const tableRows: string[] = [];
-  CliUx.ux.table(getTableDataFromProcessObj(sandboxProgress, sandboxUsername), columns, {
+  ux.table(getTableDataFromProcessObj(sandboxProgress, sandboxUsername), columns, {
     printLine: (s: string): void => {
       tableRows.push(s);
     },

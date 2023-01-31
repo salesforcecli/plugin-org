@@ -93,11 +93,12 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
       description: messages.getMessage('flags.clone.description'),
       exclusive: ['license-type'],
     }),
-    'license-type': Flags.enum({
+    'license-type': Flags.custom<SandboxLicenseType>({
+      options: getLicenseTypes(),
+    })({
       char: 'l',
       summary: messages.getMessage('flags.licenseType.summary'),
       exclusive: ['definition-file', 'clone'],
-      options: getLicenseTypes(),
       default: SandboxLicenseType.developer,
     }),
     'target-org': Flags.requiredOrg({
