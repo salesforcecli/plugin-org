@@ -1,9 +1,11 @@
 {
-  "extends": "@salesforce/dev-config/tsconfig",
+  "extends": "@salesforce/dev-config/tsconfig-strict",
   "compilerOptions": {
     "outDir": "lib",
     "rootDir": "src",
     "baseUrl": ".",
+    "skipLibCheck": true,
+    "sourceMap": true,
     "paths": {
       "@salesforce/kit": ["node_modules/@salesforce/kit"]
     }

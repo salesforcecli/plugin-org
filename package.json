@@ -6,20 +6,19 @@
   "main": "lib/index.js",
   "bugs": "https://github.com/forcedotcom/cli/issues",
   "dependencies": {
-    "@oclif/core": "^1.25.0",
-    "@salesforce/command": "^5.2.30",
-    "@salesforce/core": "^3.32.12",
+    "@oclif/core": "^1.26.1",
+    "@salesforce/core": "^3.33.1",
     "@salesforce/kit": "^1.8.3",
+    "@salesforce/sf-plugins-core": "^1.22.1",
     "open": "8.4.0",
     "tslib": "^2"
   },
   "devDependencies": {
     "@oclif/plugin-command-snapshot": "^3.3.0",
-    "@oclif/test": "^2.2.15",
-    "@salesforce/cli-plugins-testkit": "^3.2.15",
+    "@salesforce/cli-plugins-testkit": "^3.2.18",
     "@salesforce/dev-config": "^3.1.0",
-    "@salesforce/dev-scripts": "^3.1.0",
-    "@salesforce/plugin-command-reference": "^1.6.1",
+    "@salesforce/dev-scripts": "^4.0.0-beta.9",
+    "@salesforce/plugin-command-reference": "^2.2.9",
     "@salesforce/prettier-config": "^0.0.2",
     "@salesforce/ts-sinon": "1.4.4",
     "@swc/core": "^1.3.24",
@@ -37,6 +36,7 @@
     "eslint-plugin-header": "^3.0.0",
     "eslint-plugin-import": "2.27.4",
     "eslint-plugin-jsdoc": "^39.6.7",
+    "eslint-plugin-sf-plugin": "^1.7.0",
     "husky": "^7.0.4",
     "mocha": "^9.1.3",
     "moment": "^2.29.1",
@@ -48,7 +48,8 @@
     "shx": "0.3.4",
     "sinon": "10.0.0",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.4",
+    "wireit": "^0.9.3"
   },
   "engines": {
     "node": ">=14.0.0"
@@ -76,6 +77,21 @@
       "@salesforce/plugin-command-reference"
     ],
     "topics": {
+      "org": {
+        "description": "manage your orgs",
+        "longDescription": "Use the org commands to manage the orgs you use with Salesforce CLI. Create and delete scratch orgs, list your created and authorized orgs, and open orgs in your browser.",
+        "subtopics": {
+          "create": {
+            "description": "create scratch orgs, sandboxes, org shapes, and org snapshots"
+          },
+          "resume": {
+            "description": "resume an org creation that was started asynchronously, timed out, or was interrupted"
+          },
+          "delete": {
+            "description": "delete scratch orgs, sandboxes, org shapes, and org snapshots"
+          }
+        }
+      },
       "force": {
         "external": true,
         "subtopics": {
@@ -89,28 +105,122 @@
   },
   "repository": "salesforcecli/plugin-org",
   "scripts": {
-    "build": "sf-build",
+    "build": "wireit",
     "clean": "sf-clean",
     "clean-all": "sf-clean all",
     "clean:lib": "shx rm -rf lib && shx rm -rf coverage && shx rm -rf .nyc_output && shx rm -f oclif.manifest.json",
-    "compile": "sf-compile",
+    "compile": "wireit",
     "docs": "sf-docs",
-    "format": "sf-format",
-    "lint": "sf-lint",
+    "format": "wireit",
+    "lint": "wireit",
     "postpack": "shx rm -f oclif.manifest.json",
-    "posttest": "yarn lint && yarn test:deprecation-policy && yarn test:command-reference",
     "prepack": "sf-prepack",
     "prepare": "sf-install",
-    "pretest": "sf-compile-test",
-    "test": "sf-test",
-    "test:command-reference": "./bin/dev commandreference:generate --erroronwarnings",
-    "test:deprecation-policy": "./bin/dev snapshot:compare",
-    "test:nuts": "nyc mocha \"**/*.nut.ts\" --slow 4500 --timeout 600000 --parallel",
-    "test:nuts:sandbox": "nyc mocha \"**/*.sandboxNut.ts\" --slow 450000 --timeout 7200000",
+    "test": "wireit",
+    "test:command-reference": "wireit",
+    "test:compile": "wireit",
+    "test:deprecation-policy": "wireit",
+    "test:json-schema": "wireit",
+    "test:nuts": "nyc mocha \"./test/nut/*.nut.ts\" --slow 4500 --timeout 1200000 --parallel",
+    "test:nuts:legacy": "nyc mocha \"./test/nut/legacy/*.nut.ts\" --slow 4500 --timeout 1200000 --parallel",
+    "test:nuts:sandbox": "nyc mocha \"./test/**/*.sandboxNut.ts\" --slow 450000 --timeout 7200000 --parallel",
+    "test:only": "wireit",
     "test:watch": "mocha --watch \"./test/**/*.test.ts\"",
     "version": "oclif readme"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "wireit": {
+    "build": {
+      "dependencies": [
+        "compile",
+        "lint"
+      ]
+    },
+    "compile": {
+      "command": "tsc -p . --pretty --incremental",
+      "files": [
+        "src/**/*.ts",
+        "tsconfig.json",
+        "messages/**"
+      ],
+      "output": [
+        "lib/**",
+        "*.tsbuildinfo"
+      ],
+      "clean": "if-file-deleted"
+    },
+    "format": {
+      "command": "prettier --write \"+(src|test|schemas)/**/*.+(ts|js|json)|command-snapshot.json\""
+    },
+    "lint": {
+      "command": "eslint src test --color --cache --cache-location .eslintcache",
+      "files": [
+        "src/**/*.ts",
+        "test/**/*.ts",
+        "messages/**",
+        ".eslintignore",
+        ".eslintrc.js"
+      ],
+      "output": []
+    },
+    "test": {
+      "dependencies": [
+        "test:compile",
+        "test:only",
+        "test:command-reference",
+        "test:deprecation-policy",
+        "lint",
+        "test:json-schema"
+      ]
+    },
+    "test:command-reference": {
+      "command": "\"./bin/dev\" commandreference:generate --erroronwarnings",
+      "files": [
+        "src/**/*.ts",
+        "messages/**"
+      ],
+      "output": [
+        "tmp/root"
+      ]
+    },
+    "test:deprecation-policy": {
+      "command": "\"./bin/dev\" snapshot:compare",
+      "files": [
+        "src/**/*.ts"
+      ],
+      "output": [],
+      "dependencies": [
+        "compile"
+      ]
+    },
+    "test:json-schema": {
+      "command": "\"./bin/dev\" schema:compare",
+      "files": [
+        "src/**/*.ts",
+        "schemas"
+      ],
+      "output": []
+    },
+    "test:compile": {
+      "command": "tsc -p \"./test\" --pretty",
+      "files": [
+        "test/**/*.ts",
+        "tsconfig.json",
+        "test/tsconfig.json"
+      ],
+      "output": []
+    },
+    "test:only": {
+      "command": "nyc mocha \"test/**/*.test.ts\"",
+      "files": [
+        "test/**/*.ts",
+        "src/**/*.ts",
+        "tsconfig.json",
+        "test/tsconfig.json"
+      ],
+      "output": []
+    }
   }
 }

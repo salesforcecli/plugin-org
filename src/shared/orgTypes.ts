@@ -5,10 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { AuthFields } from '@salesforce/core';
+import { AuthFields, ScratchOrgInfo } from '@salesforce/core';
 import { Dictionary } from '@salesforce/ts-types';
 
-export interface OrgDisplayReturn extends Partial<ScratchOrgFields> {
+export type OrgDisplayReturn = Partial<ScratchOrgFields> & {
   username: string;
   id: string;
   accessToken: string;
@@ -21,15 +21,34 @@ export interface OrgDisplayReturn extends Partial<ScratchOrgFields> {
   // non-scratch orgs
   connectedStatus?: string;
   sfdxAuthUrl?: string;
-}
+};
 
-export interface ExtendedAuthFields extends AuthFields, OrgListFields, Partial<ScratchOrgFields> {
-  signupUsername?: string;
+/** Convenience type for the fields that are in the auth file
+ *
+ * core's AuthFields has everything as optional.
+ *
+ * In this case, we have a username because these come from auth files */
+export type AuthFieldsFromFS = Omit<AuthFields, 'expirationDate'> & {
+  username: string;
+  orgId: string;
+  accessToken: string;
+  instanceUrl: string;
+  clientId: string;
+  string: string;
+};
+
+export type ExtendedAuthFields = AuthFieldsFromFS & OrgListFields;
+
+export type ExtendedAuthFieldsScratch = ExtendedAuthFields & {
+  expirationDate: string;
+  devHubUsername: string;
   devHubOrgId?: string;
-  isExpired?: boolean;
-  connectedStatus?: string;
-  attributes?: Dictionary<unknown>;
-}
+};
+
+export type FullyPopulatedScratchOrgFields = ScratchOrgFields &
+  ExtendedAuthFieldsScratch & {
+    isExpired: boolean;
+  };
 
 // developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_objects_scratchorginfo.htm
 export interface ScratchOrgInfoSObject {
@@ -42,25 +61,39 @@ export interface ScratchOrgInfoSObject {
   };
   Edition: string;
   Namespace?: string;
-  OrgName?: string;
+  OrgName: string;
   SignupUsername: string;
 }
 
+/** fields in the  */
 export interface ScratchOrgFields {
   createdBy: string;
   createdDate: string;
   expirationDate: string;
   orgName: string;
   status: string;
-  devHubId?: string;
+  devHubId: string;
   edition?: string;
   namespace?: string;
   snapshot?: string;
   lastUsed?: Date;
+  signupUsername: string;
 }
 
 export interface OrgListFields {
+  connectedStatus?: string;
   isDefaultUsername?: boolean;
   isDefaultDevHubUsername?: boolean;
   defaultMarker?: '(D)' | '(U)';
+  attributes?: Dictionary<unknown>;
+  lastUsed?: Date;
+}
+
+/** If the scratch org is resumed, but doesn't get very far in the process, it won't have much information on it */
+export interface ScratchCreateResponse {
+  username?: string;
+  scratchOrgInfo?: ScratchOrgInfo;
+  authFields?: AuthFields;
+  warnings: string[];
+  orgId?: string;
 }

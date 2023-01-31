@@ -4,28 +4,48 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+
 import { basename, join } from 'path';
 import * as fs from 'fs/promises';
 
-import { Org, AuthInfo, sfdc, SfdxConfigAggregator, Global, AuthFields, Logger, SfError } from '@salesforce/core';
-import { Dictionary, JsonMap } from '@salesforce/ts-types';
+import {
+  Org,
+  AuthInfo,
+  SfdxConfigAggregator,
+  Global,
+  Logger,
+  SfError,
+  trimTo15,
+  ConfigAggregator,
+  OrgConfigProperties,
+} from '@salesforce/core';
+import { Dictionary, isObject } from '@salesforce/ts-types';
 import { Record } from 'jsforce';
 import { omit } from '@salesforce/kit/lib';
 import { getAliasByUsername } from './utils';
-import { ScratchOrgInfoSObject, ExtendedAuthFields } from './orgTypes';
+import {
+  ScratchOrgInfoSObject,
+  ExtendedAuthFields,
+  ExtendedAuthFieldsScratch,
+  FullyPopulatedScratchOrgFields,
+  AuthFieldsFromFS,
+} from './orgTypes';
 
 type OrgGroups = {
   nonScratchOrgs: ExtendedAuthFields[];
-  scratchOrgs: ExtendedAuthFields[];
+  scratchOrgs: ExtendedAuthFieldsScratch[];
 };
 
-type ExtendedScratchOrgInfo = ScratchOrgInfoSObject & {
-  devHubOrgId: string;
-  attributes: {
-    type: string;
-    url: string;
-  };
+type OrgGroupsFullyPopulated = {
+  nonScratchOrgs: ExtendedAuthFields[];
+  scratchOrgs: FullyPopulatedScratchOrgFields[];
 };
+
+type ExtendedScratchOrgInfo = Record &
+  ScratchOrgInfoSObject & {
+    // extra property populated by this command by resolving the devHubUsername to a devHubUsername
+    devHubOrgId: string;
+  };
 
 export class OrgListUtil {
   private static logger: Logger;
@@ -48,7 +68,7 @@ export class OrgListUtil {
   public static async readLocallyValidatedMetaConfigsGroupedByOrgType(
     userFilenames: string[],
     flags: Dictionary<string | boolean>
-  ): Promise<OrgGroups> {
+  ): Promise<OrgGroupsFullyPopulated> {
     const contents: AuthInfo[] = await OrgListUtil.readAuthFiles(userFilenames);
     const orgs = await OrgListUtil.groupOrgs(contents);
 
@@ -56,7 +76,7 @@ export class OrgListUtil {
     const [nonScratchOrgs, scratchOrgs] = await Promise.all([
       Promise.all(
         orgs.nonScratchOrgs.map(async (fields) => {
-          if (!flags.skipconnectionstatus) {
+          if (!flags.skipconnectionstatus && fields.username) {
             // skip completely if we're skipping the connection
             fields.connectedStatus = await OrgListUtil.determineConnectedStatusForNonScratchOrg(fields.username);
             if (!fields.isDevHub && fields.connectedStatus === 'Connected') {
@@ -83,16 +103,19 @@ export class OrgListUtil {
    * @param {ExtendedAuthFields[]} scratchOrgs- an array of strings that are validated against the server.
    * @returns the same scratch org list, but with updated information from the server.
    */
-  public static async processScratchOrgs(scratchOrgs: ExtendedAuthFields[]): Promise<ExtendedAuthFields[]> {
-    const orgIdsGroupedByDevHub = scratchOrgs
-      .filter((fields) => fields.devHubUsername)
-      .reduce((accum: Dictionary<string[]>, fields) => {
-        accum[fields.devHubUsername] = [...(accum[fields.devHubUsername] ?? []), sfdc.trimTo15(fields.orgId)];
-        return accum;
-      }, {});
+  public static async processScratchOrgs(
+    scratchOrgs: ExtendedAuthFieldsScratch[]
+  ): Promise<FullyPopulatedScratchOrgFields[]> {
+    const orgIdsGroupedByDevHub = new Map<string, string[]>();
+    scratchOrgs.forEach((fields) => {
+      orgIdsGroupedByDevHub.set(
+        fields.devHubUsername,
+        (orgIdsGroupedByDevHub.get(fields.devHubUsername) ?? []).concat([trimTo15(fields.orgId)])
+      );
+    });
     const updatedContents = (
       await Promise.all(
-        Object.entries(orgIdsGroupedByDevHub).map(async ([devHubUsername, orgIds]) =>
+        Array.from(orgIdsGroupedByDevHub).map(([devHubUsername, orgIds]) =>
           OrgListUtil.retrieveScratchOrgInfoFromDevHub(devHubUsername, orgIds)
         )
       )
@@ -111,7 +134,7 @@ export class OrgListUtil {
       filename.match(/^00D.{15}\.json$/g)
     );
 
-    const allAuths: AuthInfo[] = await Promise.all(
+    const allAuths: Array<AuthInfo | undefined> = await Promise.all(
       fileNames.map(async (fileName) => {
         try {
           const orgUsername = basename(fileName, '.json');
@@ -148,7 +171,7 @@ export class OrgListUtil {
         }
       })
     );
-    return allAuths.filter((auth) => !!auth);
+    return allAuths.filter(isObject<AuthInfo>);
   }
 
   /**
@@ -160,72 +183,44 @@ export class OrgListUtil {
    * @private
    */
   public static async groupOrgs(authInfos: AuthInfo[]): Promise<OrgGroups> {
-    const output: OrgGroups = {
-      scratchOrgs: [],
-      nonScratchOrgs: [],
+    const configAggregator = await SfdxConfigAggregator.create();
+
+    const results = await Promise.all(
+      authInfos.map(async (authInfo): Promise<ExtendedAuthFields | ExtendedAuthFieldsScratch> => {
+        // for (const authInfo of authInfos) {
+        let currentValue: AuthFieldsFromFS;
+        try {
+          // we're going to assert that these have a username/orgId because they came from the auth files
+          currentValue = removeRestrictedInfoFromConfig(authInfo.getFields(true) as AuthFieldsFromFS);
+        } catch (error) {
+          const logger = await OrgListUtil.retrieveLogger();
+          logger.warn(`Error decrypting ${authInfo.getUsername()}`);
+          currentValue = removeRestrictedInfoFromConfig(authInfo.getFields() as AuthFieldsFromFS);
+        }
+
+        const [alias, lastUsed] = await Promise.all([
+          getAliasByUsername(currentValue.username),
+          fs.stat(join(Global.SFDX_DIR, `${currentValue.username}.json`)),
+        ]);
+
+        return {
+          ...identifyDefaultOrgs({ ...currentValue, alias }, configAggregator),
+          lastUsed: lastUsed.atime,
+          alias,
+        };
+      })
+    );
+
+    return {
+      scratchOrgs: results.filter((result) => 'expirationDate' in result) as ExtendedAuthFieldsScratch[],
+      nonScratchOrgs: results.filter((result) => !('expirationDate' in result)),
     };
-    const config = (await SfdxConfigAggregator.create()).getConfig();
-
-    for (const authInfo of authInfos) {
-      let currentValue: ExtendedAuthFields;
-      try {
-        currentValue = OrgListUtil.removeRestrictedInfoFromConfig(authInfo.getFields(true));
-      } catch (error) {
-        // eslint-disable-next-line no-await-in-loop
-        const logger = await OrgListUtil.retrieveLogger();
-        logger.warn(`Error decrypting ${authInfo.getUsername()}`);
-        currentValue = OrgListUtil.removeRestrictedInfoFromConfig(authInfo.getFields());
-      }
-
-      // eslint-disable-next-line no-await-in-loop
-      const [alias, lastUsed] = await Promise.all([
-        getAliasByUsername(currentValue.username),
-        fs.stat(join(Global.SFDX_DIR, `${currentValue.username}.json`)),
-      ]);
-
-      currentValue.alias = alias;
-      currentValue.lastUsed = lastUsed.atime;
-
-      OrgListUtil.identifyDefaultOrgs(currentValue, config);
-      if (currentValue.devHubUsername) {
-        output.scratchOrgs.push(currentValue);
-      } else {
-        output.nonScratchOrgs.push(currentValue);
-      }
-    }
-    return output;
-  }
-
-  /**
-   * Helper utility to remove sensitive information from a scratch org auth config. By default refreshTokens and client secrets are removed.
-   *
-   * @param {*} config - scratch org auth object.
-   * @param {string[]} properties - properties to exclude ex ['refreshToken', 'clientSecret']
-   * @returns the config less the sensitive information.
-   */
-  public static removeRestrictedInfoFromConfig(
-    config: AuthFields,
-    properties = ['refreshToken', 'clientSecret']
-  ): AuthFields {
-    return omit(config, properties);
-  }
-
-  /** Identify the default orgs */
-  public static identifyDefaultOrgs(orgInfo: ExtendedAuthFields, config: JsonMap): void {
-    if (config['target-org'] && (orgInfo.username === config['target-org'] || orgInfo.alias === config['target-org'])) {
-      orgInfo.isDefaultUsername = true;
-    } else if (
-      config['target-dev-hub'] &&
-      (orgInfo.username === config['target-dev-hub'] || orgInfo.alias === config['target-dev-hub'])
-    ) {
-      orgInfo.isDefaultDevHubUsername = true;
-    }
   }
 
   public static async retrieveScratchOrgInfoFromDevHub(
     devHubUsername: string,
     orgIdsToQuery: string[]
-  ): Promise<Array<Partial<Record> & ExtendedScratchOrgInfo>> {
+  ): Promise<ExtendedScratchOrgInfo[]> {
     const fields = [
       'CreatedDate',
       'Edition',
@@ -256,38 +251,38 @@ export class OrgListUtil {
 
   public static async reduceScratchOrgInfo(
     updatedContents: Array<Partial<Record> & ExtendedScratchOrgInfo>,
-    orgs: ExtendedAuthFields[]
-  ): Promise<ExtendedAuthFields[]> {
-    // Reduce the information to key value pairs with signupUsername as key
-    const contentMap: Dictionary<ExtendedScratchOrgInfo> = updatedContents.reduce((map, scratchOrgInfo) => {
-      if (scratchOrgInfo) {
-        map[scratchOrgInfo.SignupUsername] = scratchOrgInfo;
-      }
-      return map;
-    }, {});
+    orgs: ExtendedAuthFieldsScratch[]
+  ): Promise<FullyPopulatedScratchOrgFields[]> {
+    const contentMap = new Map(updatedContents.map((org) => [org.SignupUsername, org]));
 
-    for (const scratchOrgInfo of orgs) {
-      const updatedOrgInfo = contentMap[scratchOrgInfo.username];
-      if (updatedOrgInfo) {
-        scratchOrgInfo.signupUsername = updatedOrgInfo.SignupUsername;
-        scratchOrgInfo.createdBy = updatedOrgInfo.CreatedBy.Username;
-        scratchOrgInfo.createdDate = updatedOrgInfo.CreatedDate;
-        scratchOrgInfo.devHubOrgId = updatedOrgInfo.devHubOrgId;
-        scratchOrgInfo.attributes = updatedOrgInfo.attributes;
-        scratchOrgInfo.orgName = updatedOrgInfo.OrgName;
-        scratchOrgInfo.edition = updatedOrgInfo.Edition;
-        scratchOrgInfo.status = updatedOrgInfo.Status;
-        scratchOrgInfo.expirationDate = updatedOrgInfo.ExpirationDate;
-        scratchOrgInfo.isExpired = updatedOrgInfo.Status === 'Deleted';
-        scratchOrgInfo.namespace = updatedOrgInfo.Namespace;
-      } else {
-        // eslint-disable-next-line no-await-in-loop
-        const logger = await OrgListUtil.retrieveLogger();
-        logger.warn(`Can't find ${scratchOrgInfo.username} in the updated contents`);
-      }
+    const results = orgs.map((scratchOrgInfo): FullyPopulatedScratchOrgFields | string => {
+      const updatedOrgInfo = contentMap.get(scratchOrgInfo.username);
+      return updatedOrgInfo
+        ? {
+            ...scratchOrgInfo,
+            signupUsername: updatedOrgInfo.SignupUsername,
+            createdBy: updatedOrgInfo.CreatedBy.Username,
+            createdDate: updatedOrgInfo.CreatedDate,
+            devHubOrgId: updatedOrgInfo.devHubOrgId,
+            devHubId: updatedOrgInfo.devHubOrgId,
+            attributes: updatedOrgInfo.attributes,
+            orgName: updatedOrgInfo.OrgName,
+            edition: updatedOrgInfo.Edition,
+            status: updatedOrgInfo.Status,
+            expirationDate: updatedOrgInfo.ExpirationDate,
+            isExpired: updatedOrgInfo.Status === 'Deleted',
+            namespace: updatedOrgInfo.Namespace,
+          }
+        : `Can't find ${scratchOrgInfo.username} in the updated contents`;
+    });
+
+    const warnings = results.filter((result) => typeof result === 'string') as string[];
+    if (warnings.length) {
+      const logger = await OrgListUtil.retrieveLogger();
+      warnings.forEach((warning) => logger.warn(warning));
     }
 
-    return orgs;
+    return results.filter((result) => typeof result !== 'string') as FullyPopulatedScratchOrgFields[];
   }
 
   /**
@@ -313,7 +308,7 @@ export class OrgListUtil {
    * @param username The username used when the org was authenticated
    * @returns {Promise.<string>}
    */
-  public static async determineConnectedStatusForNonScratchOrg(username: string): Promise<string> {
+  public static async determineConnectedStatusForNonScratchOrg(username: string): Promise<string | undefined> {
     try {
       const org = await Org.create({ aliasOrUsername: username });
 
@@ -341,4 +336,31 @@ export class OrgListUtil {
   }
 }
 
-export const identifyActiveOrgByStatus = (org: ExtendedAuthFields): boolean => org.status === 'Active';
+export const identifyActiveOrgByStatus = (org: FullyPopulatedScratchOrgFields): boolean =>
+  'status' in org && org.status === 'Active';
+
+/** Identify the default orgs */
+const identifyDefaultOrgs = (
+  orgInfo: AuthFieldsFromFS,
+  config: ConfigAggregator
+): ExtendedAuthFields | ExtendedAuthFieldsScratch => {
+  // remove undefined, since the config might also be undefined
+  const possibleDefaults = [orgInfo.alias, orgInfo.username].filter(Boolean);
+  return {
+    ...orgInfo,
+    isDefaultDevHubUsername: possibleDefaults.includes(config.getPropertyValue(OrgConfigProperties.TARGET_DEV_HUB)),
+    isDefaultUsername: possibleDefaults.includes(config.getPropertyValue(OrgConfigProperties.TARGET_ORG)),
+  };
+};
+
+/**
+ * Helper utility to remove sensitive information from a scratch org auth config. By default refreshTokens and client secrets are removed.
+ *
+ * @param {*} config - scratch org auth object.
+ * @param {string[]} properties - properties to exclude ex ['refreshToken', 'clientSecret']
+ * @returns the config less the sensitive information.
+ */
+const removeRestrictedInfoFromConfig = (
+  config: AuthFieldsFromFS,
+  properties: string[] = ['refreshToken', 'clientSecret']
+): AuthFieldsFromFS => omit<Omit<AuthFieldsFromFS, 'refreshToken' | 'clientSecret'>>(config, properties);

@@ -4,45 +4,61 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as os from 'os';
-import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
+import {
+  Flags,
+  SfCommand,
+  requiredOrgFlagWithDeprecations,
+  orgApiVersionFlagWithDeprecations,
+  loglevel,
+} from '@salesforce/sf-plugins-core';
 import { Messages } from '@salesforce/core';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete');
 
-type DeleteResult = {
+export type DeleteResult = {
   orgId: string;
   username: string;
 };
 
-export class Delete extends SfdxCommand {
-  public static readonly requiresUsername = true;
-  public static readonly supportsDevhubUsername = true;
+export class Delete extends SfCommand<DeleteResult> {
+  public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
-  public static readonly examples = messages.getMessage('examples').split(os.EOL);
-  public static readonly flagsConfig: FlagsConfig = {
-    noprompt: flags.boolean({
+  public static readonly examples = messages.getMessages('examples');
+  public static state = 'deprecated';
+  public static deprecationOptions = {
+    message: messages.getMessage('deprecation'),
+  };
+  public static readonly flags = {
+    'target-org': requiredOrgFlagWithDeprecations,
+    'api-version': orgApiVersionFlagWithDeprecations,
+    'no-prompt': Flags.boolean({
       char: 'p',
-      description: messages.getMessage('flags.noprompt'),
+      summary: messages.getMessage('flags.noprompt'),
+      deprecateAliases: true,
+      aliases: ['noprompt'],
     }),
+    loglevel,
   };
 
   public async run(): Promise<DeleteResult> {
-    const username = this.org.getUsername();
-    const orgId = this.org.getOrgId();
-    const isSandbox = await this.org.isSandbox();
+    const { flags } = await this.parse(Delete);
+    const username = flags['target-org'].getUsername() ?? 'unknown username';
+    const orgId = flags['target-org'].getOrgId();
+    // the connection version can be set before using it to isSandbox and delete
+    flags['target-org'].getConnection(flags['api-version']);
+    const isSandbox = await flags['target-org'].isSandbox();
     // read the config file for the org to be deleted, if it has a PROD_ORG_USERNAME entry, it's a sandbox
     // we either need permission to proceed without a prompt OR get the user to confirm
     if (
-      this.flags.noprompt ||
-      (await this.ux.confirm(messages.getMessage('confirmDelete', [isSandbox ? 'sandbox' : 'scratch', username])))
+      flags['no-prompt'] ||
+      (await this.confirm(messages.getMessage('confirmDelete', [isSandbox ? 'sandbox' : 'scratch', username])))
     ) {
       let alreadyDeleted = false;
       let successMessageKey = 'commandSandboxSuccess';
       try {
         // will determine if it's a scratch org or sandbox and will delete from the appropriate parent org (DevHub or Production)
-        await this.org.delete();
+        await flags['target-org'].delete();
       } catch (e) {
         if (e instanceof Error && e.name === 'ScratchOrgNotFound') {
           alreadyDeleted = true;
@@ -53,7 +69,7 @@ export class Delete extends SfdxCommand {
         }
       }
 
-      this.ux.log(
+      this.log(
         isSandbox
           ? messages.getMessage(successMessageKey, [username])
           : messages.getMessage(alreadyDeleted ? 'deleteOrgConfigOnlyCommandSuccess' : 'deleteOrgCommandSuccess', [

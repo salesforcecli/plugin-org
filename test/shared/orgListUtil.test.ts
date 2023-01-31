@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import * as fs from 'fs/promises';
-import { expect } from '@salesforce/command/lib/test';
+import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { AuthInfo, ConfigAggregator, Org } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
@@ -19,14 +19,37 @@ const orgAuthConfigFields = {
   accessToken: '123456abc',
   refreshToken: 'axb123',
   clientSecret: '123455',
+  orgId: '00Dxx0000000000',
+};
+
+const orgScratchOrgInfo = {
+  SignupUsername: orgAuthConfigFields.username,
+  OrgName: 'Baz',
+  CreatedDate: '2017-04-11T17:58:43.000+0000',
+  CreatedBy: 'SRV',
+  Edition: 'Developer',
+  ScratchOrg: orgAuthConfigFields.orgId,
+  Status: 'Active',
 };
 
 const expiredAuthConfigFields = {
   username: 'test@foo.org',
+  expirationDate: '2019-03-30T00:00:00.000Z',
   devHubUsername: 'devhub@testOrg.com',
   accessToken: '121abc',
   refreshToken: 'test123',
   clientSecret: '121',
+  orgId: '00Dxx0000000001',
+};
+
+const expiredOrgScratchOrgInfo = {
+  SignupUsername: expiredAuthConfigFields.username,
+  OrgName: 'Baz',
+  CreatedDate: '2017-04-11T17:58:43.000+0000',
+  CreatedBy: 'SRV',
+  Edition: 'Developer',
+  ScratchOrg: expiredAuthConfigFields.orgId,
+  Status: 'Expired',
 };
 
 const expiredAuthConfig = {
@@ -47,6 +70,7 @@ const orgAuthConfig = {
 
 const devHubConfigFields = {
   username: 'foo@example.com',
+  orgId: '00Dxx0000000002',
   isDevHub: false, // we want to simulate updating this as part of the flow
 };
 
@@ -82,15 +106,15 @@ describe('orgListUtil tests', () => {
         sandbox,
         OrgListUtil,
         'retrieveScratchOrgInfoFromDevHub'
-      ).resolves([]);
+      ).resolves([orgScratchOrgInfo, expiredOrgScratchOrgInfo]);
       checkNonScratchOrgIsDevHub = stubMethod(sandbox, OrgListUtil, 'checkNonScratchOrgIsDevHub').resolves(true);
 
       spies.set('reduceScratchOrgInfo', sandbox.spy(OrgListUtil, 'reduceScratchOrgInfo'));
       stubMethod(sandbox, ConfigAggregator, 'create').resolves({
         getConfig: () => ({
-            defaultusername: orgAuthConfigFields.username,
-            defaultdevhubusername: devHubConfigFields.username,
-          }),
+          defaultusername: orgAuthConfigFields.username,
+          defaultdevhubusername: devHubConfigFields.username,
+        }),
       });
 
       stubMethod(sandbox, fs, 'stat').resolves({ atime: 'test' });
@@ -148,22 +172,6 @@ describe('orgListUtil tests', () => {
     });
 
     it('execute queries should add information to grouped orgs', async () => {
-      retrieveScratchOrgInfoFromDevHubStub.restore();
-      retrieveScratchOrgInfoFromDevHubStub = stubMethod(
-        sandbox,
-        OrgListUtil,
-        'retrieveScratchOrgInfoFromDevHub'
-      ).resolves([
-        {
-          SignupUsername: 'gaz@foo.org',
-          OrgName: 'Baz',
-          CreatedDate: '2017-04-11T17:58:43.000+0000',
-          CreatedBy: 'SRV',
-          Edition: 'Developer',
-          ScratchOrg: '00Dxx0000001hcF',
-          Status: 'Active',
-        },
-      ]);
       const flags = { verbose: true };
       const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
       expect(retrieveScratchOrgInfoFromDevHubStub.calledOnce).to.be.true;

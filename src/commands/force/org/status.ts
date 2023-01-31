@@ -5,8 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { EOL } from 'os';
-import { flags, FlagsConfig, SfdxCommand } from '@salesforce/command';
+import {
+  Flags,
+  SfCommand,
+  requiredOrgFlagWithDeprecations,
+  orgApiVersionFlagWithDeprecations,
+  loglevel,
+} from '@salesforce/sf-plugins-core';
 import {
   Config,
   Lifecycle,
@@ -17,83 +22,93 @@ import {
   StatusEvent,
   ResultEvent,
   SandboxProcessObject,
+  Logger,
 } from '@salesforce/core';
-import { Duration } from '@salesforce/kit';
 import { SandboxReporter } from '../../../shared/sandboxReporter';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'status');
 
-export class OrgStatusCommand extends SfdxCommand {
-  public static readonly examples = messages.getMessage('examples').split(EOL);
+export class OrgStatusCommand extends SfCommand<SandboxProcessObject> {
+  public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
-  public static readonly requiresProject = false;
-  public static readonly requiresUsername = true;
+  public static readonly examples = messages.getMessages('examples');
+  public static state = 'deprecated';
+  public static deprecationOptions = {
+    to: 'org:resume:sandbox',
+    version: '60.0',
+  };
 
-  public static readonly flagsConfig: FlagsConfig = {
-    sandboxname: flags.string({
+  public static readonly flags = {
+    'target-org': requiredOrgFlagWithDeprecations,
+    'api-version': orgApiVersionFlagWithDeprecations,
+    sandboxname: Flags.string({
       char: 'n',
-      description: messages.getMessage('flags.sandboxname'),
+      summary: messages.getMessage('flags.sandboxname'),
       required: true,
     }),
-    setdefaultusername: flags.boolean({
+    setdefaultusername: Flags.boolean({
       char: 's',
-      description: messages.getMessage('flags.setdefaultusername'),
+      summary: messages.getMessage('flags.setdefaultusername'),
     }),
-    setalias: flags.string({
+    setalias: Flags.string({
       char: 'a',
-      description: messages.getMessage('flags.setalias'),
+      summary: messages.getMessage('flags.setalias'),
     }),
-    wait: flags.minutes({
+    wait: Flags.duration({
+      unit: 'minutes',
       char: 'w',
-      description: messages.getMessage('flags.wait'),
-      min: Duration.minutes(2),
-      default: Duration.minutes(6),
+      summary: messages.getMessage('flags.wait'),
+      min: 2,
+      defaultValue: 6,
     }),
+    loglevel,
   };
 
   public async run(): Promise<SandboxProcessObject> {
-    this.logger.debug('Status started with args %s ', this.flags);
+    const { flags } = await this.parse(OrgStatusCommand);
+    flags['target-org'].getConnection(flags['api-version']);
+    const logger = await Logger.child(this.constructor.name);
+    logger.debug('Status started with args %s ', flags);
     const lifecycle = Lifecycle.getInstance();
 
-    // eslint-disable-next-line @typescript-eslint/require-await
-    lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) => {
-      this.ux.log(SandboxReporter.sandboxProgress(results));
-    });
+    lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) =>
+      Promise.resolve(this.log(SandboxReporter.sandboxProgress(results)))
+    );
 
     lifecycle.on(SandboxEvents.EVENT_RESULT, async (results: ResultEvent) => {
       const resultMsg = `Sandbox ${results.sandboxProcessObj.SandboxName}(${results.sandboxProcessObj.Id}) is ready for use.`;
-      this.ux.log(resultMsg);
+      this.log(resultMsg);
       const { data } = SandboxReporter.logSandboxProcessResult(results);
-      this.ux.styledHeader('Sandbox Org Status');
-      this.ux.table(data, {
+      this.styledHeader('Sandbox Org Status');
+      this.table(data, {
         key: { header: 'Name' },
         value: { header: 'Value' },
       });
       if (results.sandboxRes?.authUserName) {
-        if (this.flags.setalias) {
+        if (flags.setalias) {
           const stateAggregator = await StateAggregator.getInstance();
-          stateAggregator.aliases.set(this.flags.setalias as string, results.sandboxRes.authUserName);
+          stateAggregator.aliases.set(flags.setalias, results.sandboxRes.authUserName);
           await stateAggregator.aliases.write();
-          this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, results.sandboxRes.authUserName);
+          logger.debug('Set Alias: %s result: %s', flags.setalias, results.sandboxRes.authUserName);
         }
-        if (this.flags.setdefaultusername) {
+        if (flags.setdefaultusername) {
           const globalConfig: Config = this.configAggregator.getGlobalConfig();
           globalConfig.set(OrgConfigProperties.TARGET_ORG, results.sandboxRes.authUserName);
           const result = await globalConfig.write();
-          this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
+          logger.debug('Set defaultUsername: %s result: %s', flags.setdefaultusername, result);
         }
       }
     });
 
-    this.logger.debug('Calling auth for SandboxName args: %s ', this.flags.sandboxname);
-    const results = await this.org.sandboxStatus(this.flags.sandboxname as string, {
-      wait: this.flags.wait as Duration,
+    logger.debug('Calling auth for SandboxName args: %s ', flags.sandboxname);
+    const results = await flags['target-org'].sandboxStatus(flags.sandboxname, {
+      wait: flags.wait,
     });
-    this.logger.debug('Results for auth call: %s ', results);
+    logger.debug('Results for auth call: %s ', results);
     if (!results) {
-      this.ux.styledHeader('Sandbox Org Creation Status');
-      this.ux.log('No SandboxProcess Result Found');
+      this.styledHeader('Sandbox Org Creation Status');
+      this.log('No SandboxProcess Result Found');
     }
     return results;
   }

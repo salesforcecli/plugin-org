@@ -5,9 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import * as chalk from 'chalk';
-import { ExtendedAuthFields } from './orgTypes';
+import { ExtendedAuthFields, FullyPopulatedScratchOrgFields } from './orgTypes';
 
-const styledProperties = new Map([
+const styledProperties = new Map<string, Map<string, chalk.Chalk>>([
   [
     'status',
     new Map([
@@ -25,15 +25,18 @@ const styledProperties = new Map([
 ]);
 
 export const getStyledValue = (key: string, value: string): string => {
-  if (!value || !styledProperties.has(key)) {
-    return value;
-  }
-  return styledProperties.get(key).has(value)
-    ? styledProperties.get(key).get(value)(value)
-    : styledProperties.get(key).get('else')(value);
+  if (!value) return value;
+  const prop = styledProperties.get(key);
+  if (!prop) return value;
+
+  // I'm not sure how to type the inner Map so that it knows else is definitely there
+  const chalkMethod = prop.get(value) ?? (prop.get('else') as chalk.Chalk);
+  return chalkMethod(value);
 };
 
-export const getStyledObject = (objectToStyle: ExtendedAuthFields): ExtendedAuthFields => {
+export const getStyledObject = (
+  objectToStyle: ExtendedAuthFields | FullyPopulatedScratchOrgFields | Record<string, string>
+): Record<string, string> => {
   const clonedObject = { ...objectToStyle };
   return Object.fromEntries(
     Object.entries(clonedObject).map(([key, value]) => [key, getStyledValue(key, value as string)])
