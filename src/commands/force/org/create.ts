@@ -67,10 +67,11 @@ export class Create extends SfCommand<CreateResult> {
     'target-dev-hub': optionalHubFlagWithDeprecations,
     'api-version': orgApiVersionFlagWithDeprecations,
     loglevel,
-    type: Flags.enum({
+    type: Flags.custom<OrgTypes>({
+      options: [OrgTypes.Scratch, OrgTypes.Sandbox],
+    })({
       char: 't',
       summary: messages.getMessage('flags.type'),
-      options: [OrgTypes.Scratch, OrgTypes.Sandbox],
       default: OrgTypes.Scratch,
     }),
     definitionfile: Flags.file({
@@ -128,7 +129,7 @@ export class Create extends SfCommand<CreateResult> {
     const { flags, args, argv } = await this.parse(Create);
 
     this.flags = flags;
-    this.varArgs = parseVarArgs(args, argv);
+    this.varArgs = parseVarArgs(args, argv as string[]);
     this.logger = await Logger.child(this.constructor.name);
     this.logger.debug('Create started with args %s ', flags);
 

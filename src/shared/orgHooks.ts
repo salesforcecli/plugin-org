@@ -7,7 +7,7 @@
 
 import { Optional } from '@salesforce/ts-types';
 import { AuthFields } from '@salesforce/core';
-import { Command, Hook, Hooks } from '@oclif/core/lib/interfaces';
+import { Command, Interfaces, Hook } from '@oclif/core';
 
 type HookOpts<T> = {
   options: { Command: Command.Class; argv: string[]; commandId: string };
@@ -33,12 +33,12 @@ type PostOrgCreateOpts = HookOpts<OrgCreateResult>;
 /**
  * Extends OCLIF's Hooks interface to add types for hooks that run on org commands
  */
-export interface OrgHooks extends Hooks {
+export interface OrgHooks extends Interfaces.Hooks {
   postorgcreate: PostOrgCreateOpts;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type OrgHook<T> = (this: Hook.Context, options: T extends keyof Hooks ? OrgHooks[T] : T) => any;
+export type OrgHook<T> = (this: Hook.Context, options: T extends keyof Interfaces.Hooks ? OrgHooks[T] : T) => any;
 
 // eslint-disable-next-line no-redeclare
 export declare namespace OrgHook {
