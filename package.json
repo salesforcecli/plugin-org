@@ -78,17 +78,16 @@
     ],
     "topics": {
       "org": {
-        "description": "manage your orgs",
-        "longDescription": "Use the org commands to manage the orgs you use with Salesforce CLI. Create and delete scratch orgs, list your created and authorized orgs, and open orgs in your browser.",
+        "description": "Manage your sandbox and scratch orgs.",
         "subtopics": {
           "create": {
-            "description": "create scratch orgs, sandboxes, org shapes, and org snapshots"
+            "description": "Create scratch orgs, sandboxes, org shapes, and org snapshots."
           },
           "resume": {
-            "description": "resume an org creation that was started asynchronously, timed out, or was interrupted"
+            "description": "Resume an org creation that was started asynchronously, timed out, or was interrupted."
           },
           "delete": {
-            "description": "delete scratch orgs, sandboxes, org shapes, and org snapshots"
+            "description": "Delete scratch orgs, sandboxes, org shapes, and org snapshots."
           }
         }
       },
@@ -96,8 +95,7 @@
         "external": true,
         "subtopics": {
           "org": {
-            "description": "manage your orgs",
-            "longDescription": "Use the org commands to manage the orgs you use with Salesforce CLI. Create and delete scratch orgs, list your created and authorized orgs, and open orgs in your browser."
+            "description": "Manage your sandbox and scratch orgs."
           }
         }
       }
