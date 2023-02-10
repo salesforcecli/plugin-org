@@ -1,3 +1,12 @@
+## [2.3.3](https://github.com/salesforcecli/plugin-org/compare/2.3.2...2.3.3) (2023-02-10)
+
+
+### Bug Fixes
+
+* apply sf styles to topic desc ([0716b40](https://github.com/salesforcecli/plugin-org/commit/0716b40e579496f9363aca9c08e48cc7dcf596d3))
+
+
+
 ## [2.3.2](https://github.com/salesforcecli/plugin-org/compare/2.3.1...2.3.2) (2023-02-05)
 
 
