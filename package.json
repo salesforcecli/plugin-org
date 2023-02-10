@@ -6,10 +6,10 @@
   "main": "lib/index.js",
   "bugs": "https://github.com/forcedotcom/cli/issues",
   "dependencies": {
-    "@oclif/core": "^2.0.7",
+    "@oclif/core": "^2.1.0",
     "@salesforce/core": "^3.33.1",
-    "@salesforce/kit": "^1.8.3",
-    "@salesforce/sf-plugins-core": "^2.0.1",
+    "@salesforce/kit": "^1.8.5",
+    "@salesforce/sf-plugins-core": "^2.1.1",
     "open": "8.4.0",
     "tslib": "^2"
   },
@@ -120,7 +120,7 @@
     "test:compile": "wireit",
     "test:deprecation-policy": "wireit",
     "test:json-schema": "wireit",
-    "test:nuts": "nyc mocha \"./test/nut/*.nut.ts\" --slow 4500 --timeout 1200000 --parallel",
+    "test:nuts": "nyc mocha \"./test/nut/*.nut.ts\" --slow 4500 --timeout 1200000 --parallel --jobs 10",
     "test:nuts:legacy": "nyc mocha \"./test/nut/legacy/*.nut.ts\" --slow 4500 --timeout 1200000 --parallel",
     "test:nuts:sandbox": "nyc mocha \"./test/**/*.sandboxNut.ts\" --slow 450000 --timeout 7200000 --parallel",
     "test:only": "wireit",
