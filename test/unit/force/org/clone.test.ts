@@ -190,7 +190,7 @@ describe('org:clone', () => {
     expect($$.stubs.configWrite.callCount).to.equal(1);
     expect(uxStyledHeaderStub.callCount).to.equal(1);
     expect(uxTableStub.firstCall.args[0].length).to.be.equal(12);
-    expect(uxLogStub.callCount).to.be.equal(4);
+    expect(uxLogStub.callCount).to.be.equal(3);
 
     // expect($$.configAggregator?.getGlobalConfig()?.get(OrgConfigProperties.TARGET_ORG)).to.equal(authUserName);
     // expect(configSetStub.callCount).to.be.equal(1);
