@@ -65,7 +65,7 @@ describe('org:delete', () => {
     $$.SANDBOX.stub(Org.prototype, 'delete').resolves();
     const res = await runDeleteCommand(['--noprompt']);
     expect(uxConfirmStub.called).to.equal(false);
-    expect(uxLogStub.callCount).to.equal(2);
+    expect(uxLogStub.callCount).to.equal(1);
     expect(uxLogStub.getCalls().flatMap((call) => call.args)).to.deep.include(
       messages.getMessage('deleteOrgCommandSuccess', [testOrg.username])
     );
@@ -77,7 +77,7 @@ describe('org:delete', () => {
     $$.SANDBOX.stub(Org.prototype, 'delete').resolves();
     const res = await runDeleteCommand(['--noprompt']);
     expect(uxConfirmStub.called).to.equal(false);
-    expect(uxLogStub.callCount).to.equal(2);
+    expect(uxLogStub.callCount).to.equal(1);
     expect(uxLogStub.getCalls().flatMap((call) => call.args)).to.deep.include(
       messages.getMessage('commandSandboxSuccess', [testOrg.username])
     );
