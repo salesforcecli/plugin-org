@@ -121,8 +121,8 @@
     "test:deprecation-policy": "wireit",
     "test:json-schema": "wireit",
     "test:nuts": "nyc mocha \"./test/nut/*.nut.ts\" --slow 4500 --timeout 1200000 --parallel --jobs 10",
-    "test:nuts:legacy": "nyc mocha \"./test/nut/legacy/*.nut.ts\" --slow 4500 --timeout 1200000 --parallel",
-    "test:nuts:sandbox": "nyc mocha \"./test/**/*.sandboxNut.ts\" --slow 450000 --timeout 7200000 --parallel",
+    "test:nuts:legacy": "nyc mocha \"./test/nut/legacy/*.nut.ts\" --slow 4500 --timeout 1200000 --parallel --jobs 10",
+    "test:nuts:sandbox": "nyc mocha \"./test/**/*.sandboxNut.ts\" --slow 450000 --timeout 7200000 --parallel --jobs 10",
     "test:only": "wireit",
     "test:watch": "mocha --watch \"./test/**/*.test.ts\"",
     "version": "oclif readme"
