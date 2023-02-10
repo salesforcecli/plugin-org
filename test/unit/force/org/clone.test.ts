@@ -157,9 +157,7 @@ describe('org:clone', () => {
     expect(uxStyledHeaderStub.calledOnce).to.be.true;
 
     expect(uxTableStub.firstCall.args[0].length).to.be.equal(12);
-    // one deprecated flag warning for -u, plus 3 sandbox events
-    expect(uxLogStub.callCount).to.be.equal(4);
-    expect(uxLogStub.callCount).to.be.equal(4);
+    expect(uxLogStub.callCount).to.be.equal(3);
     const stateAggregator = await StateAggregator.getInstance();
     expect(stateAggregator.aliases.getAll()).to.deep.equal({});
     // expect(configSetStub.callCount).to.be.equal(0);
@@ -184,9 +182,7 @@ describe('org:clone', () => {
     expect(uxStyledHeaderStub.calledOnce).to.be.true;
 
     expect(uxTableStub.firstCall.args[0].length).to.be.equal(12);
-    // one deprecated flag warning for -u, plus 3 sandbox events
-    expect(uxLogStub.callCount).to.be.equal(4);
-    expect(uxLogStub.callCount).to.be.equal(4);
+    expect(uxLogStub.callCount).to.be.equal(3);
 
     const stateAggregator = await StateAggregator.getInstance();
     expect(stateAggregator.aliases.getAll()).to.deep.equal({ [sandboxAlias]: authUserName });
@@ -194,7 +190,7 @@ describe('org:clone', () => {
     expect($$.stubs.configWrite.callCount).to.equal(1);
     expect(uxStyledHeaderStub.callCount).to.equal(1);
     expect(uxTableStub.firstCall.args[0].length).to.be.equal(12);
-    expect(uxLogStub.callCount).to.be.equal(4);
+    expect(uxLogStub.callCount).to.be.equal(3);
 
     // expect($$.configAggregator?.getGlobalConfig()?.get(OrgConfigProperties.TARGET_ORG)).to.equal(authUserName);
     // expect(configSetStub.callCount).to.be.equal(1);
@@ -227,8 +223,6 @@ describe('org:clone', () => {
       expect(e.name === 'MyError');
       expect(uxStyledHeaderStub.calledOnce).to.be.false;
       expect(uxTableStub.calledOnce).to.be.false;
-      // the deprecation warning
-      expect(uxLogStub.callCount).to.be.equal(1);
       //     expect(configSetStub.callCount).to.be.equal(0);
       const stateAggregator = await StateAggregator.getInstance();
       expect(stateAggregator.aliases.getAll()).to.deep.equal({});
