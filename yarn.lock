@@ -858,10 +858,10 @@
     chalk "^4.1.0"
     tslib "^2.3.1"
 
-"@oclif/plugin-command-snapshot@^3.3.3":
-  version "3.3.3"
-  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-3.3.3.tgz#df8fb70a19d94cc2e03559c7d668eeff9f09b3a8"
-  integrity sha512-6VQ2ZyMaQoHNzpNy5oYYJmNja59JSGG/yJfykp98/t+JC2qdBOkMPIMobpffV+pzO8Vo1XErAcrbGAHpJ0uQCA==
+"@oclif/plugin-command-snapshot@^3.3.4":
+  version "3.3.4"
+  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-3.3.4.tgz#be6b995ec5e578917ebebb21e74c5cface7b64b7"
+  integrity sha512-mfAfInRRaSXSHTXkmIMFzW0I4EWwdjtS3iaTxWz/anP26++sQOAFeRSEKtMQc58XzvqYbLutbywEw3dzr6trSQ==
   dependencies:
     "@oclif/core" "^2.0.8"
     chalk "^4.1.2"
