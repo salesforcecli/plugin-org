@@ -21,6 +21,9 @@
         "clientId": {
           "type": "string"
         },
+        "apiVersion": {
+          "type": "string"
+        },
         "alias": {
           "type": "string"
         },
