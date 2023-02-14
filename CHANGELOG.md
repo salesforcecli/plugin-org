@@ -1,3 +1,12 @@
+# [2.4.0](https://github.com/salesforcecli/plugin-org/compare/2.3.4...2.4.0) (2023-02-14)
+
+
+### Features
+
+* add apiVersion ([e916584](https://github.com/salesforcecli/plugin-org/commit/e9165847b907616d8006da90b113106503aef492))
+
+
+
 ## [2.3.4](https://github.com/salesforcecli/plugin-org/compare/2.3.3...2.3.4) (2023-02-12)
 
 
