@@ -51,7 +51,7 @@ describe('env:delete:scratch NUTs', () => {
     try {
       await session?.clean();
     } catch {
-      await fs.promises.rmdir(session.dir, { recursive: true }).catch(() => {});
+      await fs.promises.rm(session.dir, { recursive: true }).catch(() => {});
     }
   });
 
