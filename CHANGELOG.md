@@ -1,3 +1,12 @@
+## [2.4.1](https://github.com/salesforcecli/plugin-org/compare/2.4.0...2.4.1) (2023-02-17)
+
+
+### Bug Fixes
+
+* restore hub flag on org:delete ([#581](https://github.com/salesforcecli/plugin-org/issues/581)) ([a9f862f](https://github.com/salesforcecli/plugin-org/commit/a9f862fd5d427d20a0a37822289b98d5c66e2325))
+
+
+
 # [2.4.0](https://github.com/salesforcecli/plugin-org/compare/2.3.4...2.4.0) (2023-02-14)
 
 
