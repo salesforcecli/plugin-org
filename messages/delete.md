@@ -22,6 +22,10 @@ To mark the org for deletion without being prompted to confirm, specify --noprom
 
 No prompt to confirm deletion.
 
+# flags.targetdevhubusername
+
+The targetdevhubusername flag exists only for backwards compatibility. It is not necessary and has no effect.
+
 # confirmDelete
 
 Enqueue %s org with name: %s for deletion? Are you sure (y/n)?
