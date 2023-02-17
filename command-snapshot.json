@@ -40,7 +40,7 @@
   {
     "command": "force:org:delete",
     "plugin": "@salesforce/plugin-org",
-    "flags": ["api-version", "json", "loglevel", "no-prompt", "target-org"],
+    "flags": ["api-version", "json", "loglevel", "no-prompt", "target-org", "targetdevhubusername"],
     "alias": []
   },
   {
