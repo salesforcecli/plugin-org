@@ -25,6 +25,8 @@ export class ListMetadata extends SfCommand<ListMetadataCommandResult> {
   public static readonly summary = messages.getMessage('description');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
+  public static readonly aliases = ['force:org:list:metadata'];
+  public static readonly deprecateAliases = true;
   public static readonly flags = {
     'api-version': orgApiVersionFlagWithDeprecations,
     loglevel,

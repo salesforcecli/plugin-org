@@ -23,6 +23,8 @@ export class DescribeMetadata extends SfCommand<DescribeMetadataResult> {
   public static readonly summary = messages.getMessage('description');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
+  public static readonly aliases = ['force:mdapi:describemetadata'];
+  public static readonly deprecateAliases = true;
   public static readonly flags = {
     'api-version': orgApiVersionFlagWithDeprecations,
     loglevel,
