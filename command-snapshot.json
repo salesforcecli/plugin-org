@@ -115,6 +115,18 @@
     "alias": ["force:org:list"]
   },
   {
+    "command": "org:list:metadata",
+    "plugin": "@salesforce/plugin-org",
+    "flags": ["api-version", "folder", "json", "loglevel", "resultfile", "target-org", "type"],
+    "alias": []
+  },
+  {
+    "command": "org:list:metadata-types",
+    "plugin": "@salesforce/plugin-org",
+    "flags": ["api-version", "filterknown", "json", "loglevel", "resultfile", "target-org"],
+    "alias": []
+  },
+  {
     "command": "org:open",
     "plugin": "@salesforce/plugin-org",
     "flags": ["api-version", "browser", "json", "loglevel", "path", "source-file", "target-org", "url-only"],

@@ -11,6 +11,7 @@
     "@salesforce/kit": "^1.8.5",
     "@salesforce/sf-plugins-core": "^2.1.1",
     "@salesforce/source-deploy-retrieve": "^7.10.1",
+    "jsforce": "^2.0.0-beta.20",
     "open": "8.4.1",
     "tslib": "^2"
   },
@@ -86,6 +87,9 @@
           },
           "resume": {
             "description": "Resume an org creation that was started asynchronously, timed out, or was interrupted."
+          },
+          "list": {
+            "description": "list metadata types that are relevant to the org"
           },
           "delete": {
             "description": "Delete scratch orgs, sandboxes, org shapes, and org snapshots."

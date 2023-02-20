@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/ListMetadataCommandResult",
+  "definitions": {
+    "ListMetadataCommandResult": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/FileProperties"
+      }
+    },
+    "FileProperties": {
+      "type": "object",
+      "properties": {
+        "createdById": {
+          "type": "string"
+        },
+        "createdByName": {
+          "type": "string"
+        },
+        "createdDate": {
+          "type": "string"
+        },
+        "fileName": {
+          "type": "string"
+        },
+        "fullName": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "lastModifiedById": {
+          "type": "string"
+        },
+        "lastModifiedByName": {
+          "type": "string"
+        },
+        "lastModifiedDate": {
+          "type": "string"
+        },
+        "manageableState": {
+          "type": ["string", "null"]
+        },
+        "namespacePrefix": {
+          "type": ["string", "null"]
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "createdById",
+        "createdByName",
+        "createdDate",
+        "fileName",
+        "fullName",
+        "id",
+        "lastModifiedById",
+        "lastModifiedByName",
+        "lastModifiedDate",
+        "type"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
