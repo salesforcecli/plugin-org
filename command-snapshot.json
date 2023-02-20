@@ -117,8 +117,8 @@
   {
     "command": "org:open",
     "plugin": "@salesforce/plugin-org",
-    "flags": ["api-version", "browser", "json", "loglevel", "path", "target-org", "url-only"],
-    "alias": ["force:org:open"]
+    "flags": ["api-version", "browser", "json", "loglevel", "path", "source-file", "target-org", "url-only"],
+    "alias": ["force:org:open", "force:source:open"]
   },
   {
     "command": "org:resume:sandbox",

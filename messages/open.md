@@ -28,6 +28,10 @@ To open in a specific browser, use the --browser flag. Supported browsers are "c
 
 Browser where the org opens.
 
+# flags.source-file.summary
+
+Path to an ApexPage or FlexiPage to open in the browser.
+
 # flags.path.summary
 
 Navigation URL path to open a specific page.
