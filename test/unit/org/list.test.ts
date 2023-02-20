@@ -9,18 +9,19 @@ import * as chaiAsPromised from 'chai-as-promised';
 import { TestContext } from '@salesforce/core/lib/testSetup';
 import { AuthInfo, Connection, Org } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
-import { Config } from '@oclif/core';
-import { SfCommand } from '@salesforce/sf-plugins-core';
+import { SfCommand, stubSfCommandUx, stubUx } from '@salesforce/sf-plugins-core';
 import OrgListMock = require('../../shared/orgListMock');
 import { OrgListCommand } from '../../../src/commands/org/list';
 import { OrgListUtil } from '../../../src/shared/orgListUtil';
 
 ChaiUse(chaiAsPromised);
 
-describe('org_list', () => {
+describe('org:list', () => {
   const $$ = new TestContext();
 
   beforeEach(async () => {
+    stubUx($$.SANDBOX);
+    stubSfCommandUx($$.SANDBOX);
     stubMethod($$.SANDBOX, AuthInfo, 'listAllAuthorizations').resolves([
       'Jimi Hendrix',
       'SRV',
@@ -28,9 +29,6 @@ describe('org_list', () => {
       'SRV',
       'foo@example.com',
     ]);
-  });
-  afterEach(() => {
-    $$.SANDBOX.restore();
   });
 
   describe('hub org defined', () => {
@@ -40,13 +38,8 @@ describe('org_list', () => {
       );
     });
 
-    afterEach(async () => {
-      $$.SANDBOX.restore();
-    });
-
     it('should list active orgs', async () => {
-      const cmd = new OrgListCommand(['--json'], {} as Config);
-      const orgs = await cmd.run();
+      const orgs = await OrgListCommand.run(['--json']);
       expect(orgs.nonScratchOrgs.length).to.equal(1);
       expect(orgs.nonScratchOrgs[0].username).to.equal('foo@example.com');
       expect(orgs.nonScratchOrgs[0].isDevHub).to.equal(true);
@@ -54,8 +47,7 @@ describe('org_list', () => {
     });
 
     it('should list all orgs', async () => {
-      const cmd = new OrgListCommand(['--json', '--all'], {} as Config);
-      const orgs = await cmd.run();
+      const orgs = await OrgListCommand.run(['--json', '--all']);
 
       expect(orgs.scratchOrgs.length).to.equal(4); // there are 4 orgs total
     });
@@ -88,8 +80,7 @@ describe('org_list', () => {
     });
 
     it('cleans 2 orgs', async () => {
-      const cmd = new OrgListCommand(['--json', '--clean', '--noprompt'], {} as Config);
-      await cmd.run();
+      await OrgListCommand.run(['--json', '--clean', '--noprompt']);
       expect(spies.get('orgRemove').callCount).to.equal(2); // there are 2 expired scratch orgs
     });
   });

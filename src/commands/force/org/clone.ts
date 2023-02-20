@@ -15,7 +15,6 @@ import {
 } from '@salesforce/sf-plugins-core';
 import {
   SfError,
-  Config,
   Lifecycle,
   Messages,
   OrgTypes,
@@ -112,7 +111,7 @@ export class OrgCloneCommand extends SfCommand<SandboxProcessObject> {
             logger.debug('Set Alias: %s result: %s', flags.setalias, result);
           }
           if (flags.setdefaultusername) {
-            const globalConfig: Config = this.configAggregator.getGlobalConfig();
+            const globalConfig = this.configAggregator.getGlobalConfig();
             globalConfig.set(OrgConfigProperties.TARGET_ORG, results.sandboxRes.authUserName);
             const result = await globalConfig.write();
             logger.debug('Set defaultUsername: %s result: %s', flags.setdefaultusername, result);

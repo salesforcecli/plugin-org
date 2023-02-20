@@ -6,11 +6,11 @@
  */
 import { expect, config as chaiConfig } from 'chai';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
-import { Config } from '@oclif/core';
 import { Connection } from '@salesforce/core';
-import { OrgDisplayReturn } from '../../../src/shared/orgTypes';
-import { OrgListUtil } from '../../../src/shared/orgListUtil';
+import { stubSfCommandUx, stubUx } from '@salesforce/sf-plugins-core';
 import { OrgDisplayCommand } from '../../../src/commands/org/display';
+import { OrgListUtil } from '../../../src/shared/orgListUtil';
+import { OrgDisplayReturn } from '../../../src/shared/orgTypes';
 
 chaiConfig.truncateThreshold = 0;
 
@@ -19,6 +19,7 @@ const refreshToken = '5Aep8616XE5JLxJp3EMunMMUzXg.Ye8T6EJDtnvz0aSok0TzLMkNbW7YRi
 describe('org:display', () => {
   const $$ = new TestContext();
   let testOrg = new MockTestOrgData();
+  let sfCommandUxStubs: ReturnType<typeof stubSfCommandUx>;
 
   const commonAssert = (result: OrgDisplayReturn) => {
     expect(result).to.have.property('username', testOrg.username);
@@ -31,48 +32,41 @@ describe('org:display', () => {
   beforeEach(() => {
     testOrg = new MockTestOrgData();
     testOrg.orgId = '00Dxx0000000000';
-  });
-  afterEach(() => {
-    $$.restore();
+    stubUx($$.SANDBOX);
+    sfCommandUxStubs = stubSfCommandUx($$.SANDBOX);
   });
 
   describe('stdout', () => {
-    let stdoutSpy: sinon.SinonSpy;
-
-    beforeEach(() => {
-      stdoutSpy = $$.SANDBOX.stub(process.stdout, 'write');
-    });
-    afterEach(() => {
-      $$.restore();
-    });
-
     it('includes correct rows in non-json (table) mode with verbose', async () => {
       await $$.stubAuths(testOrg);
       $$.SANDBOX.stub(OrgListUtil, 'determineConnectedStatusForNonScratchOrg').resolves('Connected');
 
-      const cmd = new OrgDisplayCommand(['--targetusername', testOrg.username, '--verbose'], {} as Config);
-      await cmd.run();
+      await OrgDisplayCommand.run(['--targetusername', testOrg.username, '--verbose']);
+      const data = sfCommandUxStubs.table.firstCall.args[0];
+      expect(data).to.deep.include({
+        key: 'Client Id',
+        value: testOrg.clientId,
+      });
 
-      const stdoutResult = stdoutSpy.args.flat().join('');
-      expect(stdoutResult).to.include('Sfdx Auth Url');
-      expect(stdoutResult).to.include('Client Id');
+      const authUrl = data.find((row) => row.key === 'Sfdx Auth Url');
+      expect(authUrl).to.exist;
+      expect(authUrl?.value).to.include(testOrg.clientId);
     });
 
     it('includes correct rows in non-json (table) mode', async () => {
       await $$.stubAuths(testOrg);
       $$.SANDBOX.stub(OrgListUtil, 'determineConnectedStatusForNonScratchOrg').resolves('Connected');
 
-      const cmd = new OrgDisplayCommand(['--targetusername', testOrg.username], {} as Config);
-      await cmd.run();
+      await OrgDisplayCommand.run(['--targetusername', testOrg.username]);
 
-      const stdoutResult = stdoutSpy.args.flat().join('');
+      const columns = sfCommandUxStubs.table.firstCall.args[0].flatMap((row) => row.key);
 
-      expect(stdoutResult).to.include('Connected Status');
-      expect(stdoutResult).to.include('Access Token');
-      expect(stdoutResult).to.include('Client Id');
-      expect(stdoutResult).to.include('Instance Url');
+      expect(columns).to.include('Connected Status');
+      expect(columns).to.include('Access Token');
+      expect(columns).to.include('Client Id');
+      expect(columns).to.include('Instance Url');
       // not without verbose
-      expect(stdoutResult).to.not.include('Sfdx Auth Url');
+      expect(columns).to.not.include('Sfdx Auth Url');
     });
   });
 
@@ -81,8 +75,7 @@ describe('org:display', () => {
     $$.stubAliases({ nonscratchalias: testOrg.username });
     await $$.stubAuths(testOrg);
 
-    const cmd = new OrgDisplayCommand(['--json', '--targetusername', testOrg.username], {} as Config);
-    const result = await cmd.run();
+    const result = await OrgDisplayCommand.run(['--json', '--targetusername', testOrg.username]);
     expect(commonAssert(result));
     expect(result.sfdxAuthUrl).to.be.undefined;
     expect(result.password).to.be.undefined;
@@ -93,8 +86,7 @@ describe('org:display', () => {
   it('gets an org from local auth files by alias', async () => {
     await $$.stubAuths(testOrg);
     $$.stubAliases({ nonscratchalias: testOrg.username });
-    const cmd = new OrgDisplayCommand(['--json', '--targetusername', 'nonscratchalias'], {} as Config);
-    const result = await cmd.run();
+    const result = await OrgDisplayCommand.run(['--json', '--targetusername', 'nonscratchalias']);
     // expect(commonAssert(result));
     expect(result.sfdxAuthUrl).to.be.undefined;
     expect(result.alias).to.equal('nonscratchalias');
@@ -104,38 +96,32 @@ describe('org:display', () => {
     testOrg.refreshToken = refreshToken;
     await $$.stubAuths(testOrg);
 
-    const cmd = new OrgDisplayCommand(['--json', '--targetusername', testOrg.username, '--verbose'], {} as Config);
-
-    const result = await cmd.run();
-
+    const result = await OrgDisplayCommand.run(['--json', '--targetusername', testOrg.username, '--verbose']);
     expect(result.sfdxAuthUrl).to.include(testOrg.refreshToken);
   });
 
   it('omits authUrl when not using refresh token, despite verbose', async () => {
     testOrg.refreshToken = undefined;
     await $$.stubAuths(testOrg);
-    const cmd = new OrgDisplayCommand(['--json', '--targetusername', testOrg.username, '--verbose'], {} as Config);
+    const result = await OrgDisplayCommand.run(['--json', '--targetusername', testOrg.username, '--verbose']);
 
-    const result = await cmd.run();
     expect(commonAssert(result));
     expect(result.sfdxAuthUrl).to.be.undefined;
   });
 
   it('omits authUrl when using refresh token without verbose', async () => {
     await $$.stubAuths(testOrg);
-    const cmd = new OrgDisplayCommand(['--json', '--targetusername', testOrg.username], {} as Config);
+    const result = await OrgDisplayCommand.run(['--json', '--targetusername', testOrg.username]);
 
-    const result = await cmd.run();
     expect(commonAssert(result));
     expect(result.sfdxAuthUrl).to.be.undefined;
   });
 
   it("omits alias when alias doesn't exist for username", async () => {
     testOrg.aliases = [];
-    const cmd = new OrgDisplayCommand(['--json', '--targetusername', testOrg.username], {} as Config);
     await $$.stubAuths(testOrg);
 
-    const result = await cmd.run();
+    const result = await OrgDisplayCommand.run(['--json', '--targetusername', testOrg.username]);
     expect(commonAssert(result));
     expect(result.alias).to.be.undefined;
   });
@@ -144,9 +130,7 @@ describe('org:display', () => {
     testOrg.password = 'encrypted';
     await $$.stubAuths(testOrg);
 
-    const cmd = new OrgDisplayCommand(['--json', '--targetusername', testOrg.username], {} as Config);
-
-    const result = await cmd.run();
+    const result = await OrgDisplayCommand.run(['--json', '--targetusername', testOrg.username]);
     expect(commonAssert(result));
     expect(result.password).to.equal('encrypted');
   });
@@ -157,8 +141,7 @@ describe('org:display', () => {
     await $$.stubAuths(testOrg, testHub);
 
     $$.SANDBOX.stub(Connection.prototype, 'sobject').returns({
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore // we all know this is not the full type
+      // @ts-expect-error we all know this is not the full type
       find: async () => [
         {
           Status: 'Active',
@@ -171,8 +154,7 @@ describe('org:display', () => {
       ],
     });
 
-    const cmd = new OrgDisplayCommand(['--json', '--targetusername', testOrg.username], {} as Config);
-    const result = await cmd.run();
+    const result = await OrgDisplayCommand.run(['--json', '--targetusername', testOrg.username]);
     expect(result).to.not.be.undefined;
     expect(result.status).to.equal('Active');
   });

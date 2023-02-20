@@ -79,15 +79,12 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
       alias: await getAliasByUsername(fields.username),
     };
     this.warn(sharedMessages.getMessage('SecurityWarning'));
-
-    if (!flags.json) {
-      this.print(returnValue);
-    }
+    this.print(returnValue);
     return returnValue;
   }
 
   private print(result: OrgDisplayReturn): void {
-    this.log('');
+    this.log();
     const tableRows = Object.entries(result)
       .filter(([, value]) => value !== undefined && value !== null) // some values won't exist
       .sort() // this command always alphabetizes the table rows
