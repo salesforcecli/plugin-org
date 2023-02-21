@@ -7,13 +7,13 @@ The default target username is the admin user for the default scratch org. The u
 
 # examples
 
-- $ sfdx force:mdapi:describemetadata -a 43.0
+- $ <%= config.bin %> <%= command.id %> -a 43.0
 
-- $ sfdx force:mdapi:describemetadata -u me@example.com
+- $ <%= config.bin %> <%= command.id %> -u me@example.com
 
-- $ sfdx force:mdapi:describemetadata -f /path/to/outputfilename.txt
+- $ <%= config.bin %> <%= command.id %> -f /path/to/outputfilename.txt
 
-- $ sfdx force:mdapi:describemetadata -u me@example.com -f /path/to/outputfilename.txt
+- $ <%= config.bin %> <%= command.id %> -u me@example.com -f /path/to/outputfilename.txt
 
 # flags.apiversion
 

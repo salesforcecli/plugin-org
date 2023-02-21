@@ -16,7 +16,7 @@ import {
 import { Connection, Logger, Messages, Org, SfdcUrl, SfError } from '@salesforce/core';
 import { Duration, Env } from '@salesforce/kit';
 import open = require('open');
-import { MetadataResolver, SourceComponent } from '@salesforce/source-deploy-retrieve';
+import { MetadataResolver } from '@salesforce/source-deploy-retrieve';
 import { openUrl } from '../../shared/utils';
 
 Messages.importMessagesDirectory(__dirname);
@@ -144,7 +144,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
   private async generateFileUrl(file: string): Promise<string> {
     try {
       const metadataResolver = new MetadataResolver();
-      const components: SourceComponent[] = metadataResolver.getComponentsFromPath(file);
+      const components = metadataResolver.getComponentsFromPath(file);
       const typeName = components[0].type.name;
 
       if (typeName === 'FlexiPage') {

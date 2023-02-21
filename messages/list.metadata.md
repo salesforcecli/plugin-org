@@ -5,23 +5,23 @@ This command is useful when you want to identify individual components in your m
 
 # examples
 
-- $ sfdx force:mdapi:listmetadata -m CustomObject
+- $ <%= config.bin %> <%= command.id %> -m CustomObject
 
-- $ sfdx force:mdapi:listmetadata -m CustomObject -a 43.0
+- $ <%= config.bin %> <%= command.id %> -m CustomObject -a 43.0
 
-- $ sfdx force:mdapi:listmetadata -m CustomObject -u me@example.com
+- $ <%= config.bin %> <%= command.id %> -m CustomObject -u me@example.com
 
-- $ sfdx force:mdapi:listmetadata -m CustomObject -f /path/to/outputfilename.txt
+- $ <%= config.bin %> <%= command.id %> -m CustomObject -f /path/to/outputfilename.txt
 
-- $ sfdx force:mdapi:listmetadata -m Dashboard --folder foldername
+- $ <%= config.bin %> <%= command.id %> -m Dashboard --folder foldername
 
-- $ sfdx force:mdapi:listmetadata -m Dashboard --folder foldername -a 43.0
+- $ <%= config.bin %> <%= command.id %> -m Dashboard --folder foldername -a 43.0
 
-- $ sfdx force:mdapi:listmetadata -m Dashboard --folder foldername -u me@example.com
+- $ <%= config.bin %> <%= command.id %> -m Dashboard --folder foldername -u me@example.com
 
-- $ sfdx force:mdapi:listmetadata -m Dashboard --folder foldername -f /path/to/outputfilename.txt
+- $ <%= config.bin %> <%= command.id %> -m Dashboard --folder foldername -f /path/to/outputfilename.txt
 
-- $ sfdx force:mdapi:listmetadata -m CustomObject -u me@example.com -f /path/to/outputfilename.txt
+- $ <%= config.bin %> <%= command.id %> -m CustomObject -u me@example.com -f /path/to/outputfilename.txt
 
 # flags.apiversion
 
