@@ -18,9 +18,7 @@ describe('env:delete:scratch NUTs', () => {
 
   before(async () => {
     session = await TestSession.create({
-      project: {
-        name: 'testProject',
-      },
+      project: {},
       devhubAuthStrategy: 'AUTO',
       scratchOrgs: [
         {
