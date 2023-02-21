@@ -76,7 +76,8 @@
     "devPlugins": [
       "@oclif/plugin-help",
       "@oclif/plugin-command-snapshot",
-      "@salesforce/plugin-command-reference"
+      "@salesforce/plugin-command-reference",
+      "@salesforce/plugin-source"
     ],
     "topics": {
       "org": {

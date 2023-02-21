@@ -25,7 +25,7 @@ export class ListMetadata extends SfCommand<ListMetadataCommandResult> {
   public static readonly summary = messages.getMessage('description');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
-  public static readonly aliases = ['force:org:list:metadata'];
+  public static readonly aliases = ['force:mdapi:listmetadata'];
   public static readonly deprecateAliases = true;
   public static readonly flags = {
     'api-version': orgApiVersionFlagWithDeprecations,
@@ -35,10 +35,8 @@ export class ListMetadata extends SfCommand<ListMetadataCommandResult> {
       char: 'f',
       summary: messages.getMessage('flags.resultfile'),
     }),
-    type: Flags.string({
+    metadatatype: Flags.string({
       char: 'm',
-      aliases: ['metadatatype'],
-      deprecateAliases: true,
       summary: messages.getMessage('flags.metadatatype'),
       description: messages.getMessage('flagsLong.metadatatype'),
       required: true,
@@ -53,7 +51,9 @@ export class ListMetadata extends SfCommand<ListMetadataCommandResult> {
     const { flags } = await this.parse(ListMetadata);
     const conn = flags['target-org'].getConnection(flags['api-version']);
 
-    const query: ListMetadataQuery = flags.folder ? { type: flags.type, folder: flags.folder } : { type: flags.type };
+    const query: ListMetadataQuery = flags.folder
+      ? { type: flags.metadatatype, folder: flags.folder }
+      : { type: flags.metadatatype };
     const listResult = await conn.metadata.list(query, flags['api-version']);
 
     if (flags.resultfile) {
