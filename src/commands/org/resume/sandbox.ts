@@ -70,7 +70,6 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxProcessObje
       description: messages.getMessage('flags.targetOrg.description'),
     }),
   };
-  public static readonly state = 'beta';
   private flags!: Interfaces.InferredFlags<typeof ResumeSandbox.flags>;
 
   public async run(): Promise<SandboxProcessObject> {
