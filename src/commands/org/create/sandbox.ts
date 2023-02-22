@@ -136,10 +136,14 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
 
   private async createSandboxRequest(): Promise<SandboxRequest> {
     // reuse the existing sandbox request generator, with this command's flags as the varargs
-    const { sandboxReq } = await createSandboxRequest(false, this.flags['definition-file'], undefined, {
+    const requestOptions = {
       ...(this.flags.name ? { SandboxName: this.flags.name } : {}),
+      ...(this.flags.clone ? { SourceSandboxName: this.flags.clone } : {}),
       ...(!this.flags.clone && this.flags['license-type'] ? { LicenseType: this.flags['license-type'] } : {}),
-    });
+    };
+    const { sandboxReq } = this.flags.clone
+      ? await createSandboxRequest(true, this.flags['definition-file'], undefined, requestOptions)
+      : await createSandboxRequest(false, this.flags['definition-file'], undefined, requestOptions);
     return {
       ...sandboxReq,
       ...(this.flags.clone ? { SourceId: await this.getSourceId() } : {}),
