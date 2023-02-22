@@ -14,6 +14,7 @@ export type OrgDisplayReturn = Partial<ScratchOrgFields> & {
   accessToken: string;
   instanceUrl: string;
   clientId: string;
+  apiVersion?: string;
 
   alias?: string;
   password?: string;

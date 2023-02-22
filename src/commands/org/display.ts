@@ -64,6 +64,7 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
       devHubId: fields.devHubUsername,
 
       // copied properties
+      apiVersion: fields.instanceApiVersion,
       accessToken: fields.accessToken,
       instanceUrl: fields.instanceUrl,
       username: fields.username,

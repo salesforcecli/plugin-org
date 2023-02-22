@@ -31,6 +31,15 @@ export class Delete extends SfCommand<DeleteResult> {
   };
   public static readonly flags = {
     'target-org': requiredOrgFlagWithDeprecations,
+    targetdevhubusername: Flags.string({
+      summary: messages.getMessage('flags.targetdevhubusername'),
+      char: 'v',
+      hidden: true,
+      deprecated: {
+        version: '58.0',
+        message: messages.getMessage('flags.targetdevhubusername'),
+      },
+    }),
     'api-version': orgApiVersionFlagWithDeprecations,
     'no-prompt': Flags.boolean({
       char: 'p',
