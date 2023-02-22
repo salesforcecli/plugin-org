@@ -1,3 +1,12 @@
+## [2.4.2](https://github.com/salesforcecli/plugin-org/compare/2.4.1...2.4.2) (2023-02-22)
+
+
+### Bug Fixes
+
+* remove beta tag from org commands ([13ba4ea](https://github.com/salesforcecli/plugin-org/commit/13ba4ea871fed556e5b4742f50cdd3d6cf2e374f))
+
+
+
 ## [2.4.1](https://github.com/salesforcecli/plugin-org/compare/2.4.0...2.4.1) (2023-02-17)
 
 
