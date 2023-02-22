@@ -33,7 +33,6 @@ export default class EnvDeleteScratch extends SfCommand<ScratchDeleteResponse> {
       summary: messages.getMessage('flags.no-prompt.summary'),
     }),
   };
-  public static readonly state = 'beta';
 
   public async run(): Promise<ScratchDeleteResponse> {
     const flags = (await this.parse(EnvDeleteScratch)).flags;
