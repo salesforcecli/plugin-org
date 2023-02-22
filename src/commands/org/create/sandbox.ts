@@ -141,9 +141,12 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
       ...(this.flags.clone ? { SourceSandboxName: this.flags.clone } : {}),
       ...(!this.flags.clone && this.flags['license-type'] ? { LicenseType: this.flags['license-type'] } : {}),
     };
-    const { sandboxReq } = this.flags.clone
-      ? await createSandboxRequest(true, this.flags['definition-file'], undefined, requestOptions)
-      : await createSandboxRequest(false, this.flags['definition-file'], undefined, requestOptions);
+    const { sandboxReq } = await createSandboxRequest(
+      !!this.flags.clone,
+      this.flags['definition-file'],
+      undefined,
+      requestOptions
+    );
     return {
       ...sandboxReq,
       ...(this.flags.clone ? { SourceId: await this.getSourceId() } : {}),

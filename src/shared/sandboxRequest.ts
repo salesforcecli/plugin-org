@@ -21,7 +21,7 @@ export const generateSboxName = async (): Promise<string> => {
 };
 
 export async function createSandboxRequest(
-  isClone: true,
+  isClone: true | boolean,
   definitionFile: string | undefined,
   logger?: Logger | undefined,
   properties?: Record<string, string | undefined>

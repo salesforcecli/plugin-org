@@ -7,14 +7,14 @@
   "bugs": "https://github.com/forcedotcom/cli/issues",
   "dependencies": {
     "@oclif/core": "^2.3.0",
-    "@salesforce/core": "^3.33.2",
+    "@salesforce/core": "^3.33.4",
     "@salesforce/kit": "^1.9.0",
     "@salesforce/sf-plugins-core": "^2.2.1",
-    "open": "8.4.1",
+    "open": "8.4.2",
     "tslib": "^2"
   },
   "devDependencies": {
-    "@oclif/plugin-command-snapshot": "^3.3.4",
+    "@oclif/plugin-command-snapshot": "^3.3.6",
     "@salesforce/cli-plugins-testkit": "^3.2.21",
     "@salesforce/dev-config": "^3.1.0",
     "@salesforce/dev-scripts": "^4.0.0-beta.9",
@@ -24,8 +24,8 @@
     "@swc/core": "^1.3.36",
     "@types/chai-as-promised": "^7.1.5",
     "@types/shelljs": "^0.8.10",
-    "@typescript-eslint/eslint-plugin": "^5.42.1",
-    "@typescript-eslint/parser": "^5.46.0",
+    "@typescript-eslint/eslint-plugin": "^5.53.0",
+    "@typescript-eslint/parser": "^5.53.0",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
     "eslint": "^8.33.0",
@@ -41,14 +41,14 @@
     "mocha": "^9.1.3",
     "moment": "^2.29.1",
     "nyc": "^15.1.0",
-    "oclif": "^3.6.5",
+    "oclif": "^3.7.0",
     "prettier": "^2.8.4",
     "pretty-quick": "^3.1.0",
     "shelljs": "^0.8.5",
     "shx": "0.3.4",
     "sinon": "10.0.0",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.4",
+    "typescript": "^4.9.5",
     "wireit": "^0.9.5"
   },
   "engines": {
@@ -115,10 +115,6 @@
     "prepack": "sf-prepack",
     "prepare": "sf-install",
     "test": "wireit",
-    "test:command-reference": "wireit",
-    "test:compile": "wireit",
-    "test:deprecation-policy": "wireit",
-    "test:json-schema": "wireit",
     "test:nuts": "nyc mocha \"./test/nut/*.nut.ts\" --slow 4500 --timeout 1200000 --parallel --jobs 10",
     "test:nuts:legacy": "nyc mocha \"./test/nut/legacy/*.nut.ts\" --slow 4500 --timeout 1200000 --parallel --jobs 10",
     "test:nuts:sandbox": "nyc mocha \"./test/**/*.sandboxNut.ts\" --slow 450000 --timeout 7200000 --parallel --jobs 10",
@@ -150,7 +146,15 @@
       "clean": "if-file-deleted"
     },
     "format": {
-      "command": "prettier --write \"+(src|test|schemas)/**/*.+(ts|js|json)|command-snapshot.json\""
+      "command": "prettier --write \"+(src|test|schemas)/**/*.+(ts|js|json)|command-snapshot.json\"",
+      "files": [
+        "src/**/*.ts",
+        "test/**/*.ts",
+        "schemas/**/*.json",
+        "command-snapshot.json",
+        ".prettier*"
+      ],
+      "output": []
     },
     "lint": {
       "command": "eslint src test --color --cache --cache-location .eslintcache",
@@ -158,8 +162,7 @@
         "src/**/*.ts",
         "test/**/*.ts",
         "messages/**",
-        ".eslintignore",
-        ".eslintrc.js"
+        ".eslint*"
       ],
       "output": []
     },
@@ -177,7 +180,8 @@
       "command": "\"./bin/dev\" commandreference:generate --erroronwarnings",
       "files": [
         "src/**/*.ts",
-        "messages/**"
+        "messages/**",
+        "package.json"
       ],
       "output": [
         "tmp/root"
@@ -216,7 +220,10 @@
         "test/**/*.ts",
         "src/**/*.ts",
         "tsconfig.json",
-        "test/tsconfig.json"
+        ".mocha*",
+        "test/tsconfig.json",
+        "!*.nut.ts",
+        ".nycrc"
       ],
       "output": []
     }
