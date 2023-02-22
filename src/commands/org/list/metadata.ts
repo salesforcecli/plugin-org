@@ -31,11 +31,15 @@ export class ListMetadata extends SfCommand<ListMetadataCommandResult> {
     'api-version': orgApiVersionFlagWithDeprecations,
     loglevel,
     'target-org': requiredOrgFlagWithDeprecations,
-    resultfile: Flags.file({
+    'output-file': Flags.file({
+      aliases: ['resultfile'],
+      deprecateAliases: true,
       char: 'f',
       summary: messages.getMessage('flags.resultfile'),
     }),
-    metadatatype: Flags.string({
+    'metadata-type': Flags.string({
+      aliases: ['metadatatype'],
+      deprecateAliases: true,
       char: 'm',
       summary: messages.getMessage('flags.metadatatype'),
       description: messages.getMessage('flagsLong.metadatatype'),
@@ -52,18 +56,18 @@ export class ListMetadata extends SfCommand<ListMetadataCommandResult> {
     const conn = flags['target-org'].getConnection(flags['api-version']);
 
     const query: ListMetadataQuery = flags.folder
-      ? { type: flags.metadatatype, folder: flags.folder }
-      : { type: flags.metadatatype };
+      ? { type: flags['metadata-type'], folder: flags.folder }
+      : { type: flags['metadata-type'] };
     const listResult = await conn.metadata.list(query, flags['api-version']);
 
-    if (flags.resultfile) {
-      fs.writeFileSync(flags.resultfile, JSON.stringify(listResult, null, 2));
-      this.log(`Wrote result file to ${flags.resultfile}.`);
+    if (flags['output-file']) {
+      fs.writeFileSync(flags['output-file'], JSON.stringify(listResult, null, 2));
+      this.log(`Wrote result file to ${flags['output-file']}.`);
     } else if (!this.jsonEnabled()) {
       if (listResult?.length) {
         this.styledJSON(listResult);
       } else {
-        this.log(messages.getMessage('noMatchingMetadata', [flags.metadatatype, conn.getUsername()]));
+        this.log(messages.getMessage('noMatchingMetadata', [flags['metadata-type'], conn.getUsername()]));
       }
     }
 

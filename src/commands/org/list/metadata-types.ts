@@ -29,12 +29,16 @@ export class DescribeMetadata extends SfCommand<DescribeMetadataResult> {
     'api-version': orgApiVersionFlagWithDeprecations,
     loglevel,
     'target-org': requiredOrgFlagWithDeprecations,
-    resultfile: Flags.file({
+    'output-file': Flags.file({
+      aliases: ['resultfile'],
+      deprecateAliases: true,
       char: 'f',
       description: messages.getMessage('flags.resultfile'),
       summary: messages.getMessage('flagsLong.resultfile'),
     }),
-    filterknown: Flags.boolean({
+    'filter-known': Flags.boolean({
+      aliases: ['filterknown'],
+      deprecateAliases: true,
       char: 'k',
       description: messages.getMessage('flags.filterknown'),
       summary: messages.getMessage('flagsLong.filterknown'),
@@ -47,7 +51,7 @@ export class DescribeMetadata extends SfCommand<DescribeMetadataResult> {
     const connection = flags['target-org'].getConnection(flags['api-version']);
     const describeResult = await connection.metadata.describe(flags['api-version']);
 
-    if (flags.filterknown) {
+    if (flags['filter-known']) {
       this.debug('Filtering for only metadata types unregistered in the CLI');
       const registry = new RegistryAccess();
       describeResult.metadataObjects = describeResult.metadataObjects.filter((md) => {
@@ -62,9 +66,9 @@ export class DescribeMetadata extends SfCommand<DescribeMetadataResult> {
       });
     }
 
-    if (flags.resultfile) {
-      fs.writeFileSync(flags.resultfile, JSON.stringify(describeResult, null, 2));
-      this.log(`Wrote result file to ${flags.resultfile}.`);
+    if (flags['output-file']) {
+      fs.writeFileSync(flags['output-file'], JSON.stringify(describeResult, null, 2));
+      this.log(`Wrote result file to ${flags['output-file']}.`);
     } else if (!this.jsonEnabled()) {
       this.styledJSON(describeResult);
     }
