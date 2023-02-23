@@ -103,8 +103,8 @@ describe('org:open', () => {
       } catch (e) {
         expect(spies.get('resolver').callCount).to.equal(1);
         expect(spies.get('open').callCount).to.equal(0);
-        const error = e as Error;
-        expect(error.message).to.equal(messages.getMessage('domainTimeoutError'));
+        assert(e instanceof SfError, 'should be an SfError');
+        expect(e.message).to.equal(messages.getMessage('domainTimeoutError'));
       }
     });
   });

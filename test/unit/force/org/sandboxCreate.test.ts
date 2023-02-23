@@ -19,7 +19,7 @@ import {
 import { stubMethod } from '@salesforce/ts-sinon';
 import * as sinon from 'sinon';
 import { MockTestOrgData, shouldThrow, TestContext } from '@salesforce/core/lib/testSetup';
-import { expect, config } from 'chai';
+import { expect, config, assert } from 'chai';
 import { stubSfCommandUx } from '@salesforce/sf-plugins-core';
 import { Create } from '../../../../src/commands/force/org/create';
 import * as requestFunctions from '../../../../src/shared/sandboxRequest';
@@ -91,7 +91,8 @@ describe('org:create (sandbox paths)', () => {
         try {
           await shouldThrow(Create.run(['--type', 'sandbox', '--retry', '1', '-u', testOrg.username]));
         } catch (e) {
-          expect((e as Error).name).to.equal('retryIsNotValidForSandboxes');
+          assert(e instanceof SfError, 'Expect error to be an instance of SfError');
+          expect(e.name).to.equal('retryIsNotValidForSandboxes');
           expect(createSandboxStub.callCount).to.equal(0);
         }
       });
@@ -176,9 +177,9 @@ describe('org:create (sandbox paths)', () => {
         await shouldThrow(Create.run(['--type', 'sandbox', '-u', testOrg.username]));
       } catch (err) {
         // shouldThrow doesn't necessarily throw an SfError
-        const e = err as SfError;
-        expect(e.code).to.equal(68);
-        expect(e.actions).to.deep.equal([messages.getMessage('dnsTimeout'), messages.getMessage('partialSuccess')]);
+        assert(err instanceof SfError, 'Expect error to be an instance of SfError');
+        expect(err.code).to.equal(68);
+        expect(err.actions).to.deep.equal([messages.getMessage('dnsTimeout'), messages.getMessage('partialSuccess')]);
       }
     });
   });

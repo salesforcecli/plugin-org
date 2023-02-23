@@ -5,19 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import * as fs from 'fs';
-import {
-  Org,
-  Lifecycle,
-  StateAggregator,
-  SandboxEvents,
-  // SfdxConfigAggregator,
-  // OrgConfigProperties,
-  // ConfigAggregator,
-  SandboxProcessObject,
-  Logger,
-} from '@salesforce/core';
+import { Org, Lifecycle, SandboxEvents, SandboxProcessObject, Logger, SfError } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
-import { TestContext } from '@salesforce/core/lib/testSetup';
+import { shouldThrow, TestContext } from '@salesforce/core/lib/testSetup';
 import { stubSfCommandUx, stubUx } from '@salesforce/sf-plugins-core';
 import { assert, expect, config } from 'chai';
 import * as sinon from 'sinon';
@@ -84,30 +74,17 @@ describe('org:clone', () => {
 
   // stubs
   let requestStub: sinon.SinonStub;
-  // let aliasSetStub: sinon.SinonSpy;
-  // let configSetStub: sinon.SinonStub;
-  // let configWriteStub: sinon.SinonStub;
   let onStub: sinon.SinonStub;
-  // let readJsonDefFileStub: sinon.SinonStub;
   let cloneSandboxStub: sinon.SinonStub;
-  // let configAggregatorStub;
   let sfCommandUxStubs: ReturnType<typeof stubSfCommandUx>;
+  let setAliasStub: sinon.SinonStub;
+  let setDefaultUsernameStub: sinon.SinonStub;
 
   const runCloneCommand = async (params: string[], fails?: boolean): Promise<SandboxProcessObject> => {
     cloneSandboxStub = fails
       ? $$.SANDBOX.stub(Org.prototype, 'cloneSandbox').rejects(new Error('MyError'))
       : $$.SANDBOX.stub(Org.prototype, 'cloneSandbox').resolves(sandboxProcessObj);
 
-    // configSetStub = $$.SANDBOX.stub().returns(true);
-    // configWriteStub = $$.SANDBOX.stub().resolves(true);
-    // const configAggregatorStubOptions = {
-    //   getGlobalConfig: () => ({
-    //     set: configSetStub,
-    //     write: configWriteStub,
-    //   }),
-    // };
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    // cmd.setConfigAggregator(configAggregatorStub);
     if (!fails) {
       onStub = $$.SANDBOX.stub()
         .callsArgWith(1, sandboxProcessObj)
@@ -123,6 +100,9 @@ describe('org:clone', () => {
       on: onStub,
       onWarning: $$.SANDBOX.stub(),
     });
+
+    setAliasStub = $$.SANDBOX.stub(OrgCloneCommand.prototype, 'setAlias').resolves();
+    setDefaultUsernameStub = $$.SANDBOX.stub(OrgCloneCommand.prototype, 'setDefaultUsername').resolves();
 
     return OrgCloneCommand.run(params);
   };
@@ -159,10 +139,11 @@ describe('org:clone', () => {
 
     expect(sfCommandUxStubs.table.firstCall.args[0].length).to.be.equal(12);
     expect(sfCommandUxStubs.log.callCount).to.be.equal(3);
-    const stateAggregator = await StateAggregator.getInstance();
-    expect(stateAggregator.aliases.getAll()).to.deep.equal({});
-    // expect(configSetStub.callCount).to.be.equal(0);
-    // expect(configWriteStub.callCount).to.be.equal(0);
+
+    // Alias and default username should not be set.
+    expect(setAliasStub.callCount).to.equal(0);
+    expect(setDefaultUsernameStub.callCount).to.equal(0);
+
     expect(onStub.firstCall.firstArg).to.be.equal(SandboxEvents.EVENT_ASYNC_RESULT);
     expect(onStub.secondCall.firstArg).to.be.equal(SandboxEvents.EVENT_STATUS);
     expect(onStub.thirdCall.firstArg).to.be.equal(SandboxEvents.EVENT_RESULT);
@@ -185,19 +166,15 @@ describe('org:clone', () => {
     expect(sfCommandUxStubs.table.firstCall.args[0].length).to.be.equal(12);
     expect(sfCommandUxStubs.log.callCount).to.be.equal(3);
 
-    const stateAggregator = await StateAggregator.getInstance();
-    expect(stateAggregator.aliases.getAll()).to.deep.equal({ [sandboxAlias]: authUserName });
+    expect(setAliasStub.firstCall.args).to.deep.equal([sandboxAlias, authUserName]);
 
-    expect($$.stubs.configWrite.callCount).to.equal(2);
     expect(sfCommandUxStubs.styledHeader.callCount).to.equal(1);
     expect(sfCommandUxStubs.table.firstCall.args[0].length).to.be.equal(12);
     expect(sfCommandUxStubs.log.callCount).to.be.equal(3);
 
-    // expect($$.configAggregator?.getGlobalConfig()?.get(OrgConfigProperties.TARGET_ORG)).to.equal(authUserName);
-    // expect(configSetStub.callCount).to.be.equal(1);
+    expect(setDefaultUsernameStub.calledOnce).to.be.true;
+    expect(setDefaultUsernameStub.firstCall.args[0]).to.be.equal(authUserName);
 
-    // expect(configSetStub.firstCall.args[0]).to.be.equal(OrgConfigProperties.TARGET_ORG);
-    // expect(configSetStub.firstCall.args[1]).to.be.equal(authUserName);
     expect(onStub.firstCall.firstArg).to.be.equal(SandboxEvents.EVENT_ASYNC_RESULT);
     expect(onStub.secondCall.firstArg).to.be.equal(SandboxEvents.EVENT_STATUS);
     expect(onStub.thirdCall.firstArg).to.be.equal(SandboxEvents.EVENT_RESULT);
@@ -206,7 +183,6 @@ describe('org:clone', () => {
       authUserName,
       SandboxName: sandboxName,
     });
-    //   expect(configWriteStub.calledOnce).to.be.true;
     expect(res).to.deep.equal(sandboxProcessObj);
   });
 
@@ -216,21 +192,15 @@ describe('org:clone', () => {
       srcSandboxName: 'TheOriginal',
     });
     try {
-      // await shouldThrow(
-      //   runCloneCommand(['-t', 'sandbox', '-u', 'DevHub', '-f', 'sandbox-def.json', '-a', sandboxAlias, '-s'], true)
-      // );
-      await runCloneCommand(
-        ['-t', 'sandbox', '-u', 'DevHub', '-f', 'sandbox-def.json', '-a', sandboxAlias, '-s'],
-        true
+      await shouldThrow(
+        runCloneCommand(['-t', 'sandbox', '-u', 'DevHub', '-f', 'sandbox-def.json', '-a', sandboxAlias, '-s'], true)
       );
     } catch (error) {
-      const e = error as Error;
-      expect(e.name === 'MyError');
+      assert(error instanceof SfError, 'should be an SfError');
+      expect(error.name === 'MyError');
       expect(sfCommandUxStubs.styledHeader.calledOnce).to.be.false;
       expect(sfCommandUxStubs.table.calledOnce).to.be.false;
-      //     expect(configSetStub.callCount).to.be.equal(0);
-      const stateAggregator = await StateAggregator.getInstance();
-      expect(stateAggregator.aliases.getAll()).to.deep.equal({});
+      expect(setAliasStub.callCount).to.equal(0);
 
       expect(onStub.firstCall.firstArg).to.be.equal(SandboxEvents.EVENT_ASYNC_RESULT);
       expect(onStub.secondCall.firstArg).to.be.equal(SandboxEvents.EVENT_STATUS);
@@ -240,7 +210,6 @@ describe('org:clone', () => {
         // license type is not set in sandbox cloning
         SandboxName: sandboxName,
       });
-      //     expect(configWriteStub.calledOnce).to.be.false;
     }
   });
 });
