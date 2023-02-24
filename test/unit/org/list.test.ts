@@ -9,7 +9,7 @@ import * as chaiAsPromised from 'chai-as-promised';
 import { TestContext } from '@salesforce/core/lib/testSetup';
 import { AuthInfo, Connection, Org } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
-import { SfCommand, stubSfCommandUx, stubUx } from '@salesforce/sf-plugins-core';
+import { SfCommand, stubSfCommandUx } from '@salesforce/sf-plugins-core';
 import OrgListMock = require('../../shared/orgListMock');
 import { OrgListCommand } from '../../../src/commands/org/list';
 import { OrgListUtil } from '../../../src/shared/orgListUtil';
@@ -17,10 +17,14 @@ import { OrgListUtil } from '../../../src/shared/orgListUtil';
 ChaiUse(chaiAsPromised);
 
 describe('org:list', () => {
+  // Create new TestContext, which automatically creates and restores stubs
+  // pertaining to authorization, orgs, config files, etc...
+  // There is no need to call $$.restore() in afterEach() since that is
+  // done automatically by the TestContext.
   const $$ = new TestContext();
 
   beforeEach(async () => {
-    stubUx($$.SANDBOX);
+    // Stub the ux methods on SfCommand so that you don't get any command output in your tests.
     stubSfCommandUx($$.SANDBOX);
     stubMethod($$.SANDBOX, AuthInfo, 'listAllAuthorizations').resolves([
       'Jimi Hendrix',

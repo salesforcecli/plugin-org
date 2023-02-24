@@ -7,7 +7,7 @@
 import { expect, config as chaiConfig } from 'chai';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 import { Connection } from '@salesforce/core';
-import { stubSfCommandUx, stubUx } from '@salesforce/sf-plugins-core';
+import { stubSfCommandUx } from '@salesforce/sf-plugins-core';
 import { OrgDisplayCommand } from '../../../src/commands/org/display';
 import { OrgListUtil } from '../../../src/shared/orgListUtil';
 import { OrgDisplayReturn } from '../../../src/shared/orgTypes';
@@ -17,6 +17,10 @@ chaiConfig.truncateThreshold = 0;
 const refreshToken = '5Aep8616XE5JLxJp3EMunMMUzXg.Ye8T6EJDtnvz0aSok0TzLMkNbW7YRi99Yx85XLvz6zP44x_hVTl8pIW8S5_IW';
 
 describe('org:display', () => {
+  // Create new TestContext, which automatically creates and restores stubs
+  // pertaining to authorization, orgs, config files, etc...
+  // There is no need to call $$.restore() in afterEach() since that is
+  // done automatically by the TestContext.
   const $$ = new TestContext();
   let testOrg = new MockTestOrgData();
   let sfCommandUxStubs: ReturnType<typeof stubSfCommandUx>;
@@ -32,7 +36,9 @@ describe('org:display', () => {
   beforeEach(() => {
     testOrg = new MockTestOrgData();
     testOrg.orgId = '00Dxx0000000000';
-    stubUx($$.SANDBOX);
+    // Stub the ux methods on SfCommand so that you don't get any command output in your tests.
+    // You can also make assertions on the ux methods to ensure that they are called with the
+    // correct arguments.
     sfCommandUxStubs = stubSfCommandUx($$.SANDBOX);
   });
 
