@@ -121,10 +121,10 @@ export class OrgCloneCommand extends SfCommand<SandboxProcessObject> {
       });
 
       const { sandboxReq, srcSandboxName } = await createSandboxRequest(true, flags.definitionfile, logger, varargs);
-
       logger.debug('Calling clone with SandboxRequest: %s and SandboxName: %s ', sandboxReq, srcSandboxName);
       flags['target-org'].getConnection(flags['api-version']);
-      return flags['target-org'].cloneSandbox(sandboxReq, srcSandboxName, { wait: flags.wait });
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return flags['target-org'].cloneSandbox(sandboxReq, srcSandboxName!, { wait: flags.wait });
     } else {
       throw new SfError(
         messages.getMessage('commandOrganizationTypeNotSupport', [OrgTypes.Sandbox]),
