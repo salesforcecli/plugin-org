@@ -24,7 +24,7 @@
     "@swc/core": "^1.3.36",
     "@types/chai-as-promised": "^7.1.5",
     "@types/shelljs": "^0.8.10",
-    "@typescript-eslint/eslint-plugin": "^5.42.1",
+    "@typescript-eslint/eslint-plugin": "^5.53.0",
     "@typescript-eslint/parser": "^5.46.0",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
