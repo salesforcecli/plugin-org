@@ -733,10 +733,10 @@
     widest-line "^3.1.0"
     wrap-ansi "^7.0.0"
 
-"@oclif/core@^2.0.3", "@oclif/core@^2.0.8", "@oclif/core@^2.2.1", "@oclif/core@^2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@oclif/core/-/core-2.3.0.tgz#f63071a8116118ae02e457ac1d28a7649904aecf"
-  integrity sha512-xA53NIZDqz9nuxyCMA5Pz5b1RSgyTNWbtOdwbUJeZa/ajtVrVO9yA8k/4vJRsffUuLyP8tNbh4cH3DDZKwIFnw==
+"@oclif/core@^2.0.3", "@oclif/core@^2.0.8", "@oclif/core@^2.2.1", "@oclif/core@^2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@oclif/core/-/core-2.3.1.tgz#82d977338c68b3faeda84f780c2f97a3dd322cb2"
+  integrity sha512-18CkjjF16hwhBd/42z+0CHAwvZlBfpyCmdZxpasN/od8c/hdm0oDEJvVB33/xD0LDYg8glKoQ5zVNVvPM/uJ/Q==
   dependencies:
     "@types/cli-progress" "^3.11.0"
     ansi-escapes "^4.3.2"
@@ -744,7 +744,7 @@
     cardinal "^2.1.1"
     chalk "^4.1.2"
     clean-stack "^3.0.1"
-    cli-progress "^3.11.2"
+    cli-progress "^3.12.0"
     debug "^4.3.4"
     ejs "^3.1.8"
     fs-extra "^9.1.0"
@@ -2376,7 +2376,7 @@ cli-cursor@^3.1.0:
   dependencies:
     restore-cursor "^3.1.0"
 
-cli-progress@^3.10.0, cli-progress@^3.11.2, cli-progress@^3.4.0:
+cli-progress@^3.10.0, cli-progress@^3.12.0, cli-progress@^3.4.0:
   version "3.12.0"
   resolved "https://registry.yarnpkg.com/cli-progress/-/cli-progress-3.12.0.tgz#807ee14b66bcc086258e444ad0f19e7d42577942"
   integrity sha512-tRkV3HJ1ASwm19THiiLIXLO7Im7wlTuKnvkYaTkyoAPefqjNg7W7DHKUlGRxy9vxDvbyCYQkQozvptuMkGCg8A==
