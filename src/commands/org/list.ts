@@ -121,7 +121,9 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
         .map((org) =>
           Object.fromEntries(
             Object.entries(org).filter(([key]) =>
-              ['defaultMarker', 'alias', 'username', 'orgId', 'connectedStatus'].includes(key)
+              ['defaultMarker', Org.Fields.NAMESPACE_PREFIX, 'alias', 'username', 'orgId', 'connectedStatus'].includes(
+                key
+              )
             )
           )
         );
@@ -132,6 +134,10 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
           defaultMarker: {
             header: '',
             get: (data): string => data.defaultMarker ?? '',
+          },
+          namespacePRefix: {
+            header: 'NAMESPACE',
+            get: (data): string => data[Org.Fields.NAMESPACE_PREFIX] ?? '',
           },
           alias: {
             header: 'ALIAS',
@@ -161,6 +167,7 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
             Object.entries(org).filter(([key]) =>
               [
                 'defaultMarker',
+                'namespace',
                 'alias',
                 'username',
                 'orgId',
@@ -179,6 +186,10 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
           defaultMarker: {
             header: '',
             get: (data): string => data.defaultMarker ?? '',
+          },
+          namespace: {
+            header: 'NAMESPACE',
+            get: (data): string => data.namespace ?? '',
           },
           alias: {
             header: 'ALIAS',
