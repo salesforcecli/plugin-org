@@ -57,12 +57,10 @@ describe('Org Command NUT', () => {
       devhubAuthStrategy: 'AUTO',
       scratchOrgs: [
         {
-          executable: 'sfdx',
           config: join('config', 'project-scratch-def.json'),
           setDefault: true,
         },
         {
-          executable: 'sfdx',
           config: join('config', 'project-scratch-def.json'),
           alias: 'anAlias',
         },
