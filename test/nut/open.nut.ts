@@ -15,11 +15,10 @@ let session: TestSession;
 describe('test org:open command', () => {
   before(async () => {
     session = await TestSession.create({
-      project: { name: 'forceOrgList' },
+      project: { name: 'orgOpen' },
       devhubAuthStrategy: 'AUTO',
       scratchOrgs: [
         {
-          executable: 'sfdx',
           config: join('config', 'project-scratch-def.json'),
           setDefault: true,
         },

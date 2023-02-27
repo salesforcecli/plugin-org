@@ -20,16 +20,14 @@ describe('Delete Orgs', () => {
   // create our own orgs to delete to avoid interfering with other NUTs/cleanup
   before(async () => {
     session = await TestSession.create({
-      project: { name: 'forceOrgList' },
+      project: { name: 'legacyOrgDelete' },
       devhubAuthStrategy: 'AUTO',
       scratchOrgs: [
         {
-          executable: 'sfdx',
           setDefault: true,
           config: join('config', 'project-scratch-def.json'),
         },
         {
-          executable: 'sfdx',
           alias: 'anAlias',
           config: join('config', 'project-scratch-def.json'),
         },

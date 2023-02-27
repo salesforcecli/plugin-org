@@ -282,7 +282,7 @@ export class Create extends SfCommand<CreateResult> {
     if (!scratchOrgInfo) {
       throw new SfError('No scratch org info returned from scratchOrgCreate');
     }
-    if (!authFields || !authFields.orgId) {
+    if (!authFields?.orgId) {
       throw new SfError('Information missing from authFields');
     }
 
