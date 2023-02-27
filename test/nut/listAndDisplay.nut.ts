@@ -34,7 +34,7 @@ const verifyHumanResults = (
   const aliasUserLine = lines.find((line) => line.includes(aliasedUsername));
   assert(aliasUserLine);
   expect(aliasUserLine).to.include('anAlias');
-  // verbose mode should display sractch org Id and dev hub org Id
+  // verbose mode should display scratch org Id and dev hub org Id
   if (verbose) {
     expect(defaultUserLine.match(/00D/g)).to.have.lengthOf(2, defaultUserLine);
     expect(aliasUserLine.match(/00D/g)).to.have.lengthOf(2, aliasUserLine);
@@ -54,7 +54,7 @@ describe('Org Command NUT', () => {
   before(async () => {
     session = await TestSession.create({
       project: { name: 'forceOrgList' },
-      devhubAuthStrategy: 'AUTO',
+      devhubAuthStrategy: 'JWT',
       scratchOrgs: [
         {
           config: join('config', 'project-scratch-def.json'),
