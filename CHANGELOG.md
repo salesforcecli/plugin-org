@@ -1,3 +1,12 @@
+## [2.4.3](https://github.com/salesforcecli/plugin-org/compare/2.4.2...2.4.3) (2023-02-27)
+
+
+### Bug Fixes
+
+* bump deps ([219cf1e](https://github.com/salesforcecli/plugin-org/commit/219cf1e20f26a54ccb87f9d601a72eaf13e936b7))
+
+
+
 ## [2.4.2](https://github.com/salesforcecli/plugin-org/compare/2.4.1...2.4.2) (2023-02-22)
 
 
