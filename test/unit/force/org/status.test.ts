@@ -11,7 +11,7 @@ import { expect } from 'chai';
 
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 
-import { Config } from '@oclif/core';
+import { stubSfCommandUx } from '@salesforce/sf-plugins-core';
 import { OrgStatusCommand } from '../../../../src/commands/force/org/status';
 
 describe('org:status', () => {
@@ -48,36 +48,32 @@ describe('org:status', () => {
   };
 
   // stubs
-  let uxTableStub: sinon.SinonStub;
   let onStub: sinon.SinonStub;
   let testOrg = new MockTestOrgData();
+  let sfCommandUxStubs: ReturnType<typeof stubSfCommandUx>;
 
   beforeEach(async () => {
     testOrg = new MockTestOrgData();
     await $$.stubAuths(testOrg);
     $$.stubAliases({});
     await $$.stubConfig({ 'target-org': testOrg.username });
-  });
-  afterEach(() => {
-    $$.restore();
+    sfCommandUxStubs = stubSfCommandUx($$.SANDBOX);
   });
 
   const runStatusCommand = async (params: string[] = []): Promise<SandboxProcessObject> => {
-    const cmd = new OrgStatusCommand(params, {} as Config);
-
     stubMethod($$.SANDBOX, Org.prototype, 'sandboxStatus').resolves(sandboxProcessObj);
-    uxTableStub = $$.SANDBOX.stub(cmd, 'table');
     onStub = $$.SANDBOX.stub().callsArgWith(1, sandboxProcessObj).callsArgWith(1, resultObject);
 
     stubMethod($$.SANDBOX, Lifecycle, 'getInstance').returns({
       on: onStub,
+      onWarning: $$.SANDBOX.stub(),
     });
-    return cmd.run();
+    return OrgStatusCommand.run(params);
   };
 
   it('will return sandbox process object', async () => {
     const res = await runStatusCommand(['--sandboxname', sandboxName]);
-    expect(uxTableStub.firstCall.args[0].length).to.equal(12);
+    expect(sfCommandUxStubs.table.firstCall.args[0].length).to.equal(12);
     const logs = $$.TEST_LOGGER.getBufferedRecords();
     logs.forEach((line) => {
       expect(line.msg).to.not.include('Set Alias:');
@@ -94,7 +90,7 @@ describe('org:status', () => {
       sandboxAlias,
       '--setdefaultusername',
     ]);
-    expect(uxTableStub.firstCall.args[0].length).to.equal(12);
+    expect(sfCommandUxStubs.table.firstCall.args[0].length).to.equal(12);
     expect(onStub.callCount).to.be.equal(2);
 
     const logs = $$.TEST_LOGGER.getBufferedRecords();
@@ -105,7 +101,7 @@ describe('org:status', () => {
 
   it('will set default username but not alias', async () => {
     const res = await runStatusCommand(['--sandboxname', sandboxName, '--setdefaultusername']);
-    expect(uxTableStub.firstCall.args[0].length).to.equal(12);
+    expect(sfCommandUxStubs.table.firstCall.args[0].length).to.equal(12);
     expect(onStub.callCount).to.be.equal(2);
 
     const logs = $$.TEST_LOGGER.getBufferedRecords();

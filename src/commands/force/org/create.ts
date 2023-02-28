@@ -214,7 +214,7 @@ export class Create extends SfCommand<CreateResult> {
     try {
       return await this.flags['target-org'].createSandbox(sandboxReq, { wait });
     } catch (e) {
-      // guaranteed to be SfdxError from core;
+      // guaranteed to be SfError from core;
       const err = e as SfError;
       if (err?.message.includes('The org cannot be found')) {
         // there was most likely an issue with DNS when auth'ing to the new sandbox, but it was created.
