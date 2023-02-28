@@ -64,6 +64,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
 
   private org!: Org;
   private conn!: Connection;
+
   public async run(): Promise<OrgOpenOutput> {
     const { flags } = await this.parse(OrgOpenCommand);
 
@@ -145,7 +146,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
     try {
       const metadataResolver = new MetadataResolver();
       const components = metadataResolver.getComponentsFromPath(file);
-      const typeName = components[0].type.name;
+      const typeName = components.at(0)?.type.name;
 
       if (typeName === 'FlexiPage') {
         const flexipage = await this.conn.singleRecordQuery<{ Id: string }>(

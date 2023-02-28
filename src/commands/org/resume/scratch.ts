@@ -30,7 +30,6 @@ export default class EnvResumeScratch extends SfCommand<ScratchCreateResponse> {
   public static readonly flags = {
     'job-id': Flags.salesforceId({
       char: 'i',
-      length: 'both',
       summary: messages.getMessage('flags.job-id.summary'),
       description: messages.getMessage('flags.job-id.description'),
       exactlyOne: ['use-most-recent', 'job-id'],

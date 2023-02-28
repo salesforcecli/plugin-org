@@ -68,8 +68,8 @@ export class DescribeMetadata extends SfCommand<DescribeMetadataResult> {
 
     if (flags['output-file']) {
       fs.writeFileSync(flags['output-file'], JSON.stringify(describeResult, null, 2));
-      this.log(`Wrote result file to ${flags['output-file']}.`);
-    } else if (!this.jsonEnabled()) {
+      this.logSuccess(`Wrote result file to ${flags['output-file']}.`);
+    } else {
       this.styledJSON(describeResult);
     }
     return describeResult;
