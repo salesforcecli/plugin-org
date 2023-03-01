@@ -70,7 +70,7 @@ describe('Org Command NUT', () => {
     });
 
     assert(session.hubOrg.username);
-    hubOrgUsername = session.hubOrg.username;
+    hubOrgUsername = session.hubOrg?.username;
 
     const defaultOrg = session.orgs.get('default');
     const aliasOrg = session.orgs.get('anAlias');

@@ -146,7 +146,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
     try {
       const metadataResolver = new MetadataResolver();
       const components = metadataResolver.getComponentsFromPath(file);
-      const typeName = components.at(0)?.type.name;
+      const typeName = components[0]?.type?.name;
 
       if (typeName === 'FlexiPage') {
         const flexipage = await this.conn.singleRecordQuery<{ Id: string }>(
