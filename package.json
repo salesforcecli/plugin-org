@@ -6,12 +6,12 @@
   "main": "lib/index.js",
   "bugs": "https://github.com/forcedotcom/cli/issues",
   "dependencies": {
-    "@oclif/core": "^2.3.1",
+    "@oclif/core": "^2.4.0",
     "@salesforce/core": "^3.33.5",
     "@salesforce/kit": "^1.9.0",
     "@salesforce/sf-plugins-core": "^2.2.3",
     "@salesforce/source-deploy-retrieve": "^7.11.0",
-    "open": "8.4.1",
+    "open": "^8.4.1",
     "tslib": "^2"
   },
   "devDependencies": {

@@ -117,14 +117,14 @@
   {
     "command": "org:list:metadata",
     "plugin": "@salesforce/plugin-org",
-    "flags": ["api-version", "folder", "json", "loglevel", "resultfile", "target-org", "type"],
-    "alias": []
+    "flags": ["api-version", "folder", "json", "loglevel", "metadata-type", "output-file", "target-org"],
+    "alias": ["force:mdapi:listmetadata"]
   },
   {
     "command": "org:list:metadata-types",
     "plugin": "@salesforce/plugin-org",
-    "flags": ["api-version", "filterknown", "json", "loglevel", "resultfile", "target-org"],
-    "alias": []
+    "flags": ["api-version", "filter-known", "json", "loglevel", "output-file", "target-org"],
+    "alias": ["force:mdapi:describemetadata"]
   },
   {
     "command": "org:open",

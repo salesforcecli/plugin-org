@@ -8,7 +8,7 @@
 import * as fs from 'fs';
 import { join } from 'path';
 import { assert, expect } from 'chai';
-import { MyDomainResolver, Messages, Connection } from '@salesforce/core';
+import { MyDomainResolver, Messages, Connection, SfError } from '@salesforce/core';
 import { Config } from '@oclif/core';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { MockTestOrgData, shouldThrow, TestContext } from '@salesforce/core/lib/testSetup';
@@ -66,7 +66,7 @@ describe('org:open', () => {
         testOrg.username,
         '--urlonly',
         '--path',
-        testPath
+        testPath,
       ]);
       assert(response);
       expect(response.url).to.equal(expectedUrl);
