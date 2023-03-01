@@ -34,7 +34,7 @@ const verifyHumanResults = (
   const aliasUserLine = lines.find((line) => line.includes(aliasedUsername));
   assert(aliasUserLine);
   expect(aliasUserLine).to.include('anAlias');
-  // verbose mode should display sractch org Id and dev hub org Id
+  // verbose mode should display scratch org Id and dev hub org Id
   if (verbose) {
     expect(defaultUserLine.match(/00D/g)).to.have.lengthOf(2, defaultUserLine);
     expect(aliasUserLine.match(/00D/g)).to.have.lengthOf(2, aliasUserLine);
@@ -57,12 +57,10 @@ describe('Org Command NUT', () => {
       devhubAuthStrategy: 'AUTO',
       scratchOrgs: [
         {
-          executable: 'sfdx',
           config: join('config', 'project-scratch-def.json'),
           setDefault: true,
         },
         {
-          executable: 'sfdx',
           config: join('config', 'project-scratch-def.json'),
           alias: 'anAlias',
         },

@@ -31,7 +31,6 @@ export default class EnvDeleteSandbox extends SfCommand<SandboxDeleteResponse> {
       summary: messages.getMessage('flags.no-prompt.summary'),
     }),
   };
-  public static readonly state = 'beta';
 
   public async run(): Promise<SandboxDeleteResponse> {
     const flags = (await this.parse(EnvDeleteSandbox)).flags;

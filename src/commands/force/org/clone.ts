@@ -15,7 +15,6 @@ import {
 } from '@salesforce/sf-plugins-core';
 import {
   SfError,
-  Config,
   Lifecycle,
   Messages,
   OrgTypes,
@@ -79,9 +78,11 @@ export class OrgCloneCommand extends SfCommand<SandboxProcessObject> {
     loglevel,
   };
 
+  private logger!: Logger;
+
   public async run(): Promise<SandboxProcessObject> {
     const { flags, args, argv } = await this.parse(OrgCloneCommand);
-    const logger = await Logger.child(this.constructor.name);
+    this.logger = await Logger.child(this.constructor.name);
     const varargs = parseVarArgs(args, argv as string[]);
 
     const lifecycle = Lifecycle.getInstance();
@@ -105,24 +106,19 @@ export class OrgCloneCommand extends SfCommand<SandboxProcessObject> {
         });
 
         if (results?.sandboxRes?.authUserName) {
-          if (flags.setalias) {
-            const stateAggregator = await StateAggregator.getInstance();
-            stateAggregator.aliases.set(flags.setalias, results.sandboxRes.authUserName);
-            const result = stateAggregator.aliases.getAll();
-            logger.debug('Set Alias: %s result: %s', flags.setalias, result);
-          }
-          if (flags.setdefaultusername) {
-            const globalConfig: Config = this.configAggregator.getGlobalConfig();
-            globalConfig.set(OrgConfigProperties.TARGET_ORG, results.sandboxRes.authUserName);
-            const result = await globalConfig.write();
-            logger.debug('Set defaultUsername: %s result: %s', flags.setdefaultusername, result);
-          }
+          if (flags.setalias) await this.setAlias(flags.setalias, results.sandboxRes.authUserName);
+          if (flags.setdefaultusername) await this.setDefaultUsername(results.sandboxRes.authUserName);
         }
       });
 
-      const { sandboxReq, srcSandboxName } = await createSandboxRequest(true, flags.definitionfile, logger, varargs);
+      const { sandboxReq, srcSandboxName } = await createSandboxRequest(
+        true,
+        flags.definitionfile,
+        this.logger,
+        varargs
+      );
 
-      logger.debug('Calling clone with SandboxRequest: %s and SandboxName: %s ', sandboxReq, srcSandboxName);
+      this.logger.debug('Calling clone with SandboxRequest: %s and SandboxName: %s ', sandboxReq, srcSandboxName);
       flags['target-org'].getConnection(flags['api-version']);
       return flags['target-org'].cloneSandbox(sandboxReq, srcSandboxName, { wait: flags.wait });
     } else {
@@ -131,5 +127,19 @@ export class OrgCloneCommand extends SfCommand<SandboxProcessObject> {
         messages.getMessage('commandOrganizationTypeNotSupportAction', [OrgTypes.Sandbox])
       );
     }
+  }
+
+  public async setAlias(alias: string, username: string): Promise<void> {
+    const stateAggregator = await StateAggregator.getInstance();
+    stateAggregator.aliases.set(alias, username);
+    const result = stateAggregator.aliases.getAll();
+    this.logger.debug('Set Alias: %s result: %s', alias, result);
+  }
+
+  public async setDefaultUsername(username: string): Promise<void> {
+    const globalConfig = this.configAggregator.getGlobalConfig();
+    globalConfig.set(OrgConfigProperties.TARGET_ORG, username);
+    const result = await globalConfig.write();
+    this.logger.debug('Set defaultUsername: %s result: %s', username, result);
   }
 }

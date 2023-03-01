@@ -7,7 +7,7 @@
 import * as path from 'path';
 import { assert, expect } from 'chai';
 import { TestSession, execCmd, genUniqueString } from '@salesforce/cli-plugins-testkit';
-import { ScratchOrgCreateResult, Messages } from '@salesforce/core';
+import { ScratchOrgCreateResult } from '@salesforce/core';
 
 let session: TestSession;
 
@@ -43,16 +43,8 @@ describe('org:create command', () => {
         {
           ensureExitCode: 1,
         }
-      ).jsonOutput as unknown as { message: string };
-
-      Messages.importMessagesDirectory(
-        // 'messages' is appended to the path
-        path.join(__dirname, '..', '..', '..', 'node_modules', '@salesforce', 'core'),
-        false,
-        '@salesforce/core'
-      );
-      const messages = Messages.loadMessages('@salesforce/core', 'scratchOrgErrorCodes');
-      expect(errorOutput.message).to.be.a('string').and.to.include(messages.getMessage('C-1007'));
+      ).jsonOutput as unknown as { name: string };
+      expect(errorOutput.name).to.be.a('string').and.include('C-1007');
     });
   });
 
