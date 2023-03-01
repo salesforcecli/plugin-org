@@ -97,7 +97,11 @@ describe('test org:open command', () => {
   });
 
   after(async () => {
-    await session.zip(undefined, 'artifacts');
-    await session.clean();
+    try {
+      await session.zip(undefined, 'artifacts');
+      await session.clean();
+    } catch (e) {
+      // don't throw if an error happened while cleaning up
+    }
   });
 });
