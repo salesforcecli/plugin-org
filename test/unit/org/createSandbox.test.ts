@@ -4,16 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Lifecycle, Org, SandboxEvents, SandboxProcessObject, SfProject, AuthFields } from '@salesforce/core';
-import { Spinner } from '@salesforce/sf-plugins-core/lib/ux';
-import { Config as IConfig } from '@oclif/core/lib/interfaces';
-import { fromStub, stubInterface, stubMethod } from '@salesforce/ts-sinon';
+import { Lifecycle, Org, SandboxEvents, SandboxProcessObject, AuthFields } from '@salesforce/core';
+import { stubMethod } from '@salesforce/ts-sinon';
 import * as sinon from 'sinon';
 import { expect, config } from 'chai';
-import { Ux } from '@salesforce/sf-plugins-core/lib/ux';
 import { OrgAccessor } from '@salesforce/core/lib/stateAggregator';
+import { stubSfCommandUx, stubSpinner, stubUx } from '@salesforce/sf-plugins-core';
 import CreateSandbox from '../../../src/commands/org/create/sandbox';
-import { SandboxProgress } from '../../../src/shared/sandboxProgress';
 
 config.truncateThreshold = 0;
 
@@ -38,80 +35,34 @@ const fakeOrg: AuthFields = {
   username: 'somefake.org',
 };
 
-describe('env:create:sandbox', () => {
+describe('org:create:sandbox', () => {
   beforeEach(() => {
     stubMethod(sandbox, OrgAccessor.prototype, 'read').callsFake(async (): Promise<AuthFields> => fakeOrg);
     stubMethod(sandbox, OrgAccessor.prototype, 'write').callsFake(async (): Promise<AuthFields> => fakeOrg);
+    sfCommandUxStubs = stubSfCommandUx(sandbox);
+    stubUx(sandbox);
+    stubSpinner(sandbox);
   });
 
   const sandbox = sinon.createSandbox();
-  const oclifConfigStub = fromStub(stubInterface<IConfig>(sandbox));
-  // stubs
-  let resolveProjectConfigStub: sinon.SinonStub;
-  let createSandboxStub: sinon.SinonStub;
-  let uxLogStub: sinon.SinonStub;
-  let cmd: TestCreate;
-
-  class TestCreate extends CreateSandbox {
-    public async runIt() {
-      await this.init();
-      return this.run();
-    }
-    public setProject(project: SfProject) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      this.project = project;
-    }
-  }
-
-  const createCommand = async (params: string[]) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    cmd = new TestCreate(params, oclifConfigStub);
-    stubMethod(sandbox, cmd, 'assignProject').callsFake(() => {
-      const sfProjectStub = fromStub(
-        stubInterface<SfProject>(sandbox, {
-          resolveProjectConfig: resolveProjectConfigStub,
-        })
-      );
-      cmd.setProject(sfProjectStub);
-    });
-
-    stubMethod(sandbox, TestCreate.prototype, 'warn');
-    uxLogStub = stubMethod(sandbox, TestCreate.prototype, 'log');
-    stubMethod(sandbox, Ux.prototype, 'styledHeader');
-    stubMethod(sandbox, TestCreate.prototype, 'table');
-    // stubMethod(sandbox, SandboxProgress.prototype, 'getSandboxProgress');
-    stubMethod(sandbox, SandboxProgress.prototype, 'formatProgressStatus');
-    stubMethod(sandbox, Spinner.prototype, 'start');
-    stubMethod(sandbox, Spinner.prototype, 'stop');
-    stubMethod(sandbox, Spinner.prototype, 'status');
-    return cmd;
-  };
+  let sfCommandUxStubs: ReturnType<typeof stubSfCommandUx>;
 
   describe('sandbox', () => {
     it('will print the correct message for asyncResult lifecycle event', async () => {
-      const command = await createCommand(['-o', 'testProdOrg', '--name', 'mysandboxx', '--no-prompt']);
-
       stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
       stubMethod(sandbox, Org.prototype, 'getUsername').returns('testProdOrg');
       const createStub = stubMethod(sandbox, Org.prototype, 'createSandbox').callsFake(async () =>
         (async () => {})().catch()
       );
 
-      await command.runIt();
+      await CreateSandbox.run(['-o', 'testProdOrg', '--name', 'mysandboxx', '--no-prompt']);
 
       expect(createStub.firstCall.args[0].SandboxName).includes('mysandboxx');
       expect(createStub.firstCall.args[0].SandboxName.length).equals(10);
 
       Lifecycle.getInstance().on(SandboxEvents.EVENT_ASYNC_RESULT, async (result) => {
         expect(result).to.deep.equal(sandboxProcessObj);
-        expect(
-          uxLogStub
-            .getCalls()
-            .flatMap((c) => c.args)
-            .join('\n')
-        ).to.include(sandboxProcessObj.Id);
+        expect(sfCommandUxStubs.info.firstCall.firstArg).to.include(sandboxProcessObj.Id);
       });
 
       await Lifecycle.getInstance().emit(SandboxEvents.EVENT_ASYNC_RESULT, sandboxProcessObj);
@@ -121,6 +72,5 @@ describe('env:create:sandbox', () => {
 
   afterEach(() => {
     sandbox.restore();
-    createSandboxStub?.restore();
   });
 });
