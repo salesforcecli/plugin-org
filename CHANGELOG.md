@@ -1,3 +1,9 @@
+## [2.4.4](https://github.com/salesforcecli/plugin-org/compare/2.4.3...2.4.4) (2023-03-01)
+
+### Bug Fixes
+
+- license-type should not be needed when cloning a sandbox ([b4f5638](https://github.com/salesforcecli/plugin-org/commit/b4f5638dbbe0f7bd20de127cdbd22817accc2dc8))
+
 ## [2.4.3](https://github.com/salesforcecli/plugin-org/compare/2.4.2...2.4.3) (2023-02-27)
 
 ### Bug Fixes

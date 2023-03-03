@@ -51,7 +51,6 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
 
   private flags!: Interfaces.InferredFlags<typeof OrgListCommand.flags>;
 
-  // eslint-disable-next-line sf-plugin/should-parse-flags
   public async run(): Promise<OrgListResult> {
     const [{ flags }, fileNames] = await Promise.all([this.parse(OrgListCommand), getAuthFileNames()]);
     this.flags = flags;

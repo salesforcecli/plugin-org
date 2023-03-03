@@ -6,6 +6,7 @@
  */
 
 import { join } from 'path';
+import * as os from 'os';
 import { expect, config, assert } from 'chai';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { execCmd } from '@salesforce/cli-plugins-testkit';
@@ -91,7 +92,7 @@ describe('Org Command NUT', () => {
 
   describe('List Orgs', () => {
     it('should list all orgs', () => {
-      const listResult = execCmd<OrgListResult>('force:org:list --json', { ensureExitCode: 0 }).jsonOutput?.result;
+      const listResult = execCmd<OrgListResult>('org:list --json', { ensureExitCode: 0 }).jsonOutput?.result;
       assert(listResult);
       expect(listResult).to.have.property('nonScratchOrgs');
       expect(listResult.nonScratchOrgs).to.have.length(1);
@@ -121,8 +122,8 @@ describe('Org Command NUT', () => {
         JSON.stringify(listResult.nonScratchOrgs[0])
       );
     });
-    it('should list orgs - skipconnectionstatus', () => {
-      const listResult = execCmd<OrgListResult>('force:org:list --skipconnectionstatus --json', { ensureExitCode: 0 })
+    it('should list orgs - skip-connection-status', () => {
+      const listResult = execCmd<OrgListResult>('org:list --skip-connection-status --json', { ensureExitCode: 0 })
         .jsonOutput?.result;
       assert(listResult);
       const nonScratchOrgs = listResult.nonScratchOrgs[0];
@@ -136,17 +137,17 @@ describe('Org Command NUT', () => {
       );
     });
     it('should list orgs in a human readable form', () => {
-      const lines = execCmd('force:org:list', { ensureExitCode: 0 }).shellOutput.stdout.split('\n');
+      const lines = execCmd('org:list', { ensureExitCode: 0 }).shellOutput.stdout.split(os.EOL);
       verifyHumanResults(lines, defaultUsername, aliasedUsername);
     });
     it('should list additional information with --verbose', () => {
-      const lines = execCmd('force:org:list --verbose', { ensureExitCode: 0 }).shellOutput.stdout.split('\n');
+      const lines = execCmd('org:list --verbose', { ensureExitCode: 0 }).shellOutput.stdout.split(os.EOL);
       verifyHumanResults(lines, defaultUsername, aliasedUsername, true);
     });
   });
   describe('Org Display', () => {
     it('should display org information for default username', () => {
-      const result = execCmd<OrgListResult>('force:org:display --json', { ensureExitCode: 0 }).jsonOutput?.result;
+      const result = execCmd<OrgListResult>('org:display --json', { ensureExitCode: 0 }).jsonOutput?.result;
       expect(result).to.be.ok;
       expect(result).to.include({
         devHubId: hubOrgUsername,
@@ -154,7 +155,7 @@ describe('Org Command NUT', () => {
       });
     });
     it('should display scratch org information for alias', () => {
-      const result = execCmd<OrgListResult>(`force:org:display -u ${aliasedUsername} --json`, { ensureExitCode: 0 })
+      const result = execCmd<OrgListResult>(`org:display -u ${aliasedUsername} --json`, { ensureExitCode: 0 })
         .jsonOutput?.result;
       expect(result).to.be.ok;
       expect(result).to.include({
@@ -163,16 +164,16 @@ describe('Org Command NUT', () => {
       });
     });
     it('should display human readable org information for default username', () => {
-      const lines = execCmd<OrgDisplayReturn>('force:org:display', { ensureExitCode: 0 }).shellOutput.stdout.split(
-        '\n'
-      );
+      const result = execCmd<OrgDisplayReturn>('org:display', { ensureExitCode: 0 }).shellOutput;
+      const stdout = result.stdout;
+      const lines = stdout.split(os.EOL);
       expect(lines.length).to.have.greaterThan(0);
       const usernameLine = lines.find((line) => line.includes('Username'));
       expect(usernameLine).to.include(defaultUsername);
     });
     it('should display human readable scratch org information for alias', () => {
-      const lines = execCmd(`force:org:display -u ${aliasedUsername}`, { ensureExitCode: 0 }).shellOutput.stdout.split(
-        '\n'
+      const lines = execCmd(`force:org:display -o ${aliasedUsername}`, { ensureExitCode: 0 }).shellOutput.stdout.split(
+        os.EOL
       );
       expect(lines.length).to.have.greaterThan(0);
       const usernameLine = lines.find((line) => line.includes('Username'));
@@ -181,7 +182,7 @@ describe('Org Command NUT', () => {
   });
   describe('Org Open', () => {
     it('should produce the URL for an org in json', () => {
-      const result = execCmd<OrgOpenOutput>(`force:org:open -u ${defaultUsername} --urlonly --json`, {
+      const result = execCmd<OrgOpenOutput>(`org:open -o ${defaultUsername} --url-only --json`, {
         ensureExitCode: 0,
       }).jsonOutput?.result;
       expect(result).to.be.ok;
@@ -189,7 +190,7 @@ describe('Org Command NUT', () => {
     });
     it('should produce the URL with given path for an org in json', () => {
       const result = execCmd<OrgOpenOutput>(
-        `force:org:open -u ${aliasedUsername} --urlonly --path "foo/bar/baz" --json`,
+        `force:org:open -o ${aliasedUsername} --urlonly --path "foo/bar/baz" --json`,
         {
           ensureExitCode: 0,
         }
