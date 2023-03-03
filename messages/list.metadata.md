@@ -1,7 +1,10 @@
 # description
 
 display properties of metadata components of a specified type
-This command is useful when you want to identify individual components in your manifest file or if you want a high-level view of particular components in your organization. For example, you could use this target to return a list of names of all Layout components in your org, then use this information in a retrieve operation that returns a subset of these components.
+This command is useful when you want to identify individual components in your manifest file or if you want a high-level
+view of particular components in your organization. For example, you could use this target to return a list of names of
+all Layout components in your org, then use this information in a retrieve operation that returns a subset of these
+components.
 
 # examples
 
@@ -23,11 +26,11 @@ This command is useful when you want to identify individual components in your m
 
 - $ <%= config.bin %> <%= command.id %> -m CustomObject -u me@example.com -f /path/to/outputfilename.txt
 
-# flags.apiversion
+# flags.api-version
 
 API version to use
 
-# flags.resultfile
+# flags.output-file
 
 path to the file where results are stored
 
@@ -43,7 +46,7 @@ folder associated with the component; required for components that use folders; 
 
 The API version to use. The default is the latest API version
 
-# flagsLong.resultfile
+# flagsLong.output-file
 
 The path to the file where the results of the command are stored. The default output destination is the console.
 
@@ -53,7 +56,8 @@ The metadata type to be retrieved, such as CustomObject or Report. The metadata 
 
 # flagsLong.folder
 
-The folder associated with the component. This parameter is required for components that use folders, such as Dashboard, Document, EmailTemplate, or Report. The folder name value is case-sensitive.
+The folder associated with the component. This parameter is required for components that use folders, such as Dashboard,
+Document, EmailTemplate, or Report. The folder name value is case-sensitive.
 
 # noMatchingMetadata
 

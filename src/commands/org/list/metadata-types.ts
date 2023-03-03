@@ -8,33 +8,32 @@ import * as fs from 'fs';
 import { Messages } from '@salesforce/core';
 import { DescribeMetadataResult } from 'jsforce/api/metadata';
 import { RegistryAccess } from '@salesforce/source-deploy-retrieve';
-import {
-  Flags,
-  loglevel,
-  orgApiVersionFlagWithDeprecations,
-  requiredOrgFlagWithDeprecations,
-  SfCommand,
-} from '@salesforce/sf-plugins-core';
+import { Flags, loglevel, requiredOrgFlagWithDeprecations, SfCommand } from '@salesforce/sf-plugins-core';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'metadata-types');
 
-export class DescribeMetadata extends SfCommand<DescribeMetadataResult> {
+export class ListMetadataTypes extends SfCommand<DescribeMetadataResult> {
   public static readonly summary = messages.getMessage('description');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
   public static readonly aliases = ['force:mdapi:describemetadata'];
   public static readonly deprecateAliases = true;
   public static readonly flags = {
-    'api-version': orgApiVersionFlagWithDeprecations,
+    'api-version': Flags.orgApiVersion({
+      aliases: ['apiversion'],
+      deprecateAliases: true,
+      char: 'a',
+      summary: messages.getMessage('flags.api-version'),
+    }),
     loglevel,
     'target-org': requiredOrgFlagWithDeprecations,
     'output-file': Flags.file({
       aliases: ['resultfile'],
       deprecateAliases: true,
       char: 'f',
-      description: messages.getMessage('flags.resultfile'),
-      summary: messages.getMessage('flagsLong.resultfile'),
+      description: messages.getMessage('flags.output-file'),
+      summary: messages.getMessage('flagsLong.output-file'),
     }),
     'filter-known': Flags.boolean({
       aliases: ['filterknown'],
@@ -47,7 +46,7 @@ export class DescribeMetadata extends SfCommand<DescribeMetadataResult> {
   };
 
   public async run(): Promise<DescribeMetadataResult> {
-    const { flags } = await this.parse(DescribeMetadata);
+    const { flags } = await this.parse(ListMetadataTypes);
     const connection = flags['target-org'].getConnection(flags['api-version']);
     const describeResult = await connection.metadata.describe(flags['api-version']);
 

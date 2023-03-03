@@ -8,13 +8,7 @@
 import * as fs from 'fs';
 import { Messages } from '@salesforce/core';
 import { FileProperties, ListMetadataQuery } from 'jsforce/api/metadata';
-import {
-  Flags,
-  loglevel,
-  orgApiVersionFlagWithDeprecations,
-  requiredOrgFlagWithDeprecations,
-  SfCommand,
-} from '@salesforce/sf-plugins-core';
+import { Flags, loglevel, requiredOrgFlagWithDeprecations, SfCommand } from '@salesforce/sf-plugins-core';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'list.metadata');
@@ -28,14 +22,19 @@ export class ListMetadata extends SfCommand<ListMetadataCommandResult> {
   public static readonly aliases = ['force:mdapi:listmetadata'];
   public static readonly deprecateAliases = true;
   public static readonly flags = {
-    'api-version': orgApiVersionFlagWithDeprecations,
+    'api-version': Flags.orgApiVersion({
+      aliases: ['apiversion'],
+      deprecateAliases: true,
+      char: 'a',
+      summary: messages.getMessage('flags.api-version'),
+    }),
     loglevel,
     'target-org': requiredOrgFlagWithDeprecations,
     'output-file': Flags.file({
       aliases: ['resultfile'],
       deprecateAliases: true,
       char: 'f',
-      summary: messages.getMessage('flags.resultfile'),
+      summary: messages.getMessage('flags.output-file'),
     }),
     'metadata-type': Flags.string({
       aliases: ['metadatatype'],

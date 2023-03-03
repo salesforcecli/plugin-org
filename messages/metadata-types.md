@@ -1,9 +1,11 @@
 # description
 
 display details about the metadata types enabled for your org
-Use this information to identify the syntax needed for a <name> element in package.xml. The most recent API version is the default, or you can specify an older version.
+Use this information to identify the syntax needed for a <name> element in package.xml. The most recent API version is
+the default, or you can specify an older version.
 
-The default target username is the admin user for the default scratch org. The username must have the Modify All Data permission or the Modify Metadata permission (Beta). For more information about permissions, see Salesforce Help.
+The default target username is the admin user for the default scratch org. The username must have the Modify All Data
+permission or the Modify Metadata permission (Beta). For more information about permissions, see Salesforce Help.
 
 # examples
 
@@ -15,11 +17,11 @@ The default target username is the admin user for the default scratch org. The u
 
 - $ <%= config.bin %> <%= command.id %> -u me@example.com -f /path/to/outputfilename.txt
 
-# flags.apiversion
+# flags.api-version
 
 API version to use
 
-# flags.resultfile
+# flags.output-file
 
 path to the file where results are stored
 
@@ -31,10 +33,12 @@ filter metadata known by the CLI
 
 The API version to use. The default is the latest API version
 
-# flagsLong.resultfile
+# flagsLong.output-file
 
-The path to the file where the results of the command are stored. Directing the output to a file makes it easier to extract relevant information for your package.xml manifest file. The default output destination is the console.
+The path to the file where the results of the command are stored. Directing the output to a file makes it easier to
+extract relevant information for your package.xml manifest file. The default output destination is the console.
 
 # flagsLong.filterknown
 
-Filters all the known metadata from the result such that all that is left are the types not yet fully supported by the CLI.
+Filters all the known metadata from the result such that all that is left are the types not yet fully supported by the
+CLI.
