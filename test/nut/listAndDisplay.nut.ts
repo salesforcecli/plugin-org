@@ -137,11 +137,19 @@ describe('Org Command NUT', () => {
       );
     });
     it('should list orgs in a human readable form', () => {
-      const lines = execCmd('org:list', { ensureExitCode: 0 }).shellOutput.stdout.split(os.EOL);
+      const stdout = execCmd('org:list', { ensureExitCode: 0 }).shellOutput.stdout;
+      let lines = stdout.split(os.EOL);
+      if (lines.length === 1) {
+        lines = stdout.split('\n');
+      }
       verifyHumanResults(lines, defaultUsername, aliasedUsername);
     });
     it('should list additional information with --verbose', () => {
-      const lines = execCmd('org:list --verbose', { ensureExitCode: 0 }).shellOutput.stdout.split(os.EOL);
+      const stdout = execCmd('org:list --verbose', { ensureExitCode: 0 }).shellOutput.stdout;
+      let lines = stdout.split(os.EOL);
+      if (lines.length === 1) {
+        lines = stdout.split('\n');
+      }
       verifyHumanResults(lines, defaultUsername, aliasedUsername, true);
     });
   });
