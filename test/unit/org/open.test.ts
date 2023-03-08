@@ -126,7 +126,7 @@ describe('org:open', () => {
         );
 
         const response = await cmd.run();
-        expect(response.url).to.include('flexipage/ui/FlexiPageFilterListPage');
+        expect(response.url).to.include('lightning/setup/FlexiPageList/home');
       });
 
       it('--source-file to neither flexipage or apexpage', async () => {
@@ -136,7 +136,7 @@ describe('org:open', () => {
         );
 
         const response = await cmd.run();
-        expect(response.url).to.include('flexipage/ui/FlexiPageFilterListPage');
+        expect(response.url).to.include('lightning/setup/FlexiPageList/home');
       });
     });
 

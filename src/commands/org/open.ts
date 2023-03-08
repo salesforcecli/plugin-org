@@ -157,10 +157,10 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
       } else if (typeName === 'ApexPage') {
         return `/apex/${path.basename(file).replace('.page-meta.xml', '').replace('.page', '')}`;
       } else {
-        return '_ui/flexipage/ui/FlexiPageFilterListPage';
+        return 'lightning/setup/FlexiPageList/home';
       }
     } catch (error) {
-      return '_ui/flexipage/ui/FlexiPageFilterListPage';
+      return 'lightning/setup/FlexiPageList/home';
     }
   }
 }
