@@ -1,3 +1,15 @@
+## [2.4.6](https://github.com/salesforcecli/plugin-org/compare/2.4.5...2.4.6) (2023-03-06)
+
+### Bug Fixes
+
+- windows list NUTs ([08f4ea2](https://github.com/salesforcecli/plugin-org/commit/08f4ea2082e4eeecb8a025dd840a960dd0723470))
+
+## [2.4.5](https://github.com/salesforcecli/plugin-org/compare/2.4.4...2.4.5) (2023-03-05)
+
+### Bug Fixes
+
+- **deps:** bump open from 8.4.1 to 8.4.2 ([00e6a1d](https://github.com/salesforcecli/plugin-org/commit/00e6a1dd3221a55f694affda80f54598a93c6ce7))
+
 ## [2.4.4](https://github.com/salesforcecli/plugin-org/compare/2.4.3...2.4.4) (2023-03-01)
 
 ### Bug Fixes
