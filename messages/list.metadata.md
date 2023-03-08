@@ -1,10 +1,13 @@
 # description
 
-display properties of metadata components of a specified type
 This command is useful when you want to identify individual components in your manifest file or if you want a high-level
 view of particular components in your organization. For example, you could use this target to return a list of names of
 all Layout components in your org, then use this information in a retrieve operation that returns a subset of these
 components.
+
+# summary
+
+display properties of metadata components of a specified type
 
 # examples
 

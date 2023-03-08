@@ -4,11 +4,14 @@ Open your default scratch org, or another specified org, in a browser.
 
 # description
 
-To open a specific page, specify the portion of the URL after "https://MyDomainName.my.salesforce.com/" as the value for the --path flag. For example, specify "--path lightning" to open Lightning Experience, or specify "--path /apex/YourPage" to open a Visualforce page.
+To open a specific page, specify the portion of the URL after "https://MyDomainName.my.salesforce.com/" as the value for
+the --path flag. For example, specify "--path lightning" to open Lightning Experience, or specify "--path
+/apex/YourPage" to open a Visualforce page.
 
 To generate a URL but not launch it in your browser, specify --url-only.
 
-To open in a specific browser, use the --browser flag. Supported browsers are "chrome", "edge", and "firefox". If you don't specify --browser, the org opens in your default browser.
+To open in a specific browser, use the --browser flag. Supported browsers are "chrome", "edge", and "firefox". If you
+don't specify --browser, the org opens in your default browser.
 
 # examples
 
@@ -20,9 +23,14 @@ To open in a specific browser, use the --browser flag. Supported browsers are "c
 
   $ <%= config.bin %> <%= command.id %> --target-org MyTestOrg1 --browser firefox
 
-- Display the navigation URL for the Lightning Experience page for your default org, but don't open the page in a browser:
+- Display the navigation URL for the Lightning Experience page for your default org, but don't open the page in a
+  browser:
 
   $ <%= config.bin %> <%= command.id %> --url-only --path lightning
+
+- Open a specific ApexPage or Flexipage in the org using the --source-path flag
+
+  $ <%= config.bin %> <%= command.id %> --source-path <path to page>
 
 # flags.browser.summary
 

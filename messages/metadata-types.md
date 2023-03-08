@@ -1,21 +1,24 @@
 # description
 
-display details about the metadata types enabled for your org
 Use this information to identify the syntax needed for a <name> element in package.xml. The most recent API version is
 the default, or you can specify an older version.
 
 The default target username is the admin user for the default scratch org. The username must have the Modify All Data
 permission or the Modify Metadata permission (Beta). For more information about permissions, see Salesforce Help.
 
+# summary
+
+display details about the metadata types enabled for your org
+
 # examples
 
 - $ <%= config.bin %> <%= command.id %> -a 43.0
 
-- $ <%= config.bin %> <%= command.id %> -u me@example.com
+- $ <%= config.bin %> <%= command.id %> -o me@example.com
 
 - $ <%= config.bin %> <%= command.id %> -f /path/to/outputfilename.txt
 
-- $ <%= config.bin %> <%= command.id %> -u me@example.com -f /path/to/outputfilename.txt
+- $ <%= config.bin %> <%= command.id %> -o me@example.com -f /path/to/outputfilename.txt
 
 # flags.api-version
 

@@ -14,16 +14,15 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'metadata-types');
 
 export class ListMetadataTypes extends SfCommand<DescribeMetadataResult> {
-  public static readonly summary = messages.getMessage('description');
+  public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
   public static readonly aliases = ['force:mdapi:describemetadata'];
   public static readonly deprecateAliases = true;
   public static readonly flags = {
     'api-version': Flags.orgApiVersion({
-      aliases: ['apiversion'],
+      aliases: ['apiversion', 'a'],
       deprecateAliases: true,
-      char: 'a',
       summary: messages.getMessage('flags.api-version'),
     }),
     loglevel,
