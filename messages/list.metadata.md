@@ -15,7 +15,7 @@ display properties of metadata components of a specified type
 
 - $ <%= config.bin %> <%= command.id %> -m CustomObject -a 43.0
 
-- $ <%= config.bin %> <%= command.id %> -m CustomObject -u me@example.com
+- $ <%= config.bin %> <%= command.id %> -m CustomObject -o me@example.com
 
 - $ <%= config.bin %> <%= command.id %> -m CustomObject -f /path/to/outputfilename.txt
 
@@ -23,11 +23,11 @@ display properties of metadata components of a specified type
 
 - $ <%= config.bin %> <%= command.id %> -m Dashboard --folder foldername -a 43.0
 
-- $ <%= config.bin %> <%= command.id %> -m Dashboard --folder foldername -u me@example.com
+- $ <%= config.bin %> <%= command.id %> -m Dashboard --folder foldername -o me@example.com
 
 - $ <%= config.bin %> <%= command.id %> -m Dashboard --folder foldername -f /path/to/outputfilename.txt
 
-- $ <%= config.bin %> <%= command.id %> -m CustomObject -u me@example.com -f /path/to/outputfilename.txt
+- $ <%= config.bin %> <%= command.id %> -m CustomObject -o me@example.com -f /path/to/outputfilename.txt
 
 # flags.api-version
 
