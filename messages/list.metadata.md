@@ -2,6 +2,8 @@
 
 Use this command to identify individual components in your manifest file or if you want a high-level view of particular metadata types in your org. For example, you can use this command to return a list of names of all the CustomObject or Layout components in your org, then use this information in a retrieve command that returns a subset of these components.
 
+The username that you use to connect to the org must have the Modify All Data or Modify Metadata Through Metadata API Functions permission.
+
 # summary
 
 List the metadata components and properties of a specified type.
@@ -22,7 +24,7 @@ List the metadata components and properties of a specified type.
 
 # flags.api-version.summary
 
-API version to use; default is the latest API version.
+API version to use; default is the most recent API version.
 
 # flags.output-file.summary
 
