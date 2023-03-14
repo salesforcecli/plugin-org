@@ -25,7 +25,7 @@ export class ListMetadata extends SfCommand<ListMetadataCommandResult> {
     'api-version': Flags.orgApiVersion({
       aliases: ['apiversion', 'a'],
       deprecateAliases: true,
-      summary: messages.getMessage('flags.api-version'),
+      summary: messages.getMessage('flags.api-version.summary'),
     }),
     loglevel,
     'target-org': requiredOrgFlagWithDeprecations,
@@ -33,19 +33,18 @@ export class ListMetadata extends SfCommand<ListMetadataCommandResult> {
       aliases: ['resultfile'],
       deprecateAliases: true,
       char: 'f',
-      summary: messages.getMessage('flags.output-file'),
+      summary: messages.getMessage('flags.output-file.summary'),
     }),
     'metadata-type': Flags.string({
       aliases: ['metadatatype'],
       deprecateAliases: true,
       char: 'm',
-      summary: messages.getMessage('flags.metadatatype'),
-      description: messages.getMessage('flagsLong.metadatatype'),
+      summary: messages.getMessage('flags.metadata-type.summary'),
       required: true,
     }),
     folder: Flags.string({
-      summary: messages.getMessage('flags.folder'),
-      description: messages.getMessage('flagsLong.folder'),
+      summary: messages.getMessage('flags.folder.summary'),
+      description: messages.getMessage('flags.folder.description'),
     }),
   };
 

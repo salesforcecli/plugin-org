@@ -23,7 +23,7 @@ export class ListMetadataTypes extends SfCommand<DescribeMetadataResult> {
     'api-version': Flags.orgApiVersion({
       aliases: ['apiversion', 'a'],
       deprecateAliases: true,
-      summary: messages.getMessage('flags.api-version'),
+      summary: messages.getMessage('flags.api-version.summary'),
     }),
     loglevel,
     'target-org': requiredOrgFlagWithDeprecations,
@@ -31,15 +31,14 @@ export class ListMetadataTypes extends SfCommand<DescribeMetadataResult> {
       aliases: ['resultfile'],
       deprecateAliases: true,
       char: 'f',
-      summary: messages.getMessage('flags.output-file'),
-      description: messages.getMessage('flagsLong.output-file'),
+      summary: messages.getMessage('flags.output-file.summary'),
+      description: messages.getMessage('flags.output-file.description'),
     }),
     'filter-known': Flags.boolean({
       aliases: ['filterknown'],
       deprecateAliases: true,
       char: 'k',
-      summary: messages.getMessage('flags.filterknown'),
-      description: messages.getMessage('flagsLong.filterknown'),
+      summary: messages.getMessage('flags.filter-known.summary'),
       hidden: true,
     }),
   };

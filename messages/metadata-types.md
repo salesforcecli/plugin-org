@@ -1,47 +1,37 @@
 # description
 
-Use this information to identify the syntax needed for a <name> element in package.xml. The most recent API version is
-the default, or you can specify an older version.
+The information includes Apex classes and triggers, custom objects, custom fields on standard objects, tab sets that define an app, and many other metadata types. Use this information to identify the syntax needed for a <name> element in a manifest file (package.xml).
 
-The default target username is the admin user for the default scratch org. The username must have the Modify All Data
-permission or the Modify Metadata permission (Beta). For more information about permissions, see Salesforce Help.
+The username that you use to connect to the org must have the Modify All Data or Modify Metadata Through Metadata API Functions permission.
 
 # summary
 
-display details about the metadata types enabled for your org
+Display details about the metadata types that are enabled for your org.
 
 # examples
 
-- $ <%= config.bin %> <%= command.id %> -a 43.0
+- Display information about all known and enabled metadata types in the org with alias "my-dev-org" using API version 57.0:
 
-- $ <%= config.bin %> <%= command.id %> -o me@example.com
+  $ <%= config.bin %> <%= command.id %> --api-version 57.0 --target-org my-dev-org
 
-- $ <%= config.bin %> <%= command.id %> -f /path/to/outputfilename.txt
+- Display only the metadata types that aren't yet supported by Salesforce CLI in your default org and write the results to the specified file:
 
-- $ <%= config.bin %> <%= command.id %> -o me@example.com -f /path/to/outputfilename.txt
+  $ <%= config.bin %> <%= command.id %> --output-file /path/to/outputfilename.txt --filter-known
 
-# flags.api-version
+# flags.api-version.summary
 
-API version to use
+API version to use; default is the most recent API version.
 
-# flags.output-file
+# flags.output-file.summary
 
-path to the file where results are stored
+Pathname of the file in which to write the results.
 
-# flags.filterknown
+# flags.filter-known.summary
+
+Filter the known metadata types from the result to display only the types not yet fully supported by Salesforce CLI.
 
 filter metadata known by the CLI
 
-# flagsLong.apiversion
+# flags.output-file.description
 
-The API version to use. The default is the latest API version
-
-# flagsLong.output-file
-
-The path to the file where the results of the command are stored. Directing the output to a file makes it easier to
-extract relevant information for your package.xml manifest file. The default output destination is the console.
-
-# flagsLong.filterknown
-
-Filters all the known metadata from the result such that all that is left are the types not yet fully supported by the
-CLI.
+Directing the output to a file makes it easier to extract relevant information for your package.xml manifest file. The default output destination is the terminal or command window console.
