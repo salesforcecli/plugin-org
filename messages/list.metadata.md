@@ -1,67 +1,45 @@
 # description
 
-This command is useful when you want to identify individual components in your manifest file or if you want a high-level
-view of particular components in your organization. For example, you could use this target to return a list of names of
-all Layout components in your org, then use this information in a retrieve operation that returns a subset of these
-components.
+Use this command to identify individual components in your manifest file or if you want a high-level view of particular metadata types in your org. For example, you can use this command to return a list of names of all the CustomObject or Layout components in your org, then use this information in a retrieve command that returns a subset of these components.
 
 # summary
 
-display properties of metadata components of a specified type
+List the metadata components and properties of a specified type.
 
 # examples
 
-- $ <%= config.bin %> <%= command.id %> -m CustomObject
+- List the CustomObject components, and their properties, in the org with alias "my-dev-org":
 
-- $ <%= config.bin %> <%= command.id %> -m CustomObject -a 43.0
+  $ <%= config.bin %> <%= command.id %> --metadata-type CustomObject --target-org my-dev-org
 
-- $ <%= config.bin %> <%= command.id %> -m CustomObject -o me@example.com
+- List the CustomObject components in your default org, write the output to the specified file, and use API version 57.0:
 
-- $ <%= config.bin %> <%= command.id %> -m CustomObject -f /path/to/outputfilename.txt
+  $ <%= config.bin %> <%= command.id %> --metadata-type CustomObject --api-version 57.0 --output-file /path/to/outputfilename.txt
 
-- $ <%= config.bin %> <%= command.id %> -m Dashboard --folder foldername
+- List the Dashboard components in your default org that are contained in the "folderSales" folder, write the output to the specified file, and use API version 57.0:
 
-- $ <%= config.bin %> <%= command.id %> -m Dashboard --folder foldername -a 43.0
+  $ <%= config.bin %> <%= command.id %> --metadata-type Dashboard --folder folderSales --api-version 57.0 --output-file /path/to/outputfilename.txt
 
-- $ <%= config.bin %> <%= command.id %> -m Dashboard --folder foldername -o me@example.com
+# flags.api-version.summary
 
-- $ <%= config.bin %> <%= command.id %> -m Dashboard --folder foldername -f /path/to/outputfilename.txt
+API version to use; default is the latest API version.
 
-- $ <%= config.bin %> <%= command.id %> -m CustomObject -o me@example.com -f /path/to/outputfilename.txt
+# flags.output-file.summary
 
-# flags.api-version
+Pathname of the file in which to write the results.
 
-API version to use
+# flags.metadata-type.summary
 
-# flags.output-file
+Metadata type to be retrieved, such as CustomObject; metadata type names are case-sensitive.
 
-path to the file where results are stored
+# flags.folder.summary
 
-# flags.metadatatype
+Folder associated with the component; required for components that use folders; folder names are case-sensitive.
 
-metadata type to be retrieved, such as CustomObject; metadata type value is case-sensitive
+# flags.folder.description
 
-# flags.folder
-
-folder associated with the component; required for components that use folders; folder names are case-sensitive
-
-# flagsLong.apiversion
-
-The API version to use. The default is the latest API version
-
-# flagsLong.output-file
-
-The path to the file where the results of the command are stored. The default output destination is the console.
-
-# flagsLong.metadatatype
-
-The metadata type to be retrieved, such as CustomObject or Report. The metadata type value is case-sensitive.
-
-# flagsLong.folder
-
-The folder associated with the component. This parameter is required for components that use folders, such as Dashboard,
-Document, EmailTemplate, or Report. The folder name value is case-sensitive.
+Examples of metadata types that use folders are Dashboard, Document, EmailTemplate, and Report.
 
 # noMatchingMetadata
 
-No metadata found for type: %s in org: %s
+No metadata found for type: %s in org: %s.
