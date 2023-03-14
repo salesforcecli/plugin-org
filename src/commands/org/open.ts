@@ -26,7 +26,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
   public static readonly aliases = ['force:org:open'];
-  public static depreprecateAliases = true;
+  public static deprecateAliases = true;
 
   public static readonly flags = {
     'target-org': requiredOrgFlagWithDeprecations,
