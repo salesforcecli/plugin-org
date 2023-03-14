@@ -8,7 +8,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import { TestSession, execCmd } from '@salesforce/cli-plugins-testkit';
-import { expect } from 'chai';
+import { expect, config } from 'chai';
 import { AuthFields } from '@salesforce/core';
 import { ComponentSetBuilder } from '@salesforce/source-deploy-retrieve';
 import { OrgOpenOutput } from '../../lib/commands/org/open';
@@ -16,6 +16,8 @@ import { OrgOpenOutput } from '../../lib/commands/org/open';
 let session: TestSession;
 let defaultUsername: string;
 let defaultUserOrgId: string;
+
+config.truncateThreshold = 0;
 
 describe('test org:open command', () => {
   const flexiPagePath = path.join('force-app', 'main', 'default', 'flexipages', 'Property_Explorer.flexipage-meta.xml');
@@ -51,7 +53,7 @@ describe('test org:open command', () => {
     ).result;
     expect(result).to.be.ok;
     expect(result).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
-    expect(result).to.property('url').to.include('flexipage/ui/FlexiPageFilterListPage');
+    expect(result).to.property('url').to.include('lightning/setup/FlexiPageList/home');
   });
 
   it('should produce the URL for a flexipage resource in json', async () => {
