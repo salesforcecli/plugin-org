@@ -31,15 +31,15 @@ export class ListMetadataTypes extends SfCommand<DescribeMetadataResult> {
       aliases: ['resultfile'],
       deprecateAliases: true,
       char: 'f',
-      description: messages.getMessage('flags.output-file'),
-      summary: messages.getMessage('flagsLong.output-file'),
+      summary: messages.getMessage('flags.output-file'),
+      description: messages.getMessage('flagsLong.output-file'),
     }),
     'filter-known': Flags.boolean({
       aliases: ['filterknown'],
       deprecateAliases: true,
       char: 'k',
-      description: messages.getMessage('flags.filterknown'),
-      summary: messages.getMessage('flagsLong.filterknown'),
+      summary: messages.getMessage('flags.filterknown'),
+      description: messages.getMessage('flagsLong.filterknown'),
       hidden: true,
     }),
   };
@@ -65,7 +65,7 @@ export class ListMetadataTypes extends SfCommand<DescribeMetadataResult> {
     }
 
     if (flags['output-file']) {
-      fs.writeFileSync(flags['output-file'], JSON.stringify(describeResult, null, 2));
+      await fs.promises.writeFile(flags['output-file'], JSON.stringify(describeResult, null, 2));
       this.logSuccess(`Wrote result file to ${flags['output-file']}.`);
     } else {
       this.styledJSON(describeResult);

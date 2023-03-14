@@ -64,7 +64,7 @@ export class ListMetadata extends SfCommand<ListMetadataCommandResult> {
     } else if (listResult?.length) {
       this.styledJSON(listResult);
     } else {
-      this.log(messages.getMessage('noMatchingMetadata', [flags['metadata-type'], conn.getUsername()]));
+      this.warn(messages.getMessage('noMatchingMetadata', [flags['metadata-type'], conn.getUsername()]));
     }
 
     return listResult;
