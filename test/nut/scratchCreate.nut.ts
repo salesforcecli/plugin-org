@@ -29,7 +29,7 @@ describe('env create scratch NUTs', () => {
 
   before(async () => {
     session = await TestSession.create({
-      project: {},
+      project: { name: 'scratchOrgCreate' },
       devhubAuthStrategy: 'AUTO',
     });
   });

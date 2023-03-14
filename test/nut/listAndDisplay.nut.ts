@@ -54,7 +54,7 @@ describe('Org Command NUT', () => {
 
   before(async () => {
     session = await TestSession.create({
-      project: { name: 'forceOrgList' },
+      project: { name: 'listAndDisplay' },
       devhubAuthStrategy: 'AUTO',
       scratchOrgs: [
         {
