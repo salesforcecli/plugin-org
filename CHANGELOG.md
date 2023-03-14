@@ -1,3 +1,9 @@
+## [2.4.7](https://github.com/salesforcecli/plugin-org/compare/2.4.6...2.4.7) (2023-03-14)
+
+### Bug Fixes
+
+- deprecation warning ([8c0a3dc](https://github.com/salesforcecli/plugin-org/commit/8c0a3dce461f71db20a13eb78d8f5429b11f191c))
+
 ## [2.4.6](https://github.com/salesforcecli/plugin-org/compare/2.4.5...2.4.6) (2023-03-06)
 
 ### Bug Fixes
