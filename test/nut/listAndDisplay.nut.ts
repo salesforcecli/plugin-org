@@ -54,7 +54,7 @@ describe('Org Command NUT', () => {
 
   before(async () => {
     session = await TestSession.create({
-      project: { name: 'forceOrgList' },
+      project: { name: 'listAndDisplay' },
       devhubAuthStrategy: 'AUTO',
       scratchOrgs: [
         {
@@ -69,7 +69,7 @@ describe('Org Command NUT', () => {
     });
 
     assert(session.hubOrg.username);
-    hubOrgUsername = session.hubOrg.username;
+    hubOrgUsername = session.hubOrg?.username;
 
     const defaultOrg = session.orgs.get('default');
     const aliasOrg = session.orgs.get('anAlias');
@@ -198,6 +198,8 @@ describe('Org Command NUT', () => {
     });
     it('should produce the URL with given path for an org in json', () => {
       const result = execCmd<OrgOpenOutput>(
+        // see WI W-12694761 for single-quote behavior
+        // eslint-disable-next-line sf-plugin/no-execcmd-double-quotes
         `force:org:open -o ${aliasedUsername} --urlonly --path "foo/bar/baz" --json`,
         {
           ensureExitCode: 0,

@@ -13,7 +13,7 @@ import { secretTimeout } from '../../src/commands/org/create/scratch';
 import { ScratchCreateResponse } from '../../src/shared/orgTypes';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/plugin-org', 'create_scratch', ['prompt.secret']);
+const messages = Messages.loadMessages('@salesforce/plugin-org', 'create_scratch');
 describe('env create scratch NUTs', () => {
   let session: TestSession;
 
@@ -29,7 +29,7 @@ describe('env create scratch NUTs', () => {
 
   before(async () => {
     session = await TestSession.create({
-      project: {},
+      project: { name: 'scratchOrgCreate' },
       devhubAuthStrategy: 'AUTO',
     });
   });

@@ -3,6 +3,7 @@
   "include": ["./**/*.ts"],
   "compilerOptions": {
     "skipLibCheck": true,
+    "strictNullChecks": true,
     "baseUrl": "../",
     "sourceMap": true,
     "paths": {

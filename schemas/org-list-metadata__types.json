@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/DescribeMetadataResult",
+  "definitions": {
+    "DescribeMetadataResult": {
+      "type": "object",
+      "properties": {
+        "metadataObjects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DescribeMetadataObject"
+          }
+        },
+        "organizationNamespace": {
+          "type": "string"
+        },
+        "partialSaveAllowed": {
+          "type": "boolean"
+        },
+        "testRequired": {
+          "type": "boolean"
+        }
+      },
+      "required": ["metadataObjects", "organizationNamespace", "partialSaveAllowed", "testRequired"],
+      "additionalProperties": false
+    },
+    "DescribeMetadataObject": {
+      "type": "object",
+      "properties": {
+        "childXmlNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "directoryName": {
+          "type": "string"
+        },
+        "inFolder": {
+          "type": "boolean"
+        },
+        "metaFile": {
+          "type": "boolean"
+        },
+        "suffix": {
+          "type": ["string", "null"]
+        },
+        "xmlName": {
+          "type": "string"
+        }
+      },
+      "required": ["childXmlNames", "directoryName", "inFolder", "metaFile", "xmlName"],
+      "additionalProperties": false
+    }
+  }
+}

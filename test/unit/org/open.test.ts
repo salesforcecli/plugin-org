@@ -5,8 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import * as fs from 'fs';
+import { join } from 'path';
 import { assert, expect } from 'chai';
-import { MyDomainResolver, Messages, SfError } from '@salesforce/core';
+import { MyDomainResolver, Messages, Connection, SfError } from '@salesforce/core';
+import { Config } from '@oclif/core';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { MockTestOrgData, shouldThrow, TestContext } from '@salesforce/core/lib/testSetup';
 import { stubSfCommandUx, stubSpinner, stubUx } from '@salesforce/sf-plugins-core';
@@ -67,6 +70,74 @@ describe('org:open', () => {
       ]);
       assert(response);
       expect(response.url).to.equal(expectedUrl);
+    });
+
+    describe('--source-file', () => {
+      const flexipagesDir = join('force-app', 'main', 'default', 'flexipages');
+      const flexipagePath = join(flexipagesDir, 'test.flexipage-meta.xml');
+      const apexDir = join('force-app', 'main', 'default', 'pages');
+      const apexPath = join(apexDir, 'test.page');
+
+      before(() => {
+        fs.mkdirSync(flexipagesDir, { recursive: true });
+        fs.writeFileSync(
+          flexipagePath,
+          '<?xml version="1.0" encoding="UTF-8" ?><FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata"></FlexiPage>'
+        );
+
+        fs.mkdirSync(apexDir, { recursive: true });
+        fs.writeFileSync(
+          apexPath,
+          '<?xml version="1.0" encoding="UTF-8" ?><ApexPage xmlns="http://soap.sforce.com/2006/04/metadata"></ApexPage>'
+        );
+      });
+
+      after(() => {
+        fs.rmSync(flexipagesDir, { force: true, recursive: true });
+        fs.rmSync(apexDir, { force: true, recursive: true });
+      });
+
+      it('--source-file to flexipage', async () => {
+        const cmd = new OrgOpenCommand(
+          ['--json', '--targetusername', testOrg.username, '--urlonly', '--source-file', flexipagePath],
+          {} as Config
+        );
+
+        $$.SANDBOX.stub(Connection.prototype, 'singleRecordQuery').resolves({ Id: '123' });
+
+        const response = await cmd.run();
+        expect(response.url).to.include('visualEditor/appBuilder.app?pageId=123');
+      });
+
+      it('--source-file to an ApexPage', async () => {
+        const cmd = new OrgOpenCommand(
+          ['--json', '--targetusername', testOrg.username, '--urlonly', '--source-file', apexPath],
+          {} as Config
+        );
+
+        const response = await cmd.run();
+        expect(response.url).to.include('&retURL=/apex/test');
+      });
+
+      it('--source-file when flexipage query errors', async () => {
+        const cmd = new OrgOpenCommand(
+          ['--json', '--targetusername', testOrg.username, '--urlonly', '--source-file', flexipagesDir],
+          {} as Config
+        );
+
+        const response = await cmd.run();
+        expect(response.url).to.include('lightning/setup/FlexiPageList/home');
+      });
+
+      it('--source-file to neither flexipage or apexpage', async () => {
+        const cmd = new OrgOpenCommand(
+          ['--json', '--targetusername', testOrg.username, '--urlonly', '--source-file', apexDir],
+          {} as Config
+        );
+
+        const response = await cmd.run();
+        expect(response.url).to.include('lightning/setup/FlexiPageList/home');
+      });
     });
 
     it('can read url from env', async () => {

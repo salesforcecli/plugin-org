@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import * as path from 'path';
 import {
   Flags,
   SfCommand,
@@ -12,9 +13,10 @@ import {
   orgApiVersionFlagWithDeprecations,
   loglevel,
 } from '@salesforce/sf-plugins-core';
-import { Logger, Messages, Org, SfdcUrl, SfError } from '@salesforce/core';
+import { Connection, Logger, Messages, Org, SfdcUrl, SfError } from '@salesforce/core';
 import { Duration, Env } from '@salesforce/kit';
 import open = require('open');
+import { MetadataResolver } from '@salesforce/source-deploy-retrieve';
 import { openUrl } from '../../shared/utils';
 
 Messages.importMessagesDirectory(__dirname);
@@ -25,7 +27,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
-  public static readonly aliases = ['force:org:open'];
+  public static readonly aliases = ['force:org:open', 'force:source:open'];
   public static deprecateAliases = true;
 
   public static readonly flags = {
@@ -41,6 +43,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
       char: 'p',
       summary: messages.getMessage('flags.path.summary'),
       env: 'FORCE_OPEN_URL',
+      exclusive: ['source-file'],
       parse: (input: string): Promise<string> => Promise.resolve(encodeURIComponent(decodeURIComponent(input))),
     }),
     'url-only': Flags.boolean({
@@ -50,21 +53,39 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
       deprecateAliases: true,
     }),
     loglevel,
+    'source-file': Flags.file({
+      char: 'f',
+      aliases: ['sourcefile'],
+      exclusive: ['path'],
+      deprecateAliases: true,
+      summary: messages.getMessage('flags.source-file.summary'),
+    }),
   };
 
   private org!: Org;
+  private conn!: Connection;
+
   public async run(): Promise<OrgOpenOutput> {
     const { flags } = await this.parse(OrgOpenCommand);
+
     this.org = flags['target-org'];
-    const frontDoorUrl = await this.buildFrontdoorUrl(flags['api-version']);
-    const url = flags.path ? `${frontDoorUrl}&retURL=${flags.path}` : frontDoorUrl;
+    this.conn = this.org.getConnection(flags['api-version']);
+
+    let url = await this.buildFrontdoorUrl();
+
+    if (flags['source-file']) {
+      url += `&retURL=${await this.generateFileUrl(flags['source-file'])}`;
+    } else if (flags.path) {
+      url += `&retURL=${flags.path}`;
+    }
+
     const orgId = this.org.getOrgId();
     // TODO: better typings in sfdx-core for orgs read from auth files
     const username = this.org.getUsername() as string;
     const output = { orgId, url, username };
     const containerMode = new Env().getBoolean('SFDX_CONTAINER_MODE');
 
-    // security warning only for --json OR --urlonly OR containerMode
+    // security warning only for --json OR --url-only OR containerMode
     if (flags['url-only'] || flags.json || containerMode) {
       this.warn(sharedMessages.getMessage('SecurityWarning'));
       this.log('');
@@ -113,13 +134,34 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
     return output;
   }
 
-  private async buildFrontdoorUrl(version?: string): Promise<string> {
+  private async buildFrontdoorUrl(): Promise<string> {
     await this.org.refreshAuth(); // we need a live accessToken for the frontdoor url
-    const conn = this.org.getConnection(version);
-    const accessToken = conn.accessToken;
+    const accessToken = this.conn.accessToken;
     const instanceUrl = this.org.getField<string>(Org.Fields.INSTANCE_URL);
     const instanceUrlClean = instanceUrl.replace(/\/$/, '');
     return `${instanceUrlClean}/secur/frontdoor.jsp?sid=${accessToken}`;
+  }
+
+  private async generateFileUrl(file: string): Promise<string> {
+    try {
+      const metadataResolver = new MetadataResolver();
+      const components = metadataResolver.getComponentsFromPath(file);
+      const typeName = components[0]?.type?.name;
+
+      if (typeName === 'FlexiPage') {
+        const flexipage = await this.conn.singleRecordQuery<{ Id: string }>(
+          `SELECT id FROM flexipage WHERE DeveloperName='${path.basename(file, '.flexipage-meta.xml')}'`,
+          { tooling: true }
+        );
+        return `/visualEditor/appBuilder.app?pageId=${flexipage.Id}`;
+      } else if (typeName === 'ApexPage') {
+        return `/apex/${path.basename(file).replace('.page-meta.xml', '').replace('.page', '')}`;
+      } else {
+        return 'lightning/setup/FlexiPageList/home';
+      }
+    } catch (error) {
+      return 'lightning/setup/FlexiPageList/home';
+    }
   }
 }
 

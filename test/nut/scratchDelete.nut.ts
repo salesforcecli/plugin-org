@@ -18,23 +18,20 @@ describe('env:delete:scratch NUTs', () => {
 
   before(async () => {
     session = await TestSession.create({
-      project: {},
+      project: { name: 'scratchOrgDelete' },
       devhubAuthStrategy: 'AUTO',
       scratchOrgs: [
         {
-          executable: 'sf',
           alias: scratchOrgAlias,
           duration: 1,
           config: path.join('config', 'project-scratch-def.json'),
         },
         {
-          executable: 'sf',
           alias: scratchOrgAlias2,
           duration: 1,
           config: path.join('config', 'project-scratch-def.json'),
         },
         {
-          executable: 'sf',
           setDefault: true,
           duration: 1,
           config: path.join('config', 'project-scratch-def.json'),
@@ -49,7 +46,7 @@ describe('env:delete:scratch NUTs', () => {
     try {
       await session?.clean();
     } catch {
-      await fs.promises.rmdir(session.dir, { recursive: true }).catch(() => {});
+      await fs.promises.rm(session.dir, { recursive: true }).catch(() => {});
     }
   });
 

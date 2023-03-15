@@ -115,10 +115,22 @@
     "alias": ["force:org:list"]
   },
   {
+    "command": "org:list:metadata",
+    "plugin": "@salesforce/plugin-org",
+    "flags": ["api-version", "folder", "json", "loglevel", "metadata-type", "output-file", "target-org"],
+    "alias": ["force:mdapi:listmetadata"]
+  },
+  {
+    "command": "org:list:metadata-types",
+    "plugin": "@salesforce/plugin-org",
+    "flags": ["api-version", "filter-known", "json", "loglevel", "output-file", "target-org"],
+    "alias": ["force:mdapi:describemetadata"]
+  },
+  {
     "command": "org:open",
     "plugin": "@salesforce/plugin-org",
-    "flags": ["api-version", "browser", "json", "loglevel", "path", "target-org", "url-only"],
-    "alias": ["force:org:open"]
+    "flags": ["api-version", "browser", "json", "loglevel", "path", "source-file", "target-org", "url-only"],
+    "alias": ["force:org:open", "force:source:open"]
   },
   {
     "command": "org:resume:sandbox",
