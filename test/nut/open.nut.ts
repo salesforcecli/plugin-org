@@ -34,7 +34,6 @@ describe('test org:open command', () => {
           alias: 'default',
           duration: 1,
           setDefault: true,
-          wait: 10,
           config: path.join('config', 'project-scratch-def.json'),
         },
       ],
