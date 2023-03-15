@@ -198,7 +198,9 @@ describe('Org Command NUT', () => {
     });
     it('should produce the URL with given path for an org in json', () => {
       const result = execCmd<OrgOpenOutput>(
-        `force:org:open -o ${aliasedUsername} --urlonly --path 'foo/bar/baz' --json`,
+        // see WI W-12694761 for single-quote behavior
+        // eslint-disable-next-line sf-plugin/no-execcmd-double-quotes
+        `force:org:open -o ${aliasedUsername} --urlonly --path "foo/bar/baz" --json`,
         {
           ensureExitCode: 0,
         }
