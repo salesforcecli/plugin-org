@@ -8,30 +8,30 @@
 import { Interfaces } from '@oclif/core';
 import {
   Flags,
-  SfCommand,
+  loglevel,
+  optionalHubFlagWithDeprecations,
   optionalOrgFlagWithDeprecations,
   orgApiVersionFlagWithDeprecations,
   parseVarArgs,
-  optionalHubFlagWithDeprecations,
-  loglevel,
+  SfCommand,
 } from '@salesforce/sf-plugins-core';
 import {
   AuthFields,
-  StateAggregator,
   Config,
   Lifecycle,
+  Logger,
   Messages,
-  OrgTypes,
   OrgConfigProperties,
+  OrgTypes,
   ResultEvent,
   SandboxEvents,
   SandboxProcessObject,
   SandboxUserAuthResponse,
-  SfError,
-  StatusEvent,
   ScratchOrgInfo,
   ScratchOrgRequest,
-  Logger,
+  SfError,
+  StateAggregator,
+  StatusEvent,
 } from '@salesforce/core';
 import { createSandboxRequest } from '../../../shared/sandboxRequest';
 import { SandboxReporter } from '../../../shared/sandboxReporter';
@@ -48,6 +48,7 @@ export interface ScratchOrgProcessObject {
 }
 
 export type CreateResult = ScratchOrgProcessObject | SandboxProcessObject;
+
 export class Create extends SfCommand<CreateResult> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
@@ -63,7 +64,10 @@ export class Create extends SfCommand<CreateResult> {
   public static readonly strict = false;
 
   public static readonly flags = {
-    'target-org': optionalOrgFlagWithDeprecations,
+    'target-org': {
+      ...optionalOrgFlagWithDeprecations,
+      summary: messages.getMessage('flags.targetOrg.summary'),
+    },
     'target-dev-hub': optionalHubFlagWithDeprecations,
     'api-version': orgApiVersionFlagWithDeprecations,
     loglevel,
