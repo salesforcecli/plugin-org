@@ -1,3 +1,12 @@
+# [2.6.0](https://github.com/salesforcecli/plugin-org/compare/2.5.0...2.6.0) (2023-03-16)
+
+
+### Features
+
+* wrap tests in a describe block ([7696395](https://github.com/salesforcecli/plugin-org/commit/769639511254bfa24cb3f4b03e01e97719e98f8b))
+
+
+
 # [2.5.0](https://github.com/salesforcecli/plugin-org/compare/2.4.7...2.5.0) (2023-03-15)
 
 
