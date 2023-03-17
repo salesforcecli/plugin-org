@@ -88,7 +88,7 @@ describe('test org:open command', () => {
     expect(result).to.property('url').to.include('secur/frontdoor.jsp');
   });
 
-  it('org:open command', async () => {
+  it('org:open command', () => {
     const result = execCmd<OrgOpenOutput>('force:org:open --urlonly --json', {
       ensureExitCode: 0,
     }).jsonOutput?.result;
