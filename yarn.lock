@@ -1074,10 +1074,10 @@
     mkdirp "^1.0.4"
     tslib "^2"
 
-"@salesforce/plugin-source@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@salesforce/plugin-source/-/plugin-source-2.7.0.tgz#9c621eee0ef15e50bab25f00aea8b1302c327b27"
-  integrity sha512-jVoQrC5n05KrotbHjqKrS6jEaVnkj1QtagWxvLZZTXFlILOVYjN0B/s3AyvS4hjbPuBHBMhM9cpqByXTUL4CkQ==
+"@salesforce/plugin-source@^2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@salesforce/plugin-source/-/plugin-source-2.8.0.tgz#62a097a248593eb00e6d6b9f324b836da9c7e1bb"
+  integrity sha512-vuWfrnovFQoIF9eBN2us3adV4DKH1xV0wYsxvc4Hp7hpFigrtYKXSvYxE/4wR5fBQ396O+q9pAgmLoPUDlkT1A==
   dependencies:
     "@oclif/core" "^2.4.0"
     "@salesforce/apex-node" "^1.6.0"
@@ -1089,7 +1089,6 @@
     chalk "^4.1.2"
     got "^11.8.6"
     jsforce "^2.0.0-beta.20"
-    open "^8.4.2"
     proxy-agent "^5.0.0"
     proxy-from-env "^1.1.0"
     tslib "^2"
