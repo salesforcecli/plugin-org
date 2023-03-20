@@ -729,10 +729,10 @@
     widest-line "^3.1.0"
     wrap-ansi "^7.0.0"
 
-"@oclif/core@^2.0.7", "@oclif/core@^2.3.0", "@oclif/core@^2.4.0", "@oclif/core@^2.6.2", "@oclif/core@^2.6.3":
-  version "2.6.3"
-  resolved "https://registry.yarnpkg.com/@oclif/core/-/core-2.6.3.tgz#2f02e4510eb76d694d00c488b3ea957436289f51"
-  integrity sha512-kLwg+lmeZt4vfUlYN1XI8bPkcNBozfPOqciFOJMzHkPnq18lmoMu3+Xnm4wL1A9dXEyzoa5jidFhdyP/kZMBCw==
+"@oclif/core@^2.0.7", "@oclif/core@^2.3.0", "@oclif/core@^2.4.0", "@oclif/core@^2.6.2", "@oclif/core@^2.6.3", "@oclif/core@^2.6.4":
+  version "2.6.4"
+  resolved "https://registry.yarnpkg.com/@oclif/core/-/core-2.6.4.tgz#40a35355fece01cdedecaf8d8d523d92d47a408b"
+  integrity sha512-QkmPEdMsC8z/9d02bQvYZuviJhvK92YD/GJ5LlUk7cc8hEZ1JOLSwFg3i2EjlLNXn8OtOQHoe+EeOEaRWROuVA==
   dependencies:
     "@types/cli-progress" "^3.11.0"
     ansi-escapes "^4.3.2"
@@ -769,12 +769,12 @@
   resolved "https://registry.yarnpkg.com/@oclif/linewrap/-/linewrap-1.0.0.tgz#aedcb64b479d4db7be24196384897b5000901d91"
   integrity sha512-Ups2dShK52xXa8w6iBWLgcjPJWjais6KPJQq3gQ/88AY6BXoTX+MIGFPrWQO1KLMiQfoTpcLnUwloN4brrVUHw==
 
-"@oclif/plugin-command-snapshot@^3.3.8":
-  version "3.3.8"
-  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-3.3.8.tgz#4ef6c9b0461b40c4be1f94977e5eb9dd6c756081"
-  integrity sha512-piYlSDDzldDkvToKEG8HCnYaBwpWIX0b2TNc9ZtmH2khVgwPvmMrfZQfLl/4ZXxobdk0ndgrUUIg0mOhgCAXgg==
+"@oclif/plugin-command-snapshot@^3.3.9":
+  version "3.3.9"
+  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-3.3.9.tgz#70899bbb606b4218620f28e4c781bade10f904d4"
+  integrity sha512-/dX7sPBmgx6avV7QpNpzGN4Kffm9FYKACyomYaEtt3lvfizD0og5DUAecn9lZOwfgPKWcvi+I2makWYBMSblPw==
   dependencies:
-    "@oclif/core" "^2.4.0"
+    "@oclif/core" "^2.6.4"
     chalk "^4.1.2"
     just-diff "^5.2.0"
     lodash "^4.17.21"
@@ -1008,10 +1008,10 @@
   resolved "https://registry.yarnpkg.com/@salesforce/dev-config/-/dev-config-3.1.0.tgz#8eb5b35860ff60d1c1dc3fd9329b01a28475d5b9"
   integrity sha512-cPph7ibj3DeSzWDFLcLtxOh5fmUlDUY2Ezq43n0V6auVP+l8orxRHjCExHS86SB3QKVgXkC8yYhryXiS8KF7Zw==
 
-"@salesforce/dev-scripts@^4.1.2":
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/@salesforce/dev-scripts/-/dev-scripts-4.1.2.tgz#d9d4b403ac06934c069ca16d849ff7c2e12ee773"
-  integrity sha512-mxpwOb818k4H04DM/GV0/ZTzK5EDovcnROI+0CnR71Fqc4gwrWBmK+jlcRtICGypC48W+myOXKXet0oySQphyA==
+"@salesforce/dev-scripts@^4.1.3":
+  version "4.1.3"
+  resolved "https://registry.yarnpkg.com/@salesforce/dev-scripts/-/dev-scripts-4.1.3.tgz#e6d561e13f148d9ae6eec80d0e2e24303011e03c"
+  integrity sha512-RDZTM1Im2P++zRWSiLSGY31E+SYkHk+18uikMigZZm0XQsZf04XjDz0JMXujewMWWFnObJM0gKrswcDK/O9qSg==
   dependencies:
     "@commitlint/cli" "^17.1.2"
     "@commitlint/config-conventional" "^17.1.0"
