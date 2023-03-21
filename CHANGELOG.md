@@ -1,3 +1,13 @@
+## [2.6.1](https://github.com/salesforcecli/plugin-org/compare/2.6.0...2.6.1) (2023-03-21)
+
+
+### Bug Fixes
+
+* add missing —target-org flag summary ([4288d51](https://github.com/salesforcecli/plugin-org/commit/4288d51dbd11fd0f037e4507a1677d1f352d9abd))
+* check if sandbox is resumable ([c3f7ab3](https://github.com/salesforcecli/plugin-org/commit/c3f7ab3bff00b102ee31836dbca0b60363ec98a1))
+
+
+
 # [2.6.0](https://github.com/salesforcecli/plugin-org/compare/2.5.0...2.6.0) (2023-03-16)
 
 
