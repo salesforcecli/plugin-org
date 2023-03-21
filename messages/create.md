@@ -68,6 +68,10 @@ Number of scratch org auth retries after scratch org is successfully signed up.
 
 Streaming client socket timeout (in minutes).
 
+# flags.targetOrg.summary
+
+Username or alias of the production org that contains the sandbox license.
+
 # scratchOrgCreateSuccess
 
 Successfully created scratch org: %s, username: %s.

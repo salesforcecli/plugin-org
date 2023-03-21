@@ -5,7 +5,7 @@ The sandbox org creation was successful.
 # sandboxSuccess.actions
 
 The username for the sandbox is %s.
-You can open the org by running "%s org open -e %s"
+You can open the org by running "%s org open -o %s"
 
 # checkSandboxStatus
 
