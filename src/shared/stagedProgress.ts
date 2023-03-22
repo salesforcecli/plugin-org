@@ -81,7 +81,7 @@ export abstract class StagedProgress<T> {
       currentStage = this.mapCurrentStage(currentStage);
     }
     Object.entries(this.theStages).forEach(([stage, stageState]) => {
-      if (!currentStage || stageState.index < this.theStages[currentStage].index) {
+      if (!currentStage || stageState.index < (this.theStages[currentStage]?.index ?? 0)) {
         this.updateStages(stage, 'completed');
       }
     });
