@@ -1,3 +1,12 @@
+## [2.6.2](https://github.com/salesforcecli/plugin-org/compare/2.6.1...2.6.2) (2023-03-22)
+
+
+### Bug Fixes
+
+* mitigate Cannot read properties of undefined (reading 'index') ([95fdacc](https://github.com/salesforcecli/plugin-org/commit/95fdacc401a7ab3fbe7b08b4acad28c892149f36))
+
+
+
 ## [2.6.1](https://github.com/salesforcecli/plugin-org/compare/2.6.0...2.6.1) (2023-03-21)
 
 
