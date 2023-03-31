@@ -81,7 +81,7 @@
     ],
     "topics": {
       "org": {
-        "description": "Manage your sandbox and scratch orgs.",
+        "description": "Commands to create and manage orgs and scratch org users.",
         "subtopics": {
           "create": {
             "description": "Create scratch orgs, sandboxes, org shapes, and org snapshots."
