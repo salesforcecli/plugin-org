@@ -90,7 +90,7 @@
             "description": "Resume an org creation that was started asynchronously, timed out, or was interrupted."
           },
           "list": {
-            "description": "list metadata types that are relevant to the org"
+            "description": "List metadata types that are relevant to the org."
           },
           "delete": {
             "description": "Delete scratch orgs, sandboxes, org shapes, and org snapshots."
