@@ -1,3 +1,12 @@
+## [2.6.6](https://github.com/salesforcecli/plugin-org/compare/2.6.5...2.6.6) (2023-04-07)
+
+
+### Bug Fixes
+
+* update package.json for correct help and command ref ([56459a4](https://github.com/salesforcecli/plugin-org/commit/56459a4c047bb020a23d40fd062a2d0ec99c0f6e))
+
+
+
 ## [2.6.5](https://github.com/salesforcecli/plugin-org/compare/2.6.4...2.6.5) (2023-04-03)
 
 
