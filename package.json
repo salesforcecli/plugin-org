@@ -81,7 +81,7 @@
     ],
     "topics": {
       "org": {
-        "description": "Manage your sandbox and scratch orgs.",
+        "description": "Commands to create and manage orgs and scratch org users.",
         "subtopics": {
           "create": {
             "description": "Create scratch orgs, sandboxes, org shapes, and org snapshots."
@@ -90,7 +90,7 @@
             "description": "Resume an org creation that was started asynchronously, timed out, or was interrupted."
           },
           "list": {
-            "description": "list metadata types that are relevant to the org"
+            "description": "List metadata types that are relevant to the org."
           },
           "delete": {
             "description": "Delete scratch orgs, sandboxes, org shapes, and org snapshots."
