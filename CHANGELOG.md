@@ -1,3 +1,12 @@
+## [2.6.10](https://github.com/salesforcecli/plugin-org/compare/2.6.9...2.6.10) (2023-04-10)
+
+
+### Bug Fixes
+
+* allow expired orgs to be deleted ([79f6766](https://github.com/salesforcecli/plugin-org/commit/79f67660ae041c411007c1b501ff5524f2888d58))
+
+
+
 ## [2.6.9](https://github.com/salesforcecli/plugin-org/compare/2.6.8...2.6.9) (2023-04-10)
 
 
