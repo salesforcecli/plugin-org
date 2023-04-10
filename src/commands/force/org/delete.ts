@@ -4,9 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Flags, SfCommand, orgApiVersionFlagWithDeprecations, loglevel } from '@salesforce/sf-plugins-core';
+import { Flags, loglevel, orgApiVersionFlagWithDeprecations, SfCommand } from '@salesforce/sf-plugins-core';
 import { AuthInfo, AuthRemover, Messages, Org, StateAggregator } from '@salesforce/core';
-import { SandboxAccessor } from '@salesforce/core/lib/stateAggregator/accessors/sandboxAccessor';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete');
@@ -65,8 +64,9 @@ export class Delete extends SfCommand<DeleteResult> {
       throw messages.createError('missingUsername');
     }
 
-    const isSandbox = (await SandboxAccessor.create({ username: resolvedUsername })).has(resolvedUsername);
     const orgId = (await AuthInfo.create({ username: resolvedUsername })).getFields().orgId as string;
+    const isSandbox = await (await StateAggregator.getInstance()).sandboxes.hasFile(orgId);
+
     // read the config file for the org to be deleted, if it has a PROD_ORG_USERNAME entry, it's a sandbox
     // we either need permission to proceed without a prompt OR get the user to confirm
     if (

@@ -58,7 +58,6 @@ export default class EnvDeleteScratch extends SfCommand<ScratchDeleteResponse> {
         if (e instanceof Error && e.name === 'DomainNotFoundError') {
           // the org has expired, so remote operations won't work
           // let's clean up the files locally
-          // but first read the orgId from the auth file
           const authRemover = await AuthRemover.create();
           await authRemover.removeAuth(resolvedUsername);
           this.logSuccess(messages.getMessage('success', [resolvedUsername]));
