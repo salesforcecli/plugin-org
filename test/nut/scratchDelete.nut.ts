@@ -50,11 +50,6 @@ describe('env:delete:scratch NUTs', () => {
     }
   });
 
-  it('should see default username in help', () => {
-    const output = execCmd<ScratchDeleteResponse>('env:delete:scratch --help', { ensureExitCode: 0 }).shellOutput;
-    expect(output).to.include(session.orgs.get('default')?.username);
-  });
-
   it('should delete the 1st scratch org by alias', () => {
     const command = `env:delete:scratch --target-org ${scratchOrgAlias} --no-prompt --json`;
     const output = execCmd<ScratchDeleteResponse>(command, { ensureExitCode: 0 }).jsonOutput?.result;
