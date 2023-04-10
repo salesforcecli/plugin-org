@@ -1,3 +1,12 @@
+## [2.6.9](https://github.com/salesforcecli/plugin-org/compare/2.6.8...2.6.9) (2023-04-10)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/sf-plugins-core from 2.2.5 to 2.2.7 ([ea868ac](https://github.com/salesforcecli/plugin-org/commit/ea868acbde85435f9ccb22c16eb3e149055acedb))
+
+
+
 ## [2.6.8](https://github.com/salesforcecli/plugin-org/compare/2.6.7...2.6.8) (2023-04-09)
 
 
