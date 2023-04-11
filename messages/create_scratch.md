@@ -4,7 +4,16 @@ Create a scratch org.
 
 # description
 
-There are two ways to create a scratch org: specify a definition file that contains the options or use the --edition flag to specify the one required option. If you want to set options other than the edition, such as org features or settings, you must use a definition file.
+There are two ways to create a scratch org: either specify a definition file that contains the options or use the --edition flag to specify the one required option. In other words, you can specify --edition or --definition-file, but not both.
+
+For either method, you can also use these flags; if you use them with --definition-file, they override their equivalent option in the scratch org definition file:
+
+    * --description
+    * --name  (equivalent to the "orgName" option)
+    * --username
+    * --release
+
+If you want to set options other than the preceding ones, such as org features or settings, you must use a definition file.
 
 You must specify a Dev Hub to create a scratch org, either with the --target-dev-hub flag or by setting your default Dev Hub with the target-dev-hub configuration variable.
 
@@ -14,9 +23,13 @@ You must specify a Dev Hub to create a scratch org, either with the --target-dev
 
   <%= config.bin %> <%= command.id %> --edition=developer --alias my-scratch-org
 
-- Specify the Dev Hub using its alias and a scratch org definition file. Set the scratch org as your default and specify that it expires in 3 days:
+- Create a scratch org with a definition file. Specify the Dev Hub using its alias, set the scratch org as your default, and specify that it expires in 3 days:
 
-  <%= config.bin %> <%= command.id %> --target-dev-hub=MyHub --definition-file config/project-scratch-def.json --set-default --duration-days 3
+  <%= config.bin %> <%= command.id %> --target-dev-hub MyHub --definition-file config/project-scratch-def.json --set-default --duration-days 3
+
+- Create a preview Enterprise edition scratch org; for use only during Salesforce release transition periods:
+
+  <%= config.bin %> <%= command.id %> --edition=enterprise --alias my-scratch-org --target-dev-hub MyHub --release preview
 
 # flags.target-hub.summary
 
@@ -98,25 +111,29 @@ Number of days before the org expires.
 
 # flags.username.summary
 
-Set the username of the scratch org admin user. Overrides any value from the definition file.
+Username of the scratch org admin user. Overrides the value of the "username" option in the definition file, if set.
 
 # flags.username.description
 
-The username must be unique within the entire scratch org and sandbox universe. You need to add logic to ensure uniqueness.
+The username must be unique within the entire scratch org and sandbox universe. You must add your own logic to ensure uniqueness.
 
 Omit this flag to have Salesforce generate a unique username for your org.
 
 # flags.description.summary
 
-Set the description of the scratch org in the Dev Hub. Overrides any value from the definition file.
+Description of the scratch org in the Dev Hub. Overrides the value of the "description" option in the definition file, if set.
 
 # flags.name.summary
 
-Set the orgName property of the scratch org in the Dev Hub. Overrides any value from the definition file.
+Name of the org, such as "Acme Company". Overrides the value of the "orgName" option in the definition file, if set.
 
 # flags.release.summary
 
-By default, orgs will on the same release as the Dev Hub. During the preview period you can override this behavior to opt in or out of the new release.
+Release of the scratch org as compared to the Dev Hub release.
+
+# flags.release.description
+
+By default, scratch orgs are on the same release as the Dev Hub. During Salesforce release transition periods, you can override this default behavior and opt in or out of the new release.
 
 # prompt.secret
 
