@@ -115,6 +115,20 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
       description: messages.getMessage('flags.track-source.description'),
       allowNo: true,
     }),
+    username: Flags.string({
+      summary: messages.getMessage('flags.username.summary'),
+      description: messages.getMessage('flags.username.description'),
+    }),
+    description: Flags.string({
+      summary: messages.getMessage('flags.description.summary'),
+    }),
+    name: Flags.string({
+      summary: messages.getMessage('flags.name.summary'),
+    }),
+    release: Flags.string({
+      summary: messages.getMessage('flags.release.summary'),
+      options: ['preview', 'previous'],
+    }),
   };
   public async run(): Promise<ScratchCreateResponse> {
     const lifecycle = Lifecycle.getInstance();
@@ -123,9 +137,15 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
     if (!baseUrl) {
       throw new SfError('No instance URL found for the dev hub');
     }
-    const orgConfig = flags['definition-file']
-      ? (JSON.parse(await fs.promises.readFile(flags['definition-file'], 'utf-8')) as Record<string, unknown>)
-      : { edition: flags.edition };
+    const orgConfig = {
+      ...(flags['definition-file']
+        ? (JSON.parse(await fs.promises.readFile(flags['definition-file'], 'utf-8')) as Record<string, unknown>)
+        : { edition: flags.edition }),
+      ...(flags.username ? { username: flags.username } : {}),
+      ...(flags.description ? { description: flags.description } : {}),
+      ...(flags.name ? { orgName: flags.name } : {}),
+      ...(flags.release ? { release: flags.release } : {}),
+    };
 
     const createCommandOptions: ScratchOrgCreateOptions = {
       hubOrg: flags['target-dev-hub'],

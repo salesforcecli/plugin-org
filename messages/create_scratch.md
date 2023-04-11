@@ -96,6 +96,28 @@ Create the scratch org with no namespace, even if the Dev Hub has a namespace.
 
 Number of days before the org expires.
 
+# flags.username.summary
+
+Set the username of the scratch org admin user. Overrides any value from the definition file.
+
+# flags.username.description
+
+The username must be unique within the entire scratch org and sandbox universe. You need to add logic to ensure uniqueness.
+
+Omit this flag to have Salesforce generate a unique username for your org.
+
+# flags.description.summary
+
+Set the description of the scratch org in the Dev Hub. Overrides any value from the definition file.
+
+# flags.name.summary
+
+Set the orgName property of the scratch org in the Dev Hub. Overrides any value from the definition file.
+
+# flags.release.summary
+
+By default, orgs will on the same release as the Dev Hub. During the preview period you can override this behavior to opt in or out of the new release.
+
 # prompt.secret
 
 OAuth client secret of your personal connected app

@@ -6,7 +6,7 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
-import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
+import { execCmd, genUniqueString, TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
 import { AuthFields, Messages, Global, StateAggregator } from '@salesforce/core';
 import { secretTimeout } from '../../src/commands/org/create/scratch';
@@ -84,6 +84,17 @@ describe('env create scratch NUTs', () => {
         }
       ).jsonOutput?.result;
       expect(resp).to.have.all.keys(keys);
+    });
+    it('creates an org from config file with "override" flags ', () => {
+      const expectedUsername = genUniqueString('%s@nut.org');
+      const resp = execCmd<ScratchCreateResponse>(
+        `env:create:scratch -f config/project-scratch-def.json --json --username ${expectedUsername} --description "new one" --name TheOrg --wait 60`,
+        {
+          ensureExitCode: 0,
+        }
+      ).jsonOutput?.result;
+      expect(resp).to.have.all.keys(keys);
+      expect(resp?.username).to.equal(expectedUsername);
     });
     it('creates an org with tracking disabled ', async () => {
       const resp = execCmd<ScratchCreateResponse>(
