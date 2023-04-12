@@ -1115,7 +1115,7 @@
     chalk "^4"
     inquirer "^8.2.5"
 
-"@salesforce/source-deploy-retrieve@^7.11.3", "@salesforce/source-deploy-retrieve@^7.15.0":
+"@salesforce/source-deploy-retrieve@^7.11.3":
   version "7.15.0"
   resolved "https://registry.yarnpkg.com/@salesforce/source-deploy-retrieve/-/source-deploy-retrieve-7.15.0.tgz#a513bd14a18c6989add4bae62169e38142800cf2"
   integrity sha512-dy9gKkV2wY9skdCJQnO/0pTpAwVD6qrJZpgVfTN/z/h58Iquy4xxCdZB4LxYpOuDW6vvrKVYaJK8iN0vDp4C6g==
@@ -1125,6 +1125,25 @@
     "@salesforce/ts-types" "^1.7.2"
     archiver "^5.3.1"
     fast-xml-parser "^4.1.3"
+    got "^11.8.6"
+    graceful-fs "^4.2.11"
+    ignore "^5.2.4"
+    mime "2.6.0"
+    minimatch "^5.1.6"
+    proxy-agent "^5.0.0"
+    proxy-from-env "^1.1.0"
+    unzipper "0.10.11"
+
+"@salesforce/source-deploy-retrieve@^8.0.1":
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/@salesforce/source-deploy-retrieve/-/source-deploy-retrieve-8.0.1.tgz#769d761cf2a3015282ad6a77e103d2a9c1e99052"
+  integrity sha512-uXgMwBXaCH0SM93e8Q/ptGc4xi+wna/CO+SFfZHvy3nnlGHi7MQOUNRnAn2L5NzqEg0ZX9HrXpx4ILf4hLFl3w==
+  dependencies:
+    "@salesforce/core" "^3.34.6"
+    "@salesforce/kit" "^1.9.2"
+    "@salesforce/ts-types" "^1.7.2"
+    archiver "^5.3.1"
+    fast-xml-parser "^4.1.4"
     got "^11.8.6"
     graceful-fs "^4.2.11"
     ignore "^5.2.4"
@@ -3523,10 +3542,10 @@ fast-levenshtein@^3.0.0:
   dependencies:
     fastest-levenshtein "^1.0.7"
 
-fast-xml-parser@^4.1.3:
-  version "4.1.4"
-  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-4.1.4.tgz#bb0d02d33854325b3eded07e4a4f2ceb8202ce8b"
-  integrity sha512-jKw5Miu3xRSWhXxpWWx3Jujvy231pInmUJgCtsov8JGeuLQsKmYKXlXXPXN1Hopo0YHGuesIlu1cDMKmHa2fJQ==
+fast-xml-parser@^4.1.3, fast-xml-parser@^4.1.4:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-4.2.0.tgz#6db2ba33b95b8b4af93f94fe024d4b4d02a50855"
+  integrity sha512-+zVQv4aVTO+o8oRUyRL7PjgeVo1J6oP8Cw2+a8UTZQcj5V0yUK5T63gTN0ldgiHDPghUjKc4OpT6SwMTwnOQug==
   dependencies:
     strnum "^1.0.5"
 
