@@ -127,6 +127,7 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
     }),
     release: Flags.string({
       summary: messages.getMessage('flags.release.summary'),
+      description: messages.getMessage('flags.release.description'),
       options: ['preview', 'previous'],
     }),
   };
