@@ -1,3 +1,12 @@
+## [2.6.11](https://github.com/salesforcecli/plugin-org/compare/2.6.10...2.6.11) (2023-04-13)
+
+
+### Bug Fixes
+
+* bump sdr ([1c336fc](https://github.com/salesforcecli/plugin-org/commit/1c336fcab4fb2b7b95f33aa1681220ba2c33dbe5))
+
+
+
 ## [2.6.10](https://github.com/salesforcecli/plugin-org/compare/2.6.9...2.6.10) (2023-04-10)
 
 
