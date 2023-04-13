@@ -14,6 +14,7 @@ import { ScratchDeleteResponse } from '../../src/commands/org/delete/scratch';
 describe('env:delete:scratch NUTs', () => {
   const scratchOrgAlias = 'scratch-org';
   const scratchOrgAlias2 = 'scratch-org-2';
+  const scratchOrgAlias3 = 'scratch-org-3';
   let session: TestSession;
 
   before(async () => {
@@ -33,6 +34,7 @@ describe('env:delete:scratch NUTs', () => {
         },
         {
           setDefault: true,
+          alias: scratchOrgAlias3,
           duration: 1,
           config: path.join('config', 'project-scratch-def.json'),
         },
