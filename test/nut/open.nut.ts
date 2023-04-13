@@ -8,7 +8,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import { TestSession, execCmd } from '@salesforce/cli-plugins-testkit';
-import { expect, config } from 'chai';
+import { expect, config, assert } from 'chai';
 import { AuthFields } from '@salesforce/core';
 import { ComponentSetBuilder } from '@salesforce/source-deploy-retrieve';
 import { OrgOpenOutput } from '../../lib/commands/org/open';
@@ -30,9 +30,7 @@ describe('test org:open command', () => {
       devhubAuthStrategy: 'AUTO',
       scratchOrgs: [
         {
-          executable: 'sfdx',
           alias: 'default',
-          duration: 1,
           setDefault: true,
           config: path.join('config', 'project-scratch-def.json'),
         },
@@ -45,14 +43,12 @@ describe('test org:open command', () => {
   });
 
   it('should produce the default URL for a flexipage resource when it not in org in json', () => {
-    const result = (
-      execCmd<OrgOpenOutput>(`force:source:open -f ${flexiPagePath} --urlonly --json`, {
-        ensureExitCode: 0,
-      }).jsonOutput as { result: OrgOpenOutput }
-    ).result;
-    expect(result).to.be.ok;
+    const result = execCmd<OrgOpenOutput>(`force:source:open -f ${flexiPagePath} --urlonly --json`, {
+      ensureExitCode: 0,
+    }).jsonOutput?.result;
+    assert(result);
     expect(result).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
-    expect(result).to.property('url').to.include('lightning/setup/FlexiPageList/home');
+    expect(result.url).to.include('lightning/setup/FlexiPageList/home');
   });
 
   it('should produce the URL for a flexipage resource in json', async () => {
@@ -61,14 +57,12 @@ describe('test org:open command', () => {
     const deploy = await cs.deploy({ usernameOrConnection: defaultUsername });
     const deployResult = await deploy.pollStatus(1000, 60000);
     expect(deployResult.getFileResponses().length).to.not.equal(0);
-    const result = (
-      execCmd<OrgOpenOutput>(`force:source:open --sourcefile ${flexiPagePath} --urlonly --json`, {
-        ensureExitCode: 0,
-      }).jsonOutput as { result: OrgOpenOutput }
-    ).result;
-    expect(result).to.be.ok;
+    const result = execCmd<OrgOpenOutput>(`force:source:open --sourcefile ${flexiPagePath} --urlonly --json`, {
+      ensureExitCode: 0,
+    }).jsonOutput?.result;
+    assert(result);
     expect(result).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
-    expect(result).to.property('url').to.include('/visualEditor/appBuilder.app?pageId');
+    expect(result.url).to.include('/visualEditor/appBuilder.app?pageId');
   });
 
   it("should produce the org's frontdoor url when edition of file is not supported", async () => {
@@ -78,21 +72,19 @@ describe('test org:open command', () => {
       path.join(session.project.dir, layoutFilePath),
       '<layout xmlns="http://soap.sforce.com/2006/04/metadata">\n</layout>'
     );
-    const result = (
-      execCmd<OrgOpenOutput>(`force:source:open --source-file ${layoutFilePath} --urlonly --json`, {
-        ensureExitCode: 0,
-      }).jsonOutput as { result: OrgOpenOutput }
-    ).result;
-    expect(result).to.be.ok;
+    const result = execCmd<OrgOpenOutput>(`force:source:open --source-file ${layoutFilePath} --urlonly --json`, {
+      ensureExitCode: 0,
+    }).jsonOutput?.result;
+    assert(result);
     expect(result).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
-    expect(result).to.property('url').to.include('secur/frontdoor.jsp');
+    expect(result.url).to.include('secur/frontdoor.jsp');
   });
 
   it('org:open command', () => {
     const result = execCmd<OrgOpenOutput>('force:org:open --urlonly --json', {
       ensureExitCode: 0,
     }).jsonOutput?.result;
-    expect(result).to.be.ok;
+    assert(result);
     expect(result).to.have.keys(['url', 'orgId', 'username']);
     expect(result?.url).to.include('/secur/frontdoor.jsp');
   });
