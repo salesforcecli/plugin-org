@@ -4,8 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { expect, use as ChaiUse } from 'chai';
-import * as chaiAsPromised from 'chai-as-promised';
+import { expect } from 'chai';
 import { TestContext } from '@salesforce/core/lib/testSetup';
 import { AuthInfo, Connection, Org } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
@@ -13,8 +12,6 @@ import { SfCommand, stubSfCommandUx } from '@salesforce/sf-plugins-core';
 import OrgListMock = require('../../shared/orgListMock');
 import { OrgListCommand } from '../../../src/commands/org/list';
 import { OrgListUtil } from '../../../src/shared/orgListUtil';
-
-ChaiUse(chaiAsPromised);
 
 describe('org:list', () => {
   // Create new TestContext, which automatically creates and restores stubs

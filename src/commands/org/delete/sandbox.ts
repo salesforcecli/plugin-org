@@ -4,8 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { AuthInfo, AuthRemover, Messages, Org, SfError, StateAggregator } from '@salesforce/core';
+import { AuthInfo, AuthRemover, Messages, Org, StateAggregator } from '@salesforce/core';
 import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
+import { orgThatMightBeDeleted } from '../../../shared/flags';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete_sandbox');
@@ -22,10 +23,7 @@ export default class EnvDeleteSandbox extends SfCommand<SandboxDeleteResponse> {
   public static readonly aliases = ['env:delete:sandbox'];
   public static readonly deprecateAliases = true;
   public static readonly flags = {
-    'target-org': Flags.string({
-      // we're recreating the flag without all the validation
-      // eslint-disable-next-line sf-plugin/dash-o
-      char: 'o',
+    'target-org': orgThatMightBeDeleted({
       summary: messages.getMessage('flags.target-org.summary'),
       required: true,
     }),
@@ -37,17 +35,7 @@ export default class EnvDeleteSandbox extends SfCommand<SandboxDeleteResponse> {
 
   public async run(): Promise<SandboxDeleteResponse> {
     const flags = (await this.parse(EnvDeleteSandbox)).flags;
-    const username =
-      // from -o alias -> -o username -> [default username resolved an alias] -> [default username]
-      (await StateAggregator.getInstance()).aliases.getUsername(flags['target-org'] ?? '') ??
-      flags['target-org'] ??
-      (await StateAggregator.getInstance()).aliases.getUsername(
-        this.configAggregator.getPropertyValue('target-org') as string
-      ) ??
-      (this.configAggregator.getPropertyValue('target-org') as string);
-    if (!username) {
-      throw new SfError('The org does not have a username.');
-    }
+    const username = flags['target-org'];
 
     const orgId = (await AuthInfo.create({ username })).getFields().orgId as string;
     const isSandbox = await (await StateAggregator.getInstance()).sandboxes.hasFile(orgId);
