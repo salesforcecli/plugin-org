@@ -1,3 +1,12 @@
+## [2.6.12](https://github.com/salesforcecli/plugin-org/compare/2.6.11...2.6.12) (2023-04-13)
+
+
+### Bug Fixes
+
+* can delete default being an alias ([38eed36](https://github.com/salesforcecli/plugin-org/commit/38eed365e8629760a9761026b79e3330080bfa65))
+
+
+
 ## [2.6.11](https://github.com/salesforcecli/plugin-org/compare/2.6.10...2.6.11) (2023-04-13)
 
 
