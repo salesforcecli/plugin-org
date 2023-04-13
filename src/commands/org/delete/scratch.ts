@@ -6,7 +6,7 @@
  */
 
 import { AuthInfo, AuthRemover, Messages, Org, StateAggregator } from '@salesforce/core';
-import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
+import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete_scratch');
@@ -41,9 +41,12 @@ export default class EnvDeleteScratch extends SfCommand<ScratchDeleteResponse> {
   public async run(): Promise<ScratchDeleteResponse> {
     const flags = (await this.parse(EnvDeleteScratch)).flags;
     const resolvedUsername =
-      // from -o alias -> -o username -> [default username]
+      // from -o alias -> -o username -> [default username resolved an alias] -> [default username]
       (await StateAggregator.getInstance()).aliases.getUsername(flags['target-org'] ?? '') ??
       flags['target-org'] ??
+      (await StateAggregator.getInstance()).aliases.getUsername(
+        this.configAggregator.getPropertyValue('target-org') as string
+      ) ??
       (this.configAggregator.getPropertyValue('target-org') as string);
     const orgId = (await AuthInfo.create({ username: resolvedUsername })).getFields().orgId as string;
 

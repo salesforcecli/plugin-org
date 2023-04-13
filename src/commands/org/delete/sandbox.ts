@@ -37,9 +37,13 @@ export default class EnvDeleteSandbox extends SfCommand<SandboxDeleteResponse> {
 
   public async run(): Promise<SandboxDeleteResponse> {
     const flags = (await this.parse(EnvDeleteSandbox)).flags;
-    const username = // from -o alias -> -o username -> [default username]
+    const username =
+      // from -o alias -> -o username -> [default username resolved an alias] -> [default username]
       (await StateAggregator.getInstance()).aliases.getUsername(flags['target-org'] ?? '') ??
       flags['target-org'] ??
+      (await StateAggregator.getInstance()).aliases.getUsername(
+        this.configAggregator.getPropertyValue('target-org') as string
+      ) ??
       (this.configAggregator.getPropertyValue('target-org') as string);
     if (!username) {
       throw new SfError('The org does not have a username.');

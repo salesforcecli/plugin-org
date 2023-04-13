@@ -55,9 +55,12 @@ export class Delete extends SfCommand<DeleteResult> {
   public async run(): Promise<DeleteResult> {
     const { flags } = await this.parse(Delete);
     const resolvedUsername =
-      // from -o alias -> -o username -> [default username]
+      // from -o alias -> -o username -> [default username resolved an alias] -> [default username]
       (await StateAggregator.getInstance()).aliases.getUsername(flags['target-org'] ?? '') ??
       flags['target-org'] ??
+      (await StateAggregator.getInstance()).aliases.getUsername(
+        this.configAggregator.getPropertyValue('target-org') as string
+      ) ??
       (this.configAggregator.getPropertyValue('target-org') as string);
 
     if (!resolvedUsername) {

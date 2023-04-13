@@ -7,7 +7,7 @@
 import { ConfigAggregator, Messages, Org, SfError } from '@salesforce/core';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 
-import { expect, config } from 'chai';
+import { config, expect } from 'chai';
 import { stubPrompter, stubSfCommandUx } from '@salesforce/sf-plugins-core';
 import { SandboxAccessor } from '@salesforce/core/lib/stateAggregator/accessors/sandboxAccessor';
 import { Config } from '@oclif/core';
@@ -52,12 +52,29 @@ describe('org:delete', () => {
   it('will prompt before attempting to delete', async () => {
     const deleteCommand = new Delete([], {} as Config);
     deleteCommand.configAggregator = await ConfigAggregator.create();
-    $$.SANDBOX.stub(deleteCommand.configAggregator, 'getPropertyValue').onSecondCall().returns(testOrg.username);
+    $$.SANDBOX.stub(deleteCommand.configAggregator, 'getPropertyValue').onThirdCall().returns(testOrg.username);
     const res = await deleteCommand.run();
     expect(prompterStubs.confirm.calledOnce).to.equal(true);
     expect(prompterStubs.confirm.firstCall.args[0]).to.equal(
       messages.getMessage('confirmDelete', ['scratch', testOrg.username])
     );
+    expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
+  });
+
+  it('will resolve a default alias', async () => {
+    const deleteCommand = new Delete([], {} as Config);
+    deleteCommand.configAggregator = await ConfigAggregator.create();
+    await $$.stubConfig({ 'target-org': 'myAlias' });
+    $$.stubAliases({ myAlias: testOrg.username });
+    const getPropertyValueStub = $$.SANDBOX.stub(deleteCommand.configAggregator, 'getPropertyValue')
+      .onSecondCall()
+      .returns('myAlias');
+    const res = await deleteCommand.run();
+    expect(prompterStubs.confirm.calledOnce).to.equal(true);
+    expect(prompterStubs.confirm.firstCall.args[0]).to.equal(
+      messages.getMessage('confirmDelete', ['scratch', testOrg.username])
+    );
+    expect(getPropertyValueStub.calledTwice).to.be.true;
     expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
   });
 
