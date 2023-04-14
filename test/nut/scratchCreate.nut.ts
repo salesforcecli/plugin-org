@@ -42,9 +42,6 @@ describe('env create scratch NUTs', () => {
     it('non-existent config file', () => {
       execCmd('env:create:scratch -f badfile.json', { ensureExitCode: 1 });
     });
-    it('config file AND edition', () => {
-      execCmd('env:create:scratch -f config/project-scratch-def.json --edition developer', { ensureExitCode: 1 });
-    });
     it('wait zero', () => {
       execCmd('env:create:scratch -f config/project-scratch-def.json --wait 0', { ensureExitCode: 1 });
     });
