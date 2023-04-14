@@ -51,7 +51,6 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
       char: 'f',
       summary: messages.getMessage('flags.definition-file.summary'),
       description: messages.getMessage('flags.definition-file.description'),
-      exactlyOne: ['definition-file', 'edition'],
     }),
     'target-dev-hub': Flags.requiredHub({
       char: 'v',
@@ -78,7 +77,6 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
         'partner-group',
         'partner-professional',
       ],
-      exactlyOne: ['definition-file', 'edition'],
     }),
     'no-namespace': Flags.boolean({
       char: 'm',
@@ -141,7 +139,8 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
     const orgConfig = {
       ...(flags['definition-file']
         ? (JSON.parse(await fs.promises.readFile(flags['definition-file'], 'utf-8')) as Record<string, unknown>)
-        : { edition: flags.edition }),
+        : {}),
+      ...(flags.edition ? { edition: flags.edition } : {}),
       ...(flags.username ? { username: flags.username } : {}),
       ...(flags.description ? { description: flags.description } : {}),
       ...(flags.name ? { orgName: flags.name } : {}),

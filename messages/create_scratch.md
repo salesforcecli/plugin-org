@@ -4,7 +4,7 @@ Create a scratch org.
 
 # description
 
-There are two ways to create a scratch org: either specify a definition file that contains the options or use the --edition flag to specify the one required option. In other words, you can specify --edition or --definition-file, but not both.
+There are two ways to create a scratch org: either specify a definition file that contains the options or use the --edition flag to specify the one required option.
 
 For either method, you can also use these flags; if you use them with --definition-file, they override their equivalent option in the scratch org definition file:
 
@@ -12,6 +12,7 @@ For either method, you can also use these flags; if you use them with --definiti
     * --name  (equivalent to the "orgName" option)
     * --username
     * --release
+    * --edition
 
 If you want to set options other than the preceding ones, such as org features or settings, you must use a definition file.
 
@@ -57,7 +58,7 @@ Don't include second-generation managed package (2GP) ancestors in the scratch o
 
 # flags.edition.summary
 
-Salesforce edition of the scratch org.
+Salesforce edition of the scratch org. Overrides the value of the "edition" option in the definition file, if set.
 
 # flags.async.summary
 
