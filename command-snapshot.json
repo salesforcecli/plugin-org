@@ -78,14 +78,18 @@
       "async",
       "client-id",
       "definition-file",
+      "description",
       "duration-days",
       "edition",
       "json",
+      "name",
       "no-ancestors",
       "no-namespace",
+      "release",
       "set-default",
       "target-dev-hub",
       "track-source",
+      "username",
       "wait"
     ],
     "alias": ["env:create:scratch"]
