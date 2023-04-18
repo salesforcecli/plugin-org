@@ -1,3 +1,12 @@
+# [2.7.0](https://github.com/salesforcecli/plugin-org/compare/2.6.13...2.7.0) (2023-04-18)
+
+
+### Features
+
+* more scratch org creation flags ([#641](https://github.com/salesforcecli/plugin-org/issues/641)) ([c09d229](https://github.com/salesforcecli/plugin-org/commit/c09d22963904ebe1f87e9ee348d5e042c0d28762))
+
+
+
 ## [2.6.13](https://github.com/salesforcecli/plugin-org/compare/2.6.12...2.6.13) (2023-04-14)
 
 
