@@ -1,3 +1,12 @@
+## [2.7.2](https://github.com/salesforcecli/plugin-org/compare/2.7.1...2.7.2) (2023-04-23)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/core from 3.34.6 to 3.34.8 ([fe37651](https://github.com/salesforcecli/plugin-org/commit/fe376511c0b4451246cfb6e222518cdbd27c6581))
+
+
+
 ## [2.7.1](https://github.com/salesforcecli/plugin-org/compare/2.7.0...2.7.1) (2023-04-21)
 
 
