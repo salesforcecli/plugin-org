@@ -28,14 +28,14 @@ describe('Delete Orgs', () => {
           config: join('config', 'project-scratch-def.json'),
         },
         {
-          alias: 'anAlias',
+          alias: 'deleteAlias',
           config: join('config', 'project-scratch-def.json'),
         },
       ],
     });
 
     const defaultOrg = session.orgs.get('default');
-    const aliasOrg = session.orgs.get('anAlias');
+    const aliasOrg = session.orgs.get('deleteAlias');
 
     assert(defaultOrg?.username);
     assert(defaultOrg?.orgId);
@@ -67,7 +67,7 @@ describe('Delete Orgs', () => {
   });
 
   it('delete scratch orgs via alias', () => {
-    const result = execCmd<DeleteResult>('force:org:delete --targetusername anAlias --noprompt --json', {
+    const result = execCmd<DeleteResult>('force:org:delete --targetusername deleteAlias --noprompt --json', {
       ensureExitCode: 0,
     }).jsonOutput?.result;
     expect(result).to.be.ok;
