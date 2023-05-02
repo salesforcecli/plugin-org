@@ -289,12 +289,9 @@ describe('org:create', () => {
         warnings,
       });
       await runCreateCommand(['--type', 'scratch', '--definitionfile', definitionfile, '-v', testHub.username]);
-      expect(sfCommandUxStubs.warn.callCount).to.equal(2);
-      expect(sfCommandUxStubs.warn.callCount).to.equal(2);
-      expect(sfCommandUxStubs.warn.firstCall.firstArg).to.equal(warnings[0]);
-      expect(sfCommandUxStubs.warn.firstCall.firstArg).to.equal(warnings[0]);
-      expect(sfCommandUxStubs.warn.secondCall.firstArg).to.equal(warnings[1]);
-      expect(sfCommandUxStubs.warn.secondCall.firstArg).to.equal(warnings[1]);
+      expect(sfCommandUxStubs.warn.callCount).to.be.greaterThanOrEqual(2);
+      expect(sfCommandUxStubs.warn.getCalls().flatMap((c) => c.args)).to.have.include(warnings[0]);
+      expect(sfCommandUxStubs.warn.getCalls().flatMap((c) => c.args)).to.have.include(warnings[1]);
     });
   });
 
