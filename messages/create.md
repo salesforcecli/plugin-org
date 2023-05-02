@@ -104,10 +104,6 @@ The sandbox org creation process %s is in progress. Run "sfdx force:org:status -
 
 This command requires a username. Specify it with the -u parameter or with the "sfdx config:set defaultusername=<username>" command.
 
-# missingLicenseType
-
-The sandbox license type is required, but you didn't provide a value. Specify the license type in the sandbox definition file with the "licenseType" option, or specify the option as a name-value pair at the command-line. See https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_sandbox_definition.htm for more information.
-
 # dnsTimeout
 
 The sandbox was successfully created and authenticated. However, the sandbox DNS records aren't ready yet and so the sandbox may not be available. Run "org:list" and check if the sandbox is listed correctly. If it isn't listed, run "force:org:status" to view its status and, if necessary, authenticate to it again. If this issue happens frequently, try setting the SFDX_DNS_TIMEOUT environment variable to a larger number; the default value is 3 seconds.
