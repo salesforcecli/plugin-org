@@ -12,7 +12,7 @@ import {
   loglevel,
   orgApiVersionFlagWithDeprecations,
 } from '@salesforce/sf-plugins-core';
-import { AuthInfo, Messages, Org, sfdc, SfError, trimTo15 } from '@salesforce/core';
+import { AuthInfo, Messages, Org, SfError, trimTo15 } from '@salesforce/core';
 import { camelCaseToTitleCase } from '@salesforce/kit';
 import { AuthFieldsFromFS, OrgDisplayReturn, ScratchOrgFields } from '../../shared/orgTypes';
 import { getAliasByUsername } from '../../shared/utils';
@@ -120,10 +120,8 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
         signupUsername: result.SignupUsername,
       };
     }
-    throw new SfError(
-      messages.getMessage('noScratchOrgInfoError', [sfdc.trimTo15(orgId), hubUsername]),
-      'NoScratchInfo',
-      [messages.getMessage('noScratchOrgInfoAction')]
-    );
+    throw new SfError(messages.getMessage('noScratchOrgInfoError', [trimTo15(orgId), hubUsername]), 'NoScratchInfo', [
+      messages.getMessage('noScratchOrgInfoAction'),
+    ]);
   }
 }
