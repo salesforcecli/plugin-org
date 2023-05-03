@@ -1,3 +1,12 @@
+## [2.8.1](https://github.com/salesforcecli/plugin-org/compare/2.8.0...2.8.1) (2023-05-03)
+
+
+### Bug Fixes
+
+* remove default license type from  sbox create so config file can specify it ([21a9f92](https://github.com/salesforcecli/plugin-org/commit/21a9f926a03c3311d6361c8ff512eb8dda5098a2))
+
+
+
 # [2.8.0](https://github.com/salesforcecli/plugin-org/compare/2.7.3...2.8.0) (2023-05-03)
 
 
