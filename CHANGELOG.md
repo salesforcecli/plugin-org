@@ -1,3 +1,12 @@
+# [2.8.0](https://github.com/salesforcecli/plugin-org/compare/2.7.3...2.8.0) (2023-05-03)
+
+
+### Features
+
+* gentle deprecation warning for force:org:create ([50ed6c4](https://github.com/salesforcecli/plugin-org/commit/50ed6c478cf6bb0bd24d9af60c82ca36bc3d54d2))
+
+
+
 ## [2.7.3](https://github.com/salesforcecli/plugin-org/compare/2.7.2...2.7.3) (2023-04-30)
 
 
