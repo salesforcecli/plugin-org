@@ -98,3 +98,10 @@ export interface ScratchCreateResponse {
   warnings: string[];
   orgId?: string;
 }
+
+export enum SandboxLicenseType {
+  developer = 'Developer',
+  developerPro = 'Developer_Pro',
+  partial = 'Partial',
+  full = 'Full',
+}

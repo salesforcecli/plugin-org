@@ -46,10 +46,6 @@ Sets the streaming client socket timeout, in minutes. If the streaming client so
 
 The sandbox org cloning process %s is in progress. Run "sfdx force:org:status -n %s" to check for status. If the org is ready, checking the status also logs the requesting user in to the sandbox org and authorizes the org for use with Salesforce CLI.
 
-# missingLicenseType
-
-The sandbox license type is required, but you didn't provide a value. Specify the license type in the sandbox definition file with the "licenseType" option, or specify the option as a name-value pair at the command-line. See https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_sandbox_definition.htm for more information.
-
 # commandOrganizationTypeNotSupport
 
 The only supported org type is: %s

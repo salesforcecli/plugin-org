@@ -11,16 +11,10 @@ import { Ux } from '@salesforce/sf-plugins-core/lib/ux';
 import * as Interfaces from '@oclif/core/lib/interfaces';
 import { createSandboxRequest } from '../../../shared/sandboxRequest';
 import { SandboxCommandBase } from '../../../shared/sandboxCommandBase';
+import { SandboxLicenseType } from '../../../shared/orgTypes';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create.sandbox');
-
-export enum SandboxLicenseType {
-  developer = 'Developer',
-  developerPro = 'Developer_Pro',
-  partial = 'Partial',
-  full = 'Full',
-}
 
 const getLicenseTypes = (): string[] => Object.values(SandboxLicenseType);
 
@@ -99,7 +93,6 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
       char: 'l',
       summary: messages.getMessage('flags.licenseType.summary'),
       exclusive: ['definition-file', 'clone'],
-      default: SandboxLicenseType.developer,
     }),
     'target-org': Flags.requiredOrg({
       char: 'o',
