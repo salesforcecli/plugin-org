@@ -115,7 +115,7 @@ describe('orgListUtil tests', () => {
           defaultusername: orgAuthConfigFields.username,
           defaultdevhubusername: devHubConfigFields.username,
         }),
-        getPropertyValue: () => ({}),
+        getPropertyValue: () => {},
       });
 
       stubMethod(sandbox, fs, 'stat').resolves({ atime: 'test' });

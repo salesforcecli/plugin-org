@@ -11,7 +11,6 @@ import * as fs from 'fs/promises';
 import {
   Org,
   AuthInfo,
-  SfdxConfigAggregator,
   Global,
   Logger,
   SfError,
@@ -183,7 +182,7 @@ export class OrgListUtil {
    * @private
    */
   public static async groupOrgs(authInfos: AuthInfo[]): Promise<OrgGroups> {
-    const configAggregator = await SfdxConfigAggregator.create();
+    const configAggregator = await ConfigAggregator.create();
 
     const results = await Promise.all(
       authInfos.map(async (authInfo): Promise<ExtendedAuthFields | ExtendedAuthFieldsScratch> => {
