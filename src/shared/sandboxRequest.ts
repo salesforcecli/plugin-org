@@ -7,9 +7,9 @@
 import * as fs from 'fs';
 import { Logger, SandboxRequest, Messages, SfError, Lifecycle } from '@salesforce/core';
 import { lowerToUpper } from './utils';
+import { SandboxLicenseType } from './orgTypes';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
 const cloneMessages = Messages.loadMessages('@salesforce/plugin-org', 'clone');
 
 export const generateSboxName = async (): Promise<string> => {
@@ -72,7 +72,7 @@ export async function createSandboxRequest(
     return { sandboxReq, srcSandboxName: SourceSandboxName };
   } else {
     if (!sandboxReq.LicenseType) {
-      throw new SfError(messages.getMessage('missingLicenseType'));
+      return { sandboxReq: { ...sandboxReq, LicenseType: SandboxLicenseType.developer } };
     }
     return { sandboxReq };
   }
