@@ -102,10 +102,11 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
           const org = await Org.create({ aliasOrUsername: fields.username, connection });
           await org.remove();
         } catch (e) {
-          const err = e as SfError;
-          const logger = await Logger.child('org:list');
-          logger.debug(`Error cleaning org ${fields.username}: ${err.message}`);
-          this.warn(messages.getMessage('cleanWarning', [fields.username, fields.username]));
+          this.warn(messages.getMessage('cleanWarning', [fields.username, this.config.bin, fields.username]));
+          if (e instanceof Error) {
+            const logger = await Logger.child('org:list');
+            logger.debug(`Error cleaning org ${fields.username}: ${e.message}`);
+          }
         }
       })
     );

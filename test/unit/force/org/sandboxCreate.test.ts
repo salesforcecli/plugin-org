@@ -124,7 +124,7 @@ describe('org:create (sandbox paths)', () => {
 
       await Lifecycle.getInstance().emit(SandboxEvents.EVENT_ASYNC_RESULT, sandboxProcessObj);
       expect(sfCommandUxStubs.log.getCalls().flatMap((call) => call.args)).to.deep.include(
-        `The sandbox org creation process 0GR4p000000U8EMXXX is in progress. Run "sfdx force:org:status -n TestSandbox -u ${testOrg.username}" to check for status. If the org is ready, checking the status also authorizes the org for use with Salesforce CLI.`
+        `The sandbox org creation process 0GR4p000000U8EMXXX is in progress. Run "mocha force:org:status -n TestSandbox -u ${testOrg.username}" to check for status. If the org is ready, checking the status also authorizes the org for use with Salesforce CLI.`
       );
       Lifecycle.getInstance().removeAllListeners(SandboxEvents.EVENT_ASYNC_RESULT);
     });
@@ -179,7 +179,18 @@ describe('org:create (sandbox paths)', () => {
         // shouldThrow doesn't necessarily throw an SfError
         assert(err instanceof SfError, 'Expect error to be an instance of SfError');
         expect(err.code).to.equal(68);
-        expect(err.actions).to.deep.equal([messages.getMessage('dnsTimeout'), messages.getMessage('partialSuccess')]);
+        try {
+          // mocha really is the bin during UT
+          expect(err.actions).to.deep.equal([
+            messages.getMessage('dnsTimeout', ['mocha', 'mocha']),
+            messages.getMessage('partialSuccess', ['mocha', 'mocha', 'mocha']),
+          ]);
+        } catch (e) {
+          expect(err.actions).to.deep.equal([
+            messages.getMessage('dnsTimeout', ['sfdx', 'sfdx']),
+            messages.getMessage('partialSuccess', ['sfdx', 'sfdx', 'sfdx']),
+          ]);
+        }
       }
     });
   });

@@ -89,7 +89,9 @@ export class OrgCloneCommand extends SfCommand<SandboxProcessObject> {
     if (flags.type === OrgTypes.Sandbox) {
       lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results: SandboxProcessObject) =>
         // Keep all console output in the command
-        Promise.resolve(this.log(messages.getMessage('commandSuccess', [results.Id, results.SandboxName])))
+        Promise.resolve(
+          this.log(messages.getMessage('commandSuccess', [results.Id, this.config.bin, results.SandboxName]))
+        )
       );
 
       lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) =>
