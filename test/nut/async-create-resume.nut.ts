@@ -74,6 +74,7 @@ describe('env:create:scratch async/resume', () => {
         if (resp.status === 0) {
           done = true;
           expect(resp.result).to.have.all.keys(completeKeys);
+          expect(resp.result.orgId).to.match(/^00D.{15}/);
         } else if (resp.name === 'StillInProgressError') {
           // eslint-disable-next-line no-await-in-loop
           await sleep(Duration.seconds(30));

@@ -69,6 +69,7 @@ describe('env create scratch NUTs', () => {
       }).jsonOutput?.result;
       expect(resp).to.have.all.keys(keys);
       assert(resp?.username);
+      expect(resp?.orgId).to.match(/^00D.{15}/);
       const stateAggregator = await StateAggregator.create();
       expect(await stateAggregator.orgs.read(resp.username)).to.have.property('tracksSource', true);
       StateAggregator.clearInstance();
@@ -81,6 +82,7 @@ describe('env create scratch NUTs', () => {
         }
       ).jsonOutput?.result;
       expect(resp).to.have.all.keys(keys);
+      expect(resp?.orgId).to.match(/^00D.{15}/);
     });
     it('creates an org from config file with "override" flags ', () => {
       const expectedUsername = genUniqueString('%s@nut.org');
