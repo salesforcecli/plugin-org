@@ -901,10 +901,10 @@
     mv "~2"
     safe-json-stringify "~1"
 
-"@salesforce/cli-plugins-testkit@^3.3.5":
-  version "3.3.5"
-  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-3.3.5.tgz#72866456936f013446cb406129a9fef4fa32fe3e"
-  integrity sha512-aFNYYqXnXwAwSJ4LtQm0f2XJFurIeZtQguWzQ+1+CV3heoO7z2rQUHTNU+Uknu2JxSF47HEpPthx8v6LEfKk+g==
+"@salesforce/cli-plugins-testkit@^3.3.6":
+  version "3.3.6"
+  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-3.3.6.tgz#89c17e87a58e1d0bd6006b65568a6883a17e7e5b"
+  integrity sha512-40o363ISrdX1FNyt0YLBouQMMMySXS0YLhozTqSjtZDHZn/9gfcVH1LOz9XsOUd1C4SwnVnVjHH2bdVfHzxRWA==
   dependencies:
     "@salesforce/core" "^3.34.8"
     "@salesforce/kit" "^1.9.2"
