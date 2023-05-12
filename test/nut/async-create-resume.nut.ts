@@ -21,8 +21,8 @@ describe('env:create:scratch async/resume', () => {
   let soiId: string;
   let username: string;
 
-  const asyncKeys = ['username', 'orgId', 'scratchOrgInfo', 'warnings'];
-  const completeKeys = [...asyncKeys, 'authFields'];
+  const asyncKeys = ['username', 'scratchOrgInfo', 'warnings'];
+  const completeKeys = [...asyncKeys, 'authFields', 'orgId'];
 
   const readCacheFile = async (): Promise<Record<string, CachedOptions>> =>
     JSON.parse(await fs.promises.readFile(cacheFilePath, 'utf8')) as unknown as Record<string, CachedOptions>;
