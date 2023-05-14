@@ -1048,16 +1048,17 @@
     chalk "^4"
     inquirer "^8.2.5"
 
-"@salesforce/source-deploy-retrieve@^8.0.1", "@salesforce/source-deploy-retrieve@^8.0.7":
-  version "8.0.7"
-  resolved "https://registry.yarnpkg.com/@salesforce/source-deploy-retrieve/-/source-deploy-retrieve-8.0.7.tgz#8dcc2375395e04acec8f5f8340fa9a2d7a11577e"
-  integrity sha512-mFRq59nI2uFx1WKSge9VIEEIYjKOsQ7TQhhRDpPmGayTttHk8bmLb4/+MhQQwM/zykcxBG1c+tO81x8fvgrW1A==
+"@salesforce/source-deploy-retrieve@^8.0.1", "@salesforce/source-deploy-retrieve@^8.4.0":
+  version "8.4.0"
+  resolved "https://registry.yarnpkg.com/@salesforce/source-deploy-retrieve/-/source-deploy-retrieve-8.4.0.tgz#10cadb7a02dc4657c5b941161b30a5017dabd788"
+  integrity sha512-eAOuhmbNAMoJdvhdzF1cBtqNIG/WhLR/GRCA89wevvPLidCdzMNzNGPUQWO0N+PSVWskRbbNeZG3n9ws4SV1vA==
   dependencies:
     "@salesforce/core" "^3.36.0"
     "@salesforce/kit" "^1.9.2"
     "@salesforce/ts-types" "^1.7.2"
     archiver "^5.3.1"
-    fast-xml-parser "^4.1.4"
+    fast-levenshtein "^3.0.0"
+    fast-xml-parser "^4.2.2"
     got "^11.8.6"
     graceful-fs "^4.2.11"
     ignore "^5.2.4"
@@ -3423,10 +3424,10 @@ fast-levenshtein@^3.0.0:
   dependencies:
     fastest-levenshtein "^1.0.7"
 
-fast-xml-parser@^4.1.4:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-4.2.0.tgz#6db2ba33b95b8b4af93f94fe024d4b4d02a50855"
-  integrity sha512-+zVQv4aVTO+o8oRUyRL7PjgeVo1J6oP8Cw2+a8UTZQcj5V0yUK5T63gTN0ldgiHDPghUjKc4OpT6SwMTwnOQug==
+fast-xml-parser@^4.2.2:
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-4.2.2.tgz#cb7310d1e9cf42d22c687b0fae41f3c926629368"
+  integrity sha512-DLzIPtQqmvmdq3VUKR7T6omPK/VCRNqgFlGtbESfyhcH2R4I8EzK1/K6E8PkRCK2EabWrUHK32NjYRbEFnnz0Q==
   dependencies:
     strnum "^1.0.5"
 
