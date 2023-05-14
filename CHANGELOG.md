@@ -1,3 +1,12 @@
+## [2.8.4](https://github.com/salesforcecli/plugin-org/compare/2.8.3...2.8.4) (2023-05-14)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/source-deploy-retrieve from 8.0.7 to 8.4.0 ([cdb0f23](https://github.com/salesforcecli/plugin-org/commit/cdb0f23c94169ec6ae100c293d734a1ef2edbc21))
+
+
+
 ## [2.8.3](https://github.com/salesforcecli/plugin-org/compare/2.8.2...2.8.3) (2023-05-14)
 
 
