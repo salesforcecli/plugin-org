@@ -73,6 +73,7 @@
     "command": "org:create:scratch",
     "plugin": "@salesforce/plugin-org",
     "flags": [
+      "admin-email",
       "alias",
       "api-version",
       "async",
@@ -87,6 +88,7 @@
       "no-namespace",
       "release",
       "set-default",
+      "source-org",
       "target-dev-hub",
       "track-source",
       "username",
