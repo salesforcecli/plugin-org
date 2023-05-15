@@ -190,7 +190,7 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
         this.logSuccess(messages.getMessage('success'));
       }
 
-      return { username, scratchOrgInfo, authFields, warnings, orgId: scratchOrgInfo.Id };
+      return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
     } catch (error) {
       if (error instanceof SfError && error.name === 'ScratchOrgInfoTimeoutError') {
         this.spinner.stop(lastStatus);
