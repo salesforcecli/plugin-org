@@ -82,16 +82,17 @@ describe('env create scratch NUTs', () => {
       ).jsonOutput?.result;
       expect(resp).to.have.all.keys(keys);
     });
-    it('creates an org from config file with "override" flags ', () => {
+    it('creates an org from config file with "override" flags and custom admin email', () => {
       const expectedUsername = genUniqueString('%s@nut.org');
       const resp = execCmd<ScratchCreateResponse>(
-        `env:create:scratch -f config/project-scratch-def.json --json --username ${expectedUsername} --description "new one" --name TheOrg --wait 60`,
+        `env:create:scratch -f config/project-scratch-def.json --json --username ${expectedUsername} --description "new one" --name TheOrg --wait 60 --admin-email shane@mailinator.com`,
         {
           ensureExitCode: 0,
         }
       ).jsonOutput?.result;
       expect(resp).to.have.all.keys(keys);
       expect(resp?.username).to.equal(expectedUsername);
+      expect(resp?.scratchOrgInfo?.AdminEmail).to.equal('shane@mailinator.com');
     });
     it('creates an org with tracking disabled ', async () => {
       const resp = execCmd<ScratchCreateResponse>(
