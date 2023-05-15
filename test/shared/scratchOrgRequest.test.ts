@@ -6,6 +6,7 @@
  */
 import { Config, Interfaces } from '@oclif/core';
 import { expect } from 'chai';
+import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
 import { buildScratchOrgRequest } from '../../src/shared/scratchOrgRequest';
 import EnvCreateScratch from '../../src/commands/org/create/scratch';
 
@@ -21,6 +22,18 @@ const paramsToFlags = async (params: string[]): Promise<Interfaces.InferredFlags
   new Wrapper(params, {} as Config).getFlags();
 
 describe('buildScratchOrgRequest function', () => {
+  const $$ = new TestContext();
+  beforeEach(async () => {
+    const hub = new MockTestOrgData();
+    hub.isDevHub = true;
+    await $$.stubAuths(hub);
+    await $$.stubConfig({ 'target-dev-hub': hub.username });
+  });
+
+  after(() => {
+    $$.SANDBOX.restore();
+  });
+
   it('edition as only flag', async () => {
     const flags = await paramsToFlags(['--edition', 'developer']);
     const result = await buildScratchOrgRequest(flags);
