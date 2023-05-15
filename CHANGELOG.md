@@ -1,3 +1,12 @@
+## [2.8.6](https://github.com/salesforcecli/plugin-org/compare/2.8.5...2.8.6) (2023-05-15)
+
+
+### Bug Fixes
+
+* scratch org create/resume Id should be orgId, not SOI Id ([d783c8c](https://github.com/salesforcecli/plugin-org/commit/d783c8c566ece2f313347d475cb3bf58b032ebd8))
+
+
+
 ## [2.8.5](https://github.com/salesforcecli/plugin-org/compare/2.8.4...2.8.5) (2023-05-14)
 
 
