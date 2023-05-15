@@ -70,6 +70,6 @@ export default class EnvResumeScratch extends SfCommand<ScratchCreateResponse> {
 
     this.log();
     this.logSuccess(messages.getMessage('success'));
-    return { username, scratchOrgInfo, authFields, warnings, orgId: scratchOrgInfo?.Id };
+    return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
   }
 }
