@@ -22,8 +22,8 @@ export type OrgListResult = {
 export class OrgListCommand extends SfCommand<OrgListResult> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly examples = messages.getMessages('examples');
-  public static aliases = ['force:org:list'];
-  public static deprecateAliases = true;
+  public static readonly aliases = ['force:org:list'];
+  public static readonly deprecateAliases = true;
   public static readonly flags = {
     verbose: Flags.boolean({
       summary: messages.getMessage('flags.verbose.summary'),
