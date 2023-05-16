@@ -15,6 +15,7 @@ import {
   SfError,
 } from '@salesforce/core';
 import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
+import { Duration } from '@salesforce/kit';
 import { buildScratchOrgRequest } from '../../../shared/scratchOrgRequest';
 import { buildStatus } from '../../../shared/scratchOrgOutput';
 import { ScratchCreateResponse } from '../../../shared/orgTypes';
@@ -83,8 +84,7 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
     }),
     'duration-days': Flags.duration({
       unit: 'days',
-      defaultValue: 7,
-      required: true,
+      default: Duration.days(7),
       min: 1,
       max: 30,
       char: 'y',
@@ -93,7 +93,7 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
     }),
     wait: Flags.duration({
       unit: 'minutes',
-      defaultValue: 5,
+      default: Duration.minutes(5),
       min: 2,
       char: 'w',
       helpValue: '<minutes>',
