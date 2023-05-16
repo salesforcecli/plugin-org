@@ -166,14 +166,16 @@ export class Create extends SfCommand<CreateResult> {
 
   private async createSandbox(): Promise<SandboxProcessObject> {
     if (!this.flags['target-org']) {
-      throw new SfError(messages.getMessage('requiresUsername'));
+      throw new SfError(messages.getMessage('requiresUsername', [this.config.bin]));
     }
     const lifecycle = Lifecycle.getInstance();
     const username = this.flags['target-org'].getUsername();
     // register the sandbox event listeners before calling `prodOrg.createSandbox()`
 
     lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results: SandboxProcessObject) =>
-      Promise.resolve(this.log(messages.getMessage('sandboxSuccess', [results.Id, results.SandboxName, username])))
+      Promise.resolve(
+        this.log(messages.getMessage('sandboxSuccess', [results.Id, this.config.bin, results.SandboxName, username]))
+      )
     );
 
     lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) =>
@@ -233,7 +235,10 @@ export class Create extends SfCommand<CreateResult> {
           const result = await globalConfig.write();
           this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
         }
-        err.actions = [messages.getMessage('dnsTimeout'), messages.getMessage('partialSuccess')];
+        err.actions = [
+          messages.getMessage('dnsTimeout', [this.config.bin, this.config.bin]),
+          messages.getMessage('partialSuccess', [this.config.bin, this.config.bin, this.config.bin]),
+        ];
         err.exitCode = 68;
       }
 

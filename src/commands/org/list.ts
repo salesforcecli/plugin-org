@@ -22,8 +22,8 @@ export type OrgListResult = {
 export class OrgListCommand extends SfCommand<OrgListResult> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly examples = messages.getMessages('examples');
-  public static aliases = ['force:org:list'];
-  public static deprecateAliases = true;
+  public static readonly aliases = ['force:org:list'];
+  public static readonly deprecateAliases = true;
   public static readonly flags = {
     verbose: Flags.boolean({
       summary: messages.getMessage('flags.verbose.summary'),
@@ -102,10 +102,11 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
           const org = await Org.create({ aliasOrUsername: fields.username, connection });
           await org.remove();
         } catch (e) {
-          const err = e as SfError;
-          const logger = await Logger.child('org:list');
-          logger.debug(`Error cleaning org ${fields.username}: ${err.message}`);
-          this.warn(messages.getMessage('cleanWarning', [fields.username, fields.username]));
+          this.warn(messages.getMessage('cleanWarning', [fields.username, this.config.bin, fields.username]));
+          if (e instanceof Error) {
+            const logger = await Logger.child('org:list');
+            logger.debug(`Error cleaning org ${fields.username}: ${e.message}`);
+          }
         }
       })
     );

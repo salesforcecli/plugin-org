@@ -2,10 +2,6 @@
 
 Clone a sandbox org.
 
-# success
-
-The sandbox org cloning process %s is in progress. Run "sfdx force:org:status -n %s" to check for status. If the org is ready, checking the status also logs the requesting user in to the sandbox org and authorizes the org for use with Salesforce CLI.
-
 # description
 
 There are two ways to clone a sandbox: either specify a sandbox definition file or provide key=value pairs at the command line. Key-value pairs at the command-line override their equivalent sandbox definition file values. In either case, you must specify both the "SandboxName" and "SourceSandboxName" options to set the names of the new sandbox and the one being cloned, respectively.
@@ -44,7 +40,7 @@ Sets the streaming client socket timeout, in minutes. If the streaming client so
 
 # commandSuccess
 
-The sandbox org cloning process %s is in progress. Run "sfdx force:org:status -n %s" to check for status. If the org is ready, checking the status also logs the requesting user in to the sandbox org and authorizes the org for use with Salesforce CLI.
+The sandbox org cloning process %s is in progress. Run "%s force:org:status -n %s" to check for status. If the org is ready, checking the status also logs the requesting user in to the sandbox org and authorizes the org for use with Salesforce CLI.
 
 # commandOrganizationTypeNotSupport
 

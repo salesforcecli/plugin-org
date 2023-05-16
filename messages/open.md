@@ -67,7 +67,3 @@ Waiting to resolve the Lightning Experience-enabled custom domain...
 # domainTimeoutError
 
 The Lightning Experience-enabled custom domain is unavailable.
-
-# domainTimeoutAction
-
-The Lightning Experience-enabled custom domain may take a few more minutes to resolve. Try the "org:open" command again.

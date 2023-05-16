@@ -62,4 +62,4 @@ No non-scratch orgs found.
 
 # cleanWarning
 
-Unable to clean org with username %s. You can run "sfdx org:delete:scratch -o %s" to remove it.`
+Unable to clean org with username %s. You can run "%s org:delete:scratch -o %s" to remove it.`
