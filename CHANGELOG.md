@@ -1,3 +1,12 @@
+## [2.8.7](https://github.com/salesforcecli/plugin-org/compare/2.8.6...2.8.7) (2023-05-16)
+
+
+### Bug Fixes
+
+* messages receive the bin instead of saying "sfdx" ([5755812](https://github.com/salesforcecli/plugin-org/commit/5755812ffc7d0ff4111e6ff3f38eddcd178a2a7f))
+
+
+
 ## [2.8.6](https://github.com/salesforcecli/plugin-org/compare/2.8.5...2.8.6) (2023-05-15)
 
 
