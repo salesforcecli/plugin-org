@@ -1,3 +1,12 @@
+# [2.9.0](https://github.com/salesforcecli/plugin-org/compare/2.8.7...2.9.0) (2023-05-16)
+
+
+### Features
+
+* more config file props become flags ([68175d5](https://github.com/salesforcecli/plugin-org/commit/68175d57498ad21d44d8263d60c80f7c7f2faf18))
+
+
+
 ## [2.8.7](https://github.com/salesforcecli/plugin-org/compare/2.8.6...2.8.7) (2023-05-16)
 
 
