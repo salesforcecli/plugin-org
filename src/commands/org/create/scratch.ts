@@ -5,11 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as fs from 'fs';
-import { Duration } from '@salesforce/kit';
 import {
   Messages,
-  ScratchOrgCreateOptions,
   Lifecycle,
   ScratchOrgLifecycleEvent,
   scratchOrgLifecycleEventName,
@@ -18,6 +15,8 @@ import {
   SfError,
 } from '@salesforce/core';
 import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
+import { Duration } from '@salesforce/kit';
+import { buildScratchOrgRequest } from '../../../shared/scratchOrgRequest';
 import { buildStatus } from '../../../shared/scratchOrgOutput';
 import { ScratchCreateResponse } from '../../../shared/orgTypes';
 Messages.importMessagesDirectory(__dirname);
@@ -85,7 +84,7 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
     }),
     'duration-days': Flags.duration({
       unit: 'days',
-      defaultValue: 7,
+      default: Duration.days(7),
       min: 1,
       max: 30,
       char: 'y',
@@ -94,7 +93,7 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
     }),
     wait: Flags.duration({
       unit: 'minutes',
-      defaultValue: 5,
+      default: Duration.minutes(5),
       min: 2,
       char: 'w',
       helpValue: '<minutes>',
@@ -128,7 +127,16 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
       description: messages.getMessage('flags.release.description'),
       options: ['preview', 'previous'],
     }),
+    'admin-email': Flags.string({
+      summary: messages.getMessage('flags.adminEmail.summary'),
+    }),
+    'source-org': Flags.salesforceId({
+      summary: messages.getMessage('flags.sourceOrg.summary'),
+      startsWith: '00D',
+      length: 15,
+    }),
   };
+
   public async run(): Promise<ScratchCreateResponse> {
     const lifecycle = Lifecycle.getInstance();
     const { flags } = await this.parse(EnvCreateScratch);
@@ -136,32 +144,11 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
     if (!baseUrl) {
       throw new SfError('No instance URL found for the dev hub');
     }
-    const orgConfig = {
-      ...(flags['definition-file']
-        ? (JSON.parse(await fs.promises.readFile(flags['definition-file'], 'utf-8')) as Record<string, unknown>)
-        : {}),
-      ...(flags.edition ? { edition: flags.edition } : {}),
-      ...(flags.username ? { username: flags.username } : {}),
-      ...(flags.description ? { description: flags.description } : {}),
-      ...(flags.name ? { orgName: flags.name } : {}),
-      ...(flags.release ? { release: flags.release } : {}),
-    };
 
-    const createCommandOptions: ScratchOrgCreateOptions = {
-      hubOrg: flags['target-dev-hub'],
-      clientSecret: flags['client-id'] ? await this.clientSecretPrompt() : undefined,
-      connectedAppConsumerKey: flags['client-id'],
-      durationDays: (flags['duration-days'] as Duration).days,
-      nonamespace: flags['no-namespace'],
-      noancestors: flags['no-ancestors'],
-      wait: flags.async ? Duration.minutes(0) : flags.wait,
-      apiversion: flags['api-version'],
-      orgConfig,
-      alias: flags.alias,
-      setDefault: flags['set-default'],
-      tracksSource: flags['track-source'],
-    };
-
+    const createCommandOptions = await buildScratchOrgRequest(
+      flags,
+      flags['client-id'] ? await this.clientSecretPrompt() : undefined
+    );
     let lastStatus: string | undefined;
 
     if (!flags.async) {

@@ -13,6 +13,8 @@ For either method, you can also use these flags; if you use them with --definiti
     * --username
     * --release
     * --edition
+    * --admin-email (equivalent to the "adminEmail" option)
+    * --source-org (equivalent to the "sourceOrg" option)
 
 If you want to set options other than the preceding ones, such as org features or settings, you must use a definition file.
 
@@ -83,6 +85,14 @@ The scratch org definition file is a blueprint for the scratch org. It mimics th
 # flags.client-id.summary
 
 Consumer key of the Dev Hub connected app.
+
+# flags.adminEmail.summary
+
+Email address that will be applied to the org's admin user. Overrides the value of the "adminEmail" option in the definition file, if set.
+
+# flags.sourceOrg.summary
+
+15-character ID of the org whose shape the new scratch org will be based on. Overrides the value of the "sourceOrg" option in the definition file, if set.
 
 # flags.wait.summary
 
