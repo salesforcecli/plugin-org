@@ -1,3 +1,12 @@
+## [2.9.1](https://github.com/salesforcecli/plugin-org/compare/2.9.0...2.9.1) (2023-05-17)
+
+
+### Bug Fixes
+
+* **deps:** bump vm2 from 3.9.17 to 3.9.19 ([73cd354](https://github.com/salesforcecli/plugin-org/commit/73cd3540fa736131fb6876dd842cac4c9188dbd3))
+
+
+
 # [2.9.0](https://github.com/salesforcecli/plugin-org/compare/2.8.7...2.9.0) (2023-05-16)
 
 
