@@ -26,7 +26,7 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
-  public static aliases = ['force:org:display'];
+  public static readonly aliases = ['force:org:display'];
   public static deprecateAliases = true;
 
   public static readonly flags = {

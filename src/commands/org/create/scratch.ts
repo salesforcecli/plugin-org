@@ -24,6 +24,7 @@ const messages = Messages.loadMessages('@salesforce/plugin-org', 'create_scratch
 
 export const secretTimeout = 60000;
 
+const definitionFileHelpGroupName = 'Definition File Override';
 export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
@@ -76,6 +77,7 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
         'partner-group',
         'partner-professional',
       ],
+      helpGroup: definitionFileHelpGroupName,
     }),
     'no-namespace': Flags.boolean({
       char: 'm',
@@ -115,25 +117,31 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
     username: Flags.string({
       summary: messages.getMessage('flags.username.summary'),
       description: messages.getMessage('flags.username.description'),
+      helpGroup: definitionFileHelpGroupName,
     }),
     description: Flags.string({
       summary: messages.getMessage('flags.description.summary'),
+      helpGroup: definitionFileHelpGroupName,
     }),
     name: Flags.string({
       summary: messages.getMessage('flags.name.summary'),
+      helpGroup: definitionFileHelpGroupName,
     }),
     release: Flags.string({
       summary: messages.getMessage('flags.release.summary'),
       description: messages.getMessage('flags.release.description'),
       options: ['preview', 'previous'],
+      helpGroup: definitionFileHelpGroupName,
     }),
     'admin-email': Flags.string({
       summary: messages.getMessage('flags.adminEmail.summary'),
+      helpGroup: definitionFileHelpGroupName,
     }),
     'source-org': Flags.salesforceId({
       summary: messages.getMessage('flags.sourceOrg.summary'),
       startsWith: '00D',
       length: 15,
+      helpGroup: definitionFileHelpGroupName,
     }),
   };
 
