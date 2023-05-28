@@ -1,3 +1,12 @@
+## [2.9.2](https://github.com/salesforcecli/plugin-org/compare/2.9.1...2.9.2) (2023-05-28)
+
+
+### Bug Fixes
+
+* **deps:** bump tslib from 2.5.0 to 2.5.2 ([c600916](https://github.com/salesforcecli/plugin-org/commit/c600916667083ad0ed0cfcb58afd9bf6ba6f838f))
+
+
+
 ## [2.9.1](https://github.com/salesforcecli/plugin-org/compare/2.9.0...2.9.1) (2023-05-17)
 
 
