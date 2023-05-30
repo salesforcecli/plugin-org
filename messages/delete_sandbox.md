@@ -11,15 +11,15 @@ Specify a sandbox with either the username you used when you logged into it, or 
 
 - Delete a sandbox with alias my-sandbox:
 
-  <%= config.bin %> <%= command.id %> --target-org=my-sandbox
+  <%= config.bin %> <%= command.id %> --target-org my-sandbox
 
 - Specify a username instead of an alias:
 
-  <%= config.bin %> <%= command.id %> --target-org=myusername@example.com.qa
+  <%= config.bin %> <%= command.id %> --target-org myusername@example.com.qa
 
 - Delete the sandbox without prompting to confirm :
 
-  <%= config.bin %> <%= command.id %> --target-org=my-sandbox --no-prompt
+  <%= config.bin %> <%= command.id %> --target-org my-sandbox --no-prompt
 
 # flags.target-org.summary
 

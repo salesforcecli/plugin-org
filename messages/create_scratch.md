@@ -24,7 +24,7 @@ You must specify a Dev Hub to create a scratch org, either with the --target-dev
 
 - Create a Developer edition scratch org using your default Dev Hub and give the scratch org an alias:
 
-  <%= config.bin %> <%= command.id %> --edition=developer --alias my-scratch-org
+  <%= config.bin %> <%= command.id %> --edition developer --alias my-scratch-org
 
 - Create a scratch org with a definition file. Specify the Dev Hub using its alias, set the scratch org as your default, and specify that it expires in 3 days:
 
@@ -32,7 +32,7 @@ You must specify a Dev Hub to create a scratch org, either with the --target-dev
 
 - Create a preview Enterprise edition scratch org; for use only during Salesforce release transition periods:
 
-  <%= config.bin %> <%= command.id %> --edition=enterprise --alias my-scratch-org --target-dev-hub MyHub --release preview
+  <%= config.bin %> <%= command.id %> --edition enterprise --alias my-scratch-org --target-dev-hub MyHub --release preview
 
 # flags.target-hub.summary
 
