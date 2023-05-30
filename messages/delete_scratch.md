@@ -11,15 +11,15 @@ Specify a scratch org with either the username or the alias you gave the scratch
 
 - Delete a scratch org with alias my-scratch-org:
 
-  <%= config.bin %> <%= command.id %> --target-org=my-scratch-org
+  <%= config.bin %> <%= command.id %> --target-org my-scratch-org
 
 - Specify a username instead of an alias:
 
-  <%= config.bin %> <%= command.id %> --target-org=test-123456-abcdefg@example.com
+  <%= config.bin %> <%= command.id %> --target-org test-123456-abcdefg@example.com
 
 - Delete the scratch org without prompting to confirm :
 
-  <%= config.bin %> <%= command.id %> --target-org=my-scratch-org --no-prompt
+  <%= config.bin %> <%= command.id %> --target-org my-scratch-org --no-prompt
 
 # flags.target-org.summary
 
