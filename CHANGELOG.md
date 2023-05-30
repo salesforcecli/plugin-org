@@ -1,3 +1,12 @@
+## [2.9.3](https://github.com/salesforcecli/plugin-org/compare/2.9.2...2.9.3) (2023-05-30)
+
+
+### Bug Fixes
+
+* small fixes to --help examples ([ed2d590](https://github.com/salesforcecli/plugin-org/commit/ed2d590c19c9e956b2e6974797397fd3442e0b02))
+
+
+
 ## [2.9.2](https://github.com/salesforcecli/plugin-org/compare/2.9.1...2.9.2) (2023-05-28)
 
 
