@@ -1,3 +1,12 @@
+## [2.9.6](https://github.com/salesforcecli/plugin-org/compare/2.9.5...2.9.6) (2023-06-05)
+
+
+### Bug Fixes
+
+* remove duplicate short char from salesforceId flag and bump deps ([#707](https://github.com/salesforcecli/plugin-org/issues/707)) ([dc85ff6](https://github.com/salesforcecli/plugin-org/commit/dc85ff66e0e1ee5ea4ba965d8d8be5886d00bfb5))
+
+
+
 ## [2.9.5](https://github.com/salesforcecli/plugin-org/compare/2.9.4...2.9.5) (2023-06-04)
 
 
