@@ -13,7 +13,9 @@
       "type",
       "wait"
     ],
-    "alias": []
+    "alias": [],
+    "flagChars": ["a", "f", "o", "s", "t", "w"],
+    "flagAliases": ["apiversion", "targetusername", "u"]
   },
   {
     "command": "force:org:create",
@@ -35,19 +37,25 @@
       "type",
       "wait"
     ],
-    "alias": []
+    "alias": [],
+    "flagChars": ["a", "c", "d", "f", "i", "n", "o", "s", "t", "v", "w"],
+    "flagAliases": ["apiversion", "targetdevhubusername", "targetusername", "u"]
   },
   {
     "command": "force:org:delete",
     "plugin": "@salesforce/plugin-org",
     "flags": ["api-version", "json", "loglevel", "no-prompt", "target-org", "targetdevhubusername"],
-    "alias": []
+    "alias": [],
+    "flagChars": ["o", "p", "v"],
+    "flagAliases": ["apiversion", "noprompt", "targetusername", "u"]
   },
   {
     "command": "force:org:status",
     "plugin": "@salesforce/plugin-org",
     "flags": ["api-version", "json", "loglevel", "sandboxname", "setalias", "setdefaultusername", "target-org", "wait"],
-    "alias": []
+    "alias": [],
+    "flagChars": ["a", "n", "o", "s", "w"],
+    "flagAliases": ["apiversion", "targetusername", "u"]
   },
   {
     "command": "org:create:sandbox",
@@ -67,7 +75,9 @@
       "target-org",
       "wait"
     ],
-    "alias": ["env:create:sandbox"]
+    "alias": ["env:create:sandbox"],
+    "flagChars": ["a", "c", "f", "i", "l", "n", "o", "s", "w"],
+    "flagAliases": []
   },
   {
     "command": "org:create:scratch",
@@ -94,60 +104,80 @@
       "username",
       "wait"
     ],
-    "alias": ["env:create:scratch"]
+    "alias": ["env:create:scratch"],
+    "flagChars": ["a", "c", "d", "e", "f", "i", "m", "t", "v", "w", "y"],
+    "flagAliases": []
   },
   {
     "command": "org:delete:sandbox",
     "plugin": "@salesforce/plugin-org",
     "flags": ["json", "no-prompt", "target-org"],
-    "alias": ["env:delete:sandbox"]
+    "alias": ["env:delete:sandbox"],
+    "flagChars": ["o", "p"],
+    "flagAliases": ["targetusername", "u"]
   },
   {
     "command": "org:delete:scratch",
     "plugin": "@salesforce/plugin-org",
     "flags": ["json", "no-prompt", "target-org"],
-    "alias": ["env:delete:scratch"]
+    "alias": ["env:delete:scratch"],
+    "flagChars": ["o", "p"],
+    "flagAliases": ["targetusername", "u"]
   },
   {
     "command": "org:display",
     "plugin": "@salesforce/plugin-org",
     "flags": ["api-version", "json", "loglevel", "target-org", "verbose"],
-    "alias": ["force:org:display"]
+    "alias": ["force:org:display"],
+    "flagChars": ["o"],
+    "flagAliases": ["apiversion", "targetusername", "u"]
   },
   {
     "command": "org:list",
     "plugin": "@salesforce/plugin-org",
     "flags": ["all", "clean", "json", "loglevel", "no-prompt", "skip-connection-status", "verbose"],
-    "alias": ["force:org:list"]
+    "alias": ["force:org:list"],
+    "flagChars": ["p"],
+    "flagAliases": ["noprompt", "skipconnectionstatus"]
   },
   {
     "command": "org:list:metadata",
     "plugin": "@salesforce/plugin-org",
     "flags": ["api-version", "folder", "json", "loglevel", "metadata-type", "output-file", "target-org"],
-    "alias": ["force:mdapi:listmetadata"]
+    "alias": ["force:mdapi:listmetadata"],
+    "flagChars": ["f", "m", "o"],
+    "flagAliases": ["a", "apiversion", "metadatatype", "resultfile", "targetusername", "u"]
   },
   {
     "command": "org:list:metadata-types",
     "plugin": "@salesforce/plugin-org",
     "flags": ["api-version", "filter-known", "json", "loglevel", "output-file", "target-org"],
-    "alias": ["force:mdapi:describemetadata"]
+    "alias": ["force:mdapi:describemetadata"],
+    "flagChars": ["f", "k", "o"],
+    "flagAliases": ["a", "apiversion", "filterknown", "resultfile", "targetusername", "u"]
   },
   {
     "command": "org:open",
     "plugin": "@salesforce/plugin-org",
     "flags": ["api-version", "browser", "json", "loglevel", "path", "source-file", "target-org", "url-only"],
-    "alias": ["force:org:open", "force:source:open"]
+    "alias": ["force:org:open", "force:source:open"],
+    "flagChars": ["b", "f", "o", "p", "r"],
+    "flagAliases": ["apiversion", "sourcefile", "targetusername", "u", "urlonly"]
   },
   {
     "command": "org:resume:sandbox",
     "plugin": "@salesforce/plugin-org",
     "flags": ["job-id", "json", "name", "target-org", "use-most-recent", "wait"],
-    "alias": ["env:resume:sandbox"]
+    "alias": ["env:resume:sandbox"],
+    "flagChars": ["i", "l", "n", "o", "w"],
+    "flagAliases": []
   },
   {
     "command": "org:resume:scratch",
     "plugin": "@salesforce/plugin-org",
     "flags": ["job-id", "json", "use-most-recent"],
-    "alias": ["env:resume:scratch"]
+    "alias": ["env:resume:scratch"],
+    "flagChars": ["i", "r"],
+    "flagAliases": []
   }
 ]

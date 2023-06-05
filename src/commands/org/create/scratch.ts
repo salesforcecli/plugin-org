@@ -142,6 +142,8 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
       startsWith: '00D',
       length: 15,
       helpGroup: definitionFileHelpGroupName,
+      // salesforceId flag has `i` and that would be a conflict with client-id
+      char: undefined,
     }),
   };
 
