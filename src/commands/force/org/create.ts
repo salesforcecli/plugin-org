@@ -134,7 +134,6 @@ export class Create extends SfCommand<CreateResult> {
     this.flags = flags;
     this.varArgs = parseVarArgs(args, argv as string[]);
     this.logger = await Logger.child(this.constructor.name);
-    this.logger.debug('Create started with args %s ', flags);
 
     if (flags.type === OrgTypes.Sandbox) {
       this.validateSandboxFlags();
