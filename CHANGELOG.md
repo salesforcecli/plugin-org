@@ -1,3 +1,12 @@
+## [2.9.7](https://github.com/salesforcecli/plugin-org/compare/2.9.6...2.9.7) (2023-06-06)
+
+
+### Bug Fixes
+
+* remove logging that caused circular ref ([0a63c61](https://github.com/salesforcecli/plugin-org/commit/0a63c6195cedf9c82303cae568cefdd2452b23ed))
+
+
+
 ## [2.9.6](https://github.com/salesforcecli/plugin-org/compare/2.9.5...2.9.6) (2023-06-05)
 
 
