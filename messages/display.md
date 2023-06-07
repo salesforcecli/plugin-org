@@ -8,7 +8,7 @@ Output includes your access token, client Id, connected status, org ID, instance
 
 Use --verbose to include the SFDX auth URL. WARNING: The SFDX auth URL contains sensitive information, such as a refresh token that can be used to access an org. Don't share or distribute this URL or token.
 
-Including --verbose displays the sfdxAuthUrl property only if you authenticated to the org using auth:web:login (not auth:jwt:grant).
+Including --verbose displays the sfdxAuthUrl property only if you authenticated to the org using "org login web" (not "org login jwt").
 
 # flags.verbose.summary
 
