@@ -1,3 +1,12 @@
+## [2.9.9](https://github.com/salesforcecli/plugin-org/compare/2.9.8...2.9.9) (2023-06-08)
+
+
+### Bug Fixes
+
+* make help/errors more consistent when naming new commands ([3128bd6](https://github.com/salesforcecli/plugin-org/commit/3128bd675d5ff85a9e70db2270b6358a4e079721))
+
+
+
 ## [2.9.8](https://github.com/salesforcecli/plugin-org/compare/2.9.7...2.9.8) (2023-06-07)
 
 
