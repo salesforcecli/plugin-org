@@ -129,6 +129,10 @@ export class OrgListUtil {
    * @param fileNames All the filenames in the global hidden folder
    */
   public static async readAuthFiles(fileNames: string[]): Promise<AuthInfo[]> {
+    // Ensure that the Global.SFDX_DIR exists
+    // https://github.com/forcedotcom/cli/issues/2222
+    await fs.mkdir(Global.SFDX_DIR, { recursive: true });
+
     const orgFileNames = (await fs.readdir(Global.SFDX_DIR)).filter((filename: string) =>
       filename.match(/^00D.{15}\.json$/g)
     );
