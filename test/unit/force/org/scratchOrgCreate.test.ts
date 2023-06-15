@@ -34,7 +34,7 @@ const CREATE_RESULT = {
   warnings: [],
 };
 
-describe('org:create', () => {
+describe('[DEPRECATED] force:org:create', () => {
   const $$ = new TestContext();
   const testHub = new MockTestOrgData();
   testHub.isDevHub = true;

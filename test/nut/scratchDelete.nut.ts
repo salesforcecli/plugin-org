@@ -11,7 +11,7 @@ import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
 import { ScratchDeleteResponse } from '../../src/commands/org/delete/scratch';
 
-describe('env:delete:scratch NUTs', () => {
+describe('org:delete:scratch NUTs', () => {
   const scratchOrgAlias = 'scratch-org';
   const scratchOrgAlias2 = 'scratch-org-2';
   const scratchOrgAlias3 = 'scratch-org-3';

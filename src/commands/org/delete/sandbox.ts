@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { AuthInfo, AuthRemover, Messages, Org, StateAggregator } from '@salesforce/core';
+import { AuthInfo, AuthRemover, Messages, Org, SfError, StateAggregator } from '@salesforce/core';
 import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
 import { orgThatMightBeDeleted } from '../../../shared/flags';
 
@@ -16,7 +16,7 @@ export interface SandboxDeleteResponse {
   username: string;
 }
 
-export default class EnvDeleteSandbox extends SfCommand<SandboxDeleteResponse> {
+export default class DeleteSandbox extends SfCommand<SandboxDeleteResponse> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
@@ -34,14 +34,30 @@ export default class EnvDeleteSandbox extends SfCommand<SandboxDeleteResponse> {
   };
 
   public async run(): Promise<SandboxDeleteResponse> {
-    const flags = (await this.parse(EnvDeleteSandbox)).flags;
+    const flags = (await this.parse(DeleteSandbox)).flags;
     const username = flags['target-org'];
+    let orgId: string;
 
-    const orgId = (await AuthInfo.create({ username })).getFields().orgId as string;
-    const isSandbox = await (await StateAggregator.getInstance()).sandboxes.hasFile(orgId);
+    try {
+      const sbxAuthFields = (await AuthInfo.create({ username })).getFields();
+      orgId = sbxAuthFields.orgId as string;
+    } catch (error) {
+      if (error instanceof SfError && error.name === 'NamedOrgNotFoundError') {
+        error.actions = [
+          `Ensure the alias or username for the ${username} org is correct.`,
+          `Ensure the ${username} org has been authenticated with the CLI.`,
+        ];
+      }
+      throw error;
+    }
 
-    if (!isSandbox) {
-      throw messages.createError('error.isNotSandbox', [username]);
+    // The StateAggregator identifies sandbox auth files with a pattern of
+    // <sandbox_ID>.sandbox.json.  E.g., 00DZ0000009T3VZMA0.sandbox.json
+    const stateAggregator = await StateAggregator.getInstance();
+    const cliCreatedSandbox = await stateAggregator.sandboxes.hasFile(orgId);
+
+    if (!cliCreatedSandbox) {
+      throw messages.createError('error.unknownSandbox', [username]);
     }
 
     if (flags['no-prompt'] || (await this.confirm(messages.getMessage('prompt.confirm', [username])))) {

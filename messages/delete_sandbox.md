@@ -6,6 +6,7 @@ Delete a sandbox.
 
 Salesforce CLI marks the org for deletion in the production org that contains the sandbox licenses and then deletes all local references to the org from your computer.
 Specify a sandbox with either the username you used when you logged into it, or the alias you gave the sandbox when you created it. Run "<%= config.bin %> org list" to view all your orgs, including sandboxes, and their aliases.
+Both the sandbox and the associated production org must already be authenticated with the CLI to successfully delete the sandbox.
 
 # examples
 
@@ -17,7 +18,7 @@ Specify a sandbox with either the username you used when you logged into it, or 
 
   <%= config.bin %> <%= command.id %> --target-org myusername@example.com.qa
 
-- Delete the sandbox without prompting to confirm :
+- Delete the sandbox without prompting to confirm:
 
   <%= config.bin %> <%= command.id %> --target-org my-sandbox --no-prompt
 
@@ -41,6 +42,11 @@ Successfully marked sandbox %s for deletion.
 
 There is no sandbox with the username %s.
 
-# error.isNotSandbox
+# error.unknownSandbox
 
-The target org, %s, is not a sandbox.
+The org with username: %s is not known by the CLI to be a sandbox
+
+# error.unknownSandbox.actions
+
+Re-authenticate the sandbox with the CLI and try again.
+Ensure the CLI has authenticated with the sandbox's production org.
