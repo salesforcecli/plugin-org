@@ -686,7 +686,7 @@
     supports-color "^8.1.1"
     tslib "^2"
 
-"@oclif/core@^2.3.0", "@oclif/core@^2.4.0", "@oclif/core@^2.8.2", "@oclif/core@^2.8.4", "@oclif/core@^2.8.5", "@oclif/core@^2.8.6", "@oclif/core@^2.8.7":
+"@oclif/core@^2.3.0", "@oclif/core@^2.4.0", "@oclif/core@^2.8.2", "@oclif/core@^2.8.4", "@oclif/core@^2.8.5", "@oclif/core@^2.8.7":
   version "2.8.7"
   resolved "https://registry.yarnpkg.com/@oclif/core/-/core-2.8.7.tgz#e3fb73477cfb9e72c89bc68701d04953c084c0e8"
   integrity sha512-WTZUFgANYGyHQOmGc2YsczEdqdlG2/ZEfqksHnuYbz3egozpka/R9LrFwNfWPZETi9ydzcjDWwJKUGQmJG3ixA==
@@ -928,10 +928,10 @@
     jsonwebtoken "9.0.0"
     ts-retry-promise "^0.7.0"
 
-"@salesforce/core@^4.0.1", "@salesforce/core@^4.1.0", "@salesforce/core@^4.2.1", "@salesforce/core@^4.3.1":
-  version "4.3.1"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-4.3.1.tgz#d4f16ce7a89e90d456a9407e5994f155b7d05134"
-  integrity sha512-mqlVWVQiy24sdHR3DvBlSlg3QDCqVj4AIhcgvcVSTu3BtKMLaR2C6himtTdKIH/Fl6wLkxPcy+LufQ8J3+HBEw==
+"@salesforce/core@^4.0.1", "@salesforce/core@^4.1.0", "@salesforce/core@^4.2.1", "@salesforce/core@^4.3.1", "@salesforce/core@^4.3.2":
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-4.3.2.tgz#01cab40d349bb0b48044942266a7996f3d1e2b9b"
+  integrity sha512-dsgUYI9pBpJx0l01fumyx85jOPBl5q3J1yTff5ktzlWAs3LXdjqa5KTQMTtS5b36nd4Ht3CVSd36iEOZodoB0g==
   dependencies:
     "@salesforce/bunyan" "^2.0.0"
     "@salesforce/kit" "^3.0.3"
@@ -1065,13 +1065,13 @@
     chalk "^4"
     inquirer "^8.2.5"
 
-"@salesforce/sf-plugins-core@^3.0.4", "@salesforce/sf-plugins-core@^3.1.0":
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/@salesforce/sf-plugins-core/-/sf-plugins-core-3.1.1.tgz#f2e83705f7b0558d16a211c853e7564796f06a68"
-  integrity sha512-Do3aNpW3mAbLdkBCzHaAQgqZSeqGSmN3UnKGbucemWOxGtrxAZ8eyN30g5G096FjTx223mdxlr0u9qCZehdePw==
+"@salesforce/sf-plugins-core@^3.0.4", "@salesforce/sf-plugins-core@^3.1.3":
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/@salesforce/sf-plugins-core/-/sf-plugins-core-3.1.3.tgz#be0a86db430f1223eff8b889a20d334c5df0f04e"
+  integrity sha512-XmpEshATw5uoh6QkdjZcnluGo42v39KLp2b5MPJYhwaiyxpfttb3pofM00LLM74VJWnraODTYX3fEmvDJerWGA==
   dependencies:
-    "@oclif/core" "^2.8.6"
-    "@salesforce/core" "^4.3.1"
+    "@oclif/core" "^2.8.7"
+    "@salesforce/core" "^4.3.2"
     "@salesforce/kit" "^3.0.3"
     "@salesforce/ts-types" "^2.0.2"
     chalk "^4"
