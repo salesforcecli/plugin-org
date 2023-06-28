@@ -1,3 +1,12 @@
+## [2.9.17](https://github.com/salesforcecli/plugin-org/compare/2.9.16...2.9.17) (2023-06-28)
+
+
+### Bug Fixes
+
+* ensure sfdx dir exists ([2046a9a](https://github.com/salesforcecli/plugin-org/commit/2046a9a57a983eecdb518cf133d8ce2923cc4f1f))
+
+
+
 ## [2.9.16](https://github.com/salesforcecli/plugin-org/compare/2.9.15...2.9.16) (2023-06-26)
 
 
