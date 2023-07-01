@@ -1097,16 +1097,16 @@
     proxy-from-env "^1.1.0"
     unzipper "0.10.14"
 
-"@salesforce/source-deploy-retrieve@^9.2.3":
-  version "9.2.3"
-  resolved "https://registry.yarnpkg.com/@salesforce/source-deploy-retrieve/-/source-deploy-retrieve-9.2.3.tgz#09db101ca9edea73700330ecd6b554dabb0d054d"
-  integrity sha512-agTdNswlqXfFmc2qPrVk6q6OgyekqHdZTBa4OOfDt9LCvPaEWf9CwqH+JkOkZInsKYrgyAGKSH55cFI+bhxcOg==
+"@salesforce/source-deploy-retrieve@^9.3.0":
+  version "9.3.0"
+  resolved "https://registry.yarnpkg.com/@salesforce/source-deploy-retrieve/-/source-deploy-retrieve-9.3.0.tgz#7350751cdc2591c2d0b1726f519f1e54a9d1a5b8"
+  integrity sha512-QeFia9cw47WUNs85UY0dTL3w00xjaktPQgYEUMjPAahGkA8ZpIyMMaktT20cLKAt44qMfyJHP3g+q5pnnF/Kmg==
   dependencies:
     "@salesforce/core" "^4.3.1"
     "@salesforce/kit" "^3.0.3"
     "@salesforce/ts-types" "^2.0.3"
     fast-levenshtein "^3.0.0"
-    fast-xml-parser "^4.2.4"
+    fast-xml-parser "^4.2.5"
     got "^11.8.6"
     graceful-fs "^4.2.11"
     ignore "^5.2.4"
@@ -3447,7 +3447,7 @@ fast-levenshtein@^3.0.0:
   dependencies:
     fastest-levenshtein "^1.0.7"
 
-fast-xml-parser@^4.2.2, fast-xml-parser@^4.2.4:
+fast-xml-parser@^4.2.2, fast-xml-parser@^4.2.5:
   version "4.2.5"
   resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-4.2.5.tgz#a6747a09296a6cb34f2ae634019bf1738f3b421f"
   integrity sha512-B9/wizE4WngqQftFPmdaMYlXoJlJOYxGQOanC77fq9k8+Z0v5dDSVh+3glErdIROP//s/jgb7ZuxKfB8nVyo0g==
