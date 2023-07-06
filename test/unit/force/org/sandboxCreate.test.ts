@@ -141,6 +141,7 @@ describe('org:create (sandbox paths)', () => {
         expect(result).to.deep.equal(data);
         const logs = $$.TEST_LOGGER.getBufferedRecords();
         expect(logs.some((line) => line.msg.includes('Set defaultUsername:')));
+        return Promise.resolve();
       });
 
       const sandboxRes: SandboxUserAuthResponse = {

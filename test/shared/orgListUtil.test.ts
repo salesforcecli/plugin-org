@@ -123,7 +123,7 @@ describe('orgListUtil tests', () => {
       sandbox.stub(utils, 'getAliasByUsername').withArgs('gaz@foo.org').resolves('gaz');
     });
 
-    afterEach(async () => {
+    afterEach(() => {
       sandbox.restore();
     });
 
@@ -221,7 +221,7 @@ describe('orgListUtil tests', () => {
       stubMethod(sandbox, fs, 'readdir').resolves(['00D000000000000001.json', '00D000000000000002.json']);
     });
 
-    afterEach(async () => {
+    afterEach(() => {
       sandbox.restore();
     });
 

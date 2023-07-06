@@ -30,7 +30,7 @@ describe('sandbox progress', () => {
     sandboxProgress = new SandboxProgress();
   });
   describe('getSandboxProgress', () => {
-    it('will calculate the correct human readable message (1h 33min 00seconds seconds left)', async () => {
+    it('will calculate the correct human readable message (1h 33min 00seconds seconds left)', () => {
       const data: StatusEvent = {
         // 186*30 = 5580 = 1 hour, 33 min, 0 seconds. so 186 attempts left, at a 30 second polling interval
         sandboxProcessObj,
@@ -45,7 +45,7 @@ describe('sandbox progress', () => {
       expect(res).to.have.property('remainingWaitTimeHuman', '01:33:00 until timeout.');
     });
 
-    it('will calculate the correct human readable message (5 min 30seconds seconds left)', async () => {
+    it('will calculate the correct human readable message (5 min 30seconds seconds left)', () => {
       const data: StatusEvent = {
         sandboxProcessObj,
         interval: 30,

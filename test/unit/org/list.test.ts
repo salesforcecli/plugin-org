@@ -20,7 +20,7 @@ describe('org:list', () => {
   // done automatically by the TestContext.
   const $$ = new TestContext();
 
-  beforeEach(async () => {
+  beforeEach(() => {
     // Stub the ux methods on SfCommand so that you don't get any command output in your tests.
     stubSfCommandUx($$.SANDBOX);
     stubMethod($$.SANDBOX, AuthInfo, 'listAllAuthorizations').resolves([
@@ -33,7 +33,7 @@ describe('org:list', () => {
   });
 
   describe('hub org defined', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       stubMethod($$.SANDBOX, OrgListUtil, 'readLocallyValidatedMetaConfigsGroupedByOrgType').resolves(
         OrgListMock.AUTH_INFO
       );

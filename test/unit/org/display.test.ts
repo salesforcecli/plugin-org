@@ -147,17 +147,18 @@ describe('org:display', () => {
     await $$.stubAuths(testOrg, testHub);
 
     $$.SANDBOX.stub(Connection.prototype, 'sobject').returns({
-      // @ts-expect-error we all know this is not the full type
-      find: async () => [
-        {
-          Status: 'Active',
-          ExpirationDate: '2021-01-23',
-          CreatedBy: { Username: testHub.username },
-          Edition: 'Developer',
-          OrgName: 'MyOrg',
-          CreatedDate: '2020-12-24T15:18:55.000+0000',
-        },
-      ],
+      find: async () =>
+        // @ts-expect-error we all know this is not the full type
+        Promise.resolve([
+          {
+            Status: 'Active',
+            ExpirationDate: '2021-01-23',
+            CreatedBy: { Username: testHub.username },
+            Edition: 'Developer',
+            OrgName: 'MyOrg',
+            CreatedDate: '2020-12-24T15:18:55.000+0000',
+          },
+        ]),
     });
 
     const result = await OrgDisplayCommand.run(['--json', '--targetusername', testOrg.username]);

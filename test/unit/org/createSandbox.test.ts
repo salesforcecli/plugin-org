@@ -37,8 +37,10 @@ const fakeOrg: AuthFields = {
 
 describe('org:create:sandbox', () => {
   beforeEach(() => {
-    stubMethod(sandbox, OrgAccessor.prototype, 'read').callsFake(async (): Promise<AuthFields> => fakeOrg);
-    stubMethod(sandbox, OrgAccessor.prototype, 'write').callsFake(async (): Promise<AuthFields> => fakeOrg);
+    // stubMethod(sandbox, OrgAccessor.prototype, 'read').callsFake(async (): Promise<AuthFields> => fakeOrg);
+    // stubMethod(sandbox, OrgAccessor.prototype, 'write').callsFake(async (): Promise<AuthFields> => fakeOrg);
+    stubMethod(sandbox, OrgAccessor.prototype, 'read').resolves(fakeOrg);
+    stubMethod(sandbox, OrgAccessor.prototype, 'write').resolves(fakeOrg);
     sfCommandUxStubs = stubSfCommandUx(sandbox);
     stubUx(sandbox);
     stubSpinner(sandbox);
@@ -63,6 +65,7 @@ describe('org:create:sandbox', () => {
       Lifecycle.getInstance().on(SandboxEvents.EVENT_ASYNC_RESULT, async (result) => {
         expect(result).to.deep.equal(sandboxProcessObj);
         expect(sfCommandUxStubs.info.firstCall.firstArg).to.include(sandboxProcessObj.Id);
+        return Promise.resolve();
       });
 
       await Lifecycle.getInstance().emit(SandboxEvents.EVENT_ASYNC_RESULT, sandboxProcessObj);

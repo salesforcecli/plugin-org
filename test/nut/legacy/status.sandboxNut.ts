@@ -67,7 +67,7 @@ describe('test sandbox status command', () => {
     logoutSandbox(hubOrgUsername);
   });
 
-  it('sandbox status command', async () => {
+  it('sandbox status command', () => {
     const orgStatusResult = execCmd<SandboxProcessObject>(
       `force:org:status --sandboxname ${sandboxName} -u ${hubOrgUsername} --json`,
       {
@@ -91,7 +91,7 @@ describe('test sandbox status command', () => {
     ]);
   });
 
-  it('sandbox status command sets setdefaultusername', async () => {
+  it('sandbox status command sets setdefaultusername', () => {
     const orgStatusResult = execCmd<SandboxProcessObject>(
       `force:org:status --sandboxname ${sandboxName} -u ${hubOrgUsername} -s --json`,
       {
@@ -107,7 +107,7 @@ describe('test sandbox status command', () => {
     expect(result.stdout).to.contain(`"${hubOrgUsername}.${sandboxName.toLowerCase()}"`);
   });
 
-  it('sandbox status command set alias', async () => {
+  it('sandbox status command set alias', () => {
     const orgStatusResult = execCmd<SandboxProcessObject>(
       `force:org:status --sandboxname ${sandboxName} -u ${hubOrgUsername} -a ${sandboxName} --json`,
       {
