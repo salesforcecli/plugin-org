@@ -1,3 +1,12 @@
+## [2.9.20](https://github.com/salesforcecli/plugin-org/compare/2.9.19...2.9.20) (2023-07-06)
+
+
+### Bug Fixes
+
+* **deps:** bump teskit, core, sdr, sf-plugins-core ([ddb4215](https://github.com/salesforcecli/plugin-org/commit/ddb42159a50b7fd17080f5f150533651c19b6926))
+
+
+
 ## [2.9.19](https://github.com/salesforcecli/plugin-org/compare/2.9.18...2.9.19) (2023-07-02)
 
 
