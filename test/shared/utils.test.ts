@@ -12,7 +12,7 @@ import { getAliasByUsername } from '../../src/shared/utils';
 
 describe('getAliasByUsername', () => {
   const sandbox = sinon.createSandbox();
-  beforeEach(async () => {
+  beforeEach(() => {
     const getAllStub = sandbox.stub();
     getAllStub.withArgs('username1').returns(['alias1']);
     getAllStub.withArgs('username2').returns(['alias2', 'alias2b']);

@@ -24,13 +24,13 @@ describe('Sandbox Orgs via legacy org:create', () => {
     });
   });
 
-  it('will create a sandbox, verify it can be opened, and then attempt to delete it', async () => {
+  it('will create a sandbox, verify it can be opened, and then attempt to delete it', () => {
     let result: SandboxProcessObject | undefined;
     try {
-      Lifecycle.getInstance().on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) => {
+      Lifecycle.getInstance().on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) =>
         // eslint-disable-next-line no-console
-        console.log('sandbox copy progress', results.sandboxProcessObj.CopyProgress);
-      });
+        Promise.resolve(console.log('sandbox copy progress', results.sandboxProcessObj.CopyProgress))
+      );
       result = execCmd<SandboxProcessObject>(
         // escaped, pending outcome W-12683861
         // eslint-disable-next-line sf-plugin/no-execcmd-double-quotes
