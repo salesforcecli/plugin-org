@@ -74,44 +74,44 @@ export class Create extends SfCommand<CreateResult> {
       options: [OrgTypes.Scratch, OrgTypes.Sandbox],
     })({
       char: 't',
-      summary: messages.getMessage('flags.type'),
+      summary: messages.getMessage('flags.type.summary'),
       default: OrgTypes.Scratch,
     }),
     definitionfile: Flags.file({
       exists: true,
       char: 'f',
-      summary: messages.getMessage('flags.definitionFile'),
+      summary: messages.getMessage('flags.definitionfile.summary'),
     }),
     nonamespace: Flags.boolean({
       char: 'n',
-      summary: messages.getMessage('flags.noNamespace'),
+      summary: messages.getMessage('flags.nonamespace.summary'),
     }),
     noancestors: Flags.boolean({
       char: 'c',
-      summary: messages.getMessage('flags.noAncestors'),
+      summary: messages.getMessage('flags.noancestors.summary'),
     }),
     clientid: Flags.string({
       char: 'i',
-      summary: messages.getMessage('flags.clientId'),
+      summary: messages.getMessage('flags.clientid.summary'),
     }),
     setdefaultusername: Flags.boolean({
       char: 's',
-      summary: messages.getMessage('flags.setDefaultUsername'),
+      summary: messages.getMessage('flags.setdefaultusername.summary'),
     }),
     setalias: Flags.string({
       char: 'a',
-      summary: messages.getMessage('flags.setAlias'),
+      summary: messages.getMessage('flags.setalias.summary'),
     }),
     wait: Flags.duration({
       unit: 'minutes',
       char: 'w',
-      summary: messages.getMessage('flags.wait'),
+      summary: messages.getMessage('flags.wait.summary'),
       min: 6,
       defaultValue: 6,
     }),
     durationdays: Flags.integer({
       char: 'd',
-      summary: messages.getMessage('flags.durationDays'),
+      summary: messages.getMessage('flags.durationdays.summary'),
       min: 1,
       max: 30,
       default: 7,
@@ -120,7 +120,7 @@ export class Create extends SfCommand<CreateResult> {
       hidden: true,
       default: 0,
       max: 10,
-      summary: messages.getMessage('flags.retry'),
+      summary: messages.getMessage('flags.retry.summary'),
     }),
   };
   private sandboxAuth?: SandboxUserAuthResponse;

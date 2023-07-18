@@ -44,21 +44,21 @@ export class OrgStatusCommand extends SfCommand<SandboxProcessObject> {
     'api-version': orgApiVersionFlagWithDeprecations,
     sandboxname: Flags.string({
       char: 'n',
-      summary: messages.getMessage('flags.sandboxname'),
+      summary: messages.getMessage('flags.sandboxname.summary'),
       required: true,
     }),
     setdefaultusername: Flags.boolean({
       char: 's',
-      summary: messages.getMessage('flags.setdefaultusername'),
+      summary: messages.getMessage('flags.setdefaultusername.summary'),
     }),
     setalias: Flags.string({
       char: 'a',
-      summary: messages.getMessage('flags.setalias'),
+      summary: messages.getMessage('flags.setalias.summary'),
     }),
     wait: Flags.duration({
       unit: 'minutes',
       char: 'w',
-      summary: messages.getMessage('flags.wait'),
+      summary: messages.getMessage('flags.wait.summary'),
       min: 2,
       defaultValue: 6,
     }),

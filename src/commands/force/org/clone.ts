@@ -51,27 +51,27 @@ export class OrgCloneCommand extends SfCommand<SandboxProcessObject> {
       options: ['sandbox'],
     })({
       char: 't',
-      summary: messages.getMessage('flags.type'),
+      summary: messages.getMessage('flags.type.summary'),
       required: true,
     }),
     definitionfile: Flags.file({
       char: 'f',
       exists: true,
-      summary: messages.getMessage('flags.definitionfile'),
+      summary: messages.getMessage('flags.definitionfile.summary'),
     }),
     setdefaultusername: Flags.boolean({
       char: 's',
-      summary: messages.getMessage('flags.setdefaultusername'),
+      summary: messages.getMessage('flags.setdefaultusername.summary'),
     }),
     setalias: Flags.string({
       char: 'a',
-      summary: messages.getMessage('flags.setalias'),
+      summary: messages.getMessage('flags.setalias.summary'),
     }),
     wait: Flags.duration({
       unit: 'minutes',
       char: 'w',
-      summary: messages.getMessage('flags.wait'),
-      description: messages.getMessage('flagsLong.wait'),
+      summary: messages.getMessage('flags.wait.summary'),
+      description: messages.getMessage('flags.wait.description'),
       min: 2,
       defaultValue: 6,
     }),

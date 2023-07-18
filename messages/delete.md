@@ -18,7 +18,7 @@ To mark the org for deletion without being prompted to confirm, specify --noprom
 
 - $ <%= config.bin %> <%= command.id %> -u MyOrgAlias -p
 
-# flags.noprompt
+# flags.noprompt.summary
 
 No prompt to confirm deletion.
 
@@ -30,7 +30,7 @@ Unable to determine the username of the org to delete. Specify the username with
 
 Username or alias of the target org.
 
-# flags.targetdevhubusername
+# flags.targetdevhubusername.summary
 
 The targetdevhubusername flag exists only for backwards compatibility. It is not necessary and has no effect.
 
