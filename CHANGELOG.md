@@ -1,3 +1,12 @@
+## [2.9.26](https://github.com/salesforcecli/plugin-org/compare/2.9.25...2.9.26) (2023-07-19)
+
+
+### Bug Fixes
+
+* **deps:** bump word-wrap from 1.2.3 to 1.2.4 ([0847633](https://github.com/salesforcecli/plugin-org/commit/08476337467f2c07f3b58b38b17a77d843232d45))
+
+
+
 ## [2.9.25](https://github.com/salesforcecli/plugin-org/compare/2.9.24...2.9.25) (2023-07-17)
 
 
