@@ -30,18 +30,18 @@ export class Delete extends SfCommand<DeleteResult> {
       summary: messages.getMessage('flags.target-org.summary'),
     }),
     targetdevhubusername: Flags.string({
-      summary: messages.getMessage('flags.targetdevhubusername'),
+      summary: messages.getMessage('flags.targetdevhubusername.summary'),
       char: 'v',
       hidden: true,
       deprecated: {
         version: '58.0',
-        message: messages.getMessage('flags.targetdevhubusername'),
+        message: messages.getMessage('flags.targetdevhubusername.summary'),
       },
     }),
     'api-version': orgApiVersionFlagWithDeprecations,
     'no-prompt': Flags.boolean({
       char: 'p',
-      summary: messages.getMessage('flags.noprompt'),
+      summary: messages.getMessage('flags.no-prompt.summary'),
       deprecateAliases: true,
       aliases: ['noprompt'],
     }),

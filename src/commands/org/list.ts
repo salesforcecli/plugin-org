@@ -36,13 +36,13 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
     }),
     'no-prompt': Flags.boolean({
       char: 'p',
-      summary: messages.getMessage('flags.noPrompt.summary'),
+      summary: messages.getMessage('flags.no-prompt.summary'),
       dependsOn: ['clean'],
       aliases: ['noprompt'],
       deprecateAliases: true,
     }),
     'skip-connection-status': Flags.boolean({
-      summary: messages.getMessage('flags.skipConnectionStatus.summary'),
+      summary: messages.getMessage('flags.skip-connection-status.summary'),
       aliases: ['skipconnectionstatus'],
       deprecateAliases: true,
     }),
