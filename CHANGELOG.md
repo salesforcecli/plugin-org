@@ -1,3 +1,21 @@
+## [2.9.27](https://github.com/salesforcecli/plugin-org/compare/2.9.26...2.9.27) (2023-07-23)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/kit from 3.0.4 to 3.0.6 ([8e77315](https://github.com/salesforcecli/plugin-org/commit/8e77315f800325c26ba9de271bf3570de9192ba0))
+
+
+
+## [2.9.26](https://github.com/salesforcecli/plugin-org/compare/2.9.25...2.9.26) (2023-07-19)
+
+
+### Bug Fixes
+
+* **deps:** bump word-wrap from 1.2.3 to 1.2.4 ([0847633](https://github.com/salesforcecli/plugin-org/commit/08476337467f2c07f3b58b38b17a77d843232d45))
+
+
+
 ## [2.9.25](https://github.com/salesforcecli/plugin-org/compare/2.9.24...2.9.25) (2023-07-17)
 
 
