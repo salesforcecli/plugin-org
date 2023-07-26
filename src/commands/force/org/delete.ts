@@ -41,7 +41,7 @@ export class Delete extends SfCommand<DeleteResult> {
     'api-version': orgApiVersionFlagWithDeprecations,
     'no-prompt': Flags.boolean({
       char: 'p',
-      summary: messages.getMessage('flags.noprompt.summary'),
+      summary: messages.getMessage('flags.no-prompt.summary'),
       deprecateAliases: true,
       aliases: ['noprompt'],
     }),

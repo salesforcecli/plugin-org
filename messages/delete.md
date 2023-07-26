@@ -18,7 +18,7 @@ To mark the org for deletion without being prompted to confirm, specify --noprom
 
 - $ <%= config.bin %> <%= command.id %> -u MyOrgAlias -p
 
-# flags.noprompt.summary
+# flags.no-prompt.summary
 
 No prompt to confirm deletion.
 

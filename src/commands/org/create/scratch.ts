@@ -54,8 +54,8 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
     }),
     'target-dev-hub': Flags.requiredHub({
       char: 'v',
-      summary: messages.getMessage('flags.target-hub.summary'),
-      description: messages.getMessage('flags.target-hub.description'),
+      summary: messages.getMessage('flags.target-dev-hub.summary'),
+      description: messages.getMessage('flags.target-dev-hub.description'),
       required: true,
     }),
     'no-ancestors': Flags.boolean({
@@ -134,11 +134,11 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
       helpGroup: definitionFileHelpGroupName,
     }),
     'admin-email': Flags.string({
-      summary: messages.getMessage('flags.adminEmail.summary'),
+      summary: messages.getMessage('flags.admin-email.summary'),
       helpGroup: definitionFileHelpGroupName,
     }),
     'source-org': Flags.salesforceId({
-      summary: messages.getMessage('flags.sourceOrg.summary'),
+      summary: messages.getMessage('flags.source-org.summary'),
       startsWith: '00D',
       length: 15,
       helpGroup: definitionFileHelpGroupName,
