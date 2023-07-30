@@ -691,10 +691,10 @@
     supports-color "^8.1.1"
     tslib "^2"
 
-"@oclif/core@^2.3.0", "@oclif/core@^2.4.0", "@oclif/core@^2.8.10", "@oclif/core@^2.8.11", "@oclif/core@^2.8.4", "@oclif/core@^2.8.5", "@oclif/core@^2.9.3":
-  version "2.9.3"
-  resolved "https://registry.yarnpkg.com/@oclif/core/-/core-2.9.3.tgz#d20478d03b57713e5a6d9582027f97e83e8be496"
-  integrity sha512-0KLiVpXCJivAjLoj/LAXQf85MtGzyforyPkgNJQEP6QQugnuq2kHcG+DojWEQYz0sADXT2259EdPibslEThUMg==
+"@oclif/core@^2.11.1", "@oclif/core@^2.3.0", "@oclif/core@^2.4.0", "@oclif/core@^2.8.10", "@oclif/core@^2.8.11", "@oclif/core@^2.8.4", "@oclif/core@^2.8.5", "@oclif/core@^2.9.3":
+  version "2.11.1"
+  resolved "https://registry.yarnpkg.com/@oclif/core/-/core-2.11.1.tgz#69c3cfd3d9b2df9fe94c6d16a3c5da59706f078a"
+  integrity sha512-/DHDtm/PoSNvWdJtTv1GUYnrCrlTsEQd1CsXKNfMSylpkeOjbDIbt1w4NYZ50BfAWxpCunf7RmbwxFBpDa5lHQ==
   dependencies:
     "@types/cli-progress" "^3.11.0"
     ansi-escapes "^4.3.2"
