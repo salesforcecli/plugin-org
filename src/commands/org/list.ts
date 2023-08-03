@@ -16,9 +16,16 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'list');
 
 export type OrgListResult = {
+  /**
+   * @deprecated
+   * preserved for backward json compatibility.  Duplicates devHubs, sandboxes, regularOrgs, which should be preferred*/
   nonScratchOrgs: ExtendedAuthFields[];
   scratchOrgs: FullyPopulatedScratchOrgFields[];
+  sandboxes: ExtendedAuthFields[];
+  regularOrgs: ExtendedAuthFields[];
+  devHubs: ExtendedAuthFields[];
 };
+
 export class OrgListCommand extends SfCommand<OrgListResult> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly examples = messages.getMessages('examples');
@@ -56,6 +63,9 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
     this.flags = flags;
     const metaConfigs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
     const groupedSortedOrgs = {
+      devHubs: metaConfigs.devHubs.map(decorateWithDefaultStatus).sort(comparator),
+      regularOrgs: metaConfigs.regularOrgs.map(decorateWithDefaultStatus).sort(comparator),
+      sandboxes: metaConfigs.sandboxes.map(decorateWithDefaultStatus).sort(comparator),
       nonScratchOrgs: metaConfigs.nonScratchOrgs.map(decorateWithDefaultStatus).sort(comparator),
       scratchOrgs: metaConfigs.scratchOrgs.map(decorateWithDefaultStatus).sort(comparator),
       expiredScratchOrgs: metaConfigs.scratchOrgs.filter((org) => !identifyActiveOrgByStatus(org)),
@@ -70,13 +80,19 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
     }
 
     const result = {
+      regularOrgs: groupedSortedOrgs.regularOrgs,
+      sandboxes: groupedSortedOrgs.sandboxes,
       nonScratchOrgs: groupedSortedOrgs.nonScratchOrgs,
+      devHubs: groupedSortedOrgs.devHubs,
       scratchOrgs: flags.all
         ? groupedSortedOrgs.scratchOrgs
         : groupedSortedOrgs.scratchOrgs.filter(identifyActiveOrgByStatus),
     };
 
-    this.printOrgTable(result.nonScratchOrgs, flags['skip-connection-status']);
+    // this.printOrgTable(result.nonScratchOrgs, flags['skip-connection-status']);
+    this.printOrgTable(result.devHubs, flags['skip-connection-status'], 'DevHubs');
+    this.printOrgTable(result.regularOrgs, flags['skip-connection-status'], 'Orgs');
+    this.printOrgTable(result.sandboxes, flags['skip-connection-status'], 'Sandboxes');
 
     this.printScratchOrgTable(result.scratchOrgs);
 
@@ -112,10 +128,11 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
     );
   }
 
-  protected printOrgTable(nonScratchOrgs: ExtendedAuthFields[], skipconnectionstatus: boolean): void {
+  protected printOrgTable(nonScratchOrgs: ExtendedAuthFields[], skipconnectionstatus: boolean, title: string): void {
     if (!nonScratchOrgs.length) {
-      this.log(messages.getMessage('noResultsFound'));
+      this.info(messages.getMessage('noResultsFound', [title]));
     } else {
+      this.info(title);
       const rows = nonScratchOrgs
         .map((row) => getStyledObject(row))
         .map((org) =>
@@ -126,32 +143,28 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
           )
         );
 
-      this.table(
-        rows,
-        {
-          defaultMarker: {
-            header: '',
-            get: (data): string => data.defaultMarker ?? '',
-          },
-          alias: {
-            header: 'ALIAS',
-            get: (data): string => data.alias ?? '',
-          },
-          username: { header: 'USERNAME' },
-          orgId: { header: 'ORG ID' },
-          ...(!skipconnectionstatus ? { connectedStatus: { header: 'CONNECTED STATUS' } } : {}),
+      this.table(rows, {
+        defaultMarker: {
+          header: '',
+          get: (data): string => data.defaultMarker ?? '',
         },
-        {
-          title: 'Non-scratch orgs',
-        }
-      );
+        alias: {
+          header: 'ALIAS',
+          get: (data): string => data.alias ?? '',
+        },
+        username: { header: 'USERNAME' },
+        orgId: { header: 'ORG ID' },
+        ...(!skipconnectionstatus ? { connectedStatus: { header: 'CONNECTED STATUS' } } : {}),
+      });
     }
+    this.log();
   }
 
   private printScratchOrgTable(scratchOrgs: FullyPopulatedScratchOrgFields[]): void {
     if (scratchOrgs.length === 0) {
-      this.log(messages.getMessage('noActiveScratchOrgs'));
+      this.info(messages.getMessage('noActiveScratchOrgs'));
     } else {
+      this.info(this.flags.all ? 'Scratch Orgs' : 'Active Scratch Orgs (use --all to see all)');
       // One or more rows are available.
       // we only need a few of the props for our table.  Oclif table doesn't like extra props non-string props.
       const rows = scratchOrgs
@@ -195,12 +208,13 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
               }
             : {}),
           expirationDate: { header: 'EXPIRATION DATE' },
-        },
-        {
-          title: 'Scratch orgs',
         }
+        // {
+        //   title: 'Scratch orgs',
+        // }
       );
     }
+    this.log();
   }
 }
 

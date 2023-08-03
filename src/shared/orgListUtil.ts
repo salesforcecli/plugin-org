@@ -38,6 +38,9 @@ type OrgGroups = {
 type OrgGroupsFullyPopulated = {
   nonScratchOrgs: ExtendedAuthFields[];
   scratchOrgs: FullyPopulatedScratchOrgFields[];
+  regularOrgs: ExtendedAuthFields[];
+  sandboxes: ExtendedAuthFields[];
+  devHubs: ExtendedAuthFields[];
 };
 
 type ExtendedScratchOrgInfo = Record &
@@ -93,6 +96,9 @@ export class OrgListUtil {
     return {
       nonScratchOrgs,
       scratchOrgs,
+      sandboxes: nonScratchOrgs.filter(sandboxFilter),
+      regularOrgs: nonScratchOrgs.filter(regularOrgFilter),
+      devHubs: nonScratchOrgs.filter(devHubFilter),
     };
   }
 
@@ -367,3 +373,7 @@ const removeRestrictedInfoFromConfig = (
   config: AuthFieldsFromFS,
   properties: string[] = ['refreshToken', 'clientSecret']
 ): AuthFieldsFromFS => omit<Omit<AuthFieldsFromFS, 'refreshToken' | 'clientSecret'>>(config, properties);
+
+const sandboxFilter = (org: AuthFieldsFromFS): boolean => Boolean(org.isSandbox);
+const regularOrgFilter = (org: AuthFieldsFromFS): boolean => !org.isSandbox && !org.isDevHub;
+const devHubFilter = (org: AuthFieldsFromFS): boolean => Boolean(org.isDevHub);
