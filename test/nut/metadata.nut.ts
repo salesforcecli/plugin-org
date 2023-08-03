@@ -21,7 +21,6 @@ describe('org list metadata*', () => {
       devhubAuthStrategy: 'AUTO',
       scratchOrgs: [
         {
-          executable: 'sfdx',
           config: path.join('config', 'project-scratch-def.json'),
           setDefault: true,
           duration: 1,
@@ -29,7 +28,7 @@ describe('org list metadata*', () => {
       ],
     });
 
-    execCmd('force:source:deploy -p force-app', { cli: 'sfdx' });
+    execCmd('project:deploy:start -d force-app');
   });
 
   after(async () => {

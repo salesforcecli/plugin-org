@@ -65,12 +65,13 @@
     "salesforce",
     "sfdx",
     "salesforcedx",
-    "sfdx-plugin"
+    "sfdx-plugin",
+    "sf-plugin"
   ],
   "license": "BSD-3-Clause",
   "oclif": {
     "commands": "./lib/commands",
-    "bin": "sfdx",
+    "bin": "sf",
     "devPlugins": [
       "@oclif/plugin-help",
       "@oclif/plugin-command-snapshot",

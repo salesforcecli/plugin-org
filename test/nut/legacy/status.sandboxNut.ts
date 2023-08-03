@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { TestSession, execCmd } from '@salesforce/cli-plugins-testkit';
-import { expect, assert, config } from 'chai';
+import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
+import { assert, config, expect } from 'chai';
 import * as shell from 'shelljs';
 import { AuthInfo, Connection, SandboxProcessObject } from '@salesforce/core';
 
@@ -19,23 +19,23 @@ function unsetAlias() {
   const execOptions: shell.ExecOptions = {
     silent: true,
   };
-  shell.exec(`sfdx alias:unset ${sandboxName}`, execOptions) as shell.ShellString;
+  shell.exec(`sf alias:unset ${sandboxName}`, execOptions) as shell.ShellString;
 }
 
 function unsetConfig() {
   const execOptions: shell.ExecOptions = {
     silent: true,
   };
-  shell.exec('sfdx config:unset defaultusername -g', execOptions) as shell.ShellString;
+  shell.exec('sf config:unset defaultusername -g', execOptions) as shell.ShellString;
 }
 
 function logoutSandbox(username: string) {
   const execOptions: shell.ExecOptions = {
     silent: true,
   };
-  const rv = shell.exec(`sfdx auth:logout -u ${username}.${sandboxName} --noprompt`, execOptions) as shell.ShellString;
+  const rv = shell.exec(`sf auth:logout -u ${username}.${sandboxName} --noprompt`, execOptions) as shell.ShellString;
   if (rv.code !== 0) {
-    throw new Error(`sfdx auth:logout failed with error:\n${rv.stderr}`);
+    throw new Error(`sf auth:logout failed with error:\n${rv.stderr}`);
   }
 }
 
@@ -102,7 +102,7 @@ describe('test sandbox status command', () => {
     const execOptions: shell.ExecOptions = {
       silent: true,
     };
-    const result = shell.exec('sfdx config:get defaultusername --json', execOptions) as shell.ShellString;
+    const result = shell.exec('sf config:get defaultusername --json', execOptions) as shell.ShellString;
     expect(result.code).to.equal(0);
     expect(result.stdout).to.contain(`"${hubOrgUsername}.${sandboxName.toLowerCase()}"`);
   });
@@ -118,7 +118,7 @@ describe('test sandbox status command', () => {
     const execOptions: shell.ExecOptions = {
       silent: true,
     };
-    const result = shell.exec('sfdx alias:list --json', execOptions) as shell.ShellString;
+    const result = shell.exec('sf alias:list --json', execOptions) as shell.ShellString;
     expect(result.code).to.equal(0);
     expect(result.stdout).to.contain(`"${sandboxName}"`);
   });
