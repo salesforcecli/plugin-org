@@ -58,7 +58,7 @@ Use one of the "org login" commands or "org create scratch" to add or create a s
 
 # noResultsFound
 
-No %s found.
+No Orgs found.
 
 # cleanWarning
 

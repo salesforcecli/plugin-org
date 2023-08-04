@@ -8,6 +8,7 @@
 import { Flags, loglevel, SfCommand } from '@salesforce/sf-plugins-core';
 import { AuthInfo, ConfigAggregator, ConfigInfo, Connection, Org, SfError, Messages, Logger } from '@salesforce/core';
 import { Interfaces } from '@oclif/core';
+import * as chalk from 'chalk';
 import { OrgListUtil, identifyActiveOrgByStatus } from '../../shared/orgListUtil';
 import { getStyledObject } from '../../shared/orgHighlighter';
 import { ExtendedAuthFields, FullyPopulatedScratchOrgFields } from '../../shared/orgTypes';
@@ -89,13 +90,15 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
         : groupedSortedOrgs.scratchOrgs.filter(identifyActiveOrgByStatus),
     };
 
-    // this.printOrgTable(result.nonScratchOrgs, flags['skip-connection-status']);
-    this.printOrgTable(result.devHubs, flags['skip-connection-status'], 'DevHubs');
-    this.printOrgTable(result.regularOrgs, flags['skip-connection-status'], 'Orgs');
-    this.printOrgTable(result.sandboxes, flags['skip-connection-status'], 'Sandboxes');
-
+    this.printOrgTable({
+      devHubs: result.devHubs,
+      regularOrgs: result.regularOrgs,
+      sandboxes: result.sandboxes,
+      skipconnectionstatus: flags['skip-connection-status'],
+    });
     this.printScratchOrgTable(result.scratchOrgs);
 
+    this.info('Legend:  (D)=Default DevHub, (U)=Default Org');
     return result;
   }
 
@@ -128,35 +131,61 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
     );
   }
 
-  protected printOrgTable(nonScratchOrgs: ExtendedAuthFields[], skipconnectionstatus: boolean, title: string): void {
-    if (!nonScratchOrgs.length) {
-      this.info(messages.getMessage('noResultsFound', [title]));
-    } else {
-      this.info(title);
-      const rows = nonScratchOrgs
-        .map((row) => getStyledObject(row))
-        .map((org) =>
-          Object.fromEntries(
-            Object.entries(org).filter(([key]) =>
-              ['defaultMarker', 'alias', 'username', 'orgId', 'connectedStatus'].includes(key)
-            )
-          )
-        );
+  protected printOrgTable({
+    devHubs,
+    regularOrgs,
+    sandboxes,
+    skipconnectionstatus,
+  }: {
+    devHubs: ExtendedAuthFields[];
+    regularOrgs: ExtendedAuthFields[];
+    sandboxes: ExtendedAuthFields[];
+    skipconnectionstatus: boolean;
+  }): void {
+    if (!devHubs.length && !regularOrgs.length && !sandboxes.length) {
+      this.info(messages.getMessage('noResultsFound'));
+      return;
+    }
+    this.log();
+    this.info('Non-scratch orgs');
+    const nonScratchOrgs = [
+      ...devHubs
+        .map(addType('DevHub'))
+        .map(colorEveryFieldButConnectedStatus(chalk.cyanBright))
+        .map((row) => getStyledObject(row)),
 
-      this.table(rows, {
+      ...regularOrgs.map(colorEveryFieldButConnectedStatus(chalk.magentaBright)).map((row) => getStyledObject(row)),
+
+      ...sandboxes
+        .map(addType('Sandbox'))
+        .map(colorEveryFieldButConnectedStatus(chalk.yellowBright))
+        .map((row) => getStyledObject(row)),
+    ];
+
+    this.table(
+      nonScratchOrgs.map((org) =>
+        Object.fromEntries(
+          Object.entries(org).filter(([key]) =>
+            ['type', 'defaultMarker', 'alias', 'username', 'orgId', 'connectedStatus'].includes(key)
+          )
+        )
+      ),
+      {
         defaultMarker: {
           header: '',
-          get: (data): string => data.defaultMarker ?? '',
+        },
+        type: {
+          header: 'Type',
         },
         alias: {
-          header: 'ALIAS',
-          get: (data): string => data.alias ?? '',
+          header: 'Alias',
         },
-        username: { header: 'USERNAME' },
-        orgId: { header: 'ORG ID' },
-        ...(!skipconnectionstatus ? { connectedStatus: { header: 'CONNECTED STATUS' } } : {}),
-      });
-    }
+        username: { header: 'Username' },
+        orgId: { header: 'Org ID' },
+        ...(!skipconnectionstatus ? { connectedStatus: { header: 'Status' } } : {}),
+      }
+    );
+
     this.log();
   }
 
@@ -165,54 +194,31 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
       this.info(messages.getMessage('noActiveScratchOrgs'));
     } else {
       this.info(this.flags.all ? 'Scratch Orgs' : 'Active Scratch Orgs (use --all to see all)');
+
       // One or more rows are available.
       // we only need a few of the props for our table.  Oclif table doesn't like extra props non-string props.
       const rows = scratchOrgs
         .map(getStyledObject)
-        .map((org) =>
-          Object.fromEntries(
-            Object.entries(org).filter(([key]) =>
-              [
-                'defaultMarker',
-                'alias',
-                'username',
-                'orgId',
-                'status',
-                'expirationDate',
-                'devHubOrgId',
-                'createdDate',
-                'instanceUrl',
-              ].includes(key)
-            )
-          )
-        );
-      this.table(
-        rows,
-        {
-          defaultMarker: {
-            header: '',
-            get: (data): string => data.defaultMarker ?? '',
-          },
-          alias: {
-            header: 'ALIAS',
-            get: (data): string => data.alias ?? '',
-          },
-          username: { header: 'USERNAME' },
-          orgId: { header: 'ORG ID' },
-          ...(this.flags.all || this.flags.verbose ? { status: { header: 'STATUS' } } : {}),
-          ...(this.flags.verbose
-            ? {
-                devHubOrgId: { header: 'DEV HUB' },
-                createdDate: { header: 'CREATED DATE' },
-                instanceUrl: { header: 'INSTANCE URL' },
-              }
-            : {}),
-          expirationDate: { header: 'EXPIRATION DATE' },
-        }
-        // {
-        //   title: 'Scratch orgs',
-        // }
-      );
+        .map((org) => Object.fromEntries(Object.entries(org).filter(scratchOrgFieldFilter)));
+      this.table(rows, {
+        defaultMarker: {
+          header: '',
+        },
+        alias: {
+          header: 'Alias',
+        },
+        username: { header: 'Username' },
+        orgId: { header: 'Org ID' },
+        ...(this.flags.all || this.flags.verbose ? { status: { header: 'Status' } } : {}),
+        ...(this.flags.verbose
+          ? {
+              devHubOrgId: { header: 'Dev Hub ID' },
+              instanceUrl: { header: 'Instance URL' },
+              createdDate: { header: 'Created', get: (data): string => data.createdDate?.split('T')[0] ?? '' },
+            }
+          : {}),
+        expirationDate: { header: 'Expires' },
+      });
     }
     this.log();
   }
@@ -226,8 +232,9 @@ const decorateWithDefaultStatus = <T extends ExtendedAuthFields | FullyPopulated
 
 // sort by alias then username
 const comparator = <T extends ExtendedAuthFields | FullyPopulatedScratchOrgFields>(a: T, b: T): number => {
-  const aliasCompareResult = (a.alias ?? '').localeCompare(b.alias ?? '');
-  return aliasCompareResult !== 0 ? aliasCompareResult : (a.username ?? '').localeCompare(b.username);
+  const emptiesLast = Array(10).fill('z').join('');
+  const aliasCompareResult = (a.alias ?? emptiesLast).localeCompare(b.alias ?? emptiesLast);
+  return aliasCompareResult !== 0 ? aliasCompareResult : (a.username ?? emptiesLast).localeCompare(b.username);
 };
 
 const getAuthFileNames = async (): Promise<string[]> => {
@@ -242,3 +249,32 @@ const getAuthFileNames = async (): Promise<string[]> => {
     }
   }
 };
+
+type ExtendedAuthFieldsWithType = ExtendedAuthFields & { type?: string };
+const addType =
+  (type: string) =>
+  (val: ExtendedAuthFields): ExtendedAuthFieldsWithType => ({ ...val, type });
+
+const colorEveryFieldButConnectedStatus =
+  (colorFn: chalk.Chalk) =>
+  (row: ExtendedAuthFieldsWithType): ExtendedAuthFieldsWithType =>
+    Object.fromEntries(
+      Object.entries(row).map(([key, val]) => [
+        key,
+        typeof val === 'string' && key !== 'connectedStatus' ? colorFn(val) : val,
+      ])
+      // TS is not smart enough to know this didn't change any types
+    ) as ExtendedAuthFieldsWithType;
+
+const scratchOrgFieldFilter = ([key]: [string, string]): boolean =>
+  [
+    'defaultMarker',
+    'alias',
+    'username',
+    'orgId',
+    'status',
+    'expirationDate',
+    'devHubOrgId',
+    'createdDate',
+    'instanceUrl',
+  ].includes(key);
