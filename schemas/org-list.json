@@ -9,16 +9,35 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/ExtendedAuthFields"
-          }
+          },
+          "deprecated": "preserved for backward json compatibility.  Duplicates devHubs, sandboxes, regularOrgs, which should be preferred"
         },
         "scratchOrgs": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/FullyPopulatedScratchOrgFields"
           }
+        },
+        "sandboxes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ExtendedAuthFields"
+          }
+        },
+        "regularOrgs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ExtendedAuthFields"
+          }
+        },
+        "devHubs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ExtendedAuthFields"
+          }
         }
       },
-      "required": ["nonScratchOrgs", "scratchOrgs"],
+      "required": ["nonScratchOrgs", "scratchOrgs", "sandboxes", "regularOrgs", "devHubs"],
       "additionalProperties": false
     },
     "ExtendedAuthFields": {
