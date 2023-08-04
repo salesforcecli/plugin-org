@@ -16,6 +16,9 @@ import { ExtendedAuthFields, FullyPopulatedScratchOrgFields } from '../../shared
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'list');
 
+const defaultOrgEmoji = '🍁';
+const defaultHubEmoji = '🌳';
+
 export type OrgListResult = {
   /**
    * @deprecated
@@ -94,11 +97,18 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
       devHubs: result.devHubs,
       regularOrgs: result.regularOrgs,
       sandboxes: result.sandboxes,
+      scratchOrgs: result.scratchOrgs,
       skipconnectionstatus: flags['skip-connection-status'],
     });
-    this.printScratchOrgTable(result.scratchOrgs);
+    // this.printScratchOrgTable(result.scratchOrgs);
 
-    this.info('Legend:  (D)=Default DevHub, (U)=Default Org');
+    this.log(
+      `
+Legend:  ${defaultHubEmoji}=Default DevHub, ${defaultOrgEmoji}=Default Org ${
+        this.flags.all ? '   Use --all to see expired and deleted scratch orgs' : ''
+      }`
+    );
+
     return result;
   }
 
@@ -133,6 +143,7 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
 
   protected printOrgTable({
     devHubs,
+    scratchOrgs,
     regularOrgs,
     sandboxes,
     skipconnectionstatus,
@@ -140,36 +151,40 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
     devHubs: ExtendedAuthFields[];
     regularOrgs: ExtendedAuthFields[];
     sandboxes: ExtendedAuthFields[];
+    scratchOrgs: FullyPopulatedScratchOrgFields[];
     skipconnectionstatus: boolean;
   }): void {
     if (!devHubs.length && !regularOrgs.length && !sandboxes.length) {
       this.info(messages.getMessage('noResultsFound'));
       return;
     }
-    this.log();
-    this.info('Non-scratch orgs');
-    const nonScratchOrgs = [
+    const allOrgs: Array<FullyPopulatedScratchOrgFields | ExtendedAuthFieldsWithType> = [
       ...devHubs
         .map(addType('DevHub'))
         .map(colorEveryFieldButConnectedStatus(chalk.cyanBright))
-        .map((row) => getStyledObject(row)),
+        .map((row) => getStyledObject(row))
+        .map(statusToEmoji),
 
-      ...regularOrgs.map(colorEveryFieldButConnectedStatus(chalk.magentaBright)).map((row) => getStyledObject(row)),
+      ...regularOrgs
+        .map(colorEveryFieldButConnectedStatus(chalk.magentaBright))
+        .map((row) => getStyledObject(row))
+        .map(statusToEmoji),
 
       ...sandboxes
         .map(addType('Sandbox'))
         .map(colorEveryFieldButConnectedStatus(chalk.yellowBright))
-        .map((row) => getStyledObject(row)),
+        .map((row) => getStyledObject(row))
+        .map(statusToEmoji),
+
+      ...scratchOrgs
+        .map((row) => ({ ...row, type: 'Scratch' }))
+        .map(convertScratchOrgStatus)
+        .map((row) => getStyledObject(row))
+        .map(statusToEmoji),
     ];
 
     this.table(
-      nonScratchOrgs.map((org) =>
-        Object.fromEntries(
-          Object.entries(org).filter(([key]) =>
-            ['type', 'defaultMarker', 'alias', 'username', 'orgId', 'connectedStatus'].includes(key)
-          )
-        )
-      ),
+      allOrgs.map((org) => Object.fromEntries(Object.entries(org).filter(fieldFilter))),
       {
         defaultMarker: {
           header: '',
@@ -183,44 +198,19 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
         username: { header: 'Username' },
         orgId: { header: 'Org ID' },
         ...(!skipconnectionstatus ? { connectedStatus: { header: 'Status' } } : {}),
-      }
-    );
-
-    this.log();
-  }
-
-  private printScratchOrgTable(scratchOrgs: FullyPopulatedScratchOrgFields[]): void {
-    if (scratchOrgs.length === 0) {
-      this.info(messages.getMessage('noActiveScratchOrgs'));
-    } else {
-      this.info(this.flags.all ? 'Scratch Orgs' : 'Active Scratch Orgs (use --all to see all)');
-
-      // One or more rows are available.
-      // we only need a few of the props for our table.  Oclif table doesn't like extra props non-string props.
-      const rows = scratchOrgs
-        .map(getStyledObject)
-        .map((org) => Object.fromEntries(Object.entries(org).filter(scratchOrgFieldFilter)));
-      this.table(rows, {
-        defaultMarker: {
-          header: '',
-        },
-        alias: {
-          header: 'Alias',
-        },
-        username: { header: 'Username' },
-        orgId: { header: 'Org ID' },
-        ...(this.flags.all || this.flags.verbose ? { status: { header: 'Status' } } : {}),
         ...(this.flags.verbose
           ? {
-              devHubOrgId: { header: 'Dev Hub ID' },
               instanceUrl: { header: 'Instance URL' },
-              createdDate: { header: 'Created', get: (data): string => data.createdDate?.split('T')[0] ?? '' },
+              devHubOrgId: { header: 'Dev Hub ID' },
+              createdDate: {
+                header: 'Created',
+                get: (data): string => (data.createdDate as string)?.split('T')?.[0] ?? '',
+              },
             }
           : {}),
         expirationDate: { header: 'Expires' },
-      });
-    }
-    this.log();
+      }
+    );
   }
 }
 
@@ -228,6 +218,12 @@ const decorateWithDefaultStatus = <T extends ExtendedAuthFields | FullyPopulated
   ...val,
   ...(val.isDefaultDevHubUsername ? { defaultMarker: '(D)' } : {}),
   ...(val.isDefaultUsername ? { defaultMarker: '(U)' } : {}),
+  ...(val.isDefaultDevHubUsername && val.isDefaultUsername ? { defaultMarker: '(D),(U)' } : {}),
+});
+
+const statusToEmoji = <T extends ExtendedAuthFields | FullyPopulatedScratchOrgFields>(val: T): T => ({
+  ...val,
+  defaultMarker: val.defaultMarker?.replace('(D)', defaultHubEmoji)?.replace('(U)', defaultOrgEmoji),
 });
 
 // sort by alias then username
@@ -251,6 +247,7 @@ const getAuthFileNames = async (): Promise<string[]> => {
 };
 
 type ExtendedAuthFieldsWithType = ExtendedAuthFields & { type?: string };
+
 const addType =
   (type: string) =>
   (val: ExtendedAuthFields): ExtendedAuthFieldsWithType => ({ ...val, type });
@@ -266,15 +263,23 @@ const colorEveryFieldButConnectedStatus =
       // TS is not smart enough to know this didn't change any types
     ) as ExtendedAuthFieldsWithType;
 
-const scratchOrgFieldFilter = ([key]: [string, string]): boolean =>
+const fieldFilter = ([key]: [string, string]): boolean =>
   [
     'defaultMarker',
     'alias',
     'username',
     'orgId',
     'status',
+    'connectedStatus',
     'expirationDate',
     'devHubOrgId',
     'createdDate',
     'instanceUrl',
+    'type',
+    'createdDate',
   ].includes(key);
+
+const convertScratchOrgStatus = (
+  row: FullyPopulatedScratchOrgFields
+): FullyPopulatedScratchOrgFields & { connectedStatus: string } =>
+  ({ ...row, connectedStatus: row.status } as FullyPopulatedScratchOrgFields & { connectedStatus: string });

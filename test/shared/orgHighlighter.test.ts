@@ -6,6 +6,7 @@
  */
 import { expect } from 'chai';
 import * as chalk from 'chalk';
+import { ExtendedAuthFields } from '../../src/shared/orgTypes';
 import { getStyledObject, getStyledValue } from '../../src/shared/orgHighlighter';
 
 describe('highlights value from key-value pair', () => {
@@ -26,7 +27,8 @@ describe('highlights object with green, red, and non-colored', () => {
       status: 'Active',
       otherProp: 'foo',
       connectedStatus: 'Not found',
-    };
+      // I know it's not, but it's a test
+    } as unknown as ExtendedAuthFields;
     expect(getStyledObject(object)).to.deep.equal({
       status: chalk.green('Active'),
       otherProp: 'foo',

@@ -19,6 +19,7 @@ const styledProperties = new Map<string, Map<string, chalk.Chalk>>([
     'connectedStatus',
     new Map([
       ['Connected', chalk.green],
+      ['Active', chalk.green],
       ['else', chalk.red],
     ]),
   ],
@@ -34,11 +35,10 @@ export const getStyledValue = (key: string, value: string): string => {
   return chalkMethod(value);
 };
 
-export const getStyledObject = (
-  objectToStyle: ExtendedAuthFields | FullyPopulatedScratchOrgFields | Record<string, string>
-): Record<string, string> => {
-  const clonedObject = { ...objectToStyle };
-  return Object.fromEntries(
-    Object.entries(clonedObject).map(([key, value]) => [key, getStyledValue(key, value as string)])
-  );
-};
+export const getStyledObject = <T extends ExtendedAuthFields | FullyPopulatedScratchOrgFields>(objectToStyle: T): T =>
+  Object.fromEntries(
+    Object.entries(objectToStyle).map(([key, value]) => [
+      key,
+      typeof value === 'string' ? getStyledValue(key, value) : value,
+    ])
+  ) as T;
