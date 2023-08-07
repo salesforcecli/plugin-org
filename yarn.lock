@@ -1022,21 +1022,21 @@
     handlebars "^4.7.8"
     tslib "^2"
 
-"@salesforce/plugin-source@^2.10.25":
-  version "2.10.25"
-  resolved "https://registry.yarnpkg.com/@salesforce/plugin-source/-/plugin-source-2.10.25.tgz#4a10566c799c742b7425b857689b79632a30fc86"
-  integrity sha512-5/VwZrjsayHG3BteH6jeNQnW9+i5l1OZf07L27ecB43sT0caJMsQRYp0JJpvHiEfB47X6OEqbFfFuaTsCM2ESg==
+"@salesforce/plugin-source@^2.10.28":
+  version "2.10.28"
+  resolved "https://registry.yarnpkg.com/@salesforce/plugin-source/-/plugin-source-2.10.28.tgz#96cd45d6a519b2d06cbb7756f48b4df82934e71b"
+  integrity sha512-aVOfiCfxj/PgLMv4R12iK5peKGpsU1rNadkC7/ubPmaPhYLQAYVgrWwrYrrtNqJlRCAVp0m7q2edILo/iv8Gow==
   dependencies:
     "@oclif/core" "^2.8.10"
     "@salesforce/apex-node" "^1.6.2"
     "@salesforce/core" "^4.3.2"
     "@salesforce/kit" "^3.0.2"
     "@salesforce/sf-plugins-core" "^3.0.2"
-    "@salesforce/source-deploy-retrieve" "^9.2.2"
+    "@salesforce/source-deploy-retrieve" "^9.6.0"
     "@salesforce/source-tracking" "^4.2.5"
     chalk "^4.1.2"
     got "^11.8.6"
-    proxy-agent "^6.2.1"
+    proxy-agent "^6.3.0"
     tslib "^2"
 
 "@salesforce/prettier-config@^0.0.3":
@@ -1061,7 +1061,7 @@
     chalk "^4"
     inquirer "^8.2.5"
 
-"@salesforce/source-deploy-retrieve@^9.2.2", "@salesforce/source-deploy-retrieve@^9.3.2", "@salesforce/source-deploy-retrieve@^9.7.2":
+"@salesforce/source-deploy-retrieve@^9.3.2", "@salesforce/source-deploy-retrieve@^9.6.0", "@salesforce/source-deploy-retrieve@^9.7.2":
   version "9.7.2"
   resolved "https://registry.yarnpkg.com/@salesforce/source-deploy-retrieve/-/source-deploy-retrieve-9.7.2.tgz#b04b946ea226b21971f4cb94337ab6d8c2cd8b9f"
   integrity sha512-RJUSjeNgIpijT0BFEEnEsbOCbkWo7AJaWIN5IHyTzBlExNnTfnze3zq5hOvhuzu2UDWgD4LdQsovnhk8i0i75A==
@@ -6241,7 +6241,7 @@ proper-lockfile@^4.1.2:
     retry "^0.12.0"
     signal-exit "^3.0.2"
 
-proxy-agent@^6.2.1, proxy-agent@^6.3.0:
+proxy-agent@^6.3.0:
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/proxy-agent/-/proxy-agent-6.3.0.tgz#72f7bb20eb06049db79f7f86c49342c34f9ba08d"
   integrity sha512-0LdR757eTj/JfuU7TL2YCuAZnxWXu3tkJbg4Oq3geW/qFNT/32T0sp2HnZ9O0lMR4q3vwAt0+xCA8SR0WAD0og==
