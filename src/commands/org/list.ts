@@ -100,7 +100,6 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
       scratchOrgs: result.scratchOrgs,
       skipconnectionstatus: flags['skip-connection-status'],
     });
-    // this.printScratchOrgTable(result.scratchOrgs);
 
     this.log(
       `
@@ -226,11 +225,12 @@ const statusToEmoji = <T extends ExtendedAuthFields | FullyPopulatedScratchOrgFi
   defaultMarker: val.defaultMarker?.replace('(D)', defaultHubEmoji)?.replace('(U)', defaultOrgEmoji),
 });
 
+const EMPTIES_LAST = 'zzzzzzzzzz';
+
 // sort by alias then username
 const comparator = <T extends ExtendedAuthFields | FullyPopulatedScratchOrgFields>(a: T, b: T): number => {
-  const emptiesLast = Array(10).fill('z').join('');
-  const aliasCompareResult = (a.alias ?? emptiesLast).localeCompare(b.alias ?? emptiesLast);
-  return aliasCompareResult !== 0 ? aliasCompareResult : (a.username ?? emptiesLast).localeCompare(b.username);
+  const aliasCompareResult = (a.alias ?? EMPTIES_LAST).localeCompare(b.alias ?? EMPTIES_LAST);
+  return aliasCompareResult !== 0 ? aliasCompareResult : (a.username ?? EMPTIES_LAST).localeCompare(b.username);
 };
 
 const getAuthFileNames = async (): Promise<string[]> => {
