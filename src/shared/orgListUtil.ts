@@ -38,7 +38,7 @@ type OrgGroups = {
 type OrgGroupsFullyPopulated = {
   nonScratchOrgs: ExtendedAuthFields[];
   scratchOrgs: FullyPopulatedScratchOrgFields[];
-  regularOrgs: ExtendedAuthFields[];
+  other: ExtendedAuthFields[];
   sandboxes: ExtendedAuthFields[];
   devHubs: ExtendedAuthFields[];
 };
@@ -97,7 +97,7 @@ export class OrgListUtil {
       nonScratchOrgs,
       scratchOrgs,
       sandboxes: nonScratchOrgs.filter(sandboxFilter),
-      regularOrgs: nonScratchOrgs.filter(regularOrgFilter),
+      other: nonScratchOrgs.filter(regularOrgFilter),
       devHubs: nonScratchOrgs.filter(devHubFilter),
     };
   }

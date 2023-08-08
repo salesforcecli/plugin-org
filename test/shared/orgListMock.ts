@@ -104,7 +104,7 @@ class OrgListMock {
       },
     ],
     sandboxes: [],
-    regularOrgs: [],
+    other: [],
   };
 
   public static get devHubUsername(): string {

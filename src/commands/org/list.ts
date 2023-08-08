@@ -26,7 +26,7 @@ export type OrgListResult = {
   nonScratchOrgs: ExtendedAuthFields[];
   scratchOrgs: FullyPopulatedScratchOrgFields[];
   sandboxes: ExtendedAuthFields[];
-  regularOrgs: ExtendedAuthFields[];
+  other: ExtendedAuthFields[];
   devHubs: ExtendedAuthFields[];
 };
 
@@ -68,7 +68,7 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
     const metaConfigs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
     const groupedSortedOrgs = {
       devHubs: metaConfigs.devHubs.map(decorateWithDefaultStatus).sort(comparator),
-      regularOrgs: metaConfigs.regularOrgs.map(decorateWithDefaultStatus).sort(comparator),
+      other: metaConfigs.other.map(decorateWithDefaultStatus).sort(comparator),
       sandboxes: metaConfigs.sandboxes.map(decorateWithDefaultStatus).sort(comparator),
       nonScratchOrgs: metaConfigs.nonScratchOrgs.map(decorateWithDefaultStatus).sort(comparator),
       scratchOrgs: metaConfigs.scratchOrgs.map(decorateWithDefaultStatus).sort(comparator),
@@ -84,7 +84,7 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
     }
 
     const result = {
-      regularOrgs: groupedSortedOrgs.regularOrgs,
+      other: groupedSortedOrgs.other,
       sandboxes: groupedSortedOrgs.sandboxes,
       nonScratchOrgs: groupedSortedOrgs.nonScratchOrgs,
       devHubs: groupedSortedOrgs.devHubs,
@@ -95,7 +95,7 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
 
     this.printOrgTable({
       devHubs: result.devHubs,
-      regularOrgs: result.regularOrgs,
+      other: result.other,
       sandboxes: result.sandboxes,
       scratchOrgs: result.scratchOrgs,
       skipconnectionstatus: flags['skip-connection-status'],
@@ -143,17 +143,17 @@ Legend:  ${defaultHubEmoji}=Default DevHub, ${defaultOrgEmoji}=Default Org ${
   protected printOrgTable({
     devHubs,
     scratchOrgs,
-    regularOrgs,
+    other,
     sandboxes,
     skipconnectionstatus,
   }: {
     devHubs: ExtendedAuthFields[];
-    regularOrgs: ExtendedAuthFields[];
+    other: ExtendedAuthFields[];
     sandboxes: ExtendedAuthFields[];
     scratchOrgs: FullyPopulatedScratchOrgFields[];
     skipconnectionstatus: boolean;
   }): void {
-    if (!devHubs.length && !regularOrgs.length && !sandboxes.length) {
+    if (!devHubs.length && !other.length && !sandboxes.length) {
       this.info(messages.getMessage('noResultsFound'));
       return;
     }
@@ -164,7 +164,7 @@ Legend:  ${defaultHubEmoji}=Default DevHub, ${defaultOrgEmoji}=Default Org ${
         .map((row) => getStyledObject(row))
         .map(statusToEmoji),
 
-      ...regularOrgs
+      ...other
         .map(colorEveryFieldButConnectedStatus(chalk.magentaBright))
         .map((row) => getStyledObject(row))
         .map(statusToEmoji),
