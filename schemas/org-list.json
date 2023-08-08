@@ -24,7 +24,7 @@
             "$ref": "#/definitions/ExtendedAuthFields"
           }
         },
-        "regularOrgs": {
+        "other": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/ExtendedAuthFields"
@@ -37,7 +37,7 @@
           }
         }
       },
-      "required": ["nonScratchOrgs", "scratchOrgs", "sandboxes", "regularOrgs", "devHubs"],
+      "required": ["nonScratchOrgs", "scratchOrgs", "sandboxes", "other", "devHubs"],
       "additionalProperties": false
     },
     "ExtendedAuthFields": {
