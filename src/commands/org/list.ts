@@ -101,10 +101,10 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
       skipconnectionstatus: flags['skip-connection-status'],
     });
 
-    this.log(
+    this.info(
       `
 Legend:  ${defaultHubEmoji}=Default DevHub, ${defaultOrgEmoji}=Default Org ${
-        this.flags.all ? '   Use --all to see expired and deleted scratch orgs' : ''
+        flags.all ? '' : '     Use --all to see expired and deleted scratch orgs'
       }`
     );
 
