@@ -96,6 +96,15 @@ class OrgListMock {
         connectedStatus: 'Connected',
       },
     ],
+    devHubs: [
+      {
+        username: 'foo@example.com',
+        isDevHub: true,
+        connectedStatus: 'Connected',
+      },
+    ],
+    sandboxes: [],
+    other: [],
   };
 
   public static get devHubUsername(): string {
