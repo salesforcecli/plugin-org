@@ -8,15 +8,15 @@
 import * as path from 'path';
 import {
   Flags,
-  SfCommand,
-  requiredOrgFlagWithDeprecations,
-  orgApiVersionFlagWithDeprecations,
   loglevel,
+  orgApiVersionFlagWithDeprecations,
+  requiredOrgFlagWithDeprecations,
+  SfCommand,
 } from '@salesforce/sf-plugins-core';
 import { Connection, Logger, Messages, Org, SfdcUrl, SfError } from '@salesforce/core';
 import { Duration, Env } from '@salesforce/kit';
-import open = require('open');
 import { MetadataResolver } from '@salesforce/source-deploy-retrieve';
+import open = require('open');
 import { openUrl } from '../../shared/utils';
 
 Messages.importMessagesDirectory(__dirname);
