@@ -16,8 +16,8 @@ import { ExtendedAuthFields, FullyPopulatedScratchOrgFields } from '../../shared
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'list');
 
-const defaultOrgEmoji = '🍁';
-const defaultHubEmoji = '🌳';
+export const defaultOrgEmoji = '🍁';
+export const defaultHubEmoji = '🌳';
 
 export type OrgListResult = {
   /**

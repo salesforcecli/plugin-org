@@ -11,7 +11,7 @@ import { expect, config, assert } from 'chai';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { execCmd } from '@salesforce/cli-plugins-testkit';
 import { getString } from '@salesforce/ts-types';
-import { OrgListResult } from '../../src/commands/org/list';
+import { OrgListResult, defaultHubEmoji, defaultOrgEmoji } from '../../src/commands/org/list';
 import { OrgOpenOutput } from '../../src/commands/org/open';
 import { OrgDisplayReturn } from '../../src/shared/orgTypes';
 
@@ -27,11 +27,11 @@ const verifyHumanResults = (
   expect(lines.length).to.have.greaterThan(0);
   const devHubLine = lines.find((line) => line.includes(hubOrgUsername));
   assert(devHubLine);
-  expect(devHubLine).to.include('(D)');
+  expect(devHubLine).to.include(defaultHubEmoji);
   expect(devHubLine).to.include('Connected');
   const defaultUserLine = lines.find((line) => line.includes(defaultUsername));
   assert(defaultUserLine);
-  expect(defaultUserLine).to.include('(U)');
+  expect(defaultUserLine).to.include(defaultOrgEmoji);
   const aliasUserLine = lines.find((line) => line.includes(aliasedUsername));
   assert(aliasUserLine);
   expect(aliasUserLine).to.include('anAlias');
@@ -100,8 +100,8 @@ describe('Org Command NUT', () => {
       expect(listResult.scratchOrgs).to.have.length(2);
       const scratchOrgs = listResult.scratchOrgs;
       expect(scratchOrgs.map((scratchOrg) => getString(scratchOrg, 'username'))).to.deep.equal([
-        defaultUsername,
         aliasedUsername,
+        defaultUsername,
       ]);
       expect(scratchOrgs.find((org) => org.username === defaultUsername)).to.include({
         defaultMarker: '(U)',
@@ -113,6 +113,15 @@ describe('Org Command NUT', () => {
         namespace: null,
       });
       expect(listResult.nonScratchOrgs[0]).to.include(
+        {
+          username: hubOrgUsername,
+          defaultMarker: '(D)',
+          isDevHub: true,
+          connectedStatus: 'Connected',
+        },
+        JSON.stringify(listResult.nonScratchOrgs[0])
+      );
+      expect(listResult.devHubs[0]).to.include(
         {
           username: hubOrgUsername,
           defaultMarker: '(D)',
