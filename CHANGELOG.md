@@ -1,3 +1,22 @@
+# [2.10.0](https://github.com/salesforcecli/plugin-org/compare/2.9.30...2.10.0) (2023-08-09)
+
+
+### Features
+
+* color coding ([5835857](https://github.com/salesforcecli/plugin-org/commit/58358574fe8c008acc28db5d56763fd54e7e39a0))
+* more tables by org type ([2b81062](https://github.com/salesforcecli/plugin-org/commit/2b810625e7a4aec5a2993977f57641ec353665f3))
+* pretty org list table ([ec974b8](https://github.com/salesforcecli/plugin-org/commit/ec974b8578b1786397a8c5c198dea0fdcd5a3923))
+
+
+
+## [2.9.30](https://github.com/salesforcecli/plugin-org/compare/2.9.29...2.9.30) (2023-08-07)
+
+
+
+## [2.9.29](https://github.com/salesforcecli/plugin-org/compare/2.9.28...2.9.29) (2023-08-07)
+
+
+
 ## [2.9.28](https://github.com/salesforcecli/plugin-org/compare/2.9.27...2.9.28) (2023-07-30)
 
 
