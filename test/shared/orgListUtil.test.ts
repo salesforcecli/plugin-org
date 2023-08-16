@@ -153,6 +153,15 @@ describe('orgListUtil tests', () => {
       expect(determineConnectedStatusForNonScratchOrg.called).to.be.false;
     });
 
+    it('skipconnectionstatus with default', async () => {
+      const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames);
+      expect(orgs.nonScratchOrgs.every((org) => org.connectedStatus !== undefined)).to.be.true;
+      expect(orgs.other.every((org) => org.connectedStatus !== undefined)).to.be.true;
+      expect(orgs.sandboxes.every((org) => org.connectedStatus !== undefined)).to.be.true;
+
+      expect(determineConnectedStatusForNonScratchOrg.called).to.be.true;
+    });
+
     it('should omit sensitive information and catergorise active and non-active scracth orgs', async () => {
       const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, false);
 
