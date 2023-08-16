@@ -18,7 +18,7 @@ import {
   ConfigAggregator,
   OrgConfigProperties,
 } from '@salesforce/core';
-import { Dictionary, isObject } from '@salesforce/ts-types';
+import { isObject } from '@salesforce/ts-types';
 import { Record } from 'jsforce';
 import { omit } from '@salesforce/kit/lib';
 import { getAliasByUsername } from './utils';
@@ -69,7 +69,7 @@ export class OrgListUtil {
    */
   public static async readLocallyValidatedMetaConfigsGroupedByOrgType(
     userFilenames: string[],
-    flags: Dictionary<string | boolean>
+    skipConnection = false
   ): Promise<OrgGroupsFullyPopulated> {
     const contents: AuthInfo[] = await OrgListUtil.readAuthFiles(userFilenames);
     const orgs = await OrgListUtil.groupOrgs(contents);
@@ -78,7 +78,7 @@ export class OrgListUtil {
     const [nonScratchOrgs, scratchOrgs] = await Promise.all([
       Promise.all(
         orgs.nonScratchOrgs.map(async (fields) => {
-          if (!flags.skipconnectionstatus && fields.username) {
+          if (!skipConnection && fields.username) {
             // skip completely if we're skipping the connection
             fields.connectedStatus = await OrgListUtil.determineConnectedStatusForNonScratchOrg(fields.username);
             if (!fields.isDevHub && fields.connectedStatus === 'Connected') {

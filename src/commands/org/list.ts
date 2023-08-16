@@ -65,7 +65,10 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
   public async run(): Promise<OrgListResult> {
     const [{ flags }, fileNames] = await Promise.all([this.parse(OrgListCommand), getAuthFileNames()]);
     this.flags = flags;
-    const metaConfigs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
+    const metaConfigs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(
+      fileNames,
+      flags['skip-connection-status']
+    );
     const groupedSortedOrgs = {
       devHubs: metaConfigs.devHubs.map(decorateWithDefaultStatus).sort(comparator),
       other: metaConfigs.other.map(decorateWithDefaultStatus).sort(comparator),

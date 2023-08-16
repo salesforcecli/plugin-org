@@ -128,8 +128,7 @@ describe('orgListUtil tests', () => {
     });
 
     it('readLocallyValidatedMetaConfigsGroupedByOrgType', async () => {
-      const flags = {};
-      const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
+      const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, false);
       expect(orgs.nonScratchOrgs.every((nonScratchOrg) => nonScratchOrg.connectedStatus !== undefined)).to.be.true;
       expect(orgs.scratchOrgs.length).to.equal(2);
       expect(orgs.scratchOrgs[0]).to.haveOwnProperty('username').to.equal('gaz@foo.org');
@@ -143,8 +142,7 @@ describe('orgListUtil tests', () => {
     });
 
     it('skipconnectionstatus', async () => {
-      const flags = { skipconnectionstatus: true };
-      const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
+      const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, true);
 
       // we didn't check the status, so the hub is still not known to be a devhub
       expect(orgs.nonScratchOrgs[0].isDevHub).to.be.false;
@@ -156,8 +154,7 @@ describe('orgListUtil tests', () => {
     });
 
     it('should omit sensitive information and catergorise active and non-active scracth orgs', async () => {
-      const flags = {};
-      const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
+      const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, false);
 
       expect(orgs.scratchOrgs[0]).to.not.haveOwnProperty('clientSecret');
       expect(orgs.scratchOrgs[1]).to.not.haveOwnProperty('clientSecret');
@@ -166,15 +163,13 @@ describe('orgListUtil tests', () => {
     });
 
     it('should execute queries to check for org information if --verbose is used', async () => {
-      const flags = { verbose: true };
-      await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
+      await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, true);
       expect(retrieveScratchOrgInfoFromDevHubStub.calledOnce).to.be.true;
       expect(spies.get('reduceScratchOrgInfo').calledOnce).to.be.true;
     });
 
     it('execute queries should add information to grouped orgs', async () => {
-      const flags = { verbose: true };
-      const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
+      const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, true);
       expect(retrieveScratchOrgInfoFromDevHubStub.calledOnce).to.be.true;
       expect(spies.get('reduceScratchOrgInfo').calledOnce).to.be.true;
       expect(orgGroups.scratchOrgs[0].signupUsername).to.equal(orgAuthConfigFields.username);
@@ -198,7 +193,7 @@ describe('orgListUtil tests', () => {
       stubMethod(sandbox, Org.prototype, 'getUsername').returns(devHubConfigFields.username);
       stubMethod(sandbox, Org.prototype, 'refreshAuth').rejects({ message: 'bad auth' });
 
-      const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, {});
+      const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, false);
       expect(orgGroups.nonScratchOrgs).to.have.length(1);
       expect(orgGroups.nonScratchOrgs[0].connectedStatus).to.equal('bad auth');
       expect(checkNonScratchOrgIsDevHub.called).to.be.false;
@@ -208,7 +203,7 @@ describe('orgListUtil tests', () => {
       determineConnectedStatusForNonScratchOrg.restore();
       stubMethod(sandbox, Org, 'create').rejects({ message: 'bad file' });
 
-      const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, {});
+      const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, false);
       expect(orgGroups.nonScratchOrgs).to.have.length(1);
       expect(orgGroups.nonScratchOrgs[0].connectedStatus).to.equal('bad file');
       expect(checkNonScratchOrgIsDevHub.called).to.be.false;
