@@ -1,3 +1,12 @@
+## [2.10.1](https://github.com/salesforcecli/plugin-org/compare/2.10.0...2.10.1) (2023-08-17)
+
+
+### Bug Fixes
+
+* skip-connection-status flag works ([817cd5b](https://github.com/salesforcecli/plugin-org/commit/817cd5b20f078f8b71393ec97208b41f2a0974ac))
+
+
+
 # [2.10.0](https://github.com/salesforcecli/plugin-org/compare/2.9.30...2.10.0) (2023-08-09)
 
 
