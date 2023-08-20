@@ -1022,17 +1022,17 @@
     handlebars "^4.7.8"
     tslib "^2"
 
-"@salesforce/plugin-source@^2.10.31":
-  version "2.10.31"
-  resolved "https://registry.yarnpkg.com/@salesforce/plugin-source/-/plugin-source-2.10.31.tgz#b59f7647a8540fe88aba447ff3351e3c0a66d1ff"
-  integrity sha512-tLolL2PRac4hidc9wE1mf1Ut4WsEMrCx2QgE48fbF8YH2mjobZvo840yUEVxRScSlCK65H6L2lrInQytS2i3Yw==
+"@salesforce/plugin-source@^2.10.32":
+  version "2.10.32"
+  resolved "https://registry.yarnpkg.com/@salesforce/plugin-source/-/plugin-source-2.10.32.tgz#b5219d72a36129dbf6401a06cd5597956a073a73"
+  integrity sha512-gQh8cxskOnTVfNLMc6hK5dGz5Nh5aTIok8k3wDi2qaEvBis+4J8Dexii3uXH0u45X9PAKRW/8mWLXAQ1qppxjQ==
   dependencies:
     "@oclif/core" "^2.11.8"
     "@salesforce/apex-node" "^2.1.0"
     "@salesforce/core" "^5.2.0"
     "@salesforce/kit" "^3.0.9"
     "@salesforce/sf-plugins-core" "^3.1.14"
-    "@salesforce/source-deploy-retrieve" "^9.7.2"
+    "@salesforce/source-deploy-retrieve" "^9.7.4"
     "@salesforce/source-tracking" "^4.2.10"
     chalk "^4.1.2"
     got "^11.8.6"
