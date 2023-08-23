@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { Duration } from '@salesforce/kit';
 import { Flags } from '@salesforce/sf-plugins-core';
 import { Lifecycle, Messages, SandboxEvents, SandboxProcessObject, SandboxRequest, SfError } from '@salesforce/core';
 import { Ux } from '@salesforce/sf-plugins-core/lib/ux';
@@ -51,7 +52,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
       description: messages.getMessage('flags.wait.description'),
       min: 1,
       unit: 'minutes',
-      defaultValue: 30,
+      default: Duration.minutes(30),
       helpValue: '<minutes>',
       exclusive: ['async'],
     }),
@@ -60,7 +61,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
       summary: messages.getMessage('flags.poll-interval.summary'),
       min: 15,
       unit: 'seconds',
-      defaultValue: 30,
+      default: Duration.seconds(30),
       helpValue: '<seconds>',
       exclusive: ['async'],
     }),
