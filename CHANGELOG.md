@@ -1,3 +1,12 @@
+## [2.10.4](https://github.com/salesforcecli/plugin-org/compare/2.10.3...2.10.4) (2023-08-23)
+
+
+### Bug Fixes
+
+* change default value definition ([#783](https://github.com/salesforcecli/plugin-org/issues/783)) ([3eb89b5](https://github.com/salesforcecli/plugin-org/commit/3eb89b5f87e3ed6e545e7a3b200663df258723cd))
+
+
+
 ## [2.10.3](https://github.com/salesforcecli/plugin-org/compare/2.10.2...2.10.3) (2023-08-20)
 
 
