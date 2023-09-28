@@ -208,6 +208,33 @@ describe('orgListUtil tests', () => {
       expect(checkNonScratchOrgIsDevHub.called).to.be.false;
     });
 
+    it('handles html responses for non-scratch orgs under maintenance', async () => {
+      determineConnectedStatusForNonScratchOrg.restore();
+      stubMethod(sandbox, Org, 'create').returns(Org.prototype);
+      stubMethod(sandbox, Org.prototype, 'getField').returns(undefined);
+      stubMethod(sandbox, Org.prototype, 'getUsername').returns(devHubConfigFields.username);
+      stubMethod(sandbox, Org.prototype, 'refreshAuth').rejects({
+        message: `<html>                                                                                                                                                                                           
+  <body>                                                                                                                                                                                           
+  <center>                                                                                                                                                                                         
+    <table bgcolor="white" cellpadding="0" cellspacing="0" width="758">                                                                                                                              
+      <tbody>                                                                                                                                                                                          
+      <tr>                                                                                                                                                                                             
+        <td><span style="font-family: Verdana; font-size: medium; font-weight: bold;">We are down for maintenance.</span><br><br>Sorry for the inconvenience. We'll be back shortly.</td><br>            
+      </tr>                                                                                                                                                                                            
+      </tbody>                                                                                                                                                                                         
+    </table>                                                                                                                                                                                         
+  </center>                                                                                                                                                                                        
+  </body>                                                                                                                                                                                          
+  </html>`,
+      });
+
+      const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, false);
+      expect(orgGroups.nonScratchOrgs).to.have.length(1);
+      expect(orgGroups.nonScratchOrgs[0].connectedStatus).to.equal('Down (Maintenance)');
+      expect(checkNonScratchOrgIsDevHub.called).to.be.false;
+    });
+
     it('handles auth file problems for non-scratch orgs', async () => {
       determineConnectedStatusForNonScratchOrg.restore();
       stubMethod(sandbox, Org, 'create').rejects({ message: 'bad file' });
