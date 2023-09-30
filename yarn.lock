@@ -953,10 +953,10 @@
     typescript "^4.9.5"
     wireit "^0.9.5"
 
-"@salesforce/kit@^3.0.11", "@salesforce/kit@^3.0.9":
-  version "3.0.11"
-  resolved "https://registry.yarnpkg.com/@salesforce/kit/-/kit-3.0.11.tgz#d03160b658da9817c05e62479ca18283087a0fc0"
-  integrity sha512-ar44uFJfc/RCDWjz7LlrOtFCFHgNNUpddxe0eJCLqQuR/Xs3IlLZKuovWTx322Rzu+V9IIKrIdpz2IqA95/ClA==
+"@salesforce/kit@^3.0.11", "@salesforce/kit@^3.0.12", "@salesforce/kit@^3.0.9":
+  version "3.0.12"
+  resolved "https://registry.yarnpkg.com/@salesforce/kit/-/kit-3.0.12.tgz#8d598813fd3dce9545951186cfa579bafaac374a"
+  integrity sha512-+2bjUaIbS1/XrYBYxpS5zKyQER8dgVakIL6X/MxZVZFJaLHithkLXvrUKYd5tZEaijxBZq1ooIkGm2yCLrg8Ew==
   dependencies:
     "@salesforce/ts-types" "^2.0.7"
     tslib "^2.6.2"
@@ -975,15 +975,15 @@
     handlebars "^4.7.8"
     tslib "^2"
 
-"@salesforce/plugin-source@^2.10.36":
-  version "2.10.36"
-  resolved "https://registry.yarnpkg.com/@salesforce/plugin-source/-/plugin-source-2.10.36.tgz#16e85f2c2530915303c9a40cefc99ad621917d56"
-  integrity sha512-zX/BPSQceFDlokaMqtUM+Tb/xLlG3FE5U1p9XQbqcXn+T51UM1u6OFcRAuBzueFprnXpzrOdSn9kt5mIOdGamQ==
+"@salesforce/plugin-source@^2.10.38":
+  version "2.10.38"
+  resolved "https://registry.yarnpkg.com/@salesforce/plugin-source/-/plugin-source-2.10.38.tgz#24068b756f482d7c832237fd1e464d611a458f05"
+  integrity sha512-7uBJwu5HscmyGBQTQreCS073TwJg5GAcfFgSsIizjmOCyvPQZg41HOpO0JiH4SQLkgixXawkLCR5N7tRuGMyiA==
   dependencies:
     "@oclif/core" "^2.15.0"
     "@salesforce/apex-node" "^2.1.0"
     "@salesforce/core" "^5.2.0"
-    "@salesforce/kit" "^3.0.9"
+    "@salesforce/kit" "^3.0.12"
     "@salesforce/sf-plugins-core" "^3.1.23"
     "@salesforce/source-deploy-retrieve" "^9.7.4"
     "@salesforce/source-tracking" "^4.2.10"
