@@ -885,12 +885,12 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.7.1"
 
-"@salesforce/core@^5.2.0", "@salesforce/core@^5.2.10", "@salesforce/core@^5.2.7", "@salesforce/core@^5.2.9":
-  version "5.2.10"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-5.2.10.tgz#7f4824ddcef108b6ccec24434260c620de39012e"
-  integrity sha512-Xj1QRajmHWgl0ahivjKFGKJlGXwe9yFOZ3PwF91qEupGbO74XrCJ8OUM7EVlk53LKy9LlPZQFuy2ATX9MyEDKA==
+"@salesforce/core@^5.2.0", "@salesforce/core@^5.2.10", "@salesforce/core@^5.2.7", "@salesforce/core@^5.2.9", "@salesforce/core@^5.3.1":
+  version "5.3.2"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-5.3.2.tgz#7c930bd1f2d69980b458bff1323379daf26f0a8f"
+  integrity sha512-PhaboMJkitqJsKrp+VfAHEp9/q57/n9zqKDdO7ML2qHb6oiRgxhyBWC9N02sOxPiFKreiKKSbR1tnsk40T+oAw==
   dependencies:
-    "@salesforce/kit" "^3.0.11"
+    "@salesforce/kit" "^3.0.12"
     "@salesforce/schemas" "^1.6.0"
     "@salesforce/ts-types" "^2.0.7"
     "@types/semver" "^7.5.2"
@@ -961,15 +961,15 @@
     "@salesforce/ts-types" "^2.0.7"
     tslib "^2.6.2"
 
-"@salesforce/plugin-command-reference@^3.0.34":
-  version "3.0.34"
-  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.0.34.tgz#1277adef4d66a28f62fc560fa2fc7315c6c1d7ee"
-  integrity sha512-WaJZxFG2zQ2uB6B7lMn8qSgDp0Hd2fzIAKlPSeWb7qd386bH9rfDxCFhflirDep3Eo+J5DyKv6s6HVLDqibq6A==
+"@salesforce/plugin-command-reference@^3.0.37":
+  version "3.0.37"
+  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.0.37.tgz#e2eb0993eca120b9f3f9c7b6a0278c6361036c29"
+  integrity sha512-qcdwfcEJJe8mAzrM3wt7J1Zi8gGqQ1NhTYKwlaHVVlq/dOPZz+l1Fv1AJ/6zwFCp3i5UATPGFZwv27EXDWCsqQ==
   dependencies:
     "@oclif/core" "^2.15.0"
-    "@salesforce/core" "^5.2.10"
+    "@salesforce/core" "^5.3.1"
     "@salesforce/kit" "^3.0.9"
-    "@salesforce/sf-plugins-core" "^3.1.22"
+    "@salesforce/sf-plugins-core" "^3.1.23"
     "@salesforce/ts-types" "^2.0.7"
     chalk "^4"
     handlebars "^4.7.8"
