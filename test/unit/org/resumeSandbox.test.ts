@@ -79,7 +79,6 @@ describe('[org resume sandbox]', () => {
     });
     stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
     stubMethod(sandbox, Org.prototype, 'getUsername').returns(prodOrgUsername);
-    const sbxCreateNotComplete = new SfError('sbx create not complete', 'sandboxCreateNotComplete');
     const inProgSandboxProcessObj = Object.assign({}, sandboxProcessObj, {
       Status: 'In Progress',
       Id: '0GR4p000000U8EMZZZ',
@@ -91,7 +90,7 @@ describe('[org resume sandbox]', () => {
         inProgSandboxProcessObj,
         sandboxProcessObj,
       ]);
-      throw sbxCreateNotComplete;
+      throw new SfError('sbx create not complete', 'sandboxCreateNotComplete');
     });
 
     try {
