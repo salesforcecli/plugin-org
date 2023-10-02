@@ -1,7 +1,7 @@
 {
   "name": "@salesforce/plugin-org",
   "description": "Commands to interact with Salesforce orgs",
-  "version": "2.10.9",
+  "version": "2.10.10",
   "author": "Salesforce",
   "main": "lib/index.js",
   "bugs": "https://github.com/forcedotcom/cli/issues",

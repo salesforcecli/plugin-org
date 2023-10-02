@@ -1,3 +1,9 @@
+## [2.10.10](https://github.com/salesforcecli/plugin-org/compare/2.10.9...2.10.10) (2023-10-02)
+
+### Bug Fixes
+
+- handle html maintenance message ([95eb2e7](https://github.com/salesforcecli/plugin-org/commit/95eb2e7fd13411f55b2e78ef1f27266e4a23b80f))
+
 ## [2.10.9](https://github.com/salesforcecli/plugin-org/compare/2.10.8...2.10.9) (2023-09-28)
 
 ### Bug Fixes
