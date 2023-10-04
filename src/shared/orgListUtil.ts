@@ -329,18 +329,10 @@ export class OrgListUtil {
         await org.refreshAuth();
         return 'Connected';
       } catch (err) {
-        const error = err as SfError;
-        const logger = await OrgListUtil.retrieveLogger();
-        logger.trace(`error refreshing auth for org: ${org.getUsername()}`);
-        logger.trace(error);
-        return (error.code ?? error.message) as string;
+        return authErrorHandler(err, org.getUsername() as string);
       }
     } catch (err) {
-      const error = err as SfError;
-      const logger = await OrgListUtil.retrieveLogger();
-      logger.trace(`error refreshing auth for org: ${username}`);
-      logger.trace(error);
-      return (error.code ?? error.message ?? 'Unknown') as string;
+      return authErrorHandler(err, username);
     }
   }
 }
@@ -377,3 +369,15 @@ const removeRestrictedInfoFromConfig = (
 const sandboxFilter = (org: AuthFieldsFromFS): boolean => Boolean(org.isSandbox);
 const regularOrgFilter = (org: AuthFieldsFromFS): boolean => !org.isSandbox && !org.isDevHub;
 const devHubFilter = (org: AuthFieldsFromFS): boolean => Boolean(org.isDevHub);
+
+const authErrorHandler = async (err: unknown, username: string): Promise<string> => {
+  const error = err as SfError;
+  const logger = await OrgListUtil.retrieveLogger();
+  logger.trace(`error refreshing auth for org: ${username}`);
+  logger.trace(error);
+  // Orgs under maintenace return html as the error message.
+  if (error.message.includes('maintenance')) return 'Down (Maintenance)';
+  // handle other potential html responses
+  if (error.message.includes('<html>')) return 'Bad Response';
+  return (error.code ?? error.message) as string;
+};

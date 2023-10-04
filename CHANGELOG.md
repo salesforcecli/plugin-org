@@ -1,3 +1,15 @@
+## [2.10.10](https://github.com/salesforcecli/plugin-org/compare/2.10.9...2.10.10) (2023-10-02)
+
+### Bug Fixes
+
+- handle html maintenance message ([95eb2e7](https://github.com/salesforcecli/plugin-org/commit/95eb2e7fd13411f55b2e78ef1f27266e4a23b80f))
+
+## [2.10.9](https://github.com/salesforcecli/plugin-org/compare/2.10.8...2.10.9) (2023-09-28)
+
+### Bug Fixes
+
+- **deps:** bump get-func-name from 2.0.0 to 2.0.2 ([827c06b](https://github.com/salesforcecli/plugin-org/commit/827c06b5f61e734eb9b8fabc52462619b91e8681))
+
 ## [2.10.8](https://github.com/salesforcecli/plugin-org/compare/2.10.7...2.10.8) (2023-09-17)
 
 ### Bug Fixes
