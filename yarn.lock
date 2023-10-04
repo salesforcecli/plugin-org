@@ -885,31 +885,7 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.7.1"
 
-"@salesforce/core@^5.2.0", "@salesforce/core@^5.2.10", "@salesforce/core@^5.2.7", "@salesforce/core@^5.2.9", "@salesforce/core@^5.3.1":
-  version "5.3.2"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-5.3.2.tgz#7c930bd1f2d69980b458bff1323379daf26f0a8f"
-  integrity sha512-PhaboMJkitqJsKrp+VfAHEp9/q57/n9zqKDdO7ML2qHb6oiRgxhyBWC9N02sOxPiFKreiKKSbR1tnsk40T+oAw==
-  dependencies:
-    "@salesforce/kit" "^3.0.12"
-    "@salesforce/schemas" "^1.6.0"
-    "@salesforce/ts-types" "^2.0.7"
-    "@types/semver" "^7.5.2"
-    ajv "^8.12.0"
-    change-case "^4.1.2"
-    faye "^1.4.0"
-    form-data "^4.0.0"
-    js2xmlparser "^4.0.1"
-    jsforce "^2.0.0-beta.27"
-    jsonwebtoken "9.0.2"
-    jszip "3.10.1"
-    pino "^8.15.1"
-    pino-abstract-transport "^1.0.0"
-    pino-pretty "^10.2.0"
-    proper-lockfile "^4.1.2"
-    semver "^7.5.4"
-    ts-retry-promise "^0.7.1"
-
-"@salesforce/core@^5.3.4":
+"@salesforce/core@^5.2.0", "@salesforce/core@^5.2.10", "@salesforce/core@^5.2.7", "@salesforce/core@^5.2.9", "@salesforce/core@^5.3.1", "@salesforce/core@^5.3.4":
   version "5.3.4"
   resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-5.3.4.tgz#bbf87238a4a6f31c07c8d01d4913c552fe0d0443"
   integrity sha512-FV5QG0+W/15IaWtaZCxzAZ1K6bonlzkv5v9vuicH2VeEltruGUYYf8Bq7hkoul1xHk3Kl4+9cXx7aGp8Z0kGzQ==
