@@ -152,16 +152,13 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     });
 
     lifecycle.on(SandboxEvents.EVENT_MULTIPLE_SBX_PROCESSES, async (results: SandboxProcessObject[]) => {
-      const resumingProcess = results.shift() as SandboxProcessObject;
-      const sbxProcessIds: string[] = [];
-      const sbxProcessStatuses: string[] = [];
-      results.map((sbxProc) => {
-        sbxProcessIds.push(sbxProc.Id);
-        sbxProcessStatuses.push(sbxProc.Status);
-      });
+      const [resumingProcess, ...otherSbxProcesses] = results;
+      const sbxProcessIds = otherSbxProcesses.map((sbxProcess) => sbxProcess.Id);
+      const sbxProcessStatuses = otherSbxProcesses.map((sbxProcess) => sbxProcess.Status);
+
       this.warn(
         messages.getMessage('warning.MultipleMatchingSandboxProcesses', [
-          results[0].SandboxName,
+          otherSbxProcesses[0].SandboxName,
           sbxProcessIds.toString(),
           sbxProcessStatuses.toString(),
           resumingProcess.Id,
