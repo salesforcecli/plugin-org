@@ -93,7 +93,7 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxProcessObje
       if (latestEntry) {
         const [, sandboxRequestData] = latestEntry;
         if (sandboxRequestData) {
-          return { SandboxName: sandboxRequestData.sandboxProcessObject?.SandboxName };
+          return { SandboxProcessObjId: sandboxRequestData.sandboxProcessObject?.Id };
         }
       }
     }
@@ -130,7 +130,7 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxProcessObje
       (await this.verifyIfAuthExists({
         prodOrg: this.prodOrg,
         sandboxName: this.sandboxRequestData.sandboxProcessObject.SandboxName,
-        jobId: this.flags['job-id'],
+        jobId: this.flags['job-id'] ?? this.sandboxRequestData.sandboxProcessObject.Id,
         lifecycle,
       }))
     ) {
@@ -228,7 +228,7 @@ const getSandboxProcessObject = async (
   sandboxName?: string,
   jobId?: string
 ): Promise<SandboxProcessObject> => {
-  const where = sandboxName ? `SandboxName='${sandboxName}'` : `Id='${jobId}'`;
+  const where = jobId ? `Id='${jobId}'` : `SandboxName='${sandboxName}'`;
   const queryStr = `SELECT Id, Status, SandboxName, SandboxInfoId, LicenseType, CreatedDate, CopyProgress, SandboxOrganization, SourceId, Description, EndDate FROM SandboxProcess WHERE ${where} AND Status != 'D'`;
   try {
     return await prodOrg.getConnection().singleRecordQuery(queryStr, {

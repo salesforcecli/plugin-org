@@ -5,9 +5,6 @@
     "skipLibCheck": true,
     "strictNullChecks": true,
     "baseUrl": "../",
-    "sourceMap": true,
-    "paths": {
-      "@salesforce/kit": ["node_modules/@salesforce/kit"]
-    }
+    "sourceMap": true
   }
 }

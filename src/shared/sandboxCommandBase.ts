@@ -150,6 +150,24 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
       this.updateProgress(results, options.isAsync);
       this.reportResults(results);
     });
+
+    lifecycle.on(SandboxEvents.EVENT_MULTIPLE_SBX_PROCESSES, async (results: SandboxProcessObject[]) => {
+      const [resumingProcess, ...otherSbxProcesses] = results;
+      const sbxProcessIds = otherSbxProcesses.map((sbxProcess) => sbxProcess.Id);
+      const sbxProcessStatuses = otherSbxProcesses.map((sbxProcess) => sbxProcess.Status);
+
+      this.warn(
+        messages.getMessage('warning.MultipleMatchingSandboxProcesses', [
+          otherSbxProcesses[0].SandboxName,
+          sbxProcessIds.toString(),
+          sbxProcessStatuses.toString(),
+          resumingProcess.Id,
+          sbxProcessIds[0],
+          this.prodOrg?.getUsername(),
+        ])
+      );
+      return Promise.resolve();
+    });
   }
 
   protected reportResults(results: ResultEvent): void {
@@ -202,6 +220,20 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
       this.sandboxRequestConfig.set(this.sandboxRequestData.sandboxProcessObject.SandboxName, this.sandboxRequestData);
       this.sandboxRequestConfig.writeSync();
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  protected async finally(_: Error | undefined): Promise<any> {
+    const lifecycle = Lifecycle.getInstance();
+    lifecycle.removeAllListeners('POLLING_TIME_OUT');
+    lifecycle.removeAllListeners(SandboxEvents.EVENT_RESUME);
+    lifecycle.removeAllListeners(SandboxEvents.EVENT_ASYNC_RESULT);
+    lifecycle.removeAllListeners(SandboxEvents.EVENT_STATUS);
+    lifecycle.removeAllListeners(SandboxEvents.EVENT_AUTH);
+    lifecycle.removeAllListeners(SandboxEvents.EVENT_RESULT);
+    lifecycle.removeAllListeners(SandboxEvents.EVENT_MULTIPLE_SBX_PROCESSES);
+
+    return super.finally(_);
   }
 
   private removeSandboxProgressConfig(): void {

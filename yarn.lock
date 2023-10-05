@@ -885,14 +885,14 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.7.1"
 
-"@salesforce/core@^5.2.0", "@salesforce/core@^5.2.10", "@salesforce/core@^5.2.7", "@salesforce/core@^5.2.9", "@salesforce/core@^5.3.1":
-  version "5.3.2"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-5.3.2.tgz#7c930bd1f2d69980b458bff1323379daf26f0a8f"
-  integrity sha512-PhaboMJkitqJsKrp+VfAHEp9/q57/n9zqKDdO7ML2qHb6oiRgxhyBWC9N02sOxPiFKreiKKSbR1tnsk40T+oAw==
+"@salesforce/core@^5.2.0", "@salesforce/core@^5.2.10", "@salesforce/core@^5.2.7", "@salesforce/core@^5.2.9", "@salesforce/core@^5.3.1", "@salesforce/core@^5.3.4":
+  version "5.3.4"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-5.3.4.tgz#bbf87238a4a6f31c07c8d01d4913c552fe0d0443"
+  integrity sha512-FV5QG0+W/15IaWtaZCxzAZ1K6bonlzkv5v9vuicH2VeEltruGUYYf8Bq7hkoul1xHk3Kl4+9cXx7aGp8Z0kGzQ==
   dependencies:
     "@salesforce/kit" "^3.0.12"
     "@salesforce/schemas" "^1.6.0"
-    "@salesforce/ts-types" "^2.0.7"
+    "@salesforce/ts-types" "^2.0.8"
     "@types/semver" "^7.5.2"
     ajv "^8.12.0"
     change-case "^4.1.2"
@@ -1356,12 +1356,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/semver@^7.3.12":
-  version "7.5.0"
-  resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.5.0.tgz#591c1ce3a702c45ee15f47a42ade72c2fd78978a"
-  integrity sha512-G8hZ6XJiHnuhQKR7ZmysCeJWE08o8T0AXtk5darsCaTVsYZhhgUrq53jizaR2FvsoeCwJhlmwTjkXBY5Pn/ZHw==
-
-"@types/semver@^7.5.2":
+"@types/semver@^7.3.12", "@types/semver@^7.5.2":
   version "7.5.2"
   resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.5.2.tgz#31f6eec1ed7ec23f4f05608d3a2d381df041f564"
   integrity sha512-7aqorHYgdNO4DM36stTiGO3DvKoex9TQRwsJU6vMaFGyqpBA1MNZkz+PG3gaNUPpTAOYhT1WR7M1JyA3fbS9Cw==
@@ -6044,15 +6039,7 @@ pify@^4.0.1:
   resolved "https://registry.yarnpkg.com/pify/-/pify-4.0.1.tgz#4b2cd25c50d598735c50292224fd8c6df41e3231"
   integrity sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==
 
-pino-abstract-transport@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/pino-abstract-transport/-/pino-abstract-transport-1.0.0.tgz#cc0d6955fffcadb91b7b49ef220a6cc111d48bb3"
-  integrity sha512-c7vo5OpW4wIS42hUVcT5REsL8ZljsUfBjqV/e2sFxmFEFZiq1XLUp5EYLtuDH6PEHq9W1egWqRbnLUP5FuZmOA==
-  dependencies:
-    readable-stream "^4.0.0"
-    split2 "^4.0.0"
-
-pino-abstract-transport@v1.1.0:
+pino-abstract-transport@^1.0.0, pino-abstract-transport@v1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/pino-abstract-transport/-/pino-abstract-transport-1.1.0.tgz#083d98f966262164504afb989bccd05f665937a8"
   integrity sha512-lsleG3/2a/JIWUtf9Q5gUNErBqwIu1tUKTT3dUzaf5DySw9ra1wcqKjJjLX1VTY64Wk1eEOYsVGSaGfCK85ekA==
