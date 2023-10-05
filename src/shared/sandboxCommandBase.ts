@@ -225,6 +225,20 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  protected async finally(_: Error | undefined): Promise<any> {
+    const lifecycle = Lifecycle.getInstance();
+    lifecycle.removeAllListeners('POLLING_TIME_OUT');
+    lifecycle.removeAllListeners(SandboxEvents.EVENT_RESUME);
+    lifecycle.removeAllListeners(SandboxEvents.EVENT_ASYNC_RESULT);
+    lifecycle.removeAllListeners(SandboxEvents.EVENT_STATUS);
+    lifecycle.removeAllListeners(SandboxEvents.EVENT_AUTH);
+    lifecycle.removeAllListeners(SandboxEvents.EVENT_RESULT);
+    lifecycle.removeAllListeners(SandboxEvents.EVENT_MULTIPLE_SBX_PROCESSES);
+
+    return super.finally(_);
+  }
+
   private removeSandboxProgressConfig(): void {
     if (this.latestSandboxProgressObj?.SandboxName) {
       this.sandboxRequestConfig.unset(this.latestSandboxProgressObj.SandboxName);

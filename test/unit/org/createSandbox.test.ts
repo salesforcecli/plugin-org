@@ -37,8 +37,6 @@ const fakeOrg: AuthFields = {
 
 describe('org:create:sandbox', () => {
   beforeEach(() => {
-    // stubMethod(sandbox, OrgAccessor.prototype, 'read').callsFake(async (): Promise<AuthFields> => fakeOrg);
-    // stubMethod(sandbox, OrgAccessor.prototype, 'write').callsFake(async (): Promise<AuthFields> => fakeOrg);
     stubMethod(sandbox, OrgAccessor.prototype, 'read').resolves(fakeOrg);
     stubMethod(sandbox, OrgAccessor.prototype, 'write').resolves(fakeOrg);
     sfCommandUxStubs = stubSfCommandUx(sandbox);
@@ -53,23 +51,18 @@ describe('org:create:sandbox', () => {
     it('will print the correct message for asyncResult lifecycle event', async () => {
       stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
       stubMethod(sandbox, Org.prototype, 'getUsername').returns('testProdOrg');
-      const createStub = stubMethod(sandbox, Org.prototype, 'createSandbox').callsFake(async () =>
-        (async () => {})().catch()
-      );
+      const createStub = stubMethod(sandbox, Org.prototype, 'createSandbox').callsFake(async () => {
+        await Lifecycle.getInstance().emit(SandboxEvents.EVENT_ASYNC_RESULT, sandboxProcessObj);
+      });
 
       await CreateSandbox.run(['-o', 'testProdOrg', '--name', 'mysandboxx', '--no-prompt']);
 
-      expect(createStub.firstCall.args[0].SandboxName).includes('mysandboxx');
-      expect(createStub.firstCall.args[0].SandboxName.length).equals(10);
-
-      Lifecycle.getInstance().on(SandboxEvents.EVENT_ASYNC_RESULT, async (result) => {
-        expect(result).to.deep.equal(sandboxProcessObj);
-        expect(sfCommandUxStubs.info.firstCall.firstArg).to.include(sandboxProcessObj.Id);
-        return Promise.resolve();
+      expect(createStub.firstCall.firstArg).to.deep.equal({
+        SandboxName: 'mysandboxx',
+        LicenseType: 'Developer',
       });
-
-      await Lifecycle.getInstance().emit(SandboxEvents.EVENT_ASYNC_RESULT, sandboxProcessObj);
-      Lifecycle.getInstance().removeAllListeners(SandboxEvents.EVENT_ASYNC_RESULT);
+      const expectedInfoMsg = `org resume sandbox --job-id ${sandboxProcessObj.Id} -o testProdOrg`;
+      expect(sfCommandUxStubs.info.firstCall.firstArg).to.include(expectedInfoMsg);
     });
   });
 
