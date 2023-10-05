@@ -1,3 +1,13 @@
+## [2.10.11](https://github.com/salesforcecli/plugin-org/compare/2.10.10...2.10.11) (2023-10-05)
+
+### Bug Fixes
+
+- handle multiple sandbox processes in a resumable state ([11913a3](https://github.com/salesforcecli/plugin-org/commit/11913a329da2ae312c76e736be9945d28c66d8ef))
+- handle multiple sandbox processes in a resumable state ([cd74ab5](https://github.com/salesforcecli/plugin-org/commit/cd74ab533d88b4f06e3559c23d6a0bab30694144))
+- handle multiple sandbox processes in a resumable state ([6782771](https://github.com/salesforcecli/plugin-org/commit/6782771f11ae1c0b7dc557cfa8173dd018e05cac))
+- listener updates to not mutate sandbox process objects ([1d5e388](https://github.com/salesforcecli/plugin-org/commit/1d5e3884a1af9df036c6dbc0702d318dbacb06d9))
+- remove event listeners in finally ([1e34f35](https://github.com/salesforcecli/plugin-org/commit/1e34f35c3ad2de93c0dad71c73cdd9a21846b1ca))
+
 ## [2.10.10](https://github.com/salesforcecli/plugin-org/compare/2.10.9...2.10.10) (2023-10-02)
 
 ### Bug Fixes
