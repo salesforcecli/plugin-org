@@ -156,10 +156,15 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
         return `/visualEditor/appBuilder.app?pageId=${flexipage.Id}`;
       } else if (typeName === 'ApexPage') {
         return `/apex/${path.basename(file).replace('.page-meta.xml', '').replace('.page', '')}`;
+      } else if (typeName === 'Flow') {
+        return `/builder_platform_interaction/flowBuilder.app?flowId=${await flowFileNameToId(this.conn, file)}`;
       } else {
         return 'lightning/setup/FlexiPageList/home';
       }
     } catch (error) {
+      if (error instanceof Error && error.name === 'FlowIdNotFoundError') {
+        this.error(error);
+      }
       return 'lightning/setup/FlexiPageList/home';
     }
   }
@@ -170,3 +175,19 @@ export interface OrgOpenOutput {
   username: string;
   orgId: string;
 }
+
+/** query the tooling API to turn a flow's filepath into a FlowId  (starts with 301) */
+const flowFileNameToId = async (conn: Connection, filePath: string): Promise<string> => {
+  const result = await conn.tooling.query<{ Id: string; FullName: string }>(
+    'select id, MasterLabel, FullName from Flow'
+  );
+  const fullName = path.basename(filePath).replace('.flow-meta.xml', '');
+  // https://developer.salesforce.com/docs/atlas.en-us.api_tooling.meta/api_tooling/tooling_api_objects_flow.htm
+  // unfortunately, you can't query based on the fullname because `field 'FullName' can not be filtered in a query call`
+  // so we get all the flows and then filter.
+  const match = (result.records ?? []).find((r) => r.FullName === fullName)?.Id;
+  if (match) {
+    return match;
+  }
+  throw messages.createError('FlowIdNotFound', [filePath]);
+};
