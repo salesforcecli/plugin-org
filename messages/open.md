@@ -74,7 +74,7 @@ The Lightning Experience-enabled custom domain is unavailable.
 
 # FlowIdNotFound
 
-No ID not found for Flow %s .
+No ID not found for Flow %s.
 
 # FlowIdNotFound.actions
 

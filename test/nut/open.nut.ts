@@ -67,7 +67,7 @@ describe('test org:open command', () => {
   });
 
   it('should produce the URL for an existing flow', () => {
-    const result = execCmd<OrgOpenOutput>(`force:source:open --source-file ${flowPath} --url-only --json`, {
+    const result = execCmd<OrgOpenOutput>(`force:org:open --source-file ${flowPath} --url-only --json`, {
       ensureExitCode: 0,
     }).jsonOutput?.result;
     assert(result);
