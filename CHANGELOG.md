@@ -1,3 +1,9 @@
+# [2.11.0](https://github.com/salesforcecli/plugin-org/compare/2.10.12...2.11.0) (2023-10-13)
+
+### Features
+
+- open a flow ([cf53b7f](https://github.com/salesforcecli/plugin-org/commit/cf53b7fbcaa6de9cb4fe79641d9fc50ef7462e31))
+
 ## [2.10.12](https://github.com/salesforcecli/plugin-org/compare/2.10.11...2.10.12) (2023-10-08)
 
 ### Bug Fixes
