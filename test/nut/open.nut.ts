@@ -21,6 +21,7 @@ config.truncateThreshold = 0;
 
 describe('test org:open command', () => {
   const flexiPagePath = path.join('force-app', 'main', 'default', 'flexipages', 'Property_Explorer.flexipage-meta.xml');
+  const flowPath = path.join('force-app', 'main', 'default', 'flows', 'Create_property.flow-meta.xml');
 
   before(async () => {
     session = await TestSession.create({
@@ -63,6 +64,15 @@ describe('test org:open command', () => {
     assert(result);
     expect(result).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
     expect(result.url).to.include('/visualEditor/appBuilder.app?pageId');
+  });
+
+  it('should produce the URL for an existing flow', () => {
+    const result = execCmd<OrgOpenOutput>(`force:org:open --source-file ${flowPath} --url-only --json`, {
+      ensureExitCode: 0,
+    }).jsonOutput?.result;
+    assert(result);
+    expect(result).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
+    expect(result.url).to.include('/builder_platform_interaction/flowBuilder.app?flowId=301');
   });
 
   it("should produce the org's frontdoor url when edition of file is not supported", async () => {
