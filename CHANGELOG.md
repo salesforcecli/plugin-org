@@ -1,3 +1,9 @@
+## [2.11.1](https://github.com/salesforcecli/plugin-org/compare/2.11.0...2.11.1) (2023-10-16)
+
+### Bug Fixes
+
+- don't use tooling api to get flow id ([e8f212c](https://github.com/salesforcecli/plugin-org/commit/e8f212c1759b83d9b44cbaf00a820ac75a74113d))
+
 # [2.11.0](https://github.com/salesforcecli/plugin-org/compare/2.10.12...2.11.0) (2023-10-13)
 
 ### Features
