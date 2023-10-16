@@ -176,18 +176,17 @@ export interface OrgOpenOutput {
   orgId: string;
 }
 
-/** query the tooling API to turn a flow's filepath into a FlowId  (starts with 301) */
+/** query the rest API to turn a flow's filepath into a FlowId  (starts with 301) */
 const flowFileNameToId = async (conn: Connection, filePath: string): Promise<string> => {
-  const result = await conn.tooling.query<{ Id: string; FullName: string }>(
-    'select id, MasterLabel, FullName from Flow'
-  );
-  const fullName = path.basename(filePath).replace('.flow-meta.xml', '');
-  // https://developer.salesforce.com/docs/atlas.en-us.api_tooling.meta/api_tooling/tooling_api_objects_flow.htm
-  // unfortunately, you can't query based on the fullname because `field 'FullName' can not be filtered in a query call`
-  // so we get all the flows and then filter.
-  const match = (result.records ?? []).find((r) => r.FullName === fullName)?.Id;
-  if (match) {
-    return match;
+  try {
+    const flow = await conn.singleRecordQuery<{ DurableId: string }>(
+      `SELECT DurableId FROM FlowVersionView WHERE FlowDefinitionView.ApiName = '${path.basename(
+        filePath,
+        '.flow-meta.xml'
+      )}' ORDER BY VersionNumber DESC LIMIT 1`
+    );
+    return flow.DurableId;
+  } catch (error) {
+    throw messages.createError('FlowIdNotFound', [filePath]);
   }
-  throw messages.createError('FlowIdNotFound', [filePath]);
 };
