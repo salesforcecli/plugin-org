@@ -28,11 +28,11 @@ To open in a specific browser, use the --browser flag. Supported browsers are "c
 
 - Open a local Lightning page in your default org's Lightning App Builder:
 
-  $ <%= config.bin %> <%= command.id %> --source-path force-app/main/default/flexipages/Hello.flexipage-meta.xml
+  $ <%= config.bin %> <%= command.id %> --source-file force-app/main/default/flexipages/Hello.flexipage-meta.xml
 
 - Open a local Flow in Flow Builder:
 
-  $ <%= config.bin %> <%= command.id %> --source-path force-app/main/default/flows/Hello.flow-meta.xml
+  $ <%= config.bin %> <%= command.id %> --source-file force-app/main/default/flows/Hello.flow-meta.xml
 
 # flags.browser.summary
 
