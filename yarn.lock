@@ -885,7 +885,7 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.7.1"
 
-"@salesforce/core@^5.2.0", "@salesforce/core@^5.2.7", "@salesforce/core@^5.3.1", "@salesforce/core@^5.3.9":
+"@salesforce/core@^5.2.0", "@salesforce/core@^5.3.1", "@salesforce/core@^5.3.9":
   version "5.3.9"
   resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-5.3.9.tgz#1c8f793ce1a0798c5c7767a5a370a5926d3298de"
   integrity sha512-/HX0PiXq3Sjc5eVJ0EaYetcDGsKU9O9Nj8jFGw5qYlITx8zogfxc0j07liH67tQXS1KbTysYoj/MQ2zbHSNkPA==
@@ -1014,16 +1014,16 @@
     chalk "^4"
     inquirer "^8.2.5"
 
-"@salesforce/source-deploy-retrieve@^9.7.13", "@salesforce/source-deploy-retrieve@^9.7.2", "@salesforce/source-deploy-retrieve@^9.7.4":
-  version "9.7.13"
-  resolved "https://registry.yarnpkg.com/@salesforce/source-deploy-retrieve/-/source-deploy-retrieve-9.7.13.tgz#85777222e157a621eb00fcef0487c682b7e3d5f7"
-  integrity sha512-QRhdepll3+ED9w4clI/RvcSLtuSbTzFPZenzrvJ2R7Pg5gXRZQIJrphEkAnY7oteVBBUxPVdYgbeuQxeoi98dg==
+"@salesforce/source-deploy-retrieve@^9.7.2", "@salesforce/source-deploy-retrieve@^9.7.25", "@salesforce/source-deploy-retrieve@^9.7.4":
+  version "9.7.25"
+  resolved "https://registry.yarnpkg.com/@salesforce/source-deploy-retrieve/-/source-deploy-retrieve-9.7.25.tgz#30f1eda5bf450deab57e6840b3a8a4543de08dba"
+  integrity sha512-X2J6hYEyMALtAkIA8pTfLUfZ7n9NdCzGitSakuD771RmOk92GRcdht143TMhvpgZ5J5rRNXsbvGRX2c+E8IANg==
   dependencies:
-    "@salesforce/core" "^5.2.7"
+    "@salesforce/core" "^5.3.1"
     "@salesforce/kit" "^3.0.11"
     "@salesforce/ts-types" "^2.0.7"
     fast-levenshtein "^3.0.0"
-    fast-xml-parser "^4.2.7"
+    fast-xml-parser "^4.3.2"
     got "^11.8.6"
     graceful-fs "^4.2.11"
     ignore "^5.2.4"
@@ -3283,10 +3283,10 @@ fast-safe-stringify@^2.1.1:
   resolved "https://registry.yarnpkg.com/fast-safe-stringify/-/fast-safe-stringify-2.1.1.tgz#c406a83b6e70d9e35ce3b30a81141df30aeba884"
   integrity sha512-W+KJc2dmILlPplD/H4K9l9LcAHAfPtP6BY84uVLXQ6Evcz9Lcg33Y2z1IVblT6xdY54PXYVHEv+0Wpq8Io6zkA==
 
-fast-xml-parser@^4.2.5, fast-xml-parser@^4.2.7:
-  version "4.2.7"
-  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-4.2.7.tgz#871f2ca299dc4334b29f8da3658c164e68395167"
-  integrity sha512-J8r6BriSLO1uj2miOk1NW0YVm8AGOOu3Si2HQp/cSmo6EA4m3fcwu2WKjJ4RK9wMLBtg69y1kS8baDiQBR41Ig==
+fast-xml-parser@^4.2.5, fast-xml-parser@^4.3.2:
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-4.3.2.tgz#761e641260706d6e13251c4ef8e3f5694d4b0d79"
+  integrity sha512-rmrXUXwbJedoXkStenj1kkljNF7ugn5ZjR9FJcwmCfcCbtOMDghPajbc+Tck6vE6F5XsDmx+Pr2le9fw8+pXBg==
   dependencies:
     strnum "^1.0.5"
 
