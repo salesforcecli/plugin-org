@@ -1,3 +1,9 @@
+## [2.11.4](https://github.com/salesforcecli/plugin-org/compare/2.11.3...2.11.4) (2023-10-17)
+
+### Bug Fixes
+
+- examples should use --source-file, not --source-path ([827fb10](https://github.com/salesforcecli/plugin-org/commit/827fb102a473da97037765606741d87b87addf7d))
+
 ## [2.11.3](https://github.com/salesforcecli/plugin-org/compare/2.11.2...2.11.3) (2023-10-17)
 
 ### Bug Fixes
