@@ -235,6 +235,30 @@ describe('orgListUtil tests', () => {
       expect(checkNonScratchOrgIsDevHub.called).to.be.false;
     });
 
+    it('handles html responses for deactivated/expired non-scratch orgs', async () => {
+      determineConnectedStatusForNonScratchOrg.restore();
+      stubMethod(sandbox, Org, 'create').returns(Org.prototype);
+      stubMethod(sandbox, Org.prototype, 'getField').returns(undefined);
+      stubMethod(sandbox, Org.prototype, 'getUsername').returns(devHubConfigFields.username);
+      stubMethod(sandbox, Org.prototype, 'refreshAuth').rejects({
+        message: `
+<!DOCTYPE HTML>
+<html lang=en-US>
+
+<head>
+    <meta charset=UTF-8>
+    <title>Error Page</title>
+    <style>
+        /*! normalize.css v3.0.2 | MIT License | git.io/normalize */          html {             font-family: sans-serif;             -ms-text-size-adjust: 100%;             -webkit-text-size-adjust: 100%         }          body {             margin: 0         }          article,         aside,         details,         figcaption,         figure,         footer,         header,         hgroup,   …if (result.success === hostnames.length) {       clearInterval(interval);       success();       return;     }      if (Date.now() - startTime > totalThresholdDelay) {       clearInterval(interval);       failure();       return;     }      for (var i = 0; i < hostnames.length; i++) {       if (result["host" + i] === undefined) {         result["host" + i] = false;       }       if (!result["host" + i]) {         test(i);       }     }   }, retry); }  start(hosts);  </script> </body> </html>
+`,
+      });
+
+      const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, false);
+      expect(orgGroups.nonScratchOrgs).to.have.length(1);
+      expect(orgGroups.nonScratchOrgs[0].connectedStatus).to.equal('Bad Response');
+      expect(checkNonScratchOrgIsDevHub.called).to.be.false;
+    });
+
     it('handles auth file problems for non-scratch orgs', async () => {
       determineConnectedStatusForNonScratchOrg.restore();
       stubMethod(sandbox, Org, 'create').rejects({ message: 'bad file' });
