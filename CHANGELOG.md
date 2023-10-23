@@ -1,3 +1,9 @@
+## [2.11.5](https://github.com/salesforcecli/plugin-org/compare/2.11.4...2.11.5) (2023-10-23)
+
+### Bug Fixes
+
+- **org status:** improve err handling ([38de6c6](https://github.com/salesforcecli/plugin-org/commit/38de6c667bb538172dadd00c6a0106b4357290de))
+
 ## [2.11.4](https://github.com/salesforcecli/plugin-org/compare/2.11.3...2.11.4) (2023-10-17)
 
 ### Bug Fixes
