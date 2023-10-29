@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as fs from 'fs';
+import * as fs from 'node:fs';
 import { Messages } from '@salesforce/core';
 import { FileProperties, ListMetadataQuery } from 'jsforce/api/metadata';
 import { Flags, loglevel, requiredOrgFlagWithDeprecations, SfCommand } from '@salesforce/sf-plugins-core';

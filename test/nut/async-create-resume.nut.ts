@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
 import { AuthFields, Global, ScratchOrgCache } from '@salesforce/core';
