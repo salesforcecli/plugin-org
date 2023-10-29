@@ -10,7 +10,7 @@
     "@salesforce/core": "^5.3.9",
     "@salesforce/kit": "^3.0.9",
     "@salesforce/sf-plugins-core": "^3.1.28",
-    "@salesforce/source-deploy-retrieve": "^9.7.25",
+    "@salesforce/source-deploy-retrieve": "^9.7.28",
     "open": "^8.4.2",
     "tslib": "^2"
   },
