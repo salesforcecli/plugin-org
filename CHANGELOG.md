@@ -1,3 +1,9 @@
+## [2.11.7](https://github.com/salesforcecli/plugin-org/compare/2.11.6...2.11.7) (2023-10-30)
+
+### Bug Fixes
+
+- **deps:** bump @babel/traverse from 7.21.2 to 7.23.2 ([6109d97](https://github.com/salesforcecli/plugin-org/commit/6109d97629c0291b8c2d1cc090c68de95da06f8c))
+
 ## [2.11.6](https://github.com/salesforcecli/plugin-org/compare/2.11.5...2.11.6) (2023-10-29)
 
 ### Bug Fixes
