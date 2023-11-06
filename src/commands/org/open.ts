@@ -72,6 +72,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
     this.conn = this.org.getConnection(flags['api-version']);
 
     let url = await this.buildFrontdoorUrl();
+    const env = new Env();
 
     if (flags['source-file']) {
       url += `&retURL=${await this.generateFileUrl(flags['source-file'])}`;
@@ -83,7 +84,8 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
     // TODO: better typings in sfdx-core for orgs read from auth files
     const username = this.org.getUsername() as string;
     const output = { orgId, url, username };
-    const containerMode = new Env().getBoolean('SFDX_CONTAINER_MODE');
+    // NOTE: Deliberate use of `||` here since getBoolean() defaults to false, and we need to consider both env vars.
+    const containerMode = env.getBoolean('SF_CONTAINER_MODE') || env.getBoolean('SFDX_CONTAINER_MODE');
 
     // security warning only for --json OR --url-only OR containerMode
     if (flags['url-only'] || Boolean(flags.json) || containerMode) {
@@ -115,7 +117,8 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
       if (err instanceof Error) {
         if (err.message.includes('timeout')) {
           const domain = `https://${/https?:\/\/([^.]*)/.exec(url)?.[1]}.lightning.force.com`;
-          const timeout = new Duration(new Env().getNumber('SFDX_DOMAIN_RETRY', 240), Duration.Unit.SECONDS);
+          const domainRetryTimeout = env.getNumber('SF_DOMAIN_RETRY') ?? env.getNumber('SFDX_DOMAIN_RETRY', 240);
+          const timeout = new Duration(domainRetryTimeout, Duration.Unit.SECONDS);
           const logger = await Logger.child(this.constructor.name);
           logger.debug(`Did not find IP for ${domain} after ${timeout.seconds} seconds`);
           throw new SfError(messages.getMessage('domainTimeoutError'), 'domainTimeoutError');
