@@ -19,8 +19,8 @@
     "@salesforce/cli-plugins-testkit": "^4.4.7",
     "@salesforce/dev-scripts": "^6.0.3",
     "@salesforce/plugin-command-reference": "^3.0.46",
-    "@salesforce/plugin-source": "^2.10.38",
     "@salesforce/ts-sinon": "1.4.19",
+    "@swc/core": "1.3.39",
     "@types/shelljs": "^0.8.14",
     "eslint-plugin-sf-plugin": "^1.16.13",
     "moment": "^2.29.1",
@@ -54,8 +54,7 @@
     "devPlugins": [
       "@oclif/plugin-help",
       "@oclif/plugin-command-snapshot",
-      "@salesforce/plugin-command-reference",
-      "@salesforce/plugin-source"
+      "@salesforce/plugin-command-reference"
     ],
     "topics": {
       "org": {
