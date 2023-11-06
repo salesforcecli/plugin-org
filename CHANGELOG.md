@@ -1,3 +1,9 @@
+## [2.11.8](https://github.com/salesforcecli/plugin-org/compare/2.11.7...2.11.8) (2023-11-06)
+
+### Bug Fixes
+
+- check for both sf and sfdx env vars ([cccbd6c](https://github.com/salesforcecli/plugin-org/commit/cccbd6cda8a85e17da07b15c4933278fcb4562e0))
+
 ## [2.11.7](https://github.com/salesforcecli/plugin-org/compare/2.11.6...2.11.7) (2023-10-30)
 
 ### Bug Fixes
