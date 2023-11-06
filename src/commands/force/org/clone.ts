@@ -86,7 +86,7 @@ export class OrgCloneCommand extends SfCommand<SandboxProcessObject> {
     const varargs = parseVarArgs(args, argv as string[]);
 
     const lifecycle = Lifecycle.getInstance();
-    if (flags.type === OrgTypes.Sandbox) {
+    if (flags.type === OrgTypes.Sandbox.toString()) {
       lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results: SandboxProcessObject) =>
         // Keep all console output in the command
         Promise.resolve(

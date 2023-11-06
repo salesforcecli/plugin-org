@@ -86,7 +86,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
     const containerMode = new Env().getBoolean('SFDX_CONTAINER_MODE');
 
     // security warning only for --json OR --url-only OR containerMode
-    if (flags['url-only'] || flags.json || containerMode) {
+    if (flags['url-only'] || Boolean(flags.json) || containerMode) {
       this.warn(sharedMessages.getMessage('SecurityWarning'));
       this.log('');
     }
