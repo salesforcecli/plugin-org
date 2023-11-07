@@ -5,6 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { Interfaces } from '@oclif/core';
 import {
   Flags,
@@ -33,10 +35,10 @@ import {
   StateAggregator,
   StatusEvent,
 } from '@salesforce/core';
-import { createSandboxRequest } from '../../../shared/sandboxRequest';
-import { SandboxReporter } from '../../../shared/sandboxReporter';
+import requestFunctions from '../../../shared/sandboxRequest.js';
+import { SandboxReporter } from '../../../shared/sandboxReporter.js';
 
-Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
 
 export interface ScratchOrgProcessObject {
@@ -210,7 +212,12 @@ export class Create extends SfCommand<CreateResult> {
       }
     });
 
-    const { sandboxReq } = await createSandboxRequest(false, this.flags.definitionfile, this.logger, this.varArgs);
+    const { sandboxReq } = await requestFunctions.createSandboxRequest(
+      false,
+      this.flags.definitionfile,
+      this.logger,
+      this.varArgs
+    );
 
     this.logger.debug('Calling create with SandboxRequest: %s ', sandboxReq);
     const wait = this.flags.wait;

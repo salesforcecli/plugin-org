@@ -6,7 +6,7 @@
  */
 
 import { basename, join } from 'node:path';
-import * as fs from 'node:fs/promises';
+import fs from 'node:fs/promises';
 
 import {
   Org,
@@ -20,15 +20,15 @@ import {
 } from '@salesforce/core';
 import { isObject } from '@salesforce/ts-types';
 import { Record } from 'jsforce';
-import { omit } from '@salesforce/kit/lib';
-import { getAliasByUsername } from './utils';
+import { omit } from '@salesforce/kit';
+import { getAliasByUsername } from './utils.js';
 import {
   ScratchOrgInfoSObject,
   ExtendedAuthFields,
   ExtendedAuthFieldsScratch,
   FullyPopulatedScratchOrgFields,
   AuthFieldsFromFS,
-} from './orgTypes';
+} from './orgTypes.js';
 
 type OrgGroups = {
   nonScratchOrgs: ExtendedAuthFields[];

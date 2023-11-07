@@ -9,10 +9,10 @@ import { Org, Lifecycle, SandboxProcessObject } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { expect } from 'chai';
 
-import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
+import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup.js';
 
 import { stubSfCommandUx } from '@salesforce/sf-plugins-core';
-import { OrgStatusCommand } from '../../../../src/commands/force/org/status';
+import { OrgStatusCommand } from '../../../../src/commands/force/org/status.js';
 
 describe('org:status', () => {
   const $$ = new TestContext();

@@ -6,11 +6,11 @@
  */
 import { Lifecycle, Org, SandboxEvents, SandboxProcessObject, AuthFields } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { expect, config } from 'chai';
-import { OrgAccessor } from '@salesforce/core/lib/stateAggregator';
+import { OrgAccessor } from '@salesforce/core/lib/stateAggregator/index.js';
 import { stubSfCommandUx, stubSpinner, stubUx } from '@salesforce/sf-plugins-core';
-import CreateSandbox from '../../../src/commands/org/create/sandbox';
+import CreateSandbox from '../../../src/commands/org/create/sandbox.js';
 
 config.truncateThreshold = 0;
 

@@ -7,7 +7,11 @@
 import { expect } from 'chai';
 import { Duration } from '@salesforce/cli-plugins-testkit';
 import { SandboxProcessObject, StatusEvent } from '@salesforce/core';
-import { SandboxProgress, getTableDataFromProcessObj, getSandboxTableAsText } from '../../src/shared/sandboxProgress';
+import {
+  SandboxProgress,
+  getTableDataFromProcessObj,
+  getSandboxTableAsText,
+} from '../../src/shared/sandboxProgress.js';
 
 const sandboxProcessObj: SandboxProcessObject = {
   Id: '0GR4p000000U8EMXXX',

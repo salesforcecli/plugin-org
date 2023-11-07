@@ -4,6 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   Lifecycle,
   Messages,
@@ -15,12 +17,11 @@ import {
   SfError,
 } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { expect, config } from 'chai';
-import { OrgAccessor } from '@salesforce/core/lib/stateAggregator';
+import { OrgAccessor } from '@salesforce/core/lib/stateAggregator/index.js';
 import { stubSfCommandUx, stubSpinner, stubUx } from '@salesforce/sf-plugins-core';
-import ResumeSandbox from '../../../src/commands/org/resume/sandbox';
-
+import ResumeSandbox from '../../../src/commands/org/resume/sandbox.js';
 config.truncateThreshold = 0;
 
 const prodOrgUsername = 'resumeSandbox@test.org';
@@ -56,7 +57,7 @@ const sandboxRequestData: SandboxRequestCacheEntry = {
 };
 
 describe('[org resume sandbox]', () => {
-  Messages.importMessagesDirectory(__dirname);
+  Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
   const messages = Messages.loadMessages('@salesforce/plugin-org', 'sandboxbase');
 
   const sandbox = sinon.createSandbox();

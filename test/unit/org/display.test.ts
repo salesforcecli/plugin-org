@@ -5,12 +5,12 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { expect, config as chaiConfig } from 'chai';
-import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
+import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup.js';
 import { Connection } from '@salesforce/core';
 import { stubSfCommandUx } from '@salesforce/sf-plugins-core';
-import { OrgDisplayCommand } from '../../../src/commands/org/display';
-import { OrgListUtil } from '../../../src/shared/orgListUtil';
-import { OrgDisplayReturn } from '../../../src/shared/orgTypes';
+import { OrgDisplayCommand } from '../../../src/commands/org/display.js';
+import { OrgListUtil } from '../../../src/shared/orgListUtil.js';
+import { OrgDisplayReturn } from '../../../src/shared/orgTypes.js';
 
 chaiConfig.truncateThreshold = 0;
 

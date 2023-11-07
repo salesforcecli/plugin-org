@@ -7,7 +7,7 @@
 import { ChildProcess } from 'node:child_process';
 import { upperFirst } from '@salesforce/kit';
 import { StateAggregator } from '@salesforce/core';
-import * as open from 'open';
+import open from 'open';
 
 export const getAliasByUsername = async (username: string): Promise<string | undefined> => {
   const stateAggregator = await StateAggregator.getInstance();
@@ -22,3 +22,9 @@ export const lowerToUpper = (object: Record<string, unknown>): Record<string, un
   // the API has keys defined in capital camel case, while the definition schema has them as lower camel case
   // we need to convert lower camel case to upper before merging options so they will override properly
   Object.fromEntries(Object.entries(object).map(([key, value]) => [upperFirst(key), value]));
+
+export default {
+  getAliasByUsername,
+  openUrl,
+  lowerToUpper,
+};

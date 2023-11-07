@@ -5,6 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   Flags,
   SfCommand,
@@ -14,12 +16,12 @@ import {
 } from '@salesforce/sf-plugins-core';
 import { AuthInfo, Messages, Org, SfError, trimTo15 } from '@salesforce/core';
 import { camelCaseToTitleCase } from '@salesforce/kit';
-import { AuthFieldsFromFS, OrgDisplayReturn, ScratchOrgFields } from '../../shared/orgTypes';
-import { getAliasByUsername } from '../../shared/utils';
-import { getStyledValue } from '../../shared/orgHighlighter';
-import { OrgListUtil } from '../../shared/orgListUtil';
+import { AuthFieldsFromFS, OrgDisplayReturn, ScratchOrgFields } from '../../shared/orgTypes.js';
+import { getAliasByUsername } from '../../shared/utils.js';
+import { getStyledValue } from '../../shared/orgHighlighter.js';
+import { OrgListUtil } from '../../shared/orgListUtil.js';
 
-Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'display');
 const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
 export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {

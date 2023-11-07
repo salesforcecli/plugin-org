@@ -4,15 +4,15 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as fs from 'node:fs';
+import fs from 'node:fs';
 import { Org, Lifecycle, SandboxEvents, SandboxProcessObject, Logger, SfError } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
-import { shouldThrow, TestContext } from '@salesforce/core/lib/testSetup';
+import { shouldThrow, TestContext } from '@salesforce/core/lib/testSetup.js';
 import { stubSfCommandUx, stubUx } from '@salesforce/sf-plugins-core';
 import { assert, expect, config } from 'chai';
-import * as sinon from 'sinon';
-import { OrgCloneCommand } from '../../../../src/commands/force/org/clone';
-import * as requestFunctions from '../../../../src/shared/sandboxRequest';
+import sinon from 'sinon';
+import { OrgCloneCommand } from '../../../../src/commands/force/org/clone.js';
+import requestFunctions from '../../../../src/shared/sandboxRequest.js';
 
 config.truncateThreshold = 0;
 

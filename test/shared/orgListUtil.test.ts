@@ -4,13 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as fs from 'node:fs/promises';
+import fs from 'node:fs/promises';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { AuthInfo, ConfigAggregator, Org } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
-import { OrgListUtil } from '../../src/shared/orgListUtil';
-import * as utils from '../../src/shared/utils';
+import { OrgListUtil } from '../../src/shared/orgListUtil.js';
+import utils from '../../src/shared/utils.js';
 
 const orgAuthConfigFields = {
   username: 'gaz@foo.org',
@@ -214,18 +214,18 @@ describe('orgListUtil tests', () => {
       stubMethod(sandbox, Org.prototype, 'getField').returns(undefined);
       stubMethod(sandbox, Org.prototype, 'getUsername').returns(devHubConfigFields.username);
       stubMethod(sandbox, Org.prototype, 'refreshAuth').rejects({
-        message: `<html>                                                                                                                                                                                           
-  <body>                                                                                                                                                                                           
-  <center>                                                                                                                                                                                         
-    <table bgcolor="white" cellpadding="0" cellspacing="0" width="758">                                                                                                                              
-      <tbody>                                                                                                                                                                                          
-      <tr>                                                                                                                                                                                             
-        <td><span style="font-family: Verdana; font-size: medium; font-weight: bold;">We are down for maintenance.</span><br><br>Sorry for the inconvenience. We'll be back shortly.</td><br>            
-      </tr>                                                                                                                                                                                            
-      </tbody>                                                                                                                                                                                         
-    </table>                                                                                                                                                                                         
-  </center>                                                                                                                                                                                        
-  </body>                                                                                                                                                                                          
+        message: `<html>
+  <body>
+  <center>
+    <table bgcolor="white" cellpadding="0" cellspacing="0" width="758">
+      <tbody>
+      <tr>
+        <td><span style="font-family: Verdana; font-size: medium; font-weight: bold;">We are down for maintenance.</span><br><br>Sorry for the inconvenience. We'll be back shortly.</td><br>
+      </tr>
+      </tbody>
+    </table>
+  </center>
+  </body>
   </html>`,
       });
 

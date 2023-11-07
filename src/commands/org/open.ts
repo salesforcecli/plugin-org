@@ -5,7 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as path from 'node:path';
+import path from 'node:path';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   Flags,
   loglevel,
@@ -16,10 +18,10 @@ import {
 import { Connection, Logger, Messages, Org, SfdcUrl, SfError } from '@salesforce/core';
 import { Duration, Env } from '@salesforce/kit';
 import { MetadataResolver } from '@salesforce/source-deploy-retrieve';
-import open = require('open');
-import { openUrl } from '../../shared/utils';
+import open from 'open';
+import utils from '../../shared/utils.js';
 
-Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
 const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
 
@@ -133,7 +135,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
         { app: { name: open.apps[flags.browser as 'chrome' | 'edge' | 'firefox'] } }
       : {};
 
-    await openUrl(url, openOptions);
+    await utils.openUrl(url, openOptions);
     return output;
   }
 

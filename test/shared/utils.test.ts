@@ -5,10 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { StateAggregator } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
-import { getAliasByUsername } from '../../src/shared/utils';
+import { getAliasByUsername } from '../../src/shared/utils.js';
 
 describe('getAliasByUsername', () => {
   const sandbox = sinon.createSandbox();

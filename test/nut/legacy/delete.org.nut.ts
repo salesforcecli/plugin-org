@@ -7,7 +7,7 @@
 import { join } from 'node:path';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
-import { DeleteResult } from '../../../src/commands/force/org/delete';
+import { DeleteResult } from '../../../src/commands/force/org/delete.js';
 
 // these NUTs are separated from org.nuts.ts because deleting orgs may interfere with the other NUTs
 describe('Delete Orgs', () => {
