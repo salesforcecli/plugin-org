@@ -21,7 +21,7 @@ import {
 import { isObject } from '@salesforce/ts-types';
 import { Record } from 'jsforce';
 import { omit } from '@salesforce/kit';
-import { getAliasByUsername } from './utils.js';
+import utils from './utils.js';
 import {
   ScratchOrgInfoSObject,
   ExtendedAuthFields,
@@ -71,7 +71,7 @@ export class OrgListUtil {
     userFilenames: string[],
     skipConnection = false
   ): Promise<OrgGroupsFullyPopulated> {
-    const contents: AuthInfo[] = await OrgListUtil.readAuthFiles(userFilenames);
+    const contents = await OrgListUtil.readAuthFiles(userFilenames);
     const orgs = await OrgListUtil.groupOrgs(contents);
 
     // parallelize two very independent operations
@@ -208,7 +208,7 @@ export class OrgListUtil {
         }
 
         const [alias, lastUsed] = await Promise.all([
-          getAliasByUsername(currentValue.username),
+          utils.getAliasByUsername(currentValue.username),
           fs.stat(join(Global.SFDX_DIR, `${currentValue.username}.json`)),
         ]);
 
