@@ -10,7 +10,7 @@
     "@salesforce/kit": "^3.0.15",
     "@salesforce/sf-plugins-core": "^4.0.0",
     "@salesforce/source-deploy-retrieve": "^9.8.4",
-    "open": "^8.4.2"
+    "open": "^9.1.0"
   },
   "devDependencies": {
     "@oclif/plugin-command-snapshot": "^5.0.1",
