@@ -7,7 +7,7 @@
 import { ChildProcess } from 'node:child_process';
 import { upperFirst } from '@salesforce/kit';
 import { StateAggregator } from '@salesforce/core';
-import open from 'open';
+import open, { Options } from 'open';
 
 export const getAliasByUsername = async (username: string): Promise<string | undefined> => {
   const stateAggregator = await StateAggregator.getInstance();
@@ -16,7 +16,7 @@ export const getAliasByUsername = async (username: string): Promise<string | und
   return keys?.length ? keys[keys.length - 1] : undefined;
 };
 
-export const openUrl = async (url: string, options: open.Options): Promise<ChildProcess> => open(url, options);
+export const openUrl = async (url: string, options: Options): Promise<ChildProcess> => open(url, options);
 
 export const lowerToUpper = (object: Record<string, unknown>): Record<string, unknown> =>
   // the API has keys defined in capital camel case, while the definition schema has them as lower camel case

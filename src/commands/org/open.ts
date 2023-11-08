@@ -18,7 +18,7 @@ import {
 import { Connection, Logger, Messages, Org, SfdcUrl, SfError } from '@salesforce/core';
 import { Duration, Env } from '@salesforce/kit';
 import { MetadataResolver } from '@salesforce/source-deploy-retrieve';
-import open from 'open';
+import { apps } from 'open';
 import utils from '../../shared/utils.js';
 
 Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
@@ -132,7 +132,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
 
     const openOptions = flags.browser
       ? // assertion can be removed once oclif option flag typings are fixed
-        { app: { name: open.apps[flags.browser as 'chrome' | 'edge' | 'firefox'] } }
+        { app: { name: apps[flags.browser as 'chrome' | 'edge' | 'firefox'] } }
       : {};
 
     await utils.openUrl(url, openOptions);
