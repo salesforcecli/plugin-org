@@ -99,29 +99,29 @@ the [SandboxNuts](https://github.com/salesforcecli/plugin-org/actions/workflows/
 
 <!-- commands -->
 
-- [`sf force:org:clone`](#sf-forceorgclone)
-- [`sf force:org:create`](#sf-forceorgcreate)
-- [`sf force:org:delete`](#sf-forceorgdelete)
-- [`sf force:org:status`](#sf-forceorgstatus)
-- [`sf org:create:sandbox`](#sf-orgcreatesandbox)
-- [`sf org:create:scratch`](#sf-orgcreatescratch)
-- [`sf org:delete:sandbox`](#sf-orgdeletesandbox)
-- [`sf org:delete:scratch`](#sf-orgdeletescratch)
-- [`sf org:display`](#sf-orgdisplay)
-- [`sf org:list`](#sf-orglist)
-- [`sf org:list:metadata`](#sf-orglistmetadata)
-- [`sf org:list:metadata-types`](#sf-orglistmetadata-types)
-- [`sf org:open`](#sf-orgopen)
-- [`sf org:resume:sandbox`](#sf-orgresumesandbox)
-- [`sf org:resume:scratch`](#sf-orgresumescratch)
+- [`sf force org clone`](#sf-force-org-clone)
+- [`sf force org create`](#sf-force-org-create)
+- [`sf force org delete`](#sf-force-org-delete)
+- [`sf force org status`](#sf-force-org-status)
+- [`sf org create sandbox`](#sf-org-create-sandbox)
+- [`sf org create scratch`](#sf-org-create-scratch)
+- [`sf org delete sandbox`](#sf-org-delete-sandbox)
+- [`sf org delete scratch`](#sf-org-delete-scratch)
+- [`sf org display`](#sf-org-display)
+- [`sf org list`](#sf-org-list)
+- [`sf org list metadata`](#sf-org-list-metadata)
+- [`sf org list metadata-types`](#sf-org-list-metadata-types)
+- [`sf org open`](#sf-org-open)
+- [`sf org resume sandbox`](#sf-org-resume-sandbox)
+- [`sf org resume scratch`](#sf-org-resume-scratch)
 
-## `sf force:org:clone`
+## `sf force org clone`
 
 Clone a sandbox org.
 
 ```
 USAGE
-  $ sf force:org:clone -o <value> -t sandbox [--json] [--api-version <value>] [-f <value>] [-s] [-a <value>] [-w
+  $ sf force org clone -o <value> -t sandbox [--json] [--api-version <value>] [-f <value>] [-s] [-a <value>] [-w
     <value>]
 
 FLAGS
@@ -149,9 +149,9 @@ DESCRIPTION
   required and must be set to "sandbox".
 
 EXAMPLES
-  $ sf force:org:clone -t sandbox -f config/dev-sandbox-def.json -u prodOrg -a MyDevSandbox
+  $ sf force org clone -t sandbox -f config/dev-sandbox-def.json -u prodOrg -a MyDevSandbox
 
-  $ sf force:org:clone -t sandbox SandboxName=NewClonedSandbox SourceSandboxName=ExistingSandbox -u prodOrg -a MyDevSandbox
+  $ sf force org clone -t sandbox SandboxName=NewClonedSandbox SourceSandboxName=ExistingSandbox -u prodOrg -a MyDevSandbox
 
 FLAG DESCRIPTIONS
   -w, --wait=<value>  Number of minutes to wait while polling for status.
@@ -160,15 +160,15 @@ FLAG DESCRIPTIONS
     for a number of minutes, the client exits. Specify a longer wait time if timeouts occur frequently.
 ```
 
-_See code: [src/commands/force/org/clone.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.8/src/commands/force/org/clone.ts)_
+_See code: [src/commands/force/org/clone.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.9/src/commands/force/org/clone.ts)_
 
-## `sf force:org:create`
+## `sf force org create`
 
 Create a scratch org or sandbox.
 
 ```
 USAGE
-  $ sf force:org:create [--json] [-o <value>] [-v <value>] [--api-version <value>] [-t scratch|sandbox] [-f <value>]
+  $ sf force org create [--json] [-o <value>] [-v <value>] [--api-version <value>] [-t scratch|sandbox] [-f <value>]
     [-n] [-c] [-i <value>] [-s] [-a <value>] [-w <value>] [-d <value>]
 
 FLAGS
@@ -199,24 +199,24 @@ DESCRIPTION
   production org with sandbox licenses. The —type (-t) is required if creating a sandbox.
 
 EXAMPLES
-  $ sf force:org:create -f config/enterprise-scratch-def.json -a MyScratchOrg
+  $ sf force org create -f config/enterprise-scratch-def.json -a MyScratchOrg
 
-  $ sf force:org:create edition=Developer -a MyScratchOrg -s -v devHub
+  $ sf force org create edition=Developer -a MyScratchOrg -s -v devHub
 
-  $ sf force:org:create -f config/enterprise-scratch-def.json -a ScratchOrgWithOverrides username=testuser1@mycompany.org
+  $ sf force org create -f config/enterprise-scratch-def.json -a ScratchOrgWithOverrides username=testuser1@mycompany.org
 
-  $ sf force:org:create -t sandbox -f config/dev-sandbox-def.json -a MyDevSandbox -u prodOrg
+  $ sf force org create -t sandbox -f config/dev-sandbox-def.json -a MyDevSandbox -u prodOrg
 ```
 
-_See code: [src/commands/force/org/create.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.8/src/commands/force/org/create.ts)_
+_See code: [src/commands/force/org/create.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.9/src/commands/force/org/create.ts)_
 
-## `sf force:org:delete`
+## `sf force org delete`
 
 Delete a scratch or sandbox org.
 
 ```
 USAGE
-  $ sf force:org:delete -o <value> [--json] [--api-version <value>] [-p]
+  $ sf force org delete -o <value> [--json] [--api-version <value>] [-p]
 
 FLAGS
   -o, --target-org=<value>  (required) Username or alias of the target org.
@@ -235,20 +235,20 @@ DESCRIPTION
   To mark the org for deletion without being prompted to confirm, specify --noprompt.
 
 EXAMPLES
-  $ sf force:org:delete -u me@my.org
+  $ sf force org delete -u me@my.org
 
-  $ sf force:org:delete -u MyOrgAlias -p
+  $ sf force org delete -u MyOrgAlias -p
 ```
 
-_See code: [src/commands/force/org/delete.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.8/src/commands/force/org/delete.ts)_
+_See code: [src/commands/force/org/delete.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.9/src/commands/force/org/delete.ts)_
 
-## `sf force:org:status`
+## `sf force org status`
 
 Check the status of a sandbox, and if complete, authenticate to it.
 
 ```
 USAGE
-  $ sf force:org:status -o <value> -n <value> [--json] [--api-version <value>] [-s] [-a <value>] [-w <value>]
+  $ sf force org status -o <value> -n <value> [--json] [--api-version <value>] [-s] [-a <value>] [-w <value>]
 
 FLAGS
   -a, --setalias=<value>     Alias for the created or cloned org.
@@ -273,20 +273,20 @@ DESCRIPTION
   Set the --target-org (-o) parameter to the username or alias of the production org that contains the sandbox license.
 
 EXAMPLES
-  $ sf force:org:status --sandboxname DevSbx1 --setalias MySandbox -u prodOrg
+  $ sf force org status --sandboxname DevSbx1 --setalias MySandbox -u prodOrg
 
-  $ sf force:org:status --sandboxname DevSbx1 --wait 45 --setdefaultusername -u prodOrg
+  $ sf force org status --sandboxname DevSbx1 --wait 45 --setdefaultusername -u prodOrg
 ```
 
-_See code: [src/commands/force/org/status.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.8/src/commands/force/org/status.ts)_
+_See code: [src/commands/force/org/status.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.9/src/commands/force/org/status.ts)_
 
-## `sf org:create:sandbox`
+## `sf org create sandbox`
 
 Create a sandbox org.
 
 ```
 USAGE
-  $ sf org:create:sandbox -o <value> [--json] [-f <value> | -n <value> | -l Developer|Developer_Pro|Partial|Full] [-s]
+  $ sf org create sandbox -o <value> [--json] [-f <value> | -n <value> | -l Developer|Developer_Pro|Partial|Full] [-s]
     [-a <value>] [-w <value> | --async] [-i <value> | ] [-c <value> | ] [--no-prompt] [--no-track-source]
 
 FLAGS
@@ -315,18 +315,18 @@ DESCRIPTION
   license type, such as apexClassId, you must use a definition file.
 
 ALIASES
-  $ sf env:create:sandbox
+  $ sf env create sandbox
 
 EXAMPLES
   Create a sandbox org using a definition file and give it the alias "MyDevSandbox". The production org that contains
   the sandbox license has the alias "prodOrg".
 
-    $ sf org:create:sandbox -f config/dev-sandbox-def.json --alias MyDevSandbox --target-org prodOrg
+    $ sf org create sandbox -f config/dev-sandbox-def.json --alias MyDevSandbox --target-org prodOrg
 
   Create a sandbox org by directly specifying its name and type of license (Developer) instead of using a definition
   file. Set the sandbox org as your default.
 
-    $ sf org:create:sandbox --name mysandbox --license-type Developer --alias MyDevSandbox --target-org prodOrg \
+    $ sf org create sandbox --name mysandbox --license-type Developer --alias MyDevSandbox --target-org prodOrg \
       --set-default
 
 FLAG DESCRIPTIONS
@@ -383,15 +383,15 @@ FLAG DESCRIPTIONS
     sandbox.
 ```
 
-_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.8/src/commands/org/create/sandbox.ts)_
+_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.9/src/commands/org/create/sandbox.ts)_
 
-## `sf org:create:scratch`
+## `sf org create scratch`
 
 Create a scratch org.
 
 ```
 USAGE
-  $ sf org:create:scratch -v <value> [--json] [-a <value>] [--async] [-d] [-f <value>] [-c] [-e
+  $ sf org create scratch -v <value> [--json] [-a <value>] [--async] [-d] [-f <value>] [-c] [-e
     developer|enterprise|group|professional|partner-developer|partner-enterprise|partner-group|partner-professional]
     [-m] [-y <value>] [-w <value>] [--api-version <value>] [-i <value>] [-t] [--username <value>] [--description
     <value>] [--name <value>] [--release preview|previous] [--admin-email <value>] [--source-org <value>]
@@ -458,22 +458,22 @@ DESCRIPTION
   Dev Hub with the target-dev-hub configuration variable.
 
 ALIASES
-  $ sf env:create:scratch
+  $ sf env create scratch
 
 EXAMPLES
   Create a Developer edition scratch org using your default Dev Hub and give the scratch org an alias:
 
-    $ sf org:create:scratch --edition developer --alias my-scratch-org
+    $ sf org create scratch --edition developer --alias my-scratch-org
 
   Create a scratch org with a definition file. Specify the Dev Hub using its alias, set the scratch org as your
   default, and specify that it expires in 3 days:
 
-    $ sf org:create:scratch --target-dev-hub MyHub --definition-file config/project-scratch-def.json --set-default \
+    $ sf org create scratch --target-dev-hub MyHub --definition-file config/project-scratch-def.json --set-default \
       --duration-days 3
 
   Create a preview Enterprise edition scratch org; for use only during Salesforce release transition periods:
 
-    $ sf org:create:scratch --edition enterprise --alias my-scratch-org --target-dev-hub MyHub --release preview
+    $ sf org create scratch --edition enterprise --alias my-scratch-org --target-dev-hub MyHub --release preview
 
 FLAG DESCRIPTIONS
   -a, --alias=<value>  Alias for the scratch org.
@@ -536,15 +536,15 @@ FLAG DESCRIPTIONS
     Omit this flag to have Salesforce generate a unique username for your org.
 ```
 
-_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.8/src/commands/org/create/scratch.ts)_
+_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.9/src/commands/org/create/scratch.ts)_
 
-## `sf org:delete:sandbox`
+## `sf org delete sandbox`
 
 Delete a sandbox.
 
 ```
 USAGE
-  $ sf org:delete:sandbox -o <value> [--json] [-p]
+  $ sf org delete sandbox -o <value> [--json] [-p]
 
 FLAGS
   -o, --target-org=<value>  (required) Sandbox alias or login user.
@@ -562,31 +562,31 @@ DESCRIPTION
   you created it. Run "sf org list" to view all your orgs, including sandboxes, and their aliases.
 
 ALIASES
-  $ sf env:delete:sandbox
+  $ sf env delete sandbox
 
 EXAMPLES
   Delete a sandbox with alias my-sandbox:
 
-    $ sf org:delete:sandbox --target-org my-sandbox
+    $ sf org delete sandbox --target-org my-sandbox
 
   Specify a username instead of an alias:
 
-    $ sf org:delete:sandbox --target-org myusername@example.com.qa
+    $ sf org delete sandbox --target-org myusername@example.com.qa
 
   Delete the sandbox without prompting to confirm :
 
-    $ sf org:delete:sandbox --target-org my-sandbox --no-prompt
+    $ sf org delete sandbox --target-org my-sandbox --no-prompt
 ```
 
-_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.8/src/commands/org/delete/sandbox.ts)_
+_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.9/src/commands/org/delete/sandbox.ts)_
 
-## `sf org:delete:scratch`
+## `sf org delete scratch`
 
 Delete a scratch org.
 
 ```
 USAGE
-  $ sf org:delete:scratch -o <value> [--json] [-p]
+  $ sf org delete scratch -o <value> [--json] [-p]
 
 FLAGS
   -o, --target-org=<value>  (required) Scratch org alias or login user.
@@ -604,31 +604,31 @@ DESCRIPTION
   list" to view all your orgs, including scratch orgs, and their aliases.
 
 ALIASES
-  $ sf env:delete:scratch
+  $ sf env delete scratch
 
 EXAMPLES
   Delete a scratch org with alias my-scratch-org:
 
-    $ sf org:delete:scratch --target-org my-scratch-org
+    $ sf org delete scratch --target-org my-scratch-org
 
   Specify a username instead of an alias:
 
-    $ sf org:delete:scratch --target-org test-123456-abcdefg@example.com
+    $ sf org delete scratch --target-org test-123456-abcdefg@example.com
 
   Delete the scratch org without prompting to confirm :
 
-    $ sf org:delete:scratch --target-org my-scratch-org --no-prompt
+    $ sf org delete scratch --target-org my-scratch-org --no-prompt
 ```
 
-_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.8/src/commands/org/delete/scratch.ts)_
+_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.9/src/commands/org/delete/scratch.ts)_
 
-## `sf org:display`
+## `sf org display`
 
 Display information about an org.
 
 ```
 USAGE
-  $ sf org:display -o <value> [--json] [--api-version <value>] [--verbose]
+  $ sf org display -o <value> [--json] [--api-version <value>] [--verbose]
 
 FLAGS
   -o, --target-org=<value>  (required) Username or alias of the target org.
@@ -651,27 +651,27 @@ DESCRIPTION
   "org login jwt").
 
 ALIASES
-  $ sf force:org:display
+  $ sf force org display
 
 EXAMPLES
   Display information about your default org:
 
-    $ sf org:display
+    $ sf org display
 
   Display information, including the sfdxAuthUrl property, about the org with alias TestOrg1:
 
-    $ sf org:display --target-org TestOrg1 --verbose
+    $ sf org display --target-org TestOrg1 --verbose
 ```
 
-_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.8/src/commands/org/display.ts)_
+_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.9/src/commands/org/display.ts)_
 
-## `sf org:list`
+## `sf org list`
 
 List all orgs you’ve created or authenticated to.
 
 ```
 USAGE
-  $ sf org:list [--json] [--verbose] [--all] [-p --clean] [--skip-connection-status]
+  $ sf org list [--json] [--verbose] [--all] [-p --clean] [--skip-connection-status]
 
 FLAGS
   -p, --no-prompt           Don't prompt for confirmation.
@@ -685,31 +685,31 @@ GLOBAL FLAGS
   --json  Format output as json.
 
 ALIASES
-  $ sf force:org:list
+  $ sf force org list
 
 EXAMPLES
   List all orgs you've created or authenticated to:
 
-    $ sf org:list
+    $ sf org list
 
   List all orgs, including expired, deleted, and unknown-status orgs; don't include the connection status:
 
-    $ sf org:list --skip-connection-status --all
+    $ sf org list --skip-connection-status --all
 
   List orgs and remove local org authorization info about non-active scratch orgs:
 
-    $ sf org:list --clean
+    $ sf org list --clean
 ```
 
-_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.8/src/commands/org/list.ts)_
+_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.9/src/commands/org/list.ts)_
 
-## `sf org:list:metadata`
+## `sf org list metadata`
 
 List the metadata components and properties of a specified type.
 
 ```
 USAGE
-  $ sf org:list:metadata -o <value> -m <value> [--json] [--api-version <value>] [-f <value>] [--folder <value>]
+  $ sf org list metadata -o <value> -m <value> [--json] [--api-version <value>] [-f <value>] [--folder <value>]
 
 FLAGS
   -f, --output-file=<value>    Pathname of the file in which to write the results.
@@ -735,22 +735,22 @@ DESCRIPTION
   Functions permission.
 
 ALIASES
-  $ sf force:mdapi:listmetadata
+  $ sf force mdapi listmetadata
 
 EXAMPLES
   List the CustomObject components, and their properties, in the org with alias "my-dev-org":
 
-    $ sf org:list:metadata --metadata-type CustomObject --target-org my-dev-org
+    $ sf org list metadata --metadata-type CustomObject --target-org my-dev-org
 
   List the CustomObject components in your default org, write the output to the specified file, and use API version
   57.0:
 
-    $ sf org:list:metadata --metadata-type CustomObject --api-version 57.0 --output-file /path/to/outputfilename.txt
+    $ sf org list metadata --metadata-type CustomObject --api-version 57.0 --output-file /path/to/outputfilename.txt
 
   List the Dashboard components in your default org that are contained in the "folderSales" folder, write the output
   to the specified file, and use API version 57.0:
 
-    $ sf org:list:metadata --metadata-type Dashboard --folder folderSales --api-version 57.0 --output-file \
+    $ sf org list metadata --metadata-type Dashboard --folder folderSales --api-version 57.0 --output-file \
       /path/to/outputfilename.txt
 
 FLAG DESCRIPTIONS
@@ -765,15 +765,15 @@ FLAG DESCRIPTIONS
     Examples of metadata types that use folders are Dashboard, Document, EmailTemplate, and Report.
 ```
 
-_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.8/src/commands/org/list/metadata.ts)_
+_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.9/src/commands/org/list/metadata.ts)_
 
-## `sf org:list:metadata-types`
+## `sf org list metadata-types`
 
 Display details about the metadata types that are enabled for your org.
 
 ```
 USAGE
-  $ sf org:list:metadata-types -o <value> [--json] [--api-version <value>] [-f <value>]
+  $ sf org list metadata-types -o <value> [--json] [--api-version <value>] [-f <value>]
 
 FLAGS
   -f, --output-file=<value>  Pathname of the file in which to write the results.
@@ -794,18 +794,18 @@ DESCRIPTION
   Functions permission.
 
 ALIASES
-  $ sf force:mdapi:describemetadata
+  $ sf force mdapi describemetadata
 
 EXAMPLES
   Display information about all known and enabled metadata types in the org with alias "my-dev-org" using API version
   57.0:
 
-    $ sf org:list:metadata-types --api-version 57.0 --target-org my-dev-org
+    $ sf org list metadata-types --api-version 57.0 --target-org my-dev-org
 
   Display only the metadata types that aren't yet supported by Salesforce CLI in your default org and write the
   results to the specified file:
 
-    $ sf org:list:metadata-types --output-file /path/to/outputfilename.txt --filter-known
+    $ sf org list metadata-types --output-file /path/to/outputfilename.txt --filter-known
 
 FLAG DESCRIPTIONS
   -f, --output-file=<value>  Pathname of the file in which to write the results.
@@ -818,15 +818,15 @@ FLAG DESCRIPTIONS
     Override the api version used for api requests made by this command
 ```
 
-_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.8/src/commands/org/list/metadata-types.ts)_
+_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.9/src/commands/org/list/metadata-types.ts)_
 
-## `sf org:open`
+## `sf org open`
 
 Open your default scratch org, or another specified org, in a browser.
 
 ```
 USAGE
-  $ sf org:open -o <value> [--json] [--api-version <value>] [-b chrome|edge|firefox | -r] [-p <value> | -f
+  $ sf org open -o <value> [--json] [--api-version <value>] [-b chrome|edge|firefox | -r] [-p <value> | -f
     <value>]
 
 FLAGS
@@ -857,41 +857,41 @@ DESCRIPTION
   don't specify --browser, the org opens in your default browser.
 
 ALIASES
-  $ sf force:org:open
-  $ sf force:source:open
+  $ sf force org open
+  $ sf force source open
 
 EXAMPLES
   Open your default org in your default browser:
 
-    $ sf org:open
+    $ sf org open
 
   Open the org with alias MyTestOrg1 in the Firefox browser:
 
-    $ sf org:open --target-org MyTestOrg1 --browser firefox
+    $ sf org open --target-org MyTestOrg1 --browser firefox
 
   Display the navigation URL for the Lightning Experience page for your default org, but don't open the page in a
   browser:
 
-    $ sf org:open --url-only --path lightning
+    $ sf org open --url-only --path lightning
 
   Open a local Lightning page in your default org's Lightning App Builder:
 
-    $ sf org:open --source-file force-app/main/default/flexipages/Hello.flexipage-meta.xml
+    $ sf org open --source-file force-app/main/default/flexipages/Hello.flexipage-meta.xml
 
   Open a local Flow in Flow Builder:
 
-    $ sf org:open --source-file force-app/main/default/flows/Hello.flow-meta.xml
+    $ sf org open --source-file force-app/main/default/flows/Hello.flow-meta.xml
 ```
 
-_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.8/src/commands/org/open.ts)_
+_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.9/src/commands/org/open.ts)_
 
-## `sf org:resume:sandbox`
+## `sf org resume sandbox`
 
 Check the status of a sandbox creation, and log in to it if it's ready.
 
 ```
 USAGE
-  $ sf org:resume:sandbox [--json] [-w <value>] [-n <value> | -i <value>] [-l] [-o <value>]
+  $ sf org resume sandbox [--json] [-w <value>] [-n <value> | -i <value>] [-l] [-o <value>]
 
 FLAGS
   -i, --job-id=<value>      Job ID of the incomplete sandbox creation that you want to check the status of.
@@ -914,20 +914,20 @@ DESCRIPTION
   recent sandbox creation.
 
 ALIASES
-  $ sf env:resume:sandbox
+  $ sf env resume sandbox
 
 EXAMPLES
   Check the status of a sandbox creation using its name and specify a production org with alias "prodOrg":
 
-    $ sf org:resume:sandbox --name mysandbox --target-org prodOrg
+    $ sf org resume sandbox --name mysandbox --target-org prodOrg
 
   Check the status using the job ID:
 
-    $ sf org:resume:sandbox --job-id 0GRxxxxxxxx
+    $ sf org resume sandbox --job-id 0GRxxxxxxxx
 
   Check the status of the most recent sandbox create request:
 
-    $ sf org:resume:sandbox --use-most-recent
+    $ sf org resume sandbox --use-most-recent
 
 FLAG DESCRIPTIONS
   -i, --job-id=<value>  Job ID of the incomplete sandbox creation that you want to check the status of.
@@ -945,15 +945,15 @@ FLAG DESCRIPTIONS
     returns the job ID. To resume checking the sandbox creation, rerun this command.
 ```
 
-_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.8/src/commands/org/resume/sandbox.ts)_
+_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.9/src/commands/org/resume/sandbox.ts)_
 
-## `sf org:resume:scratch`
+## `sf org resume scratch`
 
 Resume the creation of an incomplete scratch org.
 
 ```
 USAGE
-  $ sf org:resume:scratch [--json] [-i <value>] [-r]
+  $ sf org resume scratch [--json] [-i <value>] [-r]
 
 FLAGS
   -i, --job-id=<value>   Job ID of the incomplete scratch org create that you want to resume.
@@ -972,16 +972,16 @@ DESCRIPTION
   incomplete scratch org.
 
 ALIASES
-  $ sf env:resume:scratch
+  $ sf env resume scratch
 
 EXAMPLES
   Resume a scratch org create with a job ID:
 
-    $ sf org:resume:scratch --job-id 2SR3u0000008fBDGAY
+    $ sf org resume scratch --job-id 2SR3u0000008fBDGAY
 
   Resume your most recent incomplete scratch org:
 
-    $ sf org:resume:scratch --use-most-recent
+    $ sf org resume scratch --use-most-recent
 
 FLAG DESCRIPTIONS
   -i, --job-id=<value>  Job ID of the incomplete scratch org create that you want to resume.
@@ -991,6 +991,6 @@ FLAG DESCRIPTIONS
     The job ID is valid for 24 hours after you start the scratch org creation.
 ```
 
-_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.8/src/commands/org/resume/scratch.ts)_
+_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/2.11.9/src/commands/org/resume/scratch.ts)_
 
 <!-- commandsstop -->
