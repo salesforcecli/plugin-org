@@ -7,7 +7,7 @@
 
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, config, expect } from 'chai';
-import * as shell from 'shelljs';
+import shell from 'shelljs';
 import { AuthInfo, Connection, SandboxProcessObject } from '@salesforce/core';
 
 let session: TestSession;

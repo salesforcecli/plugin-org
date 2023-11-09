@@ -5,6 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   ConfigAggregator,
   Lifecycle,
@@ -17,16 +19,15 @@ import {
   SfError,
 } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
-import * as sinon from 'sinon';
-import { MockTestOrgData, shouldThrow, TestContext } from '@salesforce/core/lib/testSetup';
+import sinon from 'sinon';
+import { MockTestOrgData, shouldThrow, TestContext } from '@salesforce/core/lib/testSetup.js';
 import { expect, config, assert } from 'chai';
 import { stubSfCommandUx } from '@salesforce/sf-plugins-core';
-import { Create } from '../../../../src/commands/force/org/create';
-import * as requestFunctions from '../../../../src/shared/sandboxRequest';
+import { Create } from '../../../../src/commands/force/org/create.js';
+import requestFunctions from '../../../../src/shared/sandboxRequest.js';
 
 config.truncateThreshold = 0;
-
-Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
 
 describe('org:create (sandbox paths)', () => {

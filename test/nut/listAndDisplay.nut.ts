@@ -6,14 +6,14 @@
  */
 
 import { join } from 'node:path';
-import * as os from 'node:os';
+import os from 'node:os';
 import { expect, config, assert } from 'chai';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { execCmd } from '@salesforce/cli-plugins-testkit';
 import { getString } from '@salesforce/ts-types';
-import { OrgListResult, defaultHubEmoji, defaultOrgEmoji } from '../../src/commands/org/list';
-import { OrgOpenOutput } from '../../src/commands/org/open';
-import { OrgDisplayReturn } from '../../src/shared/orgTypes';
+import { OrgListResult, defaultHubEmoji, defaultOrgEmoji } from '../../src/commands/org/list.js';
+import { OrgOpenOutput } from '../../src/commands/org/open.js';
+import { OrgDisplayReturn } from '../../src/shared/orgTypes.js';
 
 let hubOrgUsername: string;
 config.truncateThreshold = 0;

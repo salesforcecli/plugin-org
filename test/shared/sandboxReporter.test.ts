@@ -7,7 +7,7 @@
 
 import { expect, config } from 'chai';
 import { StatusEvent, SandboxProcessObject, SandboxUserAuthResponse } from '@salesforce/core';
-import { SandboxReporter } from '../../src/shared/sandboxReporter';
+import { SandboxReporter } from '../../src/shared/sandboxReporter.js';
 
 config.truncateThreshold = 0;
 

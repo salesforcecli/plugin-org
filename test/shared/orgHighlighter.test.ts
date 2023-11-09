@@ -5,9 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { expect } from 'chai';
-import * as chalk from 'chalk';
-import { ExtendedAuthFields } from '../../src/shared/orgTypes';
-import { getStyledObject, getStyledValue } from '../../src/shared/orgHighlighter';
+import chalk from 'chalk';
+import { ExtendedAuthFields } from '../../src/shared/orgTypes.js';
+import { getStyledObject, getStyledValue } from '../../src/shared/orgHighlighter.js';
 
 describe('highlights value from key-value pair', () => {
   it('colors matching property/value green', () => {

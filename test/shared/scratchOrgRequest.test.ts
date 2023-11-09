@@ -6,9 +6,9 @@
  */
 import { Config, Interfaces } from '@oclif/core';
 import { expect } from 'chai';
-import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
-import { buildScratchOrgRequest } from '../../src/shared/scratchOrgRequest';
-import EnvCreateScratch from '../../src/commands/org/create/scratch';
+import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup.js';
+import { buildScratchOrgRequest } from '../../src/shared/scratchOrgRequest.js';
+import EnvCreateScratch from '../../src/commands/org/create/scratch.js';
 
 class Wrapper extends EnvCreateScratch {
   // simple method to return the parsed flags so they can be used in the tests

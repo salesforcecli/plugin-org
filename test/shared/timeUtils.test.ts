@@ -6,7 +6,7 @@
  */
 import { expect } from 'chai';
 import { Duration } from '@salesforce/cli-plugins-testkit';
-import { getClockForSeconds, getSecondsToHuman } from '../../src/shared/timeUtils';
+import { getClockForSeconds, getSecondsToHuman } from '../../src/shared/timeUtils.js';
 
 describe('timeUtils', () => {
   describe('getSecondsToHuman', () => {

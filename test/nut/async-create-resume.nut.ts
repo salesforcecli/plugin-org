@@ -5,15 +5,15 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as fs from 'node:fs';
-import * as path from 'node:path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
 import { AuthFields, Global, ScratchOrgCache } from '@salesforce/core';
 import { JsonMap } from '@salesforce/ts-types';
-import { CachedOptions } from '@salesforce/core/lib/org/scratchOrgCache';
+import { CachedOptions } from '@salesforce/core/lib/org/scratchOrgCache.js';
 import { Duration, sleep } from '@salesforce/kit';
-import { ScratchCreateResponse } from '../../src/shared/orgTypes';
+import { ScratchCreateResponse } from '../../src/shared/orgTypes.js';
 
 describe('env:create:scratch async/resume', () => {
   let session: TestSession;
