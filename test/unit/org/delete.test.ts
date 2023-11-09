@@ -4,6 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { AuthInfo, Messages, Org, SfError } from '@salesforce/core';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup.js';
 import { SinonStub } from 'sinon';
@@ -15,7 +17,7 @@ import DeleteScratch from '../../../src/commands/org/delete/scratch.js';
 
 config.truncateThreshold = 0;
 
-Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
 const sbxOrgMessages = Messages.loadMessages('@salesforce/plugin-org', 'delete_sandbox');
 const scratchOrgMessages = Messages.loadMessages('@salesforce/plugin-org', 'delete_scratch');
 const deleteMessages = Messages.loadMessages('@salesforce/plugin-org', 'delete');
