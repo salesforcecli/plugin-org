@@ -4,11 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { Flags, loglevel, orgApiVersionFlagWithDeprecations, SfCommand } from '@salesforce/sf-plugins-core';
 import { AuthInfo, AuthRemover, Messages, Org, StateAggregator } from '@salesforce/core';
-import { orgThatMightBeDeleted } from '../../../shared/flags';
+import { orgThatMightBeDeleted } from '../../../shared/flags.js';
 
-Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete');
 
 export type DeleteResult = {
@@ -30,18 +32,18 @@ export class Delete extends SfCommand<DeleteResult> {
       summary: messages.getMessage('flags.target-org.summary'),
     }),
     targetdevhubusername: Flags.string({
-      summary: messages.getMessage('flags.targetdevhubusername'),
+      summary: messages.getMessage('flags.targetdevhubusername.summary'),
       char: 'v',
       hidden: true,
       deprecated: {
         version: '58.0',
-        message: messages.getMessage('flags.targetdevhubusername'),
+        message: messages.getMessage('flags.targetdevhubusername.summary'),
       },
     }),
     'api-version': orgApiVersionFlagWithDeprecations,
     'no-prompt': Flags.boolean({
       char: 'p',
-      summary: messages.getMessage('flags.noprompt'),
+      summary: messages.getMessage('flags.no-prompt.summary'),
       deprecateAliases: true,
       aliases: ['noprompt'],
     }),

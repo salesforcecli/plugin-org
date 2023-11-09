@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as moment from 'moment';
+import moment from 'moment';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
@@ -45,7 +45,7 @@ SERVER_DATA.set(TEST_USERS[3], {
   ScratchOrg: '00Dxx0000001hcG',
 });
 
-class OrgListMock {
+export default class OrgListMock {
   public static AUTH_INFO = {
     scratchOrgs: [
       {
@@ -96,6 +96,15 @@ class OrgListMock {
         connectedStatus: 'Connected',
       },
     ],
+    devHubs: [
+      {
+        username: 'foo@example.com',
+        isDevHub: true,
+        connectedStatus: 'Connected',
+      },
+    ],
+    sandboxes: [],
+    other: [],
   };
 
   public static get devHubUsername(): string {
@@ -110,5 +119,3 @@ class OrgListMock {
     return SERVER_DATA;
   }
 }
-
-export = OrgListMock;

@@ -4,13 +4,13 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as fs from 'fs/promises';
+import fs from 'node:fs/promises';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { AuthInfo, ConfigAggregator, Org } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
-import { OrgListUtil } from '../../src/shared/orgListUtil';
-import * as utils from '../../src/shared/utils';
+import { OrgListUtil } from '../../src/shared/orgListUtil.js';
+import utils from '../../src/shared/utils.js';
 
 const orgAuthConfigFields = {
   username: 'gaz@foo.org',
@@ -123,13 +123,12 @@ describe('orgListUtil tests', () => {
       sandbox.stub(utils, 'getAliasByUsername').withArgs('gaz@foo.org').resolves('gaz');
     });
 
-    afterEach(async () => {
+    afterEach(() => {
       sandbox.restore();
     });
 
     it('readLocallyValidatedMetaConfigsGroupedByOrgType', async () => {
-      const flags = {};
-      const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
+      const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, false);
       expect(orgs.nonScratchOrgs.every((nonScratchOrg) => nonScratchOrg.connectedStatus !== undefined)).to.be.true;
       expect(orgs.scratchOrgs.length).to.equal(2);
       expect(orgs.scratchOrgs[0]).to.haveOwnProperty('username').to.equal('gaz@foo.org');
@@ -143,8 +142,7 @@ describe('orgListUtil tests', () => {
     });
 
     it('skipconnectionstatus', async () => {
-      const flags = { skipconnectionstatus: true };
-      const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
+      const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, true);
 
       // we didn't check the status, so the hub is still not known to be a devhub
       expect(orgs.nonScratchOrgs[0].isDevHub).to.be.false;
@@ -155,9 +153,17 @@ describe('orgListUtil tests', () => {
       expect(determineConnectedStatusForNonScratchOrg.called).to.be.false;
     });
 
+    it('skipconnectionstatus with default', async () => {
+      const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames);
+      expect(orgs.nonScratchOrgs.every((org) => org.connectedStatus !== undefined)).to.be.true;
+      expect(orgs.other.every((org) => org.connectedStatus !== undefined)).to.be.true;
+      expect(orgs.sandboxes.every((org) => org.connectedStatus !== undefined)).to.be.true;
+
+      expect(determineConnectedStatusForNonScratchOrg.called).to.be.true;
+    });
+
     it('should omit sensitive information and catergorise active and non-active scracth orgs', async () => {
-      const flags = {};
-      const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
+      const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, false);
 
       expect(orgs.scratchOrgs[0]).to.not.haveOwnProperty('clientSecret');
       expect(orgs.scratchOrgs[1]).to.not.haveOwnProperty('clientSecret');
@@ -166,15 +172,13 @@ describe('orgListUtil tests', () => {
     });
 
     it('should execute queries to check for org information if --verbose is used', async () => {
-      const flags = { verbose: true };
-      await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
+      await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, true);
       expect(retrieveScratchOrgInfoFromDevHubStub.calledOnce).to.be.true;
       expect(spies.get('reduceScratchOrgInfo').calledOnce).to.be.true;
     });
 
     it('execute queries should add information to grouped orgs', async () => {
-      const flags = { verbose: true };
-      const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, flags);
+      const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, true);
       expect(retrieveScratchOrgInfoFromDevHubStub.calledOnce).to.be.true;
       expect(spies.get('reduceScratchOrgInfo').calledOnce).to.be.true;
       expect(orgGroups.scratchOrgs[0].signupUsername).to.equal(orgAuthConfigFields.username);
@@ -198,9 +202,60 @@ describe('orgListUtil tests', () => {
       stubMethod(sandbox, Org.prototype, 'getUsername').returns(devHubConfigFields.username);
       stubMethod(sandbox, Org.prototype, 'refreshAuth').rejects({ message: 'bad auth' });
 
-      const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, {});
+      const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, false);
       expect(orgGroups.nonScratchOrgs).to.have.length(1);
       expect(orgGroups.nonScratchOrgs[0].connectedStatus).to.equal('bad auth');
+      expect(checkNonScratchOrgIsDevHub.called).to.be.false;
+    });
+
+    it('handles html responses for non-scratch orgs under maintenance', async () => {
+      determineConnectedStatusForNonScratchOrg.restore();
+      stubMethod(sandbox, Org, 'create').returns(Org.prototype);
+      stubMethod(sandbox, Org.prototype, 'getField').returns(undefined);
+      stubMethod(sandbox, Org.prototype, 'getUsername').returns(devHubConfigFields.username);
+      stubMethod(sandbox, Org.prototype, 'refreshAuth').rejects({
+        message: `<html>
+  <body>
+  <center>
+    <table bgcolor="white" cellpadding="0" cellspacing="0" width="758">
+      <tbody>
+      <tr>
+        <td><span style="font-family: Verdana; font-size: medium; font-weight: bold;">We are down for maintenance.</span><br><br>Sorry for the inconvenience. We'll be back shortly.</td><br>
+      </tr>
+      </tbody>
+    </table>
+  </center>
+  </body>
+  </html>`,
+      });
+
+      const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, false);
+      expect(orgGroups.nonScratchOrgs).to.have.length(1);
+      expect(orgGroups.nonScratchOrgs[0].connectedStatus).to.equal('Down (Maintenance)');
+      expect(checkNonScratchOrgIsDevHub.called).to.be.false;
+    });
+
+    it('handles html responses for deactivated/expired non-scratch orgs', async () => {
+      determineConnectedStatusForNonScratchOrg.restore();
+      stubMethod(sandbox, Org, 'create').returns(Org.prototype);
+      stubMethod(sandbox, Org.prototype, 'getField').returns(undefined);
+      stubMethod(sandbox, Org.prototype, 'getUsername').returns(devHubConfigFields.username);
+      stubMethod(sandbox, Org.prototype, 'refreshAuth').rejects({
+        message: `
+<!DOCTYPE HTML>
+<html lang=en-US>
+
+<head>
+    <meta charset=UTF-8>
+    <title>Error Page</title>
+    <style>
+        /*! normalize.css v3.0.2 | MIT License | git.io/normalize */          html {             font-family: sans-serif;             -ms-text-size-adjust: 100%;             -webkit-text-size-adjust: 100%         }          body {             margin: 0         }          article,         aside,         details,         figcaption,         figure,         footer,         header,         hgroup,   …if (result.success === hostnames.length) {       clearInterval(interval);       success();       return;     }      if (Date.now() - startTime > totalThresholdDelay) {       clearInterval(interval);       failure();       return;     }      for (var i = 0; i < hostnames.length; i++) {       if (result["host" + i] === undefined) {         result["host" + i] = false;       }       if (!result["host" + i]) {         test(i);       }     }   }, retry); }  start(hosts);  </script> </body> </html>
+`,
+      });
+
+      const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, false);
+      expect(orgGroups.nonScratchOrgs).to.have.length(1);
+      expect(orgGroups.nonScratchOrgs[0].connectedStatus).to.equal('Bad Response');
       expect(checkNonScratchOrgIsDevHub.called).to.be.false;
     });
 
@@ -208,7 +263,7 @@ describe('orgListUtil tests', () => {
       determineConnectedStatusForNonScratchOrg.restore();
       stubMethod(sandbox, Org, 'create').rejects({ message: 'bad file' });
 
-      const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, {});
+      const orgGroups = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, false);
       expect(orgGroups.nonScratchOrgs).to.have.length(1);
       expect(orgGroups.nonScratchOrgs[0].connectedStatus).to.equal('bad file');
       expect(checkNonScratchOrgIsDevHub.called).to.be.false;
@@ -221,7 +276,7 @@ describe('orgListUtil tests', () => {
       stubMethod(sandbox, fs, 'readdir').resolves(['00D000000000000001.json', '00D000000000000002.json']);
     });
 
-    afterEach(async () => {
+    afterEach(() => {
       sandbox.restore();
     });
 

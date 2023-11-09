@@ -5,13 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { StatusEvent, ResultEvent } from '@salesforce/core';
-import { Duration } from '@salesforce/kit';
+import { getSecondsToHuman } from './timeUtils.js';
 
 export class SandboxReporter {
   public static sandboxProgress(update: StatusEvent): string {
     const { remainingWait, interval, sandboxProcessObj, waitingOnAuth } = update;
 
-    const waitTime: string = SandboxReporter.getSecondsToHuman(remainingWait);
+    const waitTime: string = getSecondsToHuman(remainingWait);
     const waitTimeMsg = `Sleeping ${interval} seconds. Will wait ${waitTime} more before timing out.`;
     const sandboxIdentifierMsg = `${sandboxProcessObj.SandboxName}(${sandboxProcessObj.Id})`;
     const waitingOnAuthMessage: string = waitingOnAuth ? ', waiting on JWT auth' : '';
@@ -43,17 +43,5 @@ export class SandboxReporter {
     ];
 
     return { sandboxReadyForUse, data };
-  }
-
-  private static getSecondsToHuman(waitTimeInSec: number): string {
-    const hours = Duration.hours(Math.floor(waitTimeInSec / 3600));
-    const minutes = Duration.minutes(Math.floor((waitTimeInSec % 3600) / 60));
-    const seconds = Duration.seconds(Math.floor(waitTimeInSec % 60));
-
-    const hDisplay: string = hours.hours > 0 ? hours.toString() + ' ' : '';
-    const mDisplay: string = minutes.minutes > 0 ? minutes.toString() + ' ' : '';
-    const sDisplay: string = seconds.seconds > 0 ? seconds.toString() : '';
-
-    return (hDisplay + mDisplay + sDisplay).trim();
   }
 }

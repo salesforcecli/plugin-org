@@ -28,11 +28,11 @@ Include expired, deleted, and unknown-status scratch orgs.
 
 Remove all local org authorizations for non-active scratch orgs. Use "org logout" to remove non-scratch orgs.
 
-# flags.noPrompt.summary
+# flags.no-prompt.summary
 
 Don't prompt for confirmation.
 
-# flags.skipConnectionStatus.summary
+# flags.skip-connection-status.summary
 
 Skip retrieving the connection status of non-scratch orgs.
 
@@ -58,7 +58,7 @@ Use one of the "org login" commands or "org create scratch" to add or create a s
 
 # noResultsFound
 
-No non-scratch orgs found.
+No Orgs found.
 
 # cleanWarning
 

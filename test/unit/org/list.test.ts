@@ -5,13 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { expect } from 'chai';
-import { TestContext } from '@salesforce/core/lib/testSetup';
+import { TestContext } from '@salesforce/core/lib/testSetup.js';
 import { AuthInfo, Connection, Org } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { SfCommand, stubSfCommandUx } from '@salesforce/sf-plugins-core';
-import OrgListMock = require('../../shared/orgListMock');
-import { OrgListCommand } from '../../../src/commands/org/list';
-import { OrgListUtil } from '../../../src/shared/orgListUtil';
+import OrgListMock from '../../shared/orgListMock.js';
+import { OrgListCommand } from '../../../src/commands/org/list.js';
+import { OrgListUtil } from '../../../src/shared/orgListUtil.js';
 
 describe('org:list', () => {
   // Create new TestContext, which automatically creates and restores stubs
@@ -20,7 +20,7 @@ describe('org:list', () => {
   // done automatically by the TestContext.
   const $$ = new TestContext();
 
-  beforeEach(async () => {
+  beforeEach(() => {
     // Stub the ux methods on SfCommand so that you don't get any command output in your tests.
     stubSfCommandUx($$.SANDBOX);
     stubMethod($$.SANDBOX, AuthInfo, 'listAllAuthorizations').resolves([
@@ -33,7 +33,7 @@ describe('org:list', () => {
   });
 
   describe('hub org defined', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       stubMethod($$.SANDBOX, OrgListUtil, 'readLocallyValidatedMetaConfigsGroupedByOrgType').resolves(
         OrgListMock.AUTH_INFO
       );

@@ -14,27 +14,27 @@ Set the --targetusername (-u) parameter to a production org with sandbox license
 
 - $ <%= config.bin %> <%= command.id %> -t sandbox SandboxName=NewClonedSandbox SourceSandboxName=ExistingSandbox -u prodOrg -a MyDevSandbox
 
-# flags.type
+# flags.type.summary
 
 Type of org to create.
 
-# flags.wait
+# flags.wait.summary
 
 Number of minutes to wait while polling for status.
 
-# flags.setdefaultusername
+# flags.setdefaultusername.summary
 
 Set the cloned org as your default.
 
-# flags.setalias
+# flags.setalias.summary
 
 Alias for the cloned org.
 
-# flags.definitionfile
+# flags.definitionfile.summary
 
 Path to the sandbox definition file.
 
-# flagsLong.wait
+# flags.wait.description
 
 Sets the streaming client socket timeout, in minutes. If the streaming client socket has no contact from the server for a number of minutes, the client exits. Specify a longer wait time if timeouts occur frequently.
 

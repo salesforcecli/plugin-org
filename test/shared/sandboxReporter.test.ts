@@ -7,7 +7,7 @@
 
 import { expect, config } from 'chai';
 import { StatusEvent, SandboxProcessObject, SandboxUserAuthResponse } from '@salesforce/core';
-import { SandboxReporter } from '../../src/shared/sandboxReporter';
+import { SandboxReporter } from '../../src/shared/sandboxReporter.js';
 
 config.truncateThreshold = 0;
 
@@ -28,7 +28,7 @@ const sandboxProcessObj: SandboxProcessObject = {
 
 describe('sandboxReporter', () => {
   describe('sandboxProgress', () => {
-    it('will calculate the correct human readable message (1h 33min 00seconds seconds left)', async () => {
+    it('will calculate the correct human readable message (1h 33min 00seconds seconds left)', () => {
       const data = {
         sandboxProcessObj,
         interval: 30,
@@ -41,7 +41,7 @@ describe('sandboxReporter', () => {
       );
     });
 
-    it('will calculate the correct human readable message (5 min 30seconds seconds left)', async () => {
+    it('will calculate the correct human readable message (5 min 30seconds seconds left)', () => {
       const data: StatusEvent = {
         sandboxProcessObj,
         interval: 30,

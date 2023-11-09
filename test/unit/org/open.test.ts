@@ -5,18 +5,20 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as fs from 'fs';
-import { join } from 'path';
+import fs from 'node:fs';
+import { join } from 'node:path';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { assert, expect } from 'chai';
 import { MyDomainResolver, Messages, Connection, SfError } from '@salesforce/core';
 import { Config } from '@oclif/core';
 import { stubMethod } from '@salesforce/ts-sinon';
-import { MockTestOrgData, shouldThrow, TestContext } from '@salesforce/core/lib/testSetup';
+import { MockTestOrgData, shouldThrow, TestContext } from '@salesforce/core/lib/testSetup.js';
 import { stubSfCommandUx, stubSpinner, stubUx } from '@salesforce/sf-plugins-core';
-import { OrgOpenCommand, OrgOpenOutput } from '../../../src/commands/org/open';
-import * as utils from '../../../src/shared/utils';
+import { OrgOpenCommand, OrgOpenOutput } from '../../../src/commands/org/open.js';
+import utils from '../../../src/shared/utils.js';
 
-Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
 const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
 

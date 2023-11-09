@@ -5,15 +5,18 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { Duration } from '@salesforce/kit';
 import { Flags } from '@salesforce/sf-plugins-core';
 import { Lifecycle, Messages, SandboxEvents, SandboxProcessObject, SandboxRequest, SfError } from '@salesforce/core';
-import { Ux } from '@salesforce/sf-plugins-core/lib/ux';
-import * as Interfaces from '@oclif/core/lib/interfaces';
-import { createSandboxRequest } from '../../../shared/sandboxRequest';
-import { SandboxCommandBase } from '../../../shared/sandboxCommandBase';
-import { SandboxLicenseType } from '../../../shared/orgTypes';
+import { Ux } from '@salesforce/sf-plugins-core';
+import { Interfaces } from '@oclif/core';
+import requestFunctions from '../../../shared/sandboxRequest.js';
+import { SandboxCommandBase } from '../../../shared/sandboxCommandBase.js';
+import { SandboxLicenseType } from '../../../shared/orgTypes.js';
 
-Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create.sandbox');
 
 const getLicenseTypes = (): string[] => Object.values(SandboxLicenseType);
@@ -51,7 +54,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
       description: messages.getMessage('flags.wait.description'),
       min: 1,
       unit: 'minutes',
-      defaultValue: 30,
+      default: Duration.minutes(30),
       helpValue: '<minutes>',
       exclusive: ['async'],
     }),
@@ -60,7 +63,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
       summary: messages.getMessage('flags.poll-interval.summary'),
       min: 15,
       unit: 'seconds',
-      defaultValue: 30,
+      default: Duration.seconds(30),
       helpValue: '<seconds>',
       exclusive: ['async'],
     }),
@@ -135,8 +138,8 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
       ...(!this.flags.clone && this.flags['license-type'] ? { LicenseType: this.flags['license-type'] } : {}),
     };
     const { sandboxReq } = !this.flags.clone
-      ? await createSandboxRequest(false, this.flags['definition-file'], undefined, requestOptions)
-      : await createSandboxRequest(true, this.flags['definition-file'], undefined, requestOptions);
+      ? await requestFunctions.createSandboxRequest(false, this.flags['definition-file'], undefined, requestOptions)
+      : await requestFunctions.createSandboxRequest(true, this.flags['definition-file'], undefined, requestOptions);
     return {
       ...sandboxReq,
       ...(this.flags.clone ? { SourceId: await this.getSourceId() } : {}),

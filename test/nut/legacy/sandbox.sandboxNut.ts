@@ -4,14 +4,15 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import { Lifecycle, Messages, SandboxEvents, SandboxProcessObject, SfError, StatusEvent } from '@salesforce/core';
 import { assert, expect, config } from 'chai';
-import { OrgOpenOutput } from '../../../src/commands/org/open';
+import { OrgOpenOutput } from '../../../src/commands/org/open.js';
 
 config.truncateThreshold = 0;
-
-Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
 
 describe('Sandbox Orgs via legacy org:create', () => {
@@ -24,13 +25,13 @@ describe('Sandbox Orgs via legacy org:create', () => {
     });
   });
 
-  it('will create a sandbox, verify it can be opened, and then attempt to delete it', async () => {
+  it('will create a sandbox, verify it can be opened, and then attempt to delete it', () => {
     let result: SandboxProcessObject | undefined;
     try {
-      Lifecycle.getInstance().on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) => {
+      Lifecycle.getInstance().on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) =>
         // eslint-disable-next-line no-console
-        console.log('sandbox copy progress', results.sandboxProcessObj.CopyProgress);
-      });
+        Promise.resolve(console.log('sandbox copy progress', results.sandboxProcessObj.CopyProgress))
+      );
       result = execCmd<SandboxProcessObject>(
         // escaped, pending outcome W-12683861
         // eslint-disable-next-line sf-plugin/no-execcmd-double-quotes

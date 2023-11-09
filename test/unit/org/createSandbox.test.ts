@@ -6,11 +6,11 @@
  */
 import { Lifecycle, Org, SandboxEvents, SandboxProcessObject, AuthFields } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { expect, config } from 'chai';
-import { OrgAccessor } from '@salesforce/core/lib/stateAggregator';
+import { OrgAccessor } from '@salesforce/core/lib/stateAggregator/index.js';
 import { stubSfCommandUx, stubSpinner, stubUx } from '@salesforce/sf-plugins-core';
-import CreateSandbox from '../../../src/commands/org/create/sandbox';
+import CreateSandbox from '../../../src/commands/org/create/sandbox.js';
 
 config.truncateThreshold = 0;
 
@@ -37,8 +37,8 @@ const fakeOrg: AuthFields = {
 
 describe('org:create:sandbox', () => {
   beforeEach(() => {
-    stubMethod(sandbox, OrgAccessor.prototype, 'read').callsFake(async (): Promise<AuthFields> => fakeOrg);
-    stubMethod(sandbox, OrgAccessor.prototype, 'write').callsFake(async (): Promise<AuthFields> => fakeOrg);
+    stubMethod(sandbox, OrgAccessor.prototype, 'read').resolves(fakeOrg);
+    stubMethod(sandbox, OrgAccessor.prototype, 'write').resolves(fakeOrg);
     sfCommandUxStubs = stubSfCommandUx(sandbox);
     stubUx(sandbox);
     stubSpinner(sandbox);
@@ -51,22 +51,18 @@ describe('org:create:sandbox', () => {
     it('will print the correct message for asyncResult lifecycle event', async () => {
       stubMethod(sandbox, Org, 'create').resolves(Org.prototype);
       stubMethod(sandbox, Org.prototype, 'getUsername').returns('testProdOrg');
-      const createStub = stubMethod(sandbox, Org.prototype, 'createSandbox').callsFake(async () =>
-        (async () => {})().catch()
-      );
+      const createStub = stubMethod(sandbox, Org.prototype, 'createSandbox').callsFake(async () => {
+        await Lifecycle.getInstance().emit(SandboxEvents.EVENT_ASYNC_RESULT, sandboxProcessObj);
+      });
 
       await CreateSandbox.run(['-o', 'testProdOrg', '--name', 'mysandboxx', '--no-prompt']);
 
-      expect(createStub.firstCall.args[0].SandboxName).includes('mysandboxx');
-      expect(createStub.firstCall.args[0].SandboxName.length).equals(10);
-
-      Lifecycle.getInstance().on(SandboxEvents.EVENT_ASYNC_RESULT, async (result) => {
-        expect(result).to.deep.equal(sandboxProcessObj);
-        expect(sfCommandUxStubs.info.firstCall.firstArg).to.include(sandboxProcessObj.Id);
+      expect(createStub.firstCall.firstArg).to.deep.equal({
+        SandboxName: 'mysandboxx',
+        LicenseType: 'Developer',
       });
-
-      await Lifecycle.getInstance().emit(SandboxEvents.EVENT_ASYNC_RESULT, sandboxProcessObj);
-      Lifecycle.getInstance().removeAllListeners(SandboxEvents.EVENT_ASYNC_RESULT);
+      const expectedInfoMsg = `org resume sandbox --job-id ${sandboxProcessObj.Id} -o testProdOrg`;
+      expect(sfCommandUxStubs.info.firstCall.firstArg).to.include(expectedInfoMsg);
     });
   });
 

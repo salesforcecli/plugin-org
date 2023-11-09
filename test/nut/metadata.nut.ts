@@ -4,12 +4,12 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as path from 'path';
-import * as fs from 'fs';
+import path from 'node:path';
+import fs from 'node:fs';
 import { expect } from 'chai';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
-import { DescribeMetadataResult } from 'jsforce/lib/api/metadata/schema';
-import { ListMetadataCommandResult } from '../../src/commands/org/list/metadata';
+import { DescribeMetadataResult } from 'jsforce/lib/api/metadata/schema.js';
+import { ListMetadataCommandResult } from '../../src/commands/org/list/metadata.js';
 
 describe('org list metadata*', () => {
   let session: TestSession;
@@ -21,7 +21,6 @@ describe('org list metadata*', () => {
       devhubAuthStrategy: 'AUTO',
       scratchOrgs: [
         {
-          executable: 'sfdx',
           config: path.join('config', 'project-scratch-def.json'),
           setDefault: true,
           duration: 1,
@@ -29,7 +28,7 @@ describe('org list metadata*', () => {
       ],
     });
 
-    execCmd('force:source:deploy -p force-app', { cli: 'sfdx' });
+    execCmd('project:deploy:start -d force-app');
   });
 
   after(async () => {

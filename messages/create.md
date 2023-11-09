@@ -20,43 +20,43 @@ Creates a scratch org or a sandbox org using the values specified in a configura
 
 - $ <%= config.bin %> <%= command.id %> -t sandbox -f config/dev-sandbox-def.json -a MyDevSandbox -u prodOrg
 
-# flags.clientId
+# flags.clientid.summary
 
 Connected app consumer key; not supported for sandbox org creation.
 
-# flags.setDefaultUsername
+# flags.setdefaultusername.summary
 
 Set the created org as the default username.
 
-# flags.setAlias
+# flags.setalias.summary
 
 Alias for the created org.
 
-# flags.definitionFile
+# flags.definitionfile.summary
 
 Path to an org definition file.
 
-# flags.noNamespace
+# flags.nonamespace.summary
 
 Create the scratch org with no namespace.
 
-# flags.noAncestors
+# flags.noancestors.summary
 
 Do not include second-generation package ancestors in the scratch org.
 
-# flags.type
+# flags.type.summary
 
 Type of org to create.
 
-# flags.durationDays
+# flags.durationdays.summary
 
 Duration of the scratch org (in days) (default:7, min:1, max:30).
 
-# flags.retry
+# flags.retry.summary
 
 Number of scratch org auth retries after scratch org is successfully signed up.
 
-# flags.wait
+# flags.wait.summary
 
 Streaming client socket timeout (in minutes).
 

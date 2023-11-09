@@ -34,11 +34,11 @@ You must specify a Dev Hub to create a scratch org, either with the --target-dev
 
   <%= config.bin %> <%= command.id %> --edition enterprise --alias my-scratch-org --target-dev-hub MyHub --release preview
 
-# flags.target-hub.summary
+# flags.target-dev-hub.summary
 
 Username or alias of the Dev Hub org.
 
-# flags.target-hub.description
+# flags.target-dev-hub.description
 
 Overrides the value of the target-dev-hub configuration variable, if set.
 
@@ -86,11 +86,11 @@ The scratch org definition file is a blueprint for the scratch org. It mimics th
 
 Consumer key of the Dev Hub connected app.
 
-# flags.adminEmail.summary
+# flags.admin-email.summary
 
 Email address that will be applied to the org's admin user. Overrides the value of the "adminEmail" option in the definition file, if set.
 
-# flags.sourceOrg.summary
+# flags.source-org.summary
 
 15-character ID of the org whose shape the new scratch org will be based on. Overrides the value of the "sourceOrg" option in the definition file, if set.
 

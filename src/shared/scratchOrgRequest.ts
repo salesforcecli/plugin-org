@@ -5,11 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as fs from 'fs';
+import fs from 'node:fs';
 import { Interfaces } from '@oclif/core';
 import { ScratchOrgCreateOptions } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
-import EnvCreateScratch from '../commands/org/create/scratch';
+import EnvCreateScratch from '../commands/org/create/scratch.js';
 /**
  * Provide the parsed flags
  * Returns the objet necessary to create a scratch org

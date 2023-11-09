@@ -5,6 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   Messages,
   Lifecycle,
@@ -16,10 +18,10 @@ import {
 } from '@salesforce/core';
 import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
 import { Duration } from '@salesforce/kit';
-import { buildScratchOrgRequest } from '../../../shared/scratchOrgRequest';
-import { buildStatus } from '../../../shared/scratchOrgOutput';
-import { ScratchCreateResponse } from '../../../shared/orgTypes';
-Messages.importMessagesDirectory(__dirname);
+import { buildScratchOrgRequest } from '../../../shared/scratchOrgRequest.js';
+import { buildStatus } from '../../../shared/scratchOrgOutput.js';
+import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
+Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create_scratch');
 
 export const secretTimeout = 60000;
@@ -54,8 +56,8 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
     }),
     'target-dev-hub': Flags.requiredHub({
       char: 'v',
-      summary: messages.getMessage('flags.target-hub.summary'),
-      description: messages.getMessage('flags.target-hub.description'),
+      summary: messages.getMessage('flags.target-dev-hub.summary'),
+      description: messages.getMessage('flags.target-dev-hub.description'),
       required: true,
     }),
     'no-ancestors': Flags.boolean({
@@ -134,11 +136,11 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
       helpGroup: definitionFileHelpGroupName,
     }),
     'admin-email': Flags.string({
-      summary: messages.getMessage('flags.adminEmail.summary'),
+      summary: messages.getMessage('flags.admin-email.summary'),
       helpGroup: definitionFileHelpGroupName,
     }),
     'source-org': Flags.salesforceId({
-      summary: messages.getMessage('flags.sourceOrg.summary'),
+      summary: messages.getMessage('flags.source-org.summary'),
       startsWith: '00D',
       length: 15,
       helpGroup: definitionFileHelpGroupName,

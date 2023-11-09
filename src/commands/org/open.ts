@@ -5,21 +5,23 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as path from 'path';
+import path from 'node:path';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   Flags,
-  SfCommand,
-  requiredOrgFlagWithDeprecations,
-  orgApiVersionFlagWithDeprecations,
   loglevel,
+  orgApiVersionFlagWithDeprecations,
+  requiredOrgFlagWithDeprecations,
+  SfCommand,
 } from '@salesforce/sf-plugins-core';
 import { Connection, Logger, Messages, Org, SfdcUrl, SfError } from '@salesforce/core';
 import { Duration, Env } from '@salesforce/kit';
-import open = require('open');
 import { MetadataResolver } from '@salesforce/source-deploy-retrieve';
-import { openUrl } from '../../shared/utils';
+import { apps } from 'open';
+import utils from '../../shared/utils.js';
 
-Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
 const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
 
@@ -72,6 +74,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
     this.conn = this.org.getConnection(flags['api-version']);
 
     let url = await this.buildFrontdoorUrl();
+    const env = new Env();
 
     if (flags['source-file']) {
       url += `&retURL=${await this.generateFileUrl(flags['source-file'])}`;
@@ -83,10 +86,11 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
     // TODO: better typings in sfdx-core for orgs read from auth files
     const username = this.org.getUsername() as string;
     const output = { orgId, url, username };
-    const containerMode = new Env().getBoolean('SFDX_CONTAINER_MODE');
+    // NOTE: Deliberate use of `||` here since getBoolean() defaults to false, and we need to consider both env vars.
+    const containerMode = env.getBoolean('SF_CONTAINER_MODE') || env.getBoolean('SFDX_CONTAINER_MODE');
 
     // security warning only for --json OR --url-only OR containerMode
-    if (flags['url-only'] || flags.json || containerMode) {
+    if (flags['url-only'] || Boolean(flags.json) || containerMode) {
       this.warn(sharedMessages.getMessage('SecurityWarning'));
       this.log('');
     }
@@ -115,7 +119,8 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
       if (err instanceof Error) {
         if (err.message.includes('timeout')) {
           const domain = `https://${/https?:\/\/([^.]*)/.exec(url)?.[1]}.lightning.force.com`;
-          const timeout = new Duration(new Env().getNumber('SFDX_DOMAIN_RETRY', 240), Duration.Unit.SECONDS);
+          const domainRetryTimeout = env.getNumber('SF_DOMAIN_RETRY') ?? env.getNumber('SFDX_DOMAIN_RETRY', 240);
+          const timeout = new Duration(domainRetryTimeout, Duration.Unit.SECONDS);
           const logger = await Logger.child(this.constructor.name);
           logger.debug(`Did not find IP for ${domain} after ${timeout.seconds} seconds`);
           throw new SfError(messages.getMessage('domainTimeoutError'), 'domainTimeoutError');
@@ -127,10 +132,10 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
 
     const openOptions = flags.browser
       ? // assertion can be removed once oclif option flag typings are fixed
-        { app: { name: open.apps[flags.browser as 'chrome' | 'edge' | 'firefox'] } }
+        { app: { name: apps[flags.browser as 'chrome' | 'edge' | 'firefox'] } }
       : {};
 
-    await openUrl(url, openOptions);
+    await utils.openUrl(url, openOptions);
     return output;
   }
 
@@ -156,10 +161,15 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
         return `/visualEditor/appBuilder.app?pageId=${flexipage.Id}`;
       } else if (typeName === 'ApexPage') {
         return `/apex/${path.basename(file).replace('.page-meta.xml', '').replace('.page', '')}`;
+      } else if (typeName === 'Flow') {
+        return `/builder_platform_interaction/flowBuilder.app?flowId=${await flowFileNameToId(this.conn, file)}`;
       } else {
         return 'lightning/setup/FlexiPageList/home';
       }
     } catch (error) {
+      if (error instanceof Error && error.name === 'FlowIdNotFoundError') {
+        this.error(error);
+      }
       return 'lightning/setup/FlexiPageList/home';
     }
   }
@@ -170,3 +180,18 @@ export interface OrgOpenOutput {
   username: string;
   orgId: string;
 }
+
+/** query the rest API to turn a flow's filepath into a FlowId  (starts with 301) */
+const flowFileNameToId = async (conn: Connection, filePath: string): Promise<string> => {
+  try {
+    const flow = await conn.singleRecordQuery<{ DurableId: string }>(
+      `SELECT DurableId FROM FlowVersionView WHERE FlowDefinitionView.ApiName = '${path.basename(
+        filePath,
+        '.flow-meta.xml'
+      )}' ORDER BY VersionNumber DESC LIMIT 1`
+    );
+    return flow.DurableId;
+  } catch (error) {
+    throw messages.createError('FlowIdNotFound', [filePath]);
+  }
+};

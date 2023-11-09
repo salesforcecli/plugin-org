@@ -5,12 +5,12 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { expect, config as chaiConfig } from 'chai';
-import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup';
+import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup.js';
 import { Connection } from '@salesforce/core';
 import { stubSfCommandUx } from '@salesforce/sf-plugins-core';
-import { OrgDisplayCommand } from '../../../src/commands/org/display';
-import { OrgListUtil } from '../../../src/shared/orgListUtil';
-import { OrgDisplayReturn } from '../../../src/shared/orgTypes';
+import { OrgDisplayCommand } from '../../../src/commands/org/display.js';
+import { OrgListUtil } from '../../../src/shared/orgListUtil.js';
+import { OrgDisplayReturn } from '../../../src/shared/orgTypes.js';
 
 chaiConfig.truncateThreshold = 0;
 
@@ -147,17 +147,18 @@ describe('org:display', () => {
     await $$.stubAuths(testOrg, testHub);
 
     $$.SANDBOX.stub(Connection.prototype, 'sobject').returns({
-      // @ts-expect-error we all know this is not the full type
-      find: async () => [
-        {
-          Status: 'Active',
-          ExpirationDate: '2021-01-23',
-          CreatedBy: { Username: testHub.username },
-          Edition: 'Developer',
-          OrgName: 'MyOrg',
-          CreatedDate: '2020-12-24T15:18:55.000+0000',
-        },
-      ],
+      find: async () =>
+        // @ts-expect-error we all know this is not the full type
+        Promise.resolve([
+          {
+            Status: 'Active',
+            ExpirationDate: '2021-01-23',
+            CreatedBy: { Username: testHub.username },
+            Edition: 'Developer',
+            OrgName: 'MyOrg',
+            CreatedDate: '2020-12-24T15:18:55.000+0000',
+          },
+        ]),
     });
 
     const result = await OrgDisplayCommand.run(['--json', '--targetusername', testOrg.username]);

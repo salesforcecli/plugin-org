@@ -28,7 +28,11 @@ To open in a specific browser, use the --browser flag. Supported browsers are "c
 
 - Open a local Lightning page in your default org's Lightning App Builder:
 
-  $ <%= config.bin %> <%= command.id %> --source-path force-app/main/default/flexipages/Hello.flexipage-meta.xml
+  $ <%= config.bin %> <%= command.id %> --source-file force-app/main/default/flexipages/Hello.flexipage-meta.xml
+
+- Open a local Flow in Flow Builder:
+
+  $ <%= config.bin %> <%= command.id %> --source-file force-app/main/default/flows/Hello.flow-meta.xml
 
 # flags.browser.summary
 
@@ -67,3 +71,12 @@ Waiting to resolve the Lightning Experience-enabled custom domain...
 # domainTimeoutError
 
 The Lightning Experience-enabled custom domain is unavailable.
+
+# FlowIdNotFound
+
+No ID not found for Flow %s.
+
+# FlowIdNotFound.actions
+
+- Check that the Flow you want to open is deployed to the org.
+- Run `sf org open -p lightning/setup/Flows/home` to open the list of Flows

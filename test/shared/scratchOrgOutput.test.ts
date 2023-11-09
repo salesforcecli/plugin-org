@@ -15,7 +15,7 @@ import {
   formatRequest,
   formatStage,
   formatUsername,
-} from '../../src/shared/scratchOrgOutput';
+} from '../../src/shared/scratchOrgOutput.js';
 
 describe('human output', () => {
   describe('stage formatter', () => {
