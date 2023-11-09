@@ -16,7 +16,7 @@ import requestFunctions from '../../../../src/shared/sandboxRequest.js';
 
 config.truncateThreshold = 0;
 
-describe('org:clone', () => {
+describe('[DEPRECATED] force:org:clone', () => {
   const $$ = new TestContext();
 
   beforeEach(async () => {

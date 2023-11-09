@@ -30,7 +30,7 @@ config.truncateThreshold = 0;
 Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
 
-describe('org:create (sandbox paths)', () => {
+describe('[DEPRECATED] force:org:create (sandbox paths)', () => {
   const $$ = new TestContext();
   const testOrg = new MockTestOrgData();
   // stubs

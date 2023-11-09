@@ -19,7 +19,7 @@ export interface ScratchDeleteResponse {
   username: string;
 }
 
-export default class EnvDeleteScratch extends SfCommand<ScratchDeleteResponse> {
+export default class DeleteScratch extends SfCommand<ScratchDeleteResponse> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
@@ -37,7 +37,7 @@ export default class EnvDeleteScratch extends SfCommand<ScratchDeleteResponse> {
   };
 
   public async run(): Promise<ScratchDeleteResponse> {
-    const flags = (await this.parse(EnvDeleteScratch)).flags;
+    const flags = (await this.parse(DeleteScratch)).flags;
     const resolvedUsername = flags['target-org'];
     const orgId = (await AuthInfo.create({ username: resolvedUsername })).getFields().orgId as string;
 
