@@ -1,3 +1,9 @@
+## [3.0.2](https://github.com/salesforcecli/plugin-org/compare/3.0.1...3.0.2) (2023-11-09)
+
+### Bug Fixes
+
+- provide better errors when deleting sandboxes ([b5aa59e](https://github.com/salesforcecli/plugin-org/commit/b5aa59e59e32384d9c971c163d5b4394ae191db4))
+
 ## [3.0.1](https://github.com/salesforcecli/plugin-org/compare/2.11.8...3.0.1) (2023-11-09)
 
 ## [2.11.8](https://github.com/salesforcecli/plugin-org/compare/2.11.7...2.11.8) (2023-11-06)
