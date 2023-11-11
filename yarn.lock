@@ -968,15 +968,15 @@
   resolved "https://registry.yarnpkg.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz#a77ea742fab25775145434eb1d2328cf5013ac33"
   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
 
-"@salesforce/cli-plugins-testkit@^5.0.2":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-5.0.2.tgz#be35c0b449223ee50e395aba7e1b4ccb1a5e49d7"
-  integrity sha512-piHWPnbkwytudtc3VntfyECa3NzxngecM7/hka2rooLWs7NZCLcJoAEvYDWNRGgNa0Yw6gefBJVNivoVpfNSKQ==
+"@salesforce/cli-plugins-testkit@^5.0.3":
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-5.0.3.tgz#c1b066d499f9d29f918a9337c37e0d01a9313631"
+  integrity sha512-fIW7xdyUNb8pPn8hUtIR2zsCD+dXTK7WC0OJG5m+XMM/LTLFTh31ygaKEACbdWlrpJSySfB2WOmOPMx5cRZsPQ==
   dependencies:
     "@salesforce/core" "^5.3.17"
     "@salesforce/kit" "^3.0.15"
     "@salesforce/ts-types" "^2.0.6"
-    "@types/shelljs" "^0.8.14"
+    "@types/shelljs" "^0.8.15"
     debug "^4.3.1"
     jszip "^3.10.1"
     shelljs "^0.8.4"
@@ -1392,10 +1392,10 @@
   resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.5.4.tgz#0a41252ad431c473158b22f9bfb9a63df7541cff"
   integrity sha512-MMzuxN3GdFwskAnb6fz0orFvhfqi752yjaXylr0Rp4oDg5H0Zn1IuyRhDVvYOwAXoJirx2xuS16I3WjxnAIHiQ==
 
-"@types/shelljs@^0.8.14":
-  version "0.8.14"
-  resolved "https://registry.yarnpkg.com/@types/shelljs/-/shelljs-0.8.14.tgz#87b8817b2397ffe97b86a4d844036ee0d2a1f0ca"
-  integrity sha512-eqKaGPi60riuxI9pUVeCT02EGo94Y6HT119h7w5bXSELsis6+JqzdEy6H/w2xXl881wcN3VDnb/D0WlgSety5w==
+"@types/shelljs@^0.8.14", "@types/shelljs@^0.8.15":
+  version "0.8.15"
+  resolved "https://registry.yarnpkg.com/@types/shelljs/-/shelljs-0.8.15.tgz#22c6ab9dfe05cec57d8e6cb1a95ea173aee9fcac"
+  integrity sha512-vzmnCHl6hViPu9GNLQJ+DZFd6BQI2DBTUeOvYHqkWQLMfKAAQYMb/xAmZkTogZI/vqXHCWkqDRymDI5p0QTi5Q==
   dependencies:
     "@types/glob" "~7.2.0"
     "@types/node" "*"
