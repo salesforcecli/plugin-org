@@ -983,7 +983,7 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.7.1"
 
-"@salesforce/core@^5.3.1", "@salesforce/core@^5.3.14", "@salesforce/core@^5.3.17", "@salesforce/core@^5.3.18":
+"@salesforce/core@^5.3.1", "@salesforce/core@^5.3.17", "@salesforce/core@^5.3.18":
   version "5.3.18"
   resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-5.3.18.tgz#c0b7b59fbef7f0689e88968c614dd1ae2c420f02"
   integrity sha512-/Ag7elFngTT13PRblSPJPB2Q+xk3jR2SX8bYa83fcQljVF7ApGB5qtFpauXmUv8lgRnN+F01HNqM16iszAMP9w==
@@ -3222,12 +3222,12 @@ eslint-plugin-perfectionist@^2.1.0:
     minimatch "^9.0.3"
     natural-compare-lite "^1.4.0"
 
-eslint-plugin-sf-plugin@^1.16.13:
-  version "1.16.13"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-sf-plugin/-/eslint-plugin-sf-plugin-1.16.13.tgz#e3ba9ee0014c96b414af67c6aa9e8578451a01fd"
-  integrity sha512-Cj8r7GXrSrQ7iia78sBOGZH7VFa2/7wl5a3dtoVyIx3bp/Oq7P1yOSPofg13bdH2gZr4O+/3JNxXXvj+kqvE9A==
+eslint-plugin-sf-plugin@^1.16.14:
+  version "1.16.14"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-sf-plugin/-/eslint-plugin-sf-plugin-1.16.14.tgz#64138f6c597ad7b750d9d7615894e2fe504852ec"
+  integrity sha512-numvHHhJjExz4ojxK3O25G8Vh8pXtMgZzwEaKGGsKaOJFm4rmSS2NabmfkRPYX2NCO/xn4eNHm1iGTnnQywGvg==
   dependencies:
-    "@salesforce/core" "^5.3.14"
+    "@salesforce/core" "^5.3.17"
     "@typescript-eslint/utils" "^5.59.11"
 
 eslint-plugin-unicorn@^49.0.0:
