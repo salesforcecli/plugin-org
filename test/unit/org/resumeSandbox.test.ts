@@ -19,7 +19,7 @@ import {
 import { stubMethod } from '@salesforce/ts-sinon';
 import sinon from 'sinon';
 import { expect, config } from 'chai';
-import { OrgAccessor } from '@salesforce/core/lib/stateAggregator/index.js';
+import { OrgAccessor } from '@salesforce/core/lib/stateAggregator/accessors/orgAccessor.js';
 import { stubSfCommandUx, stubSpinner, stubUx } from '@salesforce/sf-plugins-core';
 import ResumeSandbox from '../../../src/commands/org/resume/sandbox.js';
 config.truncateThreshold = 0;
