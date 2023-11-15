@@ -132,7 +132,7 @@ FLAGS
   -t, --type=<option>           (required) Type of org to create.
                                 <options: sandbox>
   -w, --wait=<value>            [default: 6 minutes] Number of minutes to wait while polling for status.
-  --api-version=<value>         Override the api version used for api requests made by this command
+      --api-version=<value>     Override the api version used for api requests made by this command
 
 GLOBAL FLAGS
   --json  Format output as json.
@@ -160,7 +160,7 @@ FLAG DESCRIPTIONS
     for a number of minutes, the client exits. Specify a longer wait time if timeouts occur frequently.
 ```
 
-_See code: [src/commands/force/org/clone.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.4/src/commands/force/org/clone.ts)_
+_See code: [src/commands/force/org/clone.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.5/src/commands/force/org/clone.ts)_
 
 ## `sf force org create`
 
@@ -184,7 +184,7 @@ FLAGS
                                 <options: scratch|sandbox>
   -v, --target-dev-hub=<value>  Username or alias of the Dev Hub org.
   -w, --wait=<value>            [default: 6 minutes] Streaming client socket timeout (in minutes).
-  --api-version=<value>         Override the api version used for api requests made by this command
+      --api-version=<value>     Override the api version used for api requests made by this command
 
 GLOBAL FLAGS
   --json  Format output as json.
@@ -208,7 +208,7 @@ EXAMPLES
   $ sf force org create -t sandbox -f config/dev-sandbox-def.json -a MyDevSandbox -u prodOrg
 ```
 
-_See code: [src/commands/force/org/create.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.4/src/commands/force/org/create.ts)_
+_See code: [src/commands/force/org/create.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.5/src/commands/force/org/create.ts)_
 
 ## `sf force org delete`
 
@@ -219,9 +219,9 @@ USAGE
   $ sf force org delete -o <value> [--json] [--api-version <value>] [-p]
 
 FLAGS
-  -o, --target-org=<value>  (required) Username or alias of the target org.
-  -p, --no-prompt           No prompt to confirm deletion.
-  --api-version=<value>     Override the api version used for api requests made by this command
+  -o, --target-org=<value>   (required) Username or alias of the target org.
+  -p, --no-prompt            No prompt to confirm deletion.
+      --api-version=<value>  Override the api version used for api requests made by this command
 
 GLOBAL FLAGS
   --json  Format output as json.
@@ -240,7 +240,7 @@ EXAMPLES
   $ sf force org delete -u MyOrgAlias -p
 ```
 
-_See code: [src/commands/force/org/delete.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.4/src/commands/force/org/delete.ts)_
+_See code: [src/commands/force/org/delete.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.5/src/commands/force/org/delete.ts)_
 
 ## `sf force org status`
 
@@ -256,7 +256,7 @@ FLAGS
   -o, --target-org=<value>   (required) Username or alias of the target org.
   -s, --setdefaultusername   Set the created or cloned org as your default.
   -w, --wait=<value>         [default: 6 minutes] Number of minutes to wait while polling for status.
-  --api-version=<value>      Override the api version used for api requests made by this command
+      --api-version=<value>  Override the api version used for api requests made by this command
 
 GLOBAL FLAGS
   --json  Format output as json.
@@ -278,7 +278,7 @@ EXAMPLES
   $ sf force org status --sandboxname DevSbx1 --wait 45 --setdefaultusername -u prodOrg
 ```
 
-_See code: [src/commands/force/org/status.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.4/src/commands/force/org/status.ts)_
+_See code: [src/commands/force/org/status.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.5/src/commands/force/org/status.ts)_
 
 ## `sf org create sandbox`
 
@@ -300,9 +300,9 @@ FLAGS
   -o, --target-org=<value>       (required) Username or alias of the production org that contains the sandbox license.
   -s, --set-default              Set the sandbox org as your default org.
   -w, --wait=<minutes>           [default: 30 minutes] Number of minutes to wait for the sandbox org to be ready.
-  --async                        Request the sandbox creation, but don't wait for it to complete.
-  --no-prompt                    Don't prompt for confirmation about the sandbox configuration.
-  --no-track-source              Do not use source tracking for this sandbox.
+      --async                    Request the sandbox creation, but don't wait for it to complete.
+      --no-prompt                Don't prompt for confirmation about the sandbox configuration.
+      --no-track-source          Do not use source tracking for this sandbox.
 
 GLOBAL FLAGS
   --json  Format output as json.
@@ -383,7 +383,7 @@ FLAG DESCRIPTIONS
     sandbox.
 ```
 
-_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.4/src/commands/org/create/sandbox.ts)_
+_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.5/src/commands/org/create/sandbox.ts)_
 
 ## `sf org create scratch`
 
@@ -406,30 +406,30 @@ FLAGS
   -v, --target-dev-hub=<value>   (required) Username or alias of the Dev Hub org.
   -w, --wait=<minutes>           [default: 5 minutes] Number of minutes to wait for the scratch org to be ready.
   -y, --duration-days=<days>     [default: 7 days] Number of days before the org expires.
-  --api-version=<value>          Override the api version used for api requests made by this command
-  --async                        Request the org, but don't wait for it to complete.
+      --api-version=<value>      Override the api version used for api requests made by this command
+      --async                    Request the org, but don't wait for it to complete.
 
 PACKAGING FLAGS
   -c, --no-ancestors  Don't include second-generation managed package (2GP) ancestors in the scratch org.
   -m, --no-namespace  Create the scratch org with no namespace, even if the Dev Hub has a namespace.
 
 DEFINITION FILE OVERRIDE FLAGS
-  -e, --edition=<option>  Salesforce edition of the scratch org. Overrides the value of the "edition" option in the
-                          definition file, if set.
-                          <options: developer|enterprise|group|professional|partner-developer|partner-enterprise|partner
-                          -group|partner-professional>
-  --admin-email=<value>   Email address that will be applied to the org's admin user. Overrides the value of the
-                          "adminEmail" option in the definition file, if set.
-  --description=<value>   Description of the scratch org in the Dev Hub. Overrides the value of the "description" option
-                          in the definition file, if set.
-  --name=<value>          Name of the org, such as "Acme Company". Overrides the value of the "orgName" option in the
-                          definition file, if set.
-  --release=<option>      Release of the scratch org as compared to the Dev Hub release.
-                          <options: preview|previous>
-  --source-org=<value>    15-character ID of the org whose shape the new scratch org will be based on. Overrides the
-                          value of the "sourceOrg" option in the definition file, if set.
-  --username=<value>      Username of the scratch org admin user. Overrides the value of the "username" option in the
-                          definition file, if set.
+  -e, --edition=<option>     Salesforce edition of the scratch org. Overrides the value of the "edition" option in the
+                             definition file, if set.
+                             <options: developer|enterprise|group|professional|partner-developer|partner-enterprise|part
+                             ner-group|partner-professional>
+      --admin-email=<value>  Email address that will be applied to the org's admin user. Overrides the value of the
+                             "adminEmail" option in the definition file, if set.
+      --description=<value>  Description of the scratch org in the Dev Hub. Overrides the value of the "description"
+                             option in the definition file, if set.
+      --name=<value>         Name of the org, such as "Acme Company". Overrides the value of the "orgName" option in the
+                             definition file, if set.
+      --release=<option>     Release of the scratch org as compared to the Dev Hub release.
+                             <options: preview|previous>
+      --source-org=<value>   15-character ID of the org whose shape the new scratch org will be based on. Overrides the
+                             value of the "sourceOrg" option in the definition file, if set.
+      --username=<value>     Username of the scratch org admin user. Overrides the value of the "username" option in the
+                             definition file, if set.
 
 GLOBAL FLAGS
   --json  Format output as json.
@@ -536,7 +536,7 @@ FLAG DESCRIPTIONS
     Omit this flag to have Salesforce generate a unique username for your org.
 ```
 
-_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.4/src/commands/org/create/scratch.ts)_
+_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.5/src/commands/org/create/scratch.ts)_
 
 ## `sf org delete sandbox`
 
@@ -580,7 +580,7 @@ EXAMPLES
     $ sf org delete sandbox --target-org my-sandbox --no-prompt
 ```
 
-_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.4/src/commands/org/delete/sandbox.ts)_
+_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.5/src/commands/org/delete/sandbox.ts)_
 
 ## `sf org delete scratch`
 
@@ -622,7 +622,7 @@ EXAMPLES
     $ sf org delete scratch --target-org my-scratch-org --no-prompt
 ```
 
-_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.4/src/commands/org/delete/scratch.ts)_
+_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.5/src/commands/org/delete/scratch.ts)_
 
 ## `sf org display`
 
@@ -633,9 +633,9 @@ USAGE
   $ sf org display -o <value> [--json] [--api-version <value>] [--verbose]
 
 FLAGS
-  -o, --target-org=<value>  (required) Username or alias of the target org.
-  --api-version=<value>     Override the api version used for api requests made by this command
-  --verbose                 Display the sfdxAuthUrl property.
+  -o, --target-org=<value>   (required) Username or alias of the target org.
+      --api-version=<value>  Override the api version used for api requests made by this command
+      --verbose              Display the sfdxAuthUrl property.
 
 GLOBAL FLAGS
   --json  Format output as json.
@@ -665,7 +665,7 @@ EXAMPLES
     $ sf org display --target-org TestOrg1 --verbose
 ```
 
-_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.4/src/commands/org/display.ts)_
+_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.5/src/commands/org/display.ts)_
 
 ## `sf org list`
 
@@ -676,12 +676,12 @@ USAGE
   $ sf org list [--json] [--verbose] [--all] [-p --clean] [--skip-connection-status]
 
 FLAGS
-  -p, --no-prompt           Don't prompt for confirmation.
-  --all                     Include expired, deleted, and unknown-status scratch orgs.
-  --clean                   Remove all local org authorizations for non-active scratch orgs. Use "org logout" to remove
-                            non-scratch orgs.
-  --skip-connection-status  Skip retrieving the connection status of non-scratch orgs.
-  --verbose                 List more information about each org.
+  -p, --no-prompt               Don't prompt for confirmation.
+      --all                     Include expired, deleted, and unknown-status scratch orgs.
+      --clean                   Remove all local org authorizations for non-active scratch orgs. Use "org logout" to
+                                remove non-scratch orgs.
+      --skip-connection-status  Skip retrieving the connection status of non-scratch orgs.
+      --verbose                 List more information about each org.
 
 GLOBAL FLAGS
   --json  Format output as json.
@@ -703,7 +703,7 @@ EXAMPLES
     $ sf org list --clean
 ```
 
-_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.4/src/commands/org/list.ts)_
+_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.5/src/commands/org/list.ts)_
 
 ## `sf org list metadata`
 
@@ -718,8 +718,8 @@ FLAGS
   -m, --metadata-type=<value>  (required) Metadata type to be retrieved, such as CustomObject; metadata type names are
                                case-sensitive.
   -o, --target-org=<value>     (required) Username or alias of the target org.
-  --api-version=<value>        API version to use; default is the most recent API version.
-  --folder=<value>             Folder associated with the component; required for components that use folders; folder
+      --api-version=<value>    API version to use; default is the most recent API version.
+      --folder=<value>         Folder associated with the component; required for components that use folders; folder
                                names are case-sensitive.
 
 GLOBAL FLAGS
@@ -767,7 +767,7 @@ FLAG DESCRIPTIONS
     Examples of metadata types that use folders are Dashboard, Document, EmailTemplate, and Report.
 ```
 
-_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.4/src/commands/org/list/metadata.ts)_
+_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.5/src/commands/org/list/metadata.ts)_
 
 ## `sf org list metadata-types`
 
@@ -780,7 +780,7 @@ USAGE
 FLAGS
   -f, --output-file=<value>  Pathname of the file in which to write the results.
   -o, --target-org=<value>   (required) Username or alias of the target org.
-  --api-version=<value>      API version to use; default is the most recent API version.
+      --api-version=<value>  API version to use; default is the most recent API version.
 
 GLOBAL FLAGS
   --json  Format output as json.
@@ -820,7 +820,7 @@ FLAG DESCRIPTIONS
     Override the api version used for api requests made by this command
 ```
 
-_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.4/src/commands/org/list/metadata-types.ts)_
+_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.5/src/commands/org/list/metadata-types.ts)_
 
 ## `sf org open`
 
@@ -838,7 +838,7 @@ FLAGS
   -o, --target-org=<value>   (required) Username or alias of the target org.
   -p, --path=<value>         Navigation URL path to open a specific page.
   -r, --url-only             Display navigation URL, but don’t launch browser.
-  --api-version=<value>      Override the api version used for api requests made by this command
+      --api-version=<value>  Override the api version used for api requests made by this command
 
 GLOBAL FLAGS
   --json  Format output as json.
@@ -885,7 +885,7 @@ EXAMPLES
     $ sf org open --source-file force-app/main/default/flows/Hello.flow-meta.xml
 ```
 
-_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.4/src/commands/org/open.ts)_
+_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.5/src/commands/org/open.ts)_
 
 ## `sf org resume sandbox`
 
@@ -947,7 +947,7 @@ FLAG DESCRIPTIONS
     returns the job ID. To resume checking the sandbox creation, rerun this command.
 ```
 
-_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.4/src/commands/org/resume/sandbox.ts)_
+_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.5/src/commands/org/resume/sandbox.ts)_
 
 ## `sf org resume scratch`
 
@@ -993,6 +993,6 @@ FLAG DESCRIPTIONS
     The job ID is valid for 24 hours after you start the scratch org creation.
 ```
 
-_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.4/src/commands/org/resume/scratch.ts)_
+_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.5/src/commands/org/resume/scratch.ts)_
 
 <!-- commandsstop -->
