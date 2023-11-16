@@ -1029,10 +1029,10 @@
   resolved "https://registry.yarnpkg.com/@salesforce/dev-config/-/dev-config-4.1.0.tgz#e529576466d074e7a5f1441236510fef123da01e"
   integrity sha512-2iDDepiIwjXHS5IVY7pwv8jMo4xWosJ7p/UTj+lllpB/gnJiYLhjJPE4Z3FCGFKyvfg5jGaimCd8Ca6bLGsCQA==
 
-"@salesforce/dev-scripts@^7.1.0":
-  version "7.1.0"
-  resolved "https://registry.yarnpkg.com/@salesforce/dev-scripts/-/dev-scripts-7.1.0.tgz#123708d4f494d8b95464b90c28993141986e84bc"
-  integrity sha512-79x6QgENORLyCrr9b4MO2pPq8N7d9ILj83vOtAp5NLreAfjZN/c5TEEHuIZKZ3UaO+hkwbtzv3Qs6CyNxiasWA==
+"@salesforce/dev-scripts@^7.1.1":
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/@salesforce/dev-scripts/-/dev-scripts-7.1.1.tgz#549b58fb7e8c2410ce594c46f780a0907618f19f"
+  integrity sha512-6SL+QDOMZCnmU4Lu2ZCjqsMRcHw96mnjUOPE7b2HcfmfPo2a/hAYUtv8v7UsZ/+3UPbSf+XsLJfUsF15QIUWrg==
   dependencies:
     "@commitlint/cli" "^17.1.2"
     "@commitlint/config-conventional" "^17.1.0"
