@@ -70,8 +70,15 @@
           },
           "delete": {
             "description": "Delete scratch orgs, sandboxes, org shapes, and org snapshots."
+          },
+          "enable": {
+            "description": "description for org.enable"
+          },
+          "disable": {
+            "description": "description for org.disable"
           }
-        }
+        },
+        "external": true
       },
       "force": {
         "external": true,
