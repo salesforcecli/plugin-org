@@ -72,10 +72,10 @@
             "description": "Delete scratch orgs, sandboxes, org shapes, and org snapshots."
           },
           "enable": {
-            "description": "description for org.enable"
+            "description": "Enable tracking on an org."
           },
           "disable": {
-            "description": "description for org.disable"
+            "description": "Disable tracking on an org"
           }
         },
         "external": true
