@@ -1,26 +1,26 @@
 # summary
 
-Enable source tracking in local auth file.
+Enable source tracking in an org.
 
 # description
 
-This has no effect on the org. It stores the setting in the CLI's configuration file for this org so that source tracking operations are executed when working with this org.
+Enabling source tracking has no direct effect on the org, it affects only your local environment. Specifically, Salesforce CLI stores the setting in the org's local configuration file so that source tracking operations are executed when working with the org.
 
-This command will throw an error if the org does not support tracking.
+This command throws an error if the org doesn't support tracking. Examples of orgs that don't support source tracking include Developer Edition orgs, production orgs, Partial Copy sandboxes, and Full sandboxes.
 
 # examples
 
-Enable tracking on an org using an alias
+- Enable source tracking in an org with alias "myscratch":
 
-- <%= config.bin %> <%= command.id %> -o someAlias
+  <%= config.bin %> <%= command.id %> --target-org myscratch
 
-Enable tracking on an org using a username
+- Enable source tracking in an org using a username:
 
-- <%= config.bin %> <%= command.id %> -o you@example.com
+  <%= config.bin %> <%= command.id %> --target-org you@example.com
 
-Enable tracking on your default org
+- Enable source tracking in your default org:
 
-- <%= config.bin %> <%= command.id %>
+  <%= config.bin %> <%= command.id %>
 
 # success
 
@@ -28,12 +28,12 @@ Enabled source tracking for %s.
 
 # error.TrackingNotAvailable
 
-This org cannot enable source tracking because the SourceMember object is not available, or you do not have access to it.
+You can't enable source tracking on this org because the SourceMember Tooling API object isn't available, or you don't have access to it.
 
 # error.TrackingNotAvailable.actions
 
-- If the org is a sandbox, make sure that your production org has Source Tracking enabled in sandboxes. See https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_setup_enable_source_tracking_sandboxes.htm.
+- If the org is a Developer or Developer Pro sandbox, make sure that the associated production org has enabled source tracking in sandboxes. See https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_setup_enable_source_tracking_sandboxes.htm.
 
-- Make sure that your user can access the SourceMembers table via the tooling API.
+- Make sure that your user can access the SourceMember Tooling API object.
 
-- If the Org is a production org, source tracking cannot be enabled.
+- You can't enable source tracking on Developer Edition orgs, production orgs, Partial Copy sandboxes, or Full sandboxes.
