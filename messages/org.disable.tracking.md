@@ -1,24 +1,24 @@
 # summary
 
-Disable source tracking in local auth file.
+Prevent Salesforce CLI from tracking changes in your source files between your project and an org.
 
 # description
 
-This has no effect on the org. It stores the setting in the CLI's configuration file for this org so that no source tracking operations are executed when working with this org.
+Disabling source tracking has no direct effect on the org, it affects only your local environment. Specifically, Salesforce CLI stores the setting in the org's local configuration file so that no source tracking operations are executed when working with the org.
 
 # examples
 
-Disable tracking on an org using an alias
+- Disable source tracking for an org with alias "myscratch":
 
-- <%= config.bin %> <%= command.id %> -o someAlias
+  <%= config.bin %> <%= command.id %> --target-org myscratch
 
-Disable tracking on an org using a username
+- Disable source tracking for an org using a username:
 
-- <%= config.bin %> <%= command.id %> -o you@example.com
+  <%= config.bin %> <%= command.id %> --target-org you@example.com
 
-Disable tracking on your default org
+- Disable source tracking for your default org:
 
-- <%= config.bin %> <%= command.id %>
+  <%= config.bin %> <%= command.id %>
 
 # success
 

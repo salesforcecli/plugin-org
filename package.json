@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@oclif/plugin-command-snapshot": "^5.0.2",
-    "@salesforce/cli-plugins-testkit": "^5.0.4",
+    "@salesforce/cli-plugins-testkit": "^5.0.3",
     "@salesforce/dev-scripts": "^7.1.1",
     "@salesforce/plugin-command-reference": "^3.0.46",
     "@salesforce/ts-sinon": "1.4.19",
@@ -72,10 +72,10 @@
             "description": "Delete scratch orgs, sandboxes, org shapes, and org snapshots."
           },
           "enable": {
-            "description": "Enable tracking on an org."
+            "description": "Enable source tracking in an org."
           },
           "disable": {
-            "description": "Disable tracking on an org"
+            "description": "Disable source tracking in an org."
           }
         },
         "external": true
