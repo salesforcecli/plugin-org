@@ -1,3 +1,9 @@
+## [3.0.7](https://github.com/salesforcecli/plugin-org/compare/3.0.6...3.0.7) (2023-11-21)
+
+### Bug Fixes
+
+- edit messages for new source-tracking commands ([5f94d1e](https://github.com/salesforcecli/plugin-org/commit/5f94d1eaf88f441158c5c3718d0f24e0ca93e11d))
+
 ## [3.0.6](https://github.com/salesforcecli/plugin-org/compare/3.0.5...3.0.6) (2023-11-21)
 
 ## [3.0.5](https://github.com/salesforcecli/plugin-org/compare/3.0.4...3.0.5) (2023-11-15)
