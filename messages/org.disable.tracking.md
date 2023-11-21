@@ -1,6 +1,6 @@
 # summary
 
-Disable source tracking in an org.
+Prevent Salesforce CLI from tracking changes in your source files between your project and an org.
 
 # description
 
@@ -8,15 +8,15 @@ Disabling source tracking has no direct effect on the org, it affects only your 
 
 # examples
 
-- Disable source tracking on an org with alias "myscratch":
+- Disable source tracking for an org with alias "myscratch":
 
   <%= config.bin %> <%= command.id %> --target-org myscratch
 
-- Disable source tracking on an org using a username:
+- Disable source tracking for an org using a username:
 
   <%= config.bin %> <%= command.id %> --target-org you@example.com
 
-- Disable source tracking on your default org:
+- Disable source tracking for your default org:
 
   <%= config.bin %> <%= command.id %>
 
