@@ -1,6 +1,6 @@
 # summary
 
-Enable source tracking in an org.
+Allow Salesforce CLI to track changes in your source files between your project and an org.
 
 # description
 
@@ -10,15 +10,15 @@ This command throws an error if the org doesn't support tracking. Examples of or
 
 # examples
 
-- Enable source tracking in an org with alias "myscratch":
+- Enable source tracking for an org with alias "myscratch":
 
   <%= config.bin %> <%= command.id %> --target-org myscratch
 
-- Enable source tracking in an org using a username:
+- Enable source tracking for an org using a username:
 
   <%= config.bin %> <%= command.id %> --target-org you@example.com
 
-- Enable source tracking in your default org:
+- Enable source tracking for your default org:
 
   <%= config.bin %> <%= command.id %>
 
