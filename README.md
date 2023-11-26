@@ -129,7 +129,8 @@ USAGE
 FLAGS
   -a, --setalias=<value>        Alias for the cloned org.
   -f, --definitionfile=<value>  Path to the sandbox definition file.
-  -o, --target-org=<value>      (required) Username or alias of the target org.
+  -o, --target-org=<value>      (required) Username or alias of the target org. Not required if the `target-org`
+                                configuration variable is already set.
   -s, --setdefaultusername      Set the cloned org as your default.
   -t, --type=<option>           (required) Type of org to create.
                                 <options: sandbox>
@@ -162,7 +163,7 @@ FLAG DESCRIPTIONS
     for a number of minutes, the client exits. Specify a longer wait time if timeouts occur frequently.
 ```
 
-_See code: [src/commands/force/org/clone.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.7/src/commands/force/org/clone.ts)_
+_See code: [src/commands/force/org/clone.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.8/src/commands/force/org/clone.ts)_
 
 ## `sf force org create`
 
@@ -184,7 +185,8 @@ FLAGS
   -s, --setdefaultusername      Set the created org as the default username.
   -t, --type=<option>           [default: scratch] Type of org to create.
                                 <options: scratch|sandbox>
-  -v, --target-dev-hub=<value>  Username or alias of the Dev Hub org.
+  -v, --target-dev-hub=<value>  Username or alias of the Dev Hub org. Not required if the `target-dev-hub` configuration
+                                variable is already set.
   -w, --wait=<value>            [default: 6 minutes] Streaming client socket timeout (in minutes).
       --api-version=<value>     Override the api version used for api requests made by this command
 
@@ -210,7 +212,7 @@ EXAMPLES
   $ sf force org create -t sandbox -f config/dev-sandbox-def.json -a MyDevSandbox -u prodOrg
 ```
 
-_See code: [src/commands/force/org/create.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.7/src/commands/force/org/create.ts)_
+_See code: [src/commands/force/org/create.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.8/src/commands/force/org/create.ts)_
 
 ## `sf force org delete`
 
@@ -242,7 +244,7 @@ EXAMPLES
   $ sf force org delete -u MyOrgAlias -p
 ```
 
-_See code: [src/commands/force/org/delete.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.7/src/commands/force/org/delete.ts)_
+_See code: [src/commands/force/org/delete.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.8/src/commands/force/org/delete.ts)_
 
 ## `sf force org status`
 
@@ -255,7 +257,8 @@ USAGE
 FLAGS
   -a, --setalias=<value>     Alias for the created or cloned org.
   -n, --sandboxname=<value>  (required) Name of the sandbox org to check status for.
-  -o, --target-org=<value>   (required) Username or alias of the target org.
+  -o, --target-org=<value>   (required) Username or alias of the target org. Not required if the `target-org`
+                             configuration variable is already set.
   -s, --setdefaultusername   Set the created or cloned org as your default.
   -w, --wait=<value>         [default: 6 minutes] Number of minutes to wait while polling for status.
       --api-version=<value>  Override the api version used for api requests made by this command
@@ -280,7 +283,7 @@ EXAMPLES
   $ sf force org status --sandboxname DevSbx1 --wait 45 --setdefaultusername -u prodOrg
 ```
 
-_See code: [src/commands/force/org/status.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.7/src/commands/force/org/status.ts)_
+_See code: [src/commands/force/org/status.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.8/src/commands/force/org/status.ts)_
 
 ## `sf org create sandbox`
 
@@ -385,7 +388,7 @@ FLAG DESCRIPTIONS
     sandbox.
 ```
 
-_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.7/src/commands/org/create/sandbox.ts)_
+_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.8/src/commands/org/create/sandbox.ts)_
 
 ## `sf org create scratch`
 
@@ -538,7 +541,7 @@ FLAG DESCRIPTIONS
     Omit this flag to have Salesforce generate a unique username for your org.
 ```
 
-_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.7/src/commands/org/create/scratch.ts)_
+_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.8/src/commands/org/create/scratch.ts)_
 
 ## `sf org delete sandbox`
 
@@ -582,7 +585,7 @@ EXAMPLES
     $ sf org delete sandbox --target-org my-sandbox --no-prompt
 ```
 
-_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.7/src/commands/org/delete/sandbox.ts)_
+_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.8/src/commands/org/delete/sandbox.ts)_
 
 ## `sf org delete scratch`
 
@@ -624,7 +627,7 @@ EXAMPLES
     $ sf org delete scratch --target-org my-scratch-org --no-prompt
 ```
 
-_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.7/src/commands/org/delete/scratch.ts)_
+_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.8/src/commands/org/delete/scratch.ts)_
 
 ## `sf org disable tracking`
 
@@ -635,7 +638,8 @@ USAGE
   $ sf org disable tracking -o <value> [--json]
 
 FLAGS
-  -o, --target-org=<value>  (required) Username or alias of the target org.
+  -o, --target-org=<value>  (required) Username or alias of the target org. Not required if the `target-org`
+                            configuration variable is already set.
 
 GLOBAL FLAGS
   --json  Format output as json.
@@ -661,7 +665,7 @@ EXAMPLES
     $ sf org disable tracking
 ```
 
-_See code: [src/commands/org/disable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.7/src/commands/org/disable/tracking.ts)_
+_See code: [src/commands/org/disable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.8/src/commands/org/disable/tracking.ts)_
 
 ## `sf org display`
 
@@ -672,7 +676,8 @@ USAGE
   $ sf org display -o <value> [--json] [--api-version <value>] [--verbose]
 
 FLAGS
-  -o, --target-org=<value>   (required) Username or alias of the target org.
+  -o, --target-org=<value>   (required) Username or alias of the target org. Not required if the `target-org`
+                             configuration variable is already set.
       --api-version=<value>  Override the api version used for api requests made by this command
       --verbose              Display the sfdxAuthUrl property.
 
@@ -704,7 +709,7 @@ EXAMPLES
     $ sf org display --target-org TestOrg1 --verbose
 ```
 
-_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.7/src/commands/org/display.ts)_
+_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.8/src/commands/org/display.ts)_
 
 ## `sf org enable tracking`
 
@@ -715,7 +720,8 @@ USAGE
   $ sf org enable tracking -o <value> [--json]
 
 FLAGS
-  -o, --target-org=<value>  (required) Username or alias of the target org.
+  -o, --target-org=<value>  (required) Username or alias of the target org. Not required if the `target-org`
+                            configuration variable is already set.
 
 GLOBAL FLAGS
   --json  Format output as json.
@@ -744,7 +750,7 @@ EXAMPLES
     $ sf org enable tracking
 ```
 
-_See code: [src/commands/org/enable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.7/src/commands/org/enable/tracking.ts)_
+_See code: [src/commands/org/enable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.8/src/commands/org/enable/tracking.ts)_
 
 ## `sf org list`
 
@@ -782,7 +788,7 @@ EXAMPLES
     $ sf org list --clean
 ```
 
-_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.7/src/commands/org/list.ts)_
+_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.8/src/commands/org/list.ts)_
 
 ## `sf org list metadata`
 
@@ -796,7 +802,8 @@ FLAGS
   -f, --output-file=<value>    Pathname of the file in which to write the results.
   -m, --metadata-type=<value>  (required) Metadata type to be retrieved, such as CustomObject; metadata type names are
                                case-sensitive.
-  -o, --target-org=<value>     (required) Username or alias of the target org.
+  -o, --target-org=<value>     (required) Username or alias of the target org. Not required if the `target-org`
+                               configuration variable is already set.
       --api-version=<value>    API version to use; default is the most recent API version.
       --folder=<value>         Folder associated with the component; required for components that use folders; folder
                                names are case-sensitive.
@@ -846,7 +853,7 @@ FLAG DESCRIPTIONS
     Examples of metadata types that use folders are Dashboard, Document, EmailTemplate, and Report.
 ```
 
-_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.7/src/commands/org/list/metadata.ts)_
+_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.8/src/commands/org/list/metadata.ts)_
 
 ## `sf org list metadata-types`
 
@@ -858,7 +865,8 @@ USAGE
 
 FLAGS
   -f, --output-file=<value>  Pathname of the file in which to write the results.
-  -o, --target-org=<value>   (required) Username or alias of the target org.
+  -o, --target-org=<value>   (required) Username or alias of the target org. Not required if the `target-org`
+                             configuration variable is already set.
       --api-version=<value>  API version to use; default is the most recent API version.
 
 GLOBAL FLAGS
@@ -899,7 +907,7 @@ FLAG DESCRIPTIONS
     Override the api version used for api requests made by this command
 ```
 
-_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.7/src/commands/org/list/metadata-types.ts)_
+_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.8/src/commands/org/list/metadata-types.ts)_
 
 ## `sf org open`
 
@@ -914,7 +922,8 @@ FLAGS
   -b, --browser=<option>     Browser where the org opens.
                              <options: chrome|edge|firefox>
   -f, --source-file=<value>  Path to an ApexPage or FlexiPage to open in Lightning App Builder.
-  -o, --target-org=<value>   (required) Username or alias of the target org.
+  -o, --target-org=<value>   (required) Username or alias of the target org. Not required if the `target-org`
+                             configuration variable is already set.
   -p, --path=<value>         Navigation URL path to open a specific page.
   -r, --url-only             Display navigation URL, but don’t launch browser.
       --api-version=<value>  Override the api version used for api requests made by this command
@@ -964,7 +973,7 @@ EXAMPLES
     $ sf org open --source-file force-app/main/default/flows/Hello.flow-meta.xml
 ```
 
-_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.7/src/commands/org/open.ts)_
+_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.8/src/commands/org/open.ts)_
 
 ## `sf org resume sandbox`
 
@@ -1026,7 +1035,7 @@ FLAG DESCRIPTIONS
     returns the job ID. To resume checking the sandbox creation, rerun this command.
 ```
 
-_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.7/src/commands/org/resume/sandbox.ts)_
+_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.8/src/commands/org/resume/sandbox.ts)_
 
 ## `sf org resume scratch`
 
@@ -1072,6 +1081,6 @@ FLAG DESCRIPTIONS
     The job ID is valid for 24 hours after you start the scratch org creation.
 ```
 
-_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.7/src/commands/org/resume/scratch.ts)_
+_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.0.8/src/commands/org/resume/scratch.ts)_
 
 <!-- commandsstop -->
