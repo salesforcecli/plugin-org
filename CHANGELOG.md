@@ -1,3 +1,9 @@
+# [3.1.0](https://github.com/salesforcecli/plugin-org/compare/3.0.9...3.1.0) (2023-12-01)
+
+### Features
+
+- add namespace column ([#596](https://github.com/salesforcecli/plugin-org/issues/596)) ([#877](https://github.com/salesforcecli/plugin-org/issues/877)) ([88e1a7e](https://github.com/salesforcecli/plugin-org/commit/88e1a7e3a5d91e3720fd63b413f24f8c9a1d6d6c))
+
 ## [3.0.9](https://github.com/salesforcecli/plugin-org/compare/3.0.8...3.0.9) (2023-11-26)
 
 ### Bug Fixes
