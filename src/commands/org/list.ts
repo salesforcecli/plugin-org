@@ -196,6 +196,10 @@ Legend:  ${defaultHubEmoji}=Default DevHub, ${defaultOrgEmoji}=Default Org ${
         type: {
           header: 'Type',
         },
+        namespacePRefix: {
+          header: 'NAMESPACE',
+          get: (data): string => data[Org.Fields.NAMESPACE_PREFIX] ?? '',
+        },
         alias: {
           header: 'Alias',
         },
