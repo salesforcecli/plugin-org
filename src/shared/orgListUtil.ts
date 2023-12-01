@@ -5,13 +5,12 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { basename, join } from 'path';
-import * as fs from 'fs/promises';
+import { basename, join } from 'node:path';
+import fs from 'node:fs/promises';
 
 import {
   Org,
   AuthInfo,
-  SfdxConfigAggregator,
   Global,
   Logger,
   SfError,
@@ -19,17 +18,17 @@ import {
   ConfigAggregator,
   OrgConfigProperties,
 } from '@salesforce/core';
-import { Dictionary, isObject } from '@salesforce/ts-types';
+import { isObject } from '@salesforce/ts-types';
 import { Record } from 'jsforce';
-import { omit } from '@salesforce/kit/lib';
-import { getAliasByUsername } from './utils';
+import { omit } from '@salesforce/kit';
+import utils from './utils.js';
 import {
   ScratchOrgInfoSObject,
   ExtendedAuthFields,
   ExtendedAuthFieldsScratch,
   FullyPopulatedScratchOrgFields,
   AuthFieldsFromFS,
-} from './orgTypes';
+} from './orgTypes.js';
 
 type OrgGroups = {
   nonScratchOrgs: ExtendedAuthFields[];
@@ -39,6 +38,9 @@ type OrgGroups = {
 type OrgGroupsFullyPopulated = {
   nonScratchOrgs: ExtendedAuthFields[];
   scratchOrgs: FullyPopulatedScratchOrgFields[];
+  other: ExtendedAuthFields[];
+  sandboxes: ExtendedAuthFields[];
+  devHubs: ExtendedAuthFields[];
 };
 
 type ExtendedScratchOrgInfo = Record &
@@ -67,16 +69,16 @@ export class OrgListUtil {
    */
   public static async readLocallyValidatedMetaConfigsGroupedByOrgType(
     userFilenames: string[],
-    flags: Dictionary<string | boolean>
+    skipConnection = false
   ): Promise<OrgGroupsFullyPopulated> {
-    const contents: AuthInfo[] = await OrgListUtil.readAuthFiles(userFilenames);
+    const contents = await OrgListUtil.readAuthFiles(userFilenames);
     const orgs = await OrgListUtil.groupOrgs(contents);
 
     // parallelize two very independent operations
     const [nonScratchOrgs, scratchOrgs] = await Promise.all([
       Promise.all(
         orgs.nonScratchOrgs.map(async (fields) => {
-          if (!flags.skipconnectionstatus && fields.username) {
+          if (!skipConnection && fields.username) {
             // skip completely if we're skipping the connection
             fields.connectedStatus = await OrgListUtil.determineConnectedStatusForNonScratchOrg(fields.username);
             if (!fields.isDevHub && fields.connectedStatus === 'Connected') {
@@ -94,6 +96,9 @@ export class OrgListUtil {
     return {
       nonScratchOrgs,
       scratchOrgs,
+      sandboxes: nonScratchOrgs.filter(sandboxFilter),
+      other: nonScratchOrgs.filter(regularOrgFilter),
+      devHubs: nonScratchOrgs.filter(devHubFilter),
     };
   }
 
@@ -130,6 +135,10 @@ export class OrgListUtil {
    * @param fileNames All the filenames in the global hidden folder
    */
   public static async readAuthFiles(fileNames: string[]): Promise<AuthInfo[]> {
+    // Ensure that the Global.SFDX_DIR exists
+    // https://github.com/forcedotcom/cli/issues/2222
+    await fs.mkdir(Global.SFDX_DIR, { recursive: true });
+
     const orgFileNames = (await fs.readdir(Global.SFDX_DIR)).filter((filename: string) =>
       filename.match(/^00D.{15}\.json$/g)
     );
@@ -183,7 +192,7 @@ export class OrgListUtil {
    * @private
    */
   public static async groupOrgs(authInfos: AuthInfo[]): Promise<OrgGroups> {
-    const configAggregator = await SfdxConfigAggregator.create();
+    const configAggregator = await ConfigAggregator.create();
 
     const results = await Promise.all(
       authInfos.map(async (authInfo): Promise<ExtendedAuthFields | ExtendedAuthFieldsScratch> => {
@@ -199,7 +208,7 @@ export class OrgListUtil {
         }
 
         const [alias, lastUsed] = await Promise.all([
-          getAliasByUsername(currentValue.username),
+          utils.getAliasByUsername(currentValue.username),
           fs.stat(join(Global.SFDX_DIR, `${currentValue.username}.json`)),
         ]);
 
@@ -320,18 +329,10 @@ export class OrgListUtil {
         await org.refreshAuth();
         return 'Connected';
       } catch (err) {
-        const error = err as SfError;
-        const logger = await OrgListUtil.retrieveLogger();
-        logger.trace(`error refreshing auth for org: ${org.getUsername()}`);
-        logger.trace(error);
-        return (error.code ?? error.message) as string;
+        return authErrorHandler(err, org.getUsername() as string);
       }
     } catch (err) {
-      const error = err as SfError;
-      const logger = await OrgListUtil.retrieveLogger();
-      logger.trace(`error refreshing auth for org: ${username}`);
-      logger.trace(error);
-      return (error.code ?? error.message ?? 'Unknown') as string;
+      return authErrorHandler(err, username);
     }
   }
 }
@@ -364,3 +365,19 @@ const removeRestrictedInfoFromConfig = (
   config: AuthFieldsFromFS,
   properties: string[] = ['refreshToken', 'clientSecret']
 ): AuthFieldsFromFS => omit<Omit<AuthFieldsFromFS, 'refreshToken' | 'clientSecret'>>(config, properties);
+
+const sandboxFilter = (org: AuthFieldsFromFS): boolean => Boolean(org.isSandbox);
+const regularOrgFilter = (org: AuthFieldsFromFS): boolean => !org.isSandbox && !org.isDevHub;
+const devHubFilter = (org: AuthFieldsFromFS): boolean => Boolean(org.isDevHub);
+
+const authErrorHandler = async (err: unknown, username: string): Promise<string> => {
+  const error = err as SfError;
+  const logger = await OrgListUtil.retrieveLogger();
+  logger.trace(`error refreshing auth for org: ${username}`);
+  logger.trace(error);
+  // Orgs under maintenace return html as the error message.
+  if (error.message.includes('maintenance')) return 'Down (Maintenance)';
+  // handle other potential html responses
+  if (error.message.includes('<html>') || error.message.includes('<!DOCTYPE HTML>')) return 'Bad Response';
+  return (error.code ?? error.message) as string;
+};

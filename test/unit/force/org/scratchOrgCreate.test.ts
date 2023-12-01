@@ -4,21 +4,18 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as fs from 'fs';
-import {
-  MockTestOrgData,
-  shouldThrow,
-  // shouldThrow,
-  TestContext,
-} from '@salesforce/core/lib/testSetup';
+import fs from 'node:fs';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { MockTestOrgData, shouldThrow, TestContext } from '@salesforce/core/lib/testSetup.js';
 import { SfError, Messages, Org } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
-import * as sinon from 'sinon';
-import { assert, expect } from 'chai';
-import { Config as IConfig } from '@oclif/core';
-import { Create } from '../../../../src/commands/force/org/create';
+import sinon from 'sinon';
+import { expect } from 'chai';
+import { Prompter, stubSfCommandUx } from '@salesforce/sf-plugins-core';
+import { Create } from '../../../../src/commands/force/org/create.js';
 
-Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
 
 const CREATE_RESULT = {
@@ -39,7 +36,7 @@ const CREATE_RESULT = {
   warnings: [],
 };
 
-describe('org:create', () => {
+describe('[DEPRECATED] force:org:create', () => {
   const $$ = new TestContext();
   const testHub = new MockTestOrgData();
   testHub.isDevHub = true;
@@ -49,38 +46,39 @@ describe('org:create', () => {
     $$.stubAliases({});
     await $$.stubConfig({ defaultdevhubusername: testHub.username });
   });
-  afterEach(() => {
-    $$.restore();
-  });
+
   const clientSecret = '123456';
   // stubs
   let scratchOrgCreateStub: sinon.SinonStub;
-  let uxLogStub: sinon.SinonStub;
-  let uxWarnStub: sinon.SinonStub;
   let promptStub: sinon.SinonStub;
+  let sfCommandUxStubs: ReturnType<typeof stubSfCommandUx>;
 
-  const getCreateCommand = (params: string[]): Create => {
-    const cmd = new Create(params, {} as IConfig);
-
+  const runCreateCommand = (params: string[]) => {
     // so the `exists` flag on definition file passes
-    $$.SANDBOX.stub(fs, 'existsSync').returns(true);
+    $$.SANDBOX.stub(fs, 'existsSync')
+      .withArgs(sinon.match('.json'))
+      .returns(true)
+      // oclif/core depends on existsSync to find the root plugin so we have to
+      // stub it out here to ensure that it doesn't think an invalid path is the root
+      .withArgs(sinon.match('bin'))
+      .returns(false);
     stubMethod($$.SANDBOX, fs.promises, 'stat').resolves({ isFile: () => true });
-    uxLogStub = $$.SANDBOX.stub(cmd, 'log');
-    uxWarnStub = $$.SANDBOX.stub(cmd, 'warn');
-    return cmd;
+
+    sfCommandUxStubs = stubSfCommandUx($$.SANDBOX);
+
+    return Create.run(params);
   };
 
   describe('scratch org', () => {
     it('will parse the --type flag correctly to create a scratchOrg', async () => {
-      const cmd = getCreateCommand(['--type', 'scratch', '-v', testHub.username]);
-      scratchOrgCreateStub = stubMethod($$.SANDBOX, cmd, 'createScratchOrg').resolves();
-      await cmd.run();
+      scratchOrgCreateStub = stubMethod($$.SANDBOX, Create.prototype, 'createScratchOrg').resolves();
+      await runCreateCommand(['--type', 'scratch', '-v', testHub.username]);
       expect(scratchOrgCreateStub.callCount).to.equal(1);
     });
 
     it('properly sends varargs, and definition file', async () => {
       scratchOrgCreateStub = stubMethod($$.SANDBOX, Org.prototype, 'scratchOrgCreate').resolves(CREATE_RESULT);
-      const cmd = getCreateCommand([
+      await runCreateCommand([
         '--type',
         'scratch',
         'licenseType=LicenseFromVarargs',
@@ -89,7 +87,7 @@ describe('org:create', () => {
         '-v',
         testHub.username,
       ]);
-      await cmd.run();
+
       expect(scratchOrgCreateStub.callCount).to.equal(1);
       expect(scratchOrgCreateStub.firstCall.args[0]).to.deep.equal({
         alias: undefined,
@@ -111,25 +109,27 @@ describe('org:create', () => {
           licenseType: 'LicenseFromVarargs',
         },
       });
-      expect(uxLogStub.firstCall.firstArg).to.equal(
+      expect(sfCommandUxStubs.log.firstCall.firstArg).to.equal(
         'Successfully created scratch org: 12345, username: sfdx-cli@salesforce.com.'
       );
     });
 
     it('will fail if no definitionfile or not varargs', async () => {
-      const cmd = getCreateCommand(['--type', 'scratch', '-v', testHub.username]);
       try {
-        await shouldThrow(cmd.run());
+        await shouldThrow(runCreateCommand(['--type', 'scratch', '-v', testHub.username]));
       } catch (e) {
-        assert(e instanceof SfError);
-        expect(e.message).to.equal(messages.getMessage('noConfig'));
+        const error = e as SfError;
+        expect(error.message).to.equal(messages.getMessage('noConfig'));
       }
     });
 
     it('will prompt the user for a secret if clientId is provided', async () => {
       const connectedAppConsumerKey = 'abcdef';
       const definitionfile = 'myScratchDef.json';
-      const cmd = getCreateCommand([
+      const prodOrg = stubMethod($$.SANDBOX, Org.prototype, 'scratchOrgCreate').resolves(CREATE_RESULT);
+      promptStub = stubMethod($$.SANDBOX, Prompter.prototype, 'prompt').resolves({ clientSecret });
+
+      await runCreateCommand([
         '--type',
         'scratch',
         '-i',
@@ -139,10 +139,7 @@ describe('org:create', () => {
         '-v',
         testHub.username,
       ]);
-      const prodOrg = stubMethod($$.SANDBOX, Org.prototype, 'scratchOrgCreate').resolves(CREATE_RESULT);
-      promptStub = stubMethod($$.SANDBOX, cmd, 'prompt').resolves({ clientSecret });
 
-      await cmd.run();
       expect(promptStub.callCount).to.equal(1);
       expect(prodOrg.firstCall.args[0]).to.deep.equal({
         alias: undefined,
@@ -164,14 +161,19 @@ describe('org:create', () => {
       });
       expect(promptStub.callCount).to.equal(1);
       expect(promptStub.callCount).to.equal(1);
-      expect(uxLogStub.firstCall.firstArg).to.equal(
+      expect(sfCommandUxStubs.log.firstCall.firstArg).to.equal(
         'Successfully created scratch org: 12345, username: sfdx-cli@salesforce.com.'
       );
     });
 
     it('will set alias/defaultusername', async () => {
       const definitionfile = 'myScratchDef.json';
-      const cmd = getCreateCommand([
+      const prodOrg = stubMethod($$.SANDBOX, Org.prototype, 'scratchOrgCreate').resolves({
+        ...CREATE_RESULT,
+        username: 'newScratchUsername',
+      });
+
+      await runCreateCommand([
         '--type',
         'scratch',
         '--setalias',
@@ -183,11 +185,6 @@ describe('org:create', () => {
         testHub.username,
       ]);
 
-      const prodOrg = stubMethod($$.SANDBOX, Org.prototype, 'scratchOrgCreate').resolves({
-        ...CREATE_RESULT,
-        username: 'newScratchUsername',
-      });
-      await cmd.run();
       expect(prodOrg.firstCall.args[0]).to.deep.equal({
         alias: 'scratchOrgAlias',
         apiversion: undefined,
@@ -210,7 +207,12 @@ describe('org:create', () => {
 
     it('will set alias as default', async () => {
       const definitionfile = 'myScratchDef.json';
-      const cmd = getCreateCommand([
+      const prodOrg = stubMethod($$.SANDBOX, Org.prototype, 'scratchOrgCreate').resolves({
+        ...CREATE_RESULT,
+        username: 'newScratchUsername',
+      });
+
+      await runCreateCommand([
         '--type',
         'scratch',
         '--setalias',
@@ -222,12 +224,6 @@ describe('org:create', () => {
         testHub.username,
       ]);
 
-      const prodOrg = stubMethod($$.SANDBOX, Org.prototype, 'scratchOrgCreate').resolves({
-        ...CREATE_RESULT,
-        username: 'newScratchUsername',
-      });
-
-      await cmd.run();
       expect(prodOrg.firstCall.args[0]).to.deep.equal({
         alias: 'scratchOrgAlias',
         apiversion: undefined,
@@ -250,13 +246,20 @@ describe('org:create', () => {
 
     it('will test json output', async () => {
       const definitionfile = 'myScratchDef.json';
-      const cmd = getCreateCommand(['--type', 'scratch', '--definitionfile', definitionfile, '-v', testHub.username]);
 
       const prodOrg = stubMethod($$.SANDBOX, Org.prototype, 'scratchOrgCreate').resolves({
         ...CREATE_RESULT,
         username: 'newScratchUsername',
       });
-      const result = await cmd.run();
+
+      const result = await runCreateCommand([
+        '--type',
+        'scratch',
+        '--definitionfile',
+        definitionfile,
+        '-v',
+        testHub.username,
+      ]);
       expect(prodOrg.firstCall.args[0]).to.deep.equal({
         alias: undefined,
         apiversion: undefined,
@@ -281,35 +284,30 @@ describe('org:create', () => {
     it('will print warnings if any', async () => {
       const definitionfile = 'myScratchDef.json';
       const warnings = ['warning1', 'warning2'];
-      const cmd = getCreateCommand(['--type', 'scratch', '--definitionfile', definitionfile, '-v', testHub.username]);
 
       stubMethod($$.SANDBOX, Org.prototype, 'scratchOrgCreate').resolves({
         ...CREATE_RESULT,
         username: 'newScratchUsername',
         warnings,
       });
-      await cmd.run();
-      expect(uxWarnStub.callCount).to.equal(2);
-      expect(uxWarnStub.callCount).to.equal(2);
-      expect(uxWarnStub.firstCall.firstArg).to.equal(warnings[0]);
-      expect(uxWarnStub.firstCall.firstArg).to.equal(warnings[0]);
-      expect(uxWarnStub.secondCall.firstArg).to.equal(warnings[1]);
-      expect(uxWarnStub.secondCall.firstArg).to.equal(warnings[1]);
+      await runCreateCommand(['--type', 'scratch', '--definitionfile', definitionfile, '-v', testHub.username]);
+      expect(sfCommandUxStubs.warn.callCount).to.be.greaterThanOrEqual(2);
+      expect(sfCommandUxStubs.warn.getCalls().flatMap((c) => c.args)).to.have.include(warnings[0]);
+      expect(sfCommandUxStubs.warn.getCalls().flatMap((c) => c.args)).to.have.include(warnings[1]);
     });
   });
 
   it('should print the error if command fails', async () => {
     const errorMessage = 'MyError';
     const definitionfile = 'myScratchDef.json';
-    const cmd = getCreateCommand(['--type', 'scratch', '--definitionfile', definitionfile, '-v', testHub.username]);
-
     stubMethod($$.SANDBOX, Org.prototype, 'scratchOrgCreate').rejects(new SfError(errorMessage));
     try {
-      await cmd.run();
-      assert.fail('the above should throw an error');
+      await shouldThrow(
+        runCreateCommand(['--type', 'scratch', '--definitionfile', definitionfile, '-v', testHub.username])
+      );
     } catch (e) {
-      assert(e instanceof SfError);
-      expect(e.message).to.equal(errorMessage);
+      const error = e as SfError;
+      expect(error.message).to.equal(errorMessage);
     }
   });
 });

@@ -26,13 +26,13 @@ Include expired, deleted, and unknown-status scratch orgs.
 
 # flags.clean.summary
 
-Remove all local org authorizations for non-active scratch orgs. Use auth:logout to remove non-scratch orgs.
+Remove all local org authorizations for non-active scratch orgs. Use "org logout" to remove non-scratch orgs.
 
-# flags.noPrompt.summary
+# flags.no-prompt.summary
 
 Don't prompt for confirmation.
 
-# flags.skipConnectionStatus.summary
+# flags.skip-connection-status.summary
 
 Skip retrieving the connection status of non-scratch orgs.
 
@@ -46,7 +46,7 @@ No active scratch orgs found. Specify --all to see all scratch orgs.
 
 # deleteOrgs
 
-You have %s expired or deleted local scratch org authorizations. To remove authorizations for inactive orgs, run org:list --clean.
+You have %s expired or deleted local scratch org authorizations. To remove authorizations for inactive orgs, run "org list --clean".
 
 # noOrgsFound
 
@@ -54,12 +54,12 @@ No orgs can be found.
 
 # noOrgsFoundAction
 
-Use one of the auth commands or org:create:scratch to add or create a scratch org.
+Use one of the "org login" commands or "org create scratch" to add or create a scratch org.
 
 # noResultsFound
 
-No non-scratch orgs found.
+No Orgs found.
 
 # cleanWarning
 
-Unable to clean org with username %s. You can run "sfdx org:delete:scratch -o %s" to remove it.`
+Unable to clean org with username %s. You can run "%s org delete scratch -o %s" to remove it.`

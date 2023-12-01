@@ -5,6 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   Flags,
   SfCommand,
@@ -24,9 +26,9 @@ import {
   SandboxProcessObject,
   Logger,
 } from '@salesforce/core';
-import { SandboxReporter } from '../../../shared/sandboxReporter';
+import { SandboxReporter } from '../../../shared/sandboxReporter.js';
 
-Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'status');
 
 export class OrgStatusCommand extends SfCommand<SandboxProcessObject> {
@@ -44,21 +46,21 @@ export class OrgStatusCommand extends SfCommand<SandboxProcessObject> {
     'api-version': orgApiVersionFlagWithDeprecations,
     sandboxname: Flags.string({
       char: 'n',
-      summary: messages.getMessage('flags.sandboxname'),
+      summary: messages.getMessage('flags.sandboxname.summary'),
       required: true,
     }),
     setdefaultusername: Flags.boolean({
       char: 's',
-      summary: messages.getMessage('flags.setdefaultusername'),
+      summary: messages.getMessage('flags.setdefaultusername.summary'),
     }),
     setalias: Flags.string({
       char: 'a',
-      summary: messages.getMessage('flags.setalias'),
+      summary: messages.getMessage('flags.setalias.summary'),
     }),
     wait: Flags.duration({
       unit: 'minutes',
       char: 'w',
-      summary: messages.getMessage('flags.wait'),
+      summary: messages.getMessage('flags.wait.summary'),
       min: 2,
       defaultValue: 6,
     }),

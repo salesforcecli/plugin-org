@@ -5,37 +5,36 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as path from 'path';
-import * as fs from 'fs';
+import path from 'node:path';
+import fs from 'node:fs';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
-import { ScratchDeleteResponse } from '../../src/commands/org/delete/scratch';
+import { ScratchDeleteResponse } from '../../src/commands/org/delete/scratch.js';
 
-describe('env:delete:scratch NUTs', () => {
+describe('org:delete:scratch NUTs', () => {
   const scratchOrgAlias = 'scratch-org';
   const scratchOrgAlias2 = 'scratch-org-2';
+  const scratchOrgAlias3 = 'scratch-org-3';
   let session: TestSession;
 
   before(async () => {
     session = await TestSession.create({
-      project: {},
+      project: { name: 'scratchOrgDelete' },
       devhubAuthStrategy: 'AUTO',
       scratchOrgs: [
         {
-          executable: 'sf',
           alias: scratchOrgAlias,
           duration: 1,
           config: path.join('config', 'project-scratch-def.json'),
         },
         {
-          executable: 'sf',
           alias: scratchOrgAlias2,
           duration: 1,
           config: path.join('config', 'project-scratch-def.json'),
         },
         {
-          executable: 'sf',
           setDefault: true,
+          alias: scratchOrgAlias3,
           duration: 1,
           config: path.join('config', 'project-scratch-def.json'),
         },
@@ -49,13 +48,8 @@ describe('env:delete:scratch NUTs', () => {
     try {
       await session?.clean();
     } catch {
-      await fs.promises.rmdir(session.dir, { recursive: true }).catch(() => {});
+      await fs.promises.rm(session.dir, { recursive: true }).catch(() => {});
     }
-  });
-
-  it('should see default username in help', () => {
-    const output = execCmd<ScratchDeleteResponse>('env:delete:scratch --help', { ensureExitCode: 0 }).shellOutput;
-    expect(output).to.include(session.orgs.get('default')?.username);
   });
 
   it('should delete the 1st scratch org by alias', () => {

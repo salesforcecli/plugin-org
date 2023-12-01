@@ -5,6 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { Flags } from '@salesforce/sf-plugins-core';
 import {
   StateAggregator,
@@ -20,10 +22,10 @@ import {
   SfError,
 } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
-import * as Interfaces from '@oclif/core/lib/interfaces';
-import { SandboxCommandBase } from '../../../shared/sandboxCommandBase';
+import { Interfaces } from '@oclif/core';
+import { SandboxCommandBase } from '../../../shared/sandboxCommandBase.js';
 
-Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'resume.sandbox');
 
 export default class ResumeSandbox extends SandboxCommandBase<SandboxProcessObject> {
@@ -93,7 +95,7 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxProcessObje
       if (latestEntry) {
         const [, sandboxRequestData] = latestEntry;
         if (sandboxRequestData) {
-          return { SandboxName: sandboxRequestData.sandboxProcessObject?.SandboxName };
+          return { SandboxProcessObjId: sandboxRequestData.sandboxProcessObject?.Id };
         }
       }
     }
@@ -130,7 +132,7 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxProcessObje
       (await this.verifyIfAuthExists({
         prodOrg: this.prodOrg,
         sandboxName: this.sandboxRequestData.sandboxProcessObject.SandboxName,
-        jobId: this.flags['job-id'],
+        jobId: this.flags['job-id'] ?? this.sandboxRequestData.sandboxProcessObject.Id,
         lifecycle,
       }))
     ) {
@@ -228,7 +230,7 @@ const getSandboxProcessObject = async (
   sandboxName?: string,
   jobId?: string
 ): Promise<SandboxProcessObject> => {
-  const where = sandboxName ? `SandboxName='${sandboxName}'` : `Id='${jobId}'`;
+  const where = jobId ? `Id='${jobId}'` : `SandboxName='${sandboxName}'`;
   const queryStr = `SELECT Id, Status, SandboxName, SandboxInfoId, LicenseType, CreatedDate, CopyProgress, SandboxOrganization, SourceId, Description, EndDate FROM SandboxProcess WHERE ${where} AND Status != 'D'`;
   try {
     return await prodOrg.getConnection().singleRecordQuery(queryStr, {

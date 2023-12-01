@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { ScratchOrgLifecycleEvent, scratchOrgLifecycleStages } from '@salesforce/core';
-import * as chalk from 'chalk';
+import chalk from 'chalk';
 import { capitalCase } from 'change-case';
 import { StandardColors } from '@salesforce/sf-plugins-core';
 

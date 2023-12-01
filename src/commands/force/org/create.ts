@@ -5,38 +5,40 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { Interfaces } from '@oclif/core';
 import {
   Flags,
-  SfCommand,
+  loglevel,
+  optionalHubFlagWithDeprecations,
   optionalOrgFlagWithDeprecations,
   orgApiVersionFlagWithDeprecations,
   parseVarArgs,
-  optionalHubFlagWithDeprecations,
-  loglevel,
+  SfCommand,
 } from '@salesforce/sf-plugins-core';
 import {
   AuthFields,
-  StateAggregator,
   Config,
   Lifecycle,
+  Logger,
   Messages,
-  OrgTypes,
   OrgConfigProperties,
+  OrgTypes,
   ResultEvent,
   SandboxEvents,
   SandboxProcessObject,
   SandboxUserAuthResponse,
-  SfError,
-  StatusEvent,
   ScratchOrgInfo,
   ScratchOrgRequest,
-  Logger,
+  SfError,
+  StateAggregator,
+  StatusEvent,
 } from '@salesforce/core';
-import { createSandboxRequest } from '../../../shared/sandboxRequest';
-import { SandboxReporter } from '../../../shared/sandboxReporter';
+import requestFunctions from '../../../shared/sandboxRequest.js';
+import { SandboxReporter } from '../../../shared/sandboxReporter.js';
 
-Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
 
 export interface ScratchOrgProcessObject {
@@ -48,22 +50,25 @@ export interface ScratchOrgProcessObject {
 }
 
 export type CreateResult = ScratchOrgProcessObject | SandboxProcessObject;
+
 export class Create extends SfCommand<CreateResult> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
 
-  // waiting for oclif bug fix around missing config.id.
-  // public static state = 'deprecated';
-  // public static deprecationOptions = {
-  //   message: messages.getMessage('deprecation'),
-  // };
+  public static state = 'deprecated';
+  public static deprecationOptions = {
+    message: messages.getMessage('deprecation'),
+  };
 
   // needed to allow varargs
   public static readonly strict = false;
 
   public static readonly flags = {
-    'target-org': optionalOrgFlagWithDeprecations,
+    'target-org': {
+      ...optionalOrgFlagWithDeprecations,
+      summary: messages.getMessage('flags.targetOrg.summary'),
+    },
     'target-dev-hub': optionalHubFlagWithDeprecations,
     'api-version': orgApiVersionFlagWithDeprecations,
     loglevel,
@@ -71,44 +76,44 @@ export class Create extends SfCommand<CreateResult> {
       options: [OrgTypes.Scratch, OrgTypes.Sandbox],
     })({
       char: 't',
-      summary: messages.getMessage('flags.type'),
+      summary: messages.getMessage('flags.type.summary'),
       default: OrgTypes.Scratch,
     }),
     definitionfile: Flags.file({
       exists: true,
       char: 'f',
-      summary: messages.getMessage('flags.definitionFile'),
+      summary: messages.getMessage('flags.definitionfile.summary'),
     }),
     nonamespace: Flags.boolean({
       char: 'n',
-      summary: messages.getMessage('flags.noNamespace'),
+      summary: messages.getMessage('flags.nonamespace.summary'),
     }),
     noancestors: Flags.boolean({
       char: 'c',
-      summary: messages.getMessage('flags.noAncestors'),
+      summary: messages.getMessage('flags.noancestors.summary'),
     }),
     clientid: Flags.string({
       char: 'i',
-      summary: messages.getMessage('flags.clientId'),
+      summary: messages.getMessage('flags.clientid.summary'),
     }),
     setdefaultusername: Flags.boolean({
       char: 's',
-      summary: messages.getMessage('flags.setDefaultUsername'),
+      summary: messages.getMessage('flags.setdefaultusername.summary'),
     }),
     setalias: Flags.string({
       char: 'a',
-      summary: messages.getMessage('flags.setAlias'),
+      summary: messages.getMessage('flags.setalias.summary'),
     }),
     wait: Flags.duration({
       unit: 'minutes',
       char: 'w',
-      summary: messages.getMessage('flags.wait'),
+      summary: messages.getMessage('flags.wait.summary'),
       min: 6,
       defaultValue: 6,
     }),
     durationdays: Flags.integer({
       char: 'd',
-      summary: messages.getMessage('flags.durationDays'),
+      summary: messages.getMessage('flags.durationdays.summary'),
       min: 1,
       max: 30,
       default: 7,
@@ -117,7 +122,7 @@ export class Create extends SfCommand<CreateResult> {
       hidden: true,
       default: 0,
       max: 10,
-      summary: messages.getMessage('flags.retry'),
+      summary: messages.getMessage('flags.retry.summary'),
     }),
   };
   private sandboxAuth?: SandboxUserAuthResponse;
@@ -131,7 +136,6 @@ export class Create extends SfCommand<CreateResult> {
     this.flags = flags;
     this.varArgs = parseVarArgs(args, argv as string[]);
     this.logger = await Logger.child(this.constructor.name);
-    this.logger.debug('Create started with args %s ', flags);
 
     if (flags.type === OrgTypes.Sandbox) {
       this.validateSandboxFlags();
@@ -163,14 +167,16 @@ export class Create extends SfCommand<CreateResult> {
 
   private async createSandbox(): Promise<SandboxProcessObject> {
     if (!this.flags['target-org']) {
-      throw new SfError(messages.getMessage('requiresUsername'));
+      throw new SfError(messages.getMessage('requiresUsername', [this.config.bin]));
     }
     const lifecycle = Lifecycle.getInstance();
     const username = this.flags['target-org'].getUsername();
     // register the sandbox event listeners before calling `prodOrg.createSandbox()`
 
     lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results: SandboxProcessObject) =>
-      Promise.resolve(this.log(messages.getMessage('sandboxSuccess', [results.Id, results.SandboxName, username])))
+      Promise.resolve(
+        this.log(messages.getMessage('sandboxSuccess', [results.Id, this.config.bin, results.SandboxName, username]))
+      )
     );
 
     lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) =>
@@ -206,7 +212,12 @@ export class Create extends SfCommand<CreateResult> {
       }
     });
 
-    const { sandboxReq } = await createSandboxRequest(false, this.flags.definitionfile, this.logger, this.varArgs);
+    const { sandboxReq } = await requestFunctions.createSandboxRequest(
+      false,
+      this.flags.definitionfile,
+      this.logger,
+      this.varArgs
+    );
 
     this.logger.debug('Calling create with SandboxRequest: %s ', sandboxReq);
     const wait = this.flags.wait;
@@ -214,7 +225,7 @@ export class Create extends SfCommand<CreateResult> {
     try {
       return await this.flags['target-org'].createSandbox(sandboxReq, { wait });
     } catch (e) {
-      // guaranteed to be SfdxError from core;
+      // guaranteed to be SfError from core;
       const err = e as SfError;
       if (err?.message.includes('The org cannot be found')) {
         // there was most likely an issue with DNS when auth'ing to the new sandbox, but it was created.
@@ -230,7 +241,10 @@ export class Create extends SfCommand<CreateResult> {
           const result = await globalConfig.write();
           this.logger.debug('Set defaultUsername: %s result: %s', this.flags.setdefaultusername, result);
         }
-        err.actions = [messages.getMessage('dnsTimeout'), messages.getMessage('partialSuccess')];
+        err.actions = [
+          messages.getMessage('dnsTimeout', [this.config.bin, this.config.bin]),
+          messages.getMessage('partialSuccess', [this.config.bin, this.config.bin, this.config.bin]),
+        ];
         err.exitCode = 68;
       }
 
@@ -282,7 +296,7 @@ export class Create extends SfCommand<CreateResult> {
     if (!scratchOrgInfo) {
       throw new SfError('No scratch org info returned from scratchOrgCreate');
     }
-    if (!authFields || !authFields.orgId) {
+    if (!authFields?.orgId) {
       throw new SfError('Information missing from authFields');
     }
 

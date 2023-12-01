@@ -4,10 +4,10 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { join } from 'path';
+import { join } from 'node:path';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
-import { DeleteResult } from '../../../src/commands/force/org/delete';
+import { DeleteResult } from '../../../src/commands/force/org/delete.js';
 
 // these NUTs are separated from org.nuts.ts because deleting orgs may interfere with the other NUTs
 describe('Delete Orgs', () => {
@@ -20,24 +20,22 @@ describe('Delete Orgs', () => {
   // create our own orgs to delete to avoid interfering with other NUTs/cleanup
   before(async () => {
     session = await TestSession.create({
-      project: { name: 'forceOrgList' },
+      project: { name: 'legacyOrgDelete' },
       devhubAuthStrategy: 'AUTO',
       scratchOrgs: [
         {
-          executable: 'sfdx',
           setDefault: true,
           config: join('config', 'project-scratch-def.json'),
         },
         {
-          executable: 'sfdx',
-          alias: 'anAlias',
+          alias: 'deleteAlias',
           config: join('config', 'project-scratch-def.json'),
         },
       ],
     });
 
     const defaultOrg = session.orgs.get('default');
-    const aliasOrg = session.orgs.get('anAlias');
+    const aliasOrg = session.orgs.get('deleteAlias');
 
     assert(defaultOrg?.username);
     assert(defaultOrg?.orgId);
@@ -69,7 +67,7 @@ describe('Delete Orgs', () => {
   });
 
   it('delete scratch orgs via alias', () => {
-    const result = execCmd<DeleteResult>('force:org:delete --targetusername anAlias --noprompt --json', {
+    const result = execCmd<DeleteResult>('force:org:delete --targetusername deleteAlias --noprompt --json', {
       ensureExitCode: 0,
     }).jsonOutput?.result;
     expect(result).to.be.ok;

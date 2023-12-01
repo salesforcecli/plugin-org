@@ -5,9 +5,9 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { expect } from 'chai';
-import * as chalk from 'chalk';
-import { StagedProgress, StateConstants } from '../../src/shared/stagedProgress';
-import { SandboxStatusData } from '../../src/shared/sandboxProgress';
+import chalk from 'chalk';
+import { StagedProgress, StateConstants } from '../../src/shared/stagedProgress.js';
+import { SandboxStatusData } from '../../src/shared/sandboxProgress.js';
 
 class TestStagedProgress extends StagedProgress<SandboxStatusData> {
   // eslint-disable-next-line class-methods-use-this

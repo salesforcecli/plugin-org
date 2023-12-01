@@ -6,6 +6,8 @@
  */
 
 import { strict as assert } from 'node:assert';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
 import {
   Messages,
@@ -15,10 +17,10 @@ import {
   ScratchOrgLifecycleEvent,
   scratchOrgLifecycleEventName,
 } from '@salesforce/core';
-import { ScratchCreateResponse } from '../../../shared/orgTypes';
-import { buildStatus } from '../../../shared/scratchOrgOutput';
+import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
+import { buildStatus } from '../../../shared/scratchOrgOutput.js';
 
-Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'resume_scratch');
 
 export default class EnvResumeScratch extends SfCommand<ScratchCreateResponse> {
@@ -30,6 +32,7 @@ export default class EnvResumeScratch extends SfCommand<ScratchCreateResponse> {
   public static readonly flags = {
     'job-id': Flags.salesforceId({
       char: 'i',
+      length: 'both',
       summary: messages.getMessage('flags.job-id.summary'),
       description: messages.getMessage('flags.job-id.description'),
       exactlyOne: ['use-most-recent', 'job-id'],
@@ -69,6 +72,6 @@ export default class EnvResumeScratch extends SfCommand<ScratchCreateResponse> {
 
     this.log();
     this.logSuccess(messages.getMessage('success'));
-    return { username, scratchOrgInfo, authFields, warnings, orgId: scratchOrgInfo?.Id };
+    return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
   }
 }

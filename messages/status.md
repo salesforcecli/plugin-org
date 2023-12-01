@@ -16,18 +16,18 @@ Use the --wait (-w) parameter to specify the number of minutes that the command 
 
 Set the --target-org (-o) parameter to the username or alias of the production org that contains the sandbox license.
 
-# flags.sandboxname
+# flags.sandboxname.summary
 
 Name of the sandbox org to check status for.
 
-# flags.wait
+# flags.wait.summary
 
 Number of minutes to wait while polling for status.
 
-# flags.setdefaultusername
+# flags.setdefaultusername.summary
 
 Set the created or cloned org as your default.
 
-# flags.setalias
+# flags.setalias.summary
 
 Alias for the created or cloned org.

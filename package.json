@@ -1,76 +1,55 @@
 {
   "name": "@salesforce/plugin-org",
   "description": "Commands to interact with Salesforce orgs",
-  "version": "2.4.2",
+  "version": "3.0.9",
   "author": "Salesforce",
-  "main": "lib/index.js",
   "bugs": "https://github.com/forcedotcom/cli/issues",
   "dependencies": {
-    "@oclif/core": "^2.3.0",
-    "@salesforce/core": "^3.33.2",
-    "@salesforce/kit": "^1.9.0",
-    "@salesforce/sf-plugins-core": "^2.2.1",
-    "open": "8.4.1",
-    "tslib": "^2"
+    "@oclif/core": "^3.10.8",
+    "@salesforce/core": "^6.1.3",
+    "@salesforce/kit": "^3.0.15",
+    "@salesforce/sf-plugins-core": "^5.0.3",
+    "@salesforce/source-deploy-retrieve": "^10.0.3",
+    "open": "^9.1.0"
   },
   "devDependencies": {
-    "@oclif/plugin-command-snapshot": "^3.3.4",
-    "@salesforce/cli-plugins-testkit": "^3.2.21",
-    "@salesforce/dev-config": "^3.1.0",
-    "@salesforce/dev-scripts": "^4.0.0-beta.9",
-    "@salesforce/plugin-command-reference": "^2.2.9",
-    "@salesforce/prettier-config": "^0.0.2",
-    "@salesforce/ts-sinon": "1.4.6",
-    "@swc/core": "^1.3.36",
-    "@types/chai-as-promised": "^7.1.5",
-    "@types/shelljs": "^0.8.10",
-    "@typescript-eslint/eslint-plugin": "^5.42.1",
-    "@typescript-eslint/parser": "^5.46.0",
-    "chai": "^4.3.7",
-    "chai-as-promised": "^7.1.1",
-    "eslint": "^8.33.0",
-    "eslint-config-prettier": "^8.6.0",
-    "eslint-config-salesforce": "^1.1.1",
-    "eslint-config-salesforce-license": "^0.1.6",
-    "eslint-config-salesforce-typescript": "^1.1.1",
-    "eslint-plugin-header": "^3.0.0",
-    "eslint-plugin-import": "2.27.5",
-    "eslint-plugin-jsdoc": "^39.6.7",
-    "eslint-plugin-sf-plugin": "^1.8.1",
-    "husky": "^7.0.4",
-    "mocha": "^9.1.3",
+    "@oclif/plugin-command-snapshot": "^5.0.2",
+    "@salesforce/cli-plugins-testkit": "^5.0.3",
+    "@salesforce/dev-scripts": "^7.1.1",
+    "@salesforce/plugin-command-reference": "^3.0.47",
+    "@salesforce/ts-sinon": "1.4.19",
+    "@types/shelljs": "^0.8.14",
+    "eslint-plugin-sf-plugin": "^1.16.15",
     "moment": "^2.29.1",
-    "nyc": "^15.1.0",
-    "oclif": "^3.6.5",
-    "prettier": "^2.8.4",
-    "pretty-quick": "^3.1.0",
+    "oclif": "^4.0.3",
     "shelljs": "^0.8.5",
     "shx": "0.3.4",
-    "sinon": "10.0.0",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.4",
-    "wireit": "^0.9.5"
+    "typescript": "^5.2.2"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   },
   "files": [
     "/lib",
     "/messages",
-    "/oclif.manifest.json"
+    "/oclif.manifest.json",
+    "/oclif.lock"
   ],
   "homepage": "https://github.com/salesforcecli/plugin-org",
   "keywords": [
     "force",
     "salesforce",
-    "sfdx",
     "salesforcedx",
+    "sf",
+    "sf-plugin",
+    "sfdx",
     "sfdx-plugin"
   ],
   "license": "BSD-3-Clause",
   "oclif": {
     "commands": "./lib/commands",
-    "bin": "sfdx",
+    "bin": "sf",
     "devPlugins": [
       "@oclif/plugin-help",
       "@oclif/plugin-command-snapshot",
@@ -78,7 +57,7 @@
     ],
     "topics": {
       "org": {
-        "description": "Manage your sandbox and scratch orgs.",
+        "description": "Commands to create and manage orgs and scratch org users.",
         "subtopics": {
           "create": {
             "description": "Create scratch orgs, sandboxes, org shapes, and org snapshots."
@@ -86,10 +65,20 @@
           "resume": {
             "description": "Resume an org creation that was started asynchronously, timed out, or was interrupted."
           },
+          "list": {
+            "description": "List metadata types that are relevant to the org."
+          },
           "delete": {
             "description": "Delete scratch orgs, sandboxes, org shapes, and org snapshots."
+          },
+          "enable": {
+            "description": "Enable source tracking in an org."
+          },
+          "disable": {
+            "description": "Disable source tracking in an org."
           }
-        }
+        },
+        "external": true
       },
       "force": {
         "external": true,
@@ -99,29 +88,27 @@
           }
         }
       }
-    }
+    },
+    "flexibleTaxonomy": true,
+    "topicSeparator": " "
   },
   "repository": "salesforcecli/plugin-org",
   "scripts": {
     "build": "wireit",
     "clean": "sf-clean",
     "clean-all": "sf-clean all",
-    "clean:lib": "shx rm -rf lib && shx rm -rf coverage && shx rm -rf .nyc_output && shx rm -f oclif.manifest.json",
+    "clean:lib": "shx rm -rf lib && shx rm -rf coverage && shx rm -rf .nyc_output && shx rm -f oclif.manifest.json oclif.lock",
     "compile": "wireit",
     "docs": "sf-docs",
     "format": "wireit",
     "lint": "wireit",
-    "postpack": "shx rm -f oclif.manifest.json",
+    "postpack": "shx rm -f oclif.manifest.json oclif.lock",
     "prepack": "sf-prepack",
     "prepare": "sf-install",
     "test": "wireit",
-    "test:command-reference": "wireit",
-    "test:compile": "wireit",
-    "test:deprecation-policy": "wireit",
-    "test:json-schema": "wireit",
-    "test:nuts": "nyc mocha \"./test/nut/*.nut.ts\" --slow 4500 --timeout 1200000 --parallel --jobs 10",
-    "test:nuts:legacy": "nyc mocha \"./test/nut/legacy/*.nut.ts\" --slow 4500 --timeout 1200000 --parallel --jobs 10",
-    "test:nuts:sandbox": "nyc mocha \"./test/**/*.sandboxNut.ts\" --slow 450000 --timeout 7200000 --parallel --jobs 10",
+    "test:nuts": "nyc mocha \"./test/nut/*.nut.ts\" --slow 4500 --timeout 1200000 --parallel --jobs 5",
+    "test:nuts:legacy": "nyc mocha \"./test/nut/legacy/*.nut.ts\" --slow 4500 --timeout 1200000 --parallel --jobs 5",
+    "test:nuts:sandbox": "nyc mocha \"./test/**/*.sandboxNut.ts\" --slow 450000 --timeout 7200000 --parallel --jobs 5",
     "test:only": "wireit",
     "test:watch": "mocha --watch \"./test/**/*.test.ts\"",
     "version": "oclif readme"
@@ -140,7 +127,7 @@
       "command": "tsc -p . --pretty --incremental",
       "files": [
         "src/**/*.ts",
-        "tsconfig.json",
+        "**/tsconfig.json",
         "messages/**"
       ],
       "output": [
@@ -150,7 +137,15 @@
       "clean": "if-file-deleted"
     },
     "format": {
-      "command": "prettier --write \"+(src|test|schemas)/**/*.+(ts|js|json)|command-snapshot.json\""
+      "command": "prettier --write \"+(src|test|schemas)/**/*.+(ts|js|json)|command-snapshot.json\"",
+      "files": [
+        "src/**/*.ts",
+        "test/**/*.ts",
+        "schemas/**/*.json",
+        "command-snapshot.json",
+        ".prettier*"
+      ],
+      "output": []
     },
     "lint": {
       "command": "eslint src test --color --cache --cache-location .eslintcache",
@@ -158,8 +153,8 @@
         "src/**/*.ts",
         "test/**/*.ts",
         "messages/**",
-        ".eslintignore",
-        ".eslintrc.js"
+        "**/.eslint*",
+        "**/tsconfig.json"
       ],
       "output": []
     },
@@ -174,17 +169,18 @@
       ]
     },
     "test:command-reference": {
-      "command": "\"./bin/dev\" commandreference:generate --erroronwarnings",
+      "command": "ts-node \"./bin/dev.js\" commandreference:generate --erroronwarnings",
       "files": [
         "src/**/*.ts",
-        "messages/**"
+        "messages/**",
+        "package.json"
       ],
       "output": [
         "tmp/root"
       ]
     },
     "test:deprecation-policy": {
-      "command": "\"./bin/dev\" snapshot:compare",
+      "command": "ts-node \"./bin/dev.js\" snapshot:compare",
       "files": [
         "src/**/*.ts"
       ],
@@ -194,7 +190,7 @@
       ]
     },
     "test:json-schema": {
-      "command": "\"./bin/dev\" schema:compare",
+      "command": "ts-node \"./bin/dev.js\" schema:compare",
       "files": [
         "src/**/*.ts",
         "schemas"
@@ -205,20 +201,26 @@
       "command": "tsc -p \"./test\" --pretty",
       "files": [
         "test/**/*.ts",
-        "tsconfig.json",
-        "test/tsconfig.json"
+        "**/tsconfig.json"
       ],
       "output": []
     },
     "test:only": {
       "command": "nyc mocha \"test/**/*.test.ts\"",
+      "env": {
+        "FORCE_COLOR": "2"
+      },
       "files": [
         "test/**/*.ts",
         "src/**/*.ts",
-        "tsconfig.json",
-        "test/tsconfig.json"
+        "**/tsconfig.json",
+        ".mocha*",
+        "!*.nut.ts",
+        ".nycrc"
       ],
       "output": []
     }
-  }
+  },
+  "exports": "./lib/index.js",
+  "type": "module"
 }

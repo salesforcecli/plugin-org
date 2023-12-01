@@ -5,10 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { Messages } from '@salesforce/core';
-import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { AuthInfo, AuthRemover, Messages, Org } from '@salesforce/core';
+import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
+import { orgThatMightBeDeleted } from '../../../shared/flags.js';
 
-Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete_scratch');
 
 export interface ScratchDeleteResponse {
@@ -16,15 +19,14 @@ export interface ScratchDeleteResponse {
   username: string;
 }
 
-export default class EnvDeleteScratch extends SfCommand<ScratchDeleteResponse> {
+export default class DeleteScratch extends SfCommand<ScratchDeleteResponse> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
   public static readonly aliases = ['env:delete:scratch'];
   public static readonly deprecateAliases = true;
   public static readonly flags = {
-    'target-org': Flags.requiredOrg({
-      char: 'o',
+    'target-org': orgThatMightBeDeleted({
       summary: messages.getMessage('flags.target-org.summary'),
       required: true,
     }),
@@ -35,21 +37,31 @@ export default class EnvDeleteScratch extends SfCommand<ScratchDeleteResponse> {
   };
 
   public async run(): Promise<ScratchDeleteResponse> {
-    const flags = (await this.parse(EnvDeleteScratch)).flags;
-    const org = flags['target-org'];
+    const flags = (await this.parse(DeleteScratch)).flags;
+    const resolvedUsername = flags['target-org'];
+    const orgId = (await AuthInfo.create({ username: resolvedUsername })).getFields().orgId as string;
 
-    if (flags['no-prompt'] || (await this.confirm(messages.getMessage('prompt.confirm', [org.getUsername()])))) {
+    if (flags['no-prompt'] || (await this.confirm(messages.getMessage('prompt.confirm', [resolvedUsername])))) {
       try {
+        const org = await Org.create({ aliasOrUsername: resolvedUsername });
+
         await org.delete();
         this.logSuccess(messages.getMessage('success', [org.getUsername()]));
+        return { username: org.getUsername() as string, orgId: org.getOrgId() };
       } catch (e) {
-        if (e instanceof Error && e.name === 'ScratchOrgNotFound') {
-          this.logSuccess(messages.getMessage('success.Idempotent', [org.getUsername()]));
+        if (e instanceof Error && e.name === 'DomainNotFoundError') {
+          // the org has expired, so remote operations won't work
+          // let's clean up the files locally
+          const authRemover = await AuthRemover.create();
+          await authRemover.removeAuth(resolvedUsername);
+          this.logSuccess(messages.getMessage('success', [resolvedUsername]));
+        } else if (e instanceof Error && e.name === 'ScratchOrgNotFound') {
+          this.logSuccess(messages.getMessage('success.Idempotent', [resolvedUsername]));
         } else {
           throw e;
         }
       }
     }
-    return { username: org.getUsername() as string, orgId: org.getOrgId() };
+    return { username: resolvedUsername, orgId };
   }
 }

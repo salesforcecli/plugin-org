@@ -5,11 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as fs from 'fs';
-import { Duration } from '@salesforce/kit';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   Messages,
-  ScratchOrgCreateOptions,
   Lifecycle,
   ScratchOrgLifecycleEvent,
   scratchOrgLifecycleEventName,
@@ -18,13 +17,16 @@ import {
   SfError,
 } from '@salesforce/core';
 import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
-import { buildStatus } from '../../../shared/scratchOrgOutput';
-import { ScratchCreateResponse } from '../../../shared/orgTypes';
-Messages.importMessagesDirectory(__dirname);
+import { Duration } from '@salesforce/kit';
+import { buildScratchOrgRequest } from '../../../shared/scratchOrgRequest.js';
+import { buildStatus } from '../../../shared/scratchOrgOutput.js';
+import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
+Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create_scratch');
 
 export const secretTimeout = 60000;
 
+const definitionFileHelpGroupName = 'Definition File Override';
 export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
@@ -51,12 +53,11 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
       char: 'f',
       summary: messages.getMessage('flags.definition-file.summary'),
       description: messages.getMessage('flags.definition-file.description'),
-      exactlyOne: ['definition-file', 'edition'],
     }),
     'target-dev-hub': Flags.requiredHub({
       char: 'v',
-      summary: messages.getMessage('flags.target-hub.summary'),
-      description: messages.getMessage('flags.target-hub.description'),
+      summary: messages.getMessage('flags.target-dev-hub.summary'),
+      description: messages.getMessage('flags.target-dev-hub.description'),
       required: true,
     }),
     'no-ancestors': Flags.boolean({
@@ -78,7 +79,7 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
         'partner-group',
         'partner-professional',
       ],
-      exactlyOne: ['definition-file', 'edition'],
+      helpGroup: definitionFileHelpGroupName,
     }),
     'no-namespace': Flags.boolean({
       char: 'm',
@@ -87,7 +88,7 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
     }),
     'duration-days': Flags.duration({
       unit: 'days',
-      defaultValue: 7,
+      default: Duration.days(7),
       min: 1,
       max: 30,
       char: 'y',
@@ -96,7 +97,7 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
     }),
     wait: Flags.duration({
       unit: 'minutes',
-      defaultValue: 5,
+      default: Duration.minutes(5),
       min: 2,
       char: 'w',
       helpValue: '<minutes>',
@@ -115,7 +116,39 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
       description: messages.getMessage('flags.track-source.description'),
       allowNo: true,
     }),
+    username: Flags.string({
+      summary: messages.getMessage('flags.username.summary'),
+      description: messages.getMessage('flags.username.description'),
+      helpGroup: definitionFileHelpGroupName,
+    }),
+    description: Flags.string({
+      summary: messages.getMessage('flags.description.summary'),
+      helpGroup: definitionFileHelpGroupName,
+    }),
+    name: Flags.string({
+      summary: messages.getMessage('flags.name.summary'),
+      helpGroup: definitionFileHelpGroupName,
+    }),
+    release: Flags.string({
+      summary: messages.getMessage('flags.release.summary'),
+      description: messages.getMessage('flags.release.description'),
+      options: ['preview', 'previous'],
+      helpGroup: definitionFileHelpGroupName,
+    }),
+    'admin-email': Flags.string({
+      summary: messages.getMessage('flags.admin-email.summary'),
+      helpGroup: definitionFileHelpGroupName,
+    }),
+    'source-org': Flags.salesforceId({
+      summary: messages.getMessage('flags.source-org.summary'),
+      startsWith: '00D',
+      length: 15,
+      helpGroup: definitionFileHelpGroupName,
+      // salesforceId flag has `i` and that would be a conflict with client-id
+      char: undefined,
+    }),
   };
+
   public async run(): Promise<ScratchCreateResponse> {
     const lifecycle = Lifecycle.getInstance();
     const { flags } = await this.parse(EnvCreateScratch);
@@ -123,25 +156,11 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
     if (!baseUrl) {
       throw new SfError('No instance URL found for the dev hub');
     }
-    const orgConfig = flags['definition-file']
-      ? (JSON.parse(await fs.promises.readFile(flags['definition-file'], 'utf-8')) as Record<string, unknown>)
-      : { edition: flags.edition };
 
-    const createCommandOptions: ScratchOrgCreateOptions = {
-      hubOrg: flags['target-dev-hub'],
-      clientSecret: flags['client-id'] ? await this.clientSecretPrompt() : undefined,
-      connectedAppConsumerKey: flags['client-id'],
-      durationDays: (flags['duration-days'] as Duration).days,
-      nonamespace: flags['no-namespace'],
-      noancestors: flags['no-ancestors'],
-      wait: flags.async ? Duration.minutes(0) : flags.wait,
-      apiversion: flags['api-version'],
-      orgConfig,
-      alias: flags.alias,
-      setDefault: flags['set-default'],
-      tracksSource: flags['track-source'],
-    };
-
+    const createCommandOptions = await buildScratchOrgRequest(
+      flags,
+      flags['client-id'] ? await this.clientSecretPrompt() : undefined
+    );
     let lastStatus: string | undefined;
 
     if (!flags.async) {
@@ -170,7 +189,7 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
         this.logSuccess(messages.getMessage('success'));
       }
 
-      return { username, scratchOrgInfo, authFields, warnings, orgId: scratchOrgInfo.Id };
+      return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
     } catch (error) {
       if (error instanceof SfError && error.name === 'ScratchOrgInfoTimeoutError') {
         this.spinner.stop(lastStatus);

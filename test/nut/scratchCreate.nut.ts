@@ -4,16 +4,17 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as fs from 'fs';
-import * as path from 'path';
-import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { execCmd, genUniqueString, TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
 import { AuthFields, Messages, Global, StateAggregator } from '@salesforce/core';
-import { secretTimeout } from '../../src/commands/org/create/scratch';
-import { ScratchCreateResponse } from '../../src/shared/orgTypes';
+import { secretTimeout } from '../../src/commands/org/create/scratch.js';
+import { ScratchCreateResponse } from '../../src/shared/orgTypes.js';
 
-Messages.importMessagesDirectory(__dirname);
-const messages = Messages.load('@salesforce/plugin-org', 'create_scratch', ['prompt.secret']);
+Messages.importMessagesDirectory(path.dirname(fileURLToPath(import.meta.url)));
+const messages = Messages.loadMessages('@salesforce/plugin-org', 'create_scratch');
 describe('env create scratch NUTs', () => {
   let session: TestSession;
 
@@ -29,7 +30,7 @@ describe('env create scratch NUTs', () => {
 
   before(async () => {
     session = await TestSession.create({
-      project: {},
+      project: { name: 'scratchOrgCreate' },
       devhubAuthStrategy: 'AUTO',
     });
   });
@@ -41,9 +42,6 @@ describe('env create scratch NUTs', () => {
   describe('flag failures', () => {
     it('non-existent config file', () => {
       execCmd('env:create:scratch -f badfile.json', { ensureExitCode: 1 });
-    });
-    it('config file AND edition', () => {
-      execCmd('env:create:scratch -f config/project-scratch-def.json --edition developer', { ensureExitCode: 1 });
     });
     it('wait zero', () => {
       execCmd('env:create:scratch -f config/project-scratch-def.json --wait 0', { ensureExitCode: 1 });
@@ -72,6 +70,7 @@ describe('env create scratch NUTs', () => {
       }).jsonOutput?.result;
       expect(resp).to.have.all.keys(keys);
       assert(resp?.username);
+      expect(resp?.orgId).to.match(/^00D.{15}/);
       const stateAggregator = await StateAggregator.create();
       expect(await stateAggregator.orgs.read(resp.username)).to.have.property('tracksSource', true);
       StateAggregator.clearInstance();
@@ -84,6 +83,19 @@ describe('env create scratch NUTs', () => {
         }
       ).jsonOutput?.result;
       expect(resp).to.have.all.keys(keys);
+      expect(resp?.orgId).to.match(/^00D.{15}/);
+    });
+    it('creates an org from config file with "override" flags and custom admin email', () => {
+      const expectedUsername = genUniqueString('%s@nut.org');
+      const resp = execCmd<ScratchCreateResponse>(
+        `env:create:scratch -f config/project-scratch-def.json --json --username ${expectedUsername} --description "new one" --name TheOrg --wait 60 --admin-email shane@mailinator.com`,
+        {
+          ensureExitCode: 0,
+        }
+      ).jsonOutput?.result;
+      expect(resp).to.have.all.keys(keys);
+      expect(resp?.username).to.equal(expectedUsername);
+      expect(resp?.scratchOrgInfo?.AdminEmail).to.equal('shane@mailinator.com');
     });
     it('creates an org with tracking disabled ', async () => {
       const resp = execCmd<ScratchCreateResponse>(

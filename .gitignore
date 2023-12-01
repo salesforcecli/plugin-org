@@ -44,3 +44,5 @@ node_modules
 .idea
 
 oclif.manifest.json
+
+oclif.lock

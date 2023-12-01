@@ -5,15 +5,15 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as fs from 'fs';
-import * as path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
 import { AuthFields, Global, ScratchOrgCache } from '@salesforce/core';
 import { JsonMap } from '@salesforce/ts-types';
-import { CachedOptions } from '@salesforce/core/lib/org/scratchOrgCache';
+import { CachedOptions } from '@salesforce/core/lib/org/scratchOrgCache.js';
 import { Duration, sleep } from '@salesforce/kit';
-import { ScratchCreateResponse } from '../../src/shared/orgTypes';
+import { ScratchCreateResponse } from '../../src/shared/orgTypes.js';
 
 describe('env:create:scratch async/resume', () => {
   let session: TestSession;
@@ -21,8 +21,8 @@ describe('env:create:scratch async/resume', () => {
   let soiId: string;
   let username: string;
 
-  const asyncKeys = ['username', 'orgId', 'scratchOrgInfo', 'warnings'];
-  const completeKeys = [...asyncKeys, 'authFields'];
+  const asyncKeys = ['username', 'scratchOrgInfo', 'warnings'];
+  const completeKeys = [...asyncKeys, 'authFields', 'orgId'];
 
   const readCacheFile = async (): Promise<Record<string, CachedOptions>> =>
     JSON.parse(await fs.promises.readFile(cacheFilePath, 'utf8')) as unknown as Record<string, CachedOptions>;
@@ -39,7 +39,7 @@ describe('env:create:scratch async/resume', () => {
 
   before(async () => {
     session = await TestSession.create({
-      project: {},
+      project: { name: 'asyncCreateResume' },
       devhubAuthStrategy: 'AUTO',
     });
     cacheFilePath = path.join(session.dir, '.sf', ScratchOrgCache.getFileName());
@@ -74,6 +74,7 @@ describe('env:create:scratch async/resume', () => {
         if (resp.status === 0) {
           done = true;
           expect(resp.result).to.have.all.keys(completeKeys);
+          expect(resp.result.orgId).to.match(/^00D.{15}/);
         } else if (resp.name === 'StillInProgressError') {
           // eslint-disable-next-line no-await-in-loop
           await sleep(Duration.seconds(30));

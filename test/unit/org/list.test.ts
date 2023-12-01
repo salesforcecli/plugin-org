@@ -4,23 +4,25 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { expect, use as ChaiUse } from 'chai';
-import * as chaiAsPromised from 'chai-as-promised';
-import { TestContext } from '@salesforce/core/lib/testSetup';
+import { expect } from 'chai';
+import { TestContext } from '@salesforce/core/lib/testSetup.js';
 import { AuthInfo, Connection, Org } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
-import { Config } from '@oclif/core';
-import { SfCommand } from '@salesforce/sf-plugins-core';
-import OrgListMock = require('../../shared/orgListMock');
-import { OrgListCommand } from '../../../src/commands/org/list';
-import { OrgListUtil } from '../../../src/shared/orgListUtil';
+import { SfCommand, stubSfCommandUx } from '@salesforce/sf-plugins-core';
+import OrgListMock from '../../shared/orgListMock.js';
+import { OrgListCommand } from '../../../src/commands/org/list.js';
+import { OrgListUtil } from '../../../src/shared/orgListUtil.js';
 
-ChaiUse(chaiAsPromised);
-
-describe('org_list', () => {
+describe('org:list', () => {
+  // Create new TestContext, which automatically creates and restores stubs
+  // pertaining to authorization, orgs, config files, etc...
+  // There is no need to call $$.restore() in afterEach() since that is
+  // done automatically by the TestContext.
   const $$ = new TestContext();
 
-  beforeEach(async () => {
+  beforeEach(() => {
+    // Stub the ux methods on SfCommand so that you don't get any command output in your tests.
+    stubSfCommandUx($$.SANDBOX);
     stubMethod($$.SANDBOX, AuthInfo, 'listAllAuthorizations').resolves([
       'Jimi Hendrix',
       'SRV',
@@ -29,24 +31,16 @@ describe('org_list', () => {
       'foo@example.com',
     ]);
   });
-  afterEach(() => {
-    $$.SANDBOX.restore();
-  });
 
   describe('hub org defined', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       stubMethod($$.SANDBOX, OrgListUtil, 'readLocallyValidatedMetaConfigsGroupedByOrgType').resolves(
         OrgListMock.AUTH_INFO
       );
     });
 
-    afterEach(async () => {
-      $$.SANDBOX.restore();
-    });
-
     it('should list active orgs', async () => {
-      const cmd = new OrgListCommand(['--json'], {} as Config);
-      const orgs = await cmd.run();
+      const orgs = await OrgListCommand.run(['--json']);
       expect(orgs.nonScratchOrgs.length).to.equal(1);
       expect(orgs.nonScratchOrgs[0].username).to.equal('foo@example.com');
       expect(orgs.nonScratchOrgs[0].isDevHub).to.equal(true);
@@ -54,8 +48,7 @@ describe('org_list', () => {
     });
 
     it('should list all orgs', async () => {
-      const cmd = new OrgListCommand(['--json', '--all'], {} as Config);
-      const orgs = await cmd.run();
+      const orgs = await OrgListCommand.run(['--json', '--all']);
 
       expect(orgs.scratchOrgs.length).to.equal(4); // there are 4 orgs total
     });
@@ -88,8 +81,7 @@ describe('org_list', () => {
     });
 
     it('cleans 2 orgs', async () => {
-      const cmd = new OrgListCommand(['--json', '--clean', '--noprompt'], {} as Config);
-      await cmd.run();
+      await OrgListCommand.run(['--json', '--clean', '--noprompt']);
       expect(spies.get('orgRemove').callCount).to.equal(2); // there are 2 expired scratch orgs
     });
   });

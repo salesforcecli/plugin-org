@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/OrgEnableTrackingResult",
+  "definitions": {
+    "OrgEnableTrackingResult": {
+      "type": "object",
+      "properties": {
+        "tracksSource": {
+          "type": "boolean"
+        },
+        "username": {
+          "type": "string"
+        }
+      },
+      "required": ["tracksSource", "username"],
+      "additionalProperties": false
+    }
+  }
+}

@@ -4,26 +4,29 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { Messages, SfError } from '@salesforce/core';
-import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { AuthInfo, AuthRemover, Messages, Org, SfError, StateAggregator } from '@salesforce/core';
+import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
+import { orgThatMightBeDeleted } from '../../../shared/flags.js';
 
-Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete_sandbox');
 
 export interface SandboxDeleteResponse {
   orgId: string;
   username: string;
 }
-export default class EnvDeleteSandbox extends SfCommand<SandboxDeleteResponse> {
+
+export default class DeleteSandbox extends SfCommand<SandboxDeleteResponse> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
   public static readonly aliases = ['env:delete:sandbox'];
   public static readonly deprecateAliases = true;
   public static readonly flags = {
-    'target-org': Flags.requiredOrg({
+    'target-org': orgThatMightBeDeleted({
       summary: messages.getMessage('flags.target-org.summary'),
-      char: 'o',
       required: true,
     }),
     'no-prompt': Flags.boolean({
@@ -33,29 +36,51 @@ export default class EnvDeleteSandbox extends SfCommand<SandboxDeleteResponse> {
   };
 
   public async run(): Promise<SandboxDeleteResponse> {
-    const flags = (await this.parse(EnvDeleteSandbox)).flags;
-    const org = flags['target-org'];
-    const username = org.getUsername();
-    if (!username) {
-      throw new SfError('The org does not have a username.');
+    const flags = (await this.parse(DeleteSandbox)).flags;
+    const username = flags['target-org'];
+    let orgId: string;
+
+    try {
+      const sbxAuthFields = (await AuthInfo.create({ username })).getFields();
+      orgId = sbxAuthFields.orgId as string;
+    } catch (error) {
+      if (error instanceof SfError && error.name === 'NamedOrgNotFoundError') {
+        error.actions = [
+          `Ensure the alias or username for the ${username} org is correct.`,
+          `Ensure the ${username} org has been authenticated with the CLI.`,
+        ];
+      }
+      throw error;
     }
 
-    if (!(await org.isSandbox())) {
-      throw messages.createError('error.isNotSandbox', [username]);
+    // The StateAggregator identifies sandbox auth files with a pattern of
+    // <sandbox_ID>.sandbox.json.  E.g., 00DZ0000009T3VZMA0.sandbox.json
+    const stateAggregator = await StateAggregator.getInstance();
+    const cliCreatedSandbox = await stateAggregator.sandboxes.hasFile(orgId);
+
+    if (!cliCreatedSandbox) {
+      throw messages.createError('error.unknownSandbox', [username]);
     }
 
     if (flags['no-prompt'] || (await this.confirm(messages.getMessage('prompt.confirm', [username])))) {
       try {
+        const org = await Org.create({ aliasOrUsername: username });
         await org.delete();
         this.logSuccess(messages.getMessage('success', [username]));
       } catch (e) {
-        if (e instanceof Error && e.name === 'SandboxNotFound') {
+        if (e instanceof Error && e.name === 'DomainNotFoundError') {
+          // the org has expired, so remote operations won't work
+          // let's clean up the files locally
+          const authRemover = await AuthRemover.create();
+          await authRemover.removeAuth(username);
+          this.logSuccess(messages.getMessage('success.Idempotent', [username]));
+        } else if (e instanceof Error && e.name === 'SandboxNotFound') {
           this.logSuccess(messages.getMessage('success.Idempotent', [username]));
         } else {
           throw e;
         }
       }
     }
-    return { username, orgId: org.getOrgId() };
+    return { username, orgId };
   }
 }

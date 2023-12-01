@@ -5,6 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   Flags,
   SfCommand,
@@ -12,21 +14,21 @@ import {
   loglevel,
   orgApiVersionFlagWithDeprecations,
 } from '@salesforce/sf-plugins-core';
-import { AuthInfo, Messages, Org, sfdc, SfError, trimTo15 } from '@salesforce/core';
+import { AuthInfo, Messages, Org, SfError, trimTo15 } from '@salesforce/core';
 import { camelCaseToTitleCase } from '@salesforce/kit';
-import { AuthFieldsFromFS, OrgDisplayReturn, ScratchOrgFields } from '../../shared/orgTypes';
-import { getAliasByUsername } from '../../shared/utils';
-import { getStyledValue } from '../../shared/orgHighlighter';
-import { OrgListUtil } from '../../shared/orgListUtil';
+import { AuthFieldsFromFS, OrgDisplayReturn, ScratchOrgFields } from '../../shared/orgTypes.js';
+import { getAliasByUsername } from '../../shared/utils.js';
+import { getStyledValue } from '../../shared/orgHighlighter.js';
+import { OrgListUtil } from '../../shared/orgListUtil.js';
 
-Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'display');
 const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
 export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
-  public static aliases = ['force:org:display'];
+  public static readonly aliases = ['force:org:display'];
   public static deprecateAliases = true;
 
   public static readonly flags = {
@@ -80,15 +82,12 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
       alias: await getAliasByUsername(fields.username),
     };
     this.warn(sharedMessages.getMessage('SecurityWarning'));
-
-    if (!flags.json) {
-      this.print(returnValue);
-    }
+    this.print(returnValue);
     return returnValue;
   }
 
   private print(result: OrgDisplayReturn): void {
-    this.log('');
+    this.log();
     const tableRows = Object.entries(result)
       .filter(([, value]) => value !== undefined && value !== null) // some values won't exist
       .sort() // this command always alphabetizes the table rows
@@ -123,10 +122,8 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
         signupUsername: result.SignupUsername,
       };
     }
-    throw new SfError(
-      messages.getMessage('noScratchOrgInfoError', [sfdc.trimTo15(orgId), hubUsername]),
-      'NoScratchInfo',
-      [messages.getMessage('noScratchOrgInfoAction')]
-    );
+    throw new SfError(messages.getMessage('noScratchOrgInfoError', [trimTo15(orgId), hubUsername]), 'NoScratchInfo', [
+      messages.getMessage('noScratchOrgInfoAction'),
+    ]);
   }
 }

@@ -4,7 +4,7 @@ Delete a scratch or sandbox org.
 
 # deprecation
 
-The force:org:delete command is deprecated. Use org:delete:scratch or org:delete:sandbox.
+The force:org:delete command is deprecated. Try "org delete scratch" or "org delete sandbox" instead.
 
 # description
 
@@ -18,11 +18,19 @@ To mark the org for deletion without being prompted to confirm, specify --noprom
 
 - $ <%= config.bin %> <%= command.id %> -u MyOrgAlias -p
 
-# flags.noprompt
+# flags.no-prompt.summary
 
 No prompt to confirm deletion.
 
-# flags.targetdevhubusername
+# missingUsername
+
+Unable to determine the username of the org to delete. Specify the username with the --target-org | -o flag.
+
+# flags.target-org.summary
+
+Username or alias of the target org.
+
+# flags.targetdevhubusername.summary
 
 The targetdevhubusername flag exists only for backwards compatibility. It is not necessary and has no effect.
 
@@ -48,4 +56,5 @@ Successfully marked scratch org %s for deletion
 
 # commandSandboxSuccess
 
-The sandbox org %s has been successfully removed from your list of CLI authorized orgs. If you created the sandbox with one of the force:org commands, it has also been marked for deletion.
+The sandbox org %s has been successfully removed from your list of CLI authorized orgs. If you created the sandbox with
+one of the force:org commands, it has also been marked for deletion.

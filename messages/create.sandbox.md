@@ -102,10 +102,6 @@ To disable source tracking in the new sandbox, specify the --no-track-source fla
 
 Is the configuration correct?
 
-# warning.NoSandboxNameDefined
-
-No SandboxName defined, generating new SandboxName: %s.
-
 # error.SandboxNameLength
 
 The sandbox name "%s" should be 10 or fewer characters.
