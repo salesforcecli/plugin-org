@@ -196,10 +196,6 @@ Legend:  ${defaultHubEmoji}=Default DevHub, ${defaultOrgEmoji}=Default Org ${
         type: {
           header: 'Type',
         },
-        namespacePRefix: {
-          header: 'NAMESPACE',
-          get: (data): string => data[Org.Fields.NAMESPACE_PREFIX] ?? '',
-        },
         alias: {
           header: 'Alias',
         },
@@ -209,6 +205,7 @@ Legend:  ${defaultHubEmoji}=Default DevHub, ${defaultOrgEmoji}=Default Org ${
         ...(this.flags.verbose
           ? {
               instanceUrl: { header: 'Instance URL' },
+              namespacePrefix: { header: 'Namespace' },
               devHubOrgId: { header: 'Dev Hub ID' },
               createdDate: {
                 header: 'Created',
@@ -275,6 +272,7 @@ const colorEveryFieldButConnectedStatus =
 const fieldFilter = ([key]: [string, string]): boolean =>
   [
     'defaultMarker',
+    'namespacePrefix',
     'alias',
     'username',
     'orgId',
