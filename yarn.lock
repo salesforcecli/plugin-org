@@ -781,7 +781,7 @@
     wordwrap "^1.0.0"
     wrap-ansi "^7.0.0"
 
-"@oclif/core@^3.0.0", "@oclif/core@^3.0.4", "@oclif/core@^3.10.8", "@oclif/core@^3.11.0", "@oclif/core@^3.13.1", "@oclif/core@^3.3.1":
+"@oclif/core@^3.0.4", "@oclif/core@^3.10.8", "@oclif/core@^3.11.0", "@oclif/core@^3.12.0", "@oclif/core@^3.13.1", "@oclif/core@^3.3.1":
   version "3.13.1"
   resolved "https://registry.yarnpkg.com/@oclif/core/-/core-3.13.1.tgz#dbd5e604ec78a716a33bfa6fec6c988a507b7f38"
   integrity sha512-bpnF6BL+j7D0k0T+dZ4g7LwcZzctCoKjIYm8zcSNgrItS2pgIlvsRf8SdkGNu6djzRD7vzM657ZO9fWU6goz0g==
@@ -1069,12 +1069,12 @@
     "@salesforce/ts-types" "^2.0.9"
     tslib "^2.6.2"
 
-"@salesforce/plugin-command-reference@^3.0.47":
-  version "3.0.47"
-  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.0.47.tgz#477c3384402ef08458f4259b100447e136384e85"
-  integrity sha512-A3syaw8bf8Bovne6WDiYOcOeLFKTqf1T+MXlxXPwDkDM0X5squkwVvE6wun7S54Q3n4gCSlCPiAMbJfpF8wwaw==
+"@salesforce/plugin-command-reference@^3.0.48":
+  version "3.0.48"
+  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.0.48.tgz#ca24930520e40266864dbe7ba51529ec446b35fc"
+  integrity sha512-eC8ZagVwBFJVxuls0bfomdtLhGbh6YxKbQKTWAVVvBDEEUvSxcpoeGhYHKRfYJU+4Wwa7GdwK86LTmAy/PD0KQ==
   dependencies:
-    "@oclif/core" "^3.0.0"
+    "@oclif/core" "^3.12.0"
     "@salesforce/core" "^5.3.20"
     "@salesforce/kit" "^3.0.15"
     "@salesforce/sf-plugins-core" "^4"
