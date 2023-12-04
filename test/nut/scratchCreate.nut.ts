@@ -41,20 +41,20 @@ describe('env create scratch NUTs', () => {
 
   describe('flag failures', () => {
     it('non-existent config file', () => {
-      execCmd('env:create:scratch -f badfile.json', { ensureExitCode: 1 });
+      execCmd('env:create:scratch -f badfile.json', { ensureExitCode: 'nonZero' });
     });
     it('wait zero', () => {
-      execCmd('env:create:scratch -f config/project-scratch-def.json --wait 0', { ensureExitCode: 1 });
+      execCmd('env:create:scratch -f config/project-scratch-def.json --wait 0', { ensureExitCode: 'nonZero' });
     });
     it('no edition or config', () => {
-      execCmd('env:create:scratch', { ensureExitCode: 1 });
+      execCmd('env:create:scratch', { ensureExitCode: 'nonZero' });
     });
     it('days out of bounds', () => {
-      execCmd('env:create:scratch -f config/project-scratch-def.json -d 50', { ensureExitCode: 1 });
+      execCmd('env:create:scratch -f config/project-scratch-def.json -d 50', { ensureExitCode: 'nonZero' });
     });
     it('prompts for client secret if client id present and times out', () => {
       const error = execCmd('env:create:scratch --edition developer --client-id someConnectedApp', {
-        ensureExitCode: 1,
+        ensureExitCode: 'nonZero',
       }).shellOutput;
       expect(error.stdout).to.include(messages.getMessage('prompt.secret'));
       expect(error.stderr).to.include(`Timed out after ${secretTimeout} ms.`);
