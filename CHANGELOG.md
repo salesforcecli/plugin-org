@@ -1,3 +1,9 @@
+## [3.1.2](https://github.com/salesforcecli/plugin-org/compare/3.1.1...3.1.2) (2023-12-10)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 6.2.2 to 6.4.0 ([aa0dcd5](https://github.com/salesforcecli/plugin-org/commit/aa0dcd5aa10d6db95d6742a8055023e884ad8931))
+
 ## [3.1.1](https://github.com/salesforcecli/plugin-org/compare/3.1.0...3.1.1) (2023-12-03)
 
 ### Bug Fixes
