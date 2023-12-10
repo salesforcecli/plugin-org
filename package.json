@@ -24,7 +24,7 @@
     "oclif": "^4.0.4",
     "shelljs": "^0.8.5",
     "shx": "0.3.4",
-    "ts-node": "^10.9.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.2.2"
   },
   "engines": {
