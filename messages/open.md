@@ -4,7 +4,7 @@ Open your default scratch org, or another specified org, in a browser.
 
 # description
 
-To open a specific page, specify the portion of the URL after "https://MyDomainName.my.salesforce.com/" as the value for the --path flag. For example, specify "--path lightning" to open Lightning Experience, or specify "--path /apex/YourPage" to open a Visualforce page.
+To open a specific page, specify the portion of the URL after "https://mydomain.my.salesforce.com" as the value for the --path flag. For example, specify "--path lightning" to open Lightning Experience, or specify "--path /apex/YourPage" to open a Visualforce page.
 
 Use the --source-file to open a Lightning Page from your local project in Lightning App Builder. Lightning page files have the suffix .flexipage-meta.xml, and are stored in the "flexipages" directory.
 

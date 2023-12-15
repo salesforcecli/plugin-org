@@ -7,7 +7,7 @@ open source, it may not represent all of the `org` commands.
 
 ## About Salesforce CLI plugins
 
-Salesforce CLI plugins are based on the [oclif plugin framework](<(https://oclif.io/docs/introduction.html)>). Read
+Salesforce CLI plugins are based on the [oclif plugin framework](https://oclif.io/docs/introduction). Read
 the [plugin developer guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_plugins.meta/sfdx_cli_plugins/cli_plugins_architecture_sf_cli.htm)
 to learn about Salesforce CLI plugin development.
 
@@ -934,7 +934,7 @@ GLOBAL FLAGS
 DESCRIPTION
   Open your default scratch org, or another specified org, in a browser.
 
-  To open a specific page, specify the portion of the URL after "https://MyDomainName.my.salesforce.com/" as the value
+  To open a specific page, specify the portion of the URL after "https://MyDomainName.my.salesforce.com" as the value
   for the --path flag. For example, specify "--path lightning" to open Lightning Experience, or specify "--path
   /apex/YourPage" to open a Visualforce page.
 
