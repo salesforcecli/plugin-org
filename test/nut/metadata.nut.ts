@@ -8,8 +8,8 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { expect } from 'chai';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
-import { DescribeMetadataResult } from 'jsforce/lib/api/metadata/schema.js';
-import { ListMetadataCommandResult } from '../../src/commands/org/list/metadata.js';
+import type { DescribeMetadataResult } from 'jsforce/lib/api/metadata/schema.js';
+import type { ListMetadataCommandResult } from '../../src/commands/org/list/metadata.js';
 
 describe('org list metadata*', () => {
   let session: TestSession;

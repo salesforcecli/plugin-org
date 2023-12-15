@@ -10,6 +10,7 @@ import { Ux } from '@salesforce/sf-plugins-core/lib/ux';
 import { ux } from '@oclif/core';
 import { getClockForSeconds } from '../shared/timeUtils.js';
 import { StagedProgress } from './stagedProgress.js';
+import { isDefined } from './utils.js';
 
 const columns: Ux.Table.Columns<{ key: string; value: string }> = {
   key: { header: 'Field' },
@@ -74,7 +75,7 @@ export class SandboxProgress extends StagedProgress<SandboxStatusData> {
       'Sandbox Create Stages',
       this.formatStages(),
     ]
-      .filter((line) => line)
+      .filter(isDefined)
       .join(os.EOL);
   }
   // eslint-disable-next-line class-methods-use-this

@@ -58,7 +58,8 @@
           "enum": ["(D)", "(U)"]
         },
         "attributes": {
-          "$ref": "#/definitions/Dictionary%3Cunknown%3E"
+          "type": "object",
+          "additionalProperties": {}
         },
         "lastUsed": {
           "type": "string",
@@ -163,22 +164,6 @@
       },
       "required": ["accessToken", "clientId", "instanceUrl", "orgId", "string", "username"]
     },
-    "Dictionary<unknown>": {
-      "type": "object",
-      "additionalProperties": {
-        "$ref": "#/definitions/Optional%3Cunknown%3E"
-      },
-      "description": "An object with arbitrary string-indexed values of an optional generic type `Optional<T>`. `T` defaults to `unknown` when not explicitly supplied. For convenient iteration of definitely assigned (i.e. non-nullable) entries, keys, and values, see the following functions:  {@link  definiteEntriesOf  } ,  {@link  definiteKeysOf  } , and  {@link  definiteValuesOf  } ."
-    },
-    "Optional<unknown>": {
-      "anyOf": [
-        {},
-        {
-          "not": {}
-        }
-      ],
-      "description": "A union type for either the parameterized type `T` or `undefined` -- the opposite of  {@link  NonOptional  } ."
-    },
     "FullyPopulatedScratchOrgFields": {
       "type": "object",
       "additionalProperties": false,
@@ -209,7 +194,8 @@
           "enum": ["(D)", "(U)"]
         },
         "attributes": {
-          "$ref": "#/definitions/Dictionary%3Cunknown%3E"
+          "type": "object",
+          "additionalProperties": {}
         },
         "lastUsed": {
           "type": "string",

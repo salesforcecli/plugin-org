@@ -5,13 +5,12 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { Optional } from '@salesforce/ts-types';
-import { AuthFields } from '@salesforce/core';
+import type { AuthFields } from '@salesforce/core';
 import { Command, Interfaces, Hook } from '@oclif/core';
 
 type HookOpts<T> = {
   options: { Command: Command.Class; argv: string[]; commandId: string };
-  return: Optional<T>;
+  return: T | undefined;
 };
 
 export type OrgCreateResult = Pick<

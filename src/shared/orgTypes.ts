@@ -6,7 +6,6 @@
  */
 
 import { AuthFields, ScratchOrgInfo } from '@salesforce/core';
-import { Dictionary } from '@salesforce/ts-types';
 
 export type OrgDisplayReturn = Partial<ScratchOrgFields> & {
   username: string;
@@ -86,7 +85,7 @@ export interface OrgListFields {
   isDefaultUsername?: boolean;
   isDefaultDevHubUsername?: boolean;
   defaultMarker?: '(D)' | '(U)';
-  attributes?: Dictionary<unknown>;
+  attributes?: Record<string, unknown>;
   lastUsed?: Date;
 }
 
