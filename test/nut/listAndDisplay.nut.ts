@@ -10,7 +10,6 @@ import os from 'node:os';
 import { expect, config, assert } from 'chai';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { execCmd } from '@salesforce/cli-plugins-testkit';
-import { getString } from '@salesforce/ts-types';
 import { OrgListResult, defaultHubEmoji, defaultOrgEmoji } from '../../src/commands/org/list.js';
 import { OrgOpenOutput } from '../../src/commands/org/open.js';
 import { OrgDisplayReturn } from '../../src/shared/orgTypes.js';
@@ -99,10 +98,7 @@ describe('Org Command NUT', () => {
       expect(listResult).to.have.property('scratchOrgs');
       expect(listResult.scratchOrgs).to.have.length(2);
       const scratchOrgs = listResult.scratchOrgs;
-      expect(scratchOrgs.map((scratchOrg) => getString(scratchOrg, 'username'))).to.deep.equal([
-        aliasedUsername,
-        defaultUsername,
-      ]);
+      expect(scratchOrgs.map((scratchOrg) => scratchOrg.username)).to.deep.equal([aliasedUsername, defaultUsername]);
       expect(scratchOrgs.find((org) => org.username === defaultUsername)).to.include({
         defaultMarker: '(U)',
         isDefaultUsername: true,

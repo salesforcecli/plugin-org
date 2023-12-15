@@ -18,11 +18,10 @@ import {
   ConfigAggregator,
   OrgConfigProperties,
 } from '@salesforce/core';
-import { isObject } from '@salesforce/ts-types';
-import { Record } from 'jsforce';
+import type { Record } from 'jsforce';
 import { omit } from '@salesforce/kit';
-import utils from './utils.js';
-import {
+import utils, { isDefined } from './utils.js';
+import type {
   ScratchOrgInfoSObject,
   ExtendedAuthFields,
   ExtendedAuthFieldsScratch,
@@ -180,7 +179,7 @@ export class OrgListUtil {
         }
       })
     );
-    return allAuths.filter(isObject<AuthInfo>);
+    return allAuths.filter(isDefined);
   }
 
   /**
@@ -285,13 +284,13 @@ export class OrgListUtil {
         : `Can't find ${scratchOrgInfo.username} in the updated contents`;
     });
 
-    const warnings = results.filter((result) => typeof result === 'string') as string[];
+    const warnings = results.filter((result): result is string => typeof result === 'string');
     if (warnings.length) {
       const logger = await OrgListUtil.retrieveLogger();
       warnings.forEach((warning) => logger.warn(warning));
     }
 
-    return results.filter((result) => typeof result !== 'string') as FullyPopulatedScratchOrgFields[];
+    return results.filter((result): result is FullyPopulatedScratchOrgFields => typeof result !== 'string');
   }
 
   /**

@@ -8,7 +8,7 @@ import fs from 'node:fs';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Messages } from '@salesforce/core';
-import { DescribeMetadataResult } from 'jsforce/api/metadata';
+import type { DescribeMetadataResult } from 'jsforce/api/metadata';
 import { RegistryAccess } from '@salesforce/source-deploy-retrieve';
 import { Flags, loglevel, requiredOrgFlagWithDeprecations, SfCommand } from '@salesforce/sf-plugins-core';
 

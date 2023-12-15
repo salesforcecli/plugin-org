@@ -10,6 +10,8 @@
     "@salesforce/kit": "^3.0.15",
     "@salesforce/sf-plugins-core": "^5.0.3",
     "@salesforce/source-deploy-retrieve": "^10.0.3",
+    "chalk": "^4",
+    "change-case": "^5.3.0",
     "open": "^9.1.0"
   },
   "devDependencies": {

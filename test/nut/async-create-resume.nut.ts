@@ -10,7 +10,6 @@ import path from 'node:path';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
 import { AuthFields, Global, ScratchOrgCache } from '@salesforce/core';
-import { JsonMap } from '@salesforce/ts-types';
 import { CachedOptions } from '@salesforce/core/lib/org/scratchOrgCache.js';
 import { Duration, sleep } from '@salesforce/kit';
 import { ScratchCreateResponse } from '../../src/shared/orgTypes.js';
@@ -120,7 +119,7 @@ describe('env:create:scratch async/resume', () => {
       expect(cache[soiId].definitionjson).to.deep.equal(
         JSON.parse(
           await fs.promises.readFile(path.join(session.project.dir, 'config', 'project-scratch-def.json'), 'utf8')
-        ) as unknown as JsonMap
+        )
       );
     });
     it('resumes org using latest', async () => {
