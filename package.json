@@ -1,7 +1,7 @@
 {
   "name": "@salesforce/plugin-org",
   "description": "Commands to interact with Salesforce orgs",
-  "version": "3.1.5",
+  "version": "3.1.6",
   "author": "Salesforce",
   "bugs": "https://github.com/forcedotcom/cli/issues",
   "dependencies": {
