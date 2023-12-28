@@ -5,13 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import fs from 'node:fs';
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+
+
 import { Logger, SandboxRequest, Messages, SfError, Lifecycle } from '@salesforce/core';
 import { lowerToUpper } from './utils.js';
 import { SandboxLicenseType } from './orgTypes.js';
 
-Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
 const cloneMessages = Messages.loadMessages('@salesforce/plugin-org', 'clone');
 
 export const generateSboxName = async (): Promise<string> => {

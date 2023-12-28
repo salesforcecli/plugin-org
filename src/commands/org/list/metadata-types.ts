@@ -5,14 +5,14 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import fs from 'node:fs';
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+
+
 import { Messages } from '@salesforce/core';
 import type { DescribeMetadataResult } from 'jsforce/api/metadata';
 import { RegistryAccess } from '@salesforce/source-deploy-retrieve';
 import { Flags, loglevel, requiredOrgFlagWithDeprecations, SfCommand } from '@salesforce/sf-plugins-core';
 
-Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'metadata-types');
 
 export class ListMetadataTypes extends SfCommand<DescribeMetadataResult> {

@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import os from 'node:os';
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+
+
 import { SfCommand } from '@salesforce/sf-plugins-core';
 import { Config } from '@oclif/core';
 import {
@@ -25,7 +25,7 @@ import {
 import { SandboxProgress, SandboxStatusData } from './sandboxProgress.js';
 import { State } from './stagedProgress.js';
 
-Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'sandboxbase');
 export abstract class SandboxCommandBase<T> extends SfCommand<T> {
   protected sandboxProgress: SandboxProgress;
