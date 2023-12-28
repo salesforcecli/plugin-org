@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+
+
 import { Flags, loglevel, SfCommand } from '@salesforce/sf-plugins-core';
 import { AuthInfo, ConfigAggregator, ConfigInfo, Connection, Org, SfError, Messages, Logger } from '@salesforce/core';
 import { Interfaces } from '@oclif/core';
@@ -15,7 +15,7 @@ import { OrgListUtil, identifyActiveOrgByStatus } from '../../shared/orgListUtil
 import { getStyledObject } from '../../shared/orgHighlighter.js';
 import { ExtendedAuthFields, FullyPopulatedScratchOrgFields } from '../../shared/orgTypes.js';
 
-Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'list');
 
 export const defaultOrgEmoji = '🍁';

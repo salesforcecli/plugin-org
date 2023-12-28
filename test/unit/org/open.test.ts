@@ -7,8 +7,8 @@
 
 import fs from 'node:fs';
 import { join } from 'node:path';
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+
+
 import { assert, expect } from 'chai';
 import { MyDomainResolver, Messages, Connection, SfError } from '@salesforce/core';
 import { Config } from '@oclif/core';
@@ -18,7 +18,7 @@ import { stubSfCommandUx, stubSpinner, stubUx } from '@salesforce/sf-plugins-cor
 import { OrgOpenCommand, OrgOpenOutput } from '../../../src/commands/org/open.js';
 import utils from '../../../src/shared/utils.js';
 
-Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
 const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
 

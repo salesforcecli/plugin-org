@@ -4,15 +4,15 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+
+
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import { expect } from 'chai';
 import { Messages } from '@salesforce/core';
 import { OrgEnableTrackingResult } from '../../src/commands/org/enable/tracking.js';
 import { OrgDisableTrackingResult } from '../../src/commands/org/disable/tracking.js';
 
-Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'org.enable.tracking');
 
 describe('org enable/disable tracking NUTs', () => {

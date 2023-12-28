@@ -5,8 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+
+
 import { Duration } from '@salesforce/kit';
 import { Flags } from '@salesforce/sf-plugins-core';
 import { Lifecycle, Messages, SandboxEvents, SandboxProcessObject, SandboxRequest, SfError } from '@salesforce/core';
@@ -16,7 +16,7 @@ import requestFunctions from '../../../shared/sandboxRequest.js';
 import { SandboxCommandBase } from '../../../shared/sandboxCommandBase.js';
 import { SandboxLicenseType } from '../../../shared/orgTypes.js';
 
-Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create.sandbox');
 
 const getLicenseTypes = (): string[] => Object.values(SandboxLicenseType);

@@ -6,14 +6,14 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+
 import { execCmd, genUniqueString, TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
 import { AuthFields, Messages, Global, StateAggregator } from '@salesforce/core';
 import { secretTimeout } from '../../src/commands/org/create/scratch.js';
 import { ScratchCreateResponse } from '../../src/shared/orgTypes.js';
 
-Messages.importMessagesDirectory(path.dirname(fileURLToPath(import.meta.url)));
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create_scratch');
 describe('env create scratch NUTs', () => {
   let session: TestSession;

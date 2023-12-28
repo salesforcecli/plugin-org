@@ -6,8 +6,8 @@
  */
 
 import path from 'node:path';
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+
+
 import {
   Flags,
   loglevel,
@@ -21,7 +21,7 @@ import { MetadataResolver } from '@salesforce/source-deploy-retrieve';
 import { apps } from 'open';
 import utils from '../../shared/utils.js';
 
-Messages.importMessagesDirectory(dirname(fileURLToPath(import.meta.url)));
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
 const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
 
