@@ -6,7 +6,8 @@
  */
 
 import path from 'node:path';
-
+import { tmpdir } from 'node:os';
+import { writeFile, rm } from 'node:fs/promises';
 import {
   Flags,
   loglevel,
@@ -15,7 +16,7 @@ import {
   SfCommand,
 } from '@salesforce/sf-plugins-core';
 import { Connection, Logger, Messages, Org, SfdcUrl, SfError } from '@salesforce/core';
-import { Duration, Env } from '@salesforce/kit';
+import { Duration, Env, sleep } from '@salesforce/kit';
 import { MetadataResolver } from '@salesforce/source-deploy-retrieve';
 import { apps } from 'open';
 import utils from '../../shared/utils.js';
@@ -62,27 +63,21 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
     }),
   };
 
-  private org!: Org;
-  private conn!: Connection;
-
   public async run(): Promise<OrgOpenOutput> {
     const { flags } = await this.parse(OrgOpenCommand);
+    const conn = flags['target-org'].getConnection(flags['api-version']);
 
-    this.org = flags['target-org'];
-    this.conn = this.org.getConnection(flags['api-version']);
-
-    let url = await this.buildFrontdoorUrl();
     const env = new Env();
+    const [frontDoorUrl, retUrl] = await Promise.all([
+      buildFrontdoorUrl(flags['target-org'], conn),
+      flags['source-file'] ? generateFileUrl(flags['source-file'], conn) : flags.path,
+    ]);
 
-    if (flags['source-file']) {
-      url += `&retURL=${await this.generateFileUrl(flags['source-file'])}`;
-    } else if (flags.path) {
-      url += `&retURL=${flags.path}`;
-    }
+    const url = `${frontDoorUrl}${retUrl ? `&retURL=${retUrl}` : ''}`;
 
-    const orgId = this.org.getOrgId();
+    const orgId = flags['target-org'].getOrgId();
     // TODO: better typings in sfdx-core for orgs read from auth files
-    const username = this.org.getUsername() as string;
+    const username = flags['target-org'].getUsername() as string;
     const output = { orgId, url, username };
     // NOTE: Deliberate use of `||` here since getBoolean() defaults to false, and we need to consider both env vars.
     const containerMode = env.getBoolean('SF_CONTAINER_MODE') || env.getBoolean('SFDX_CONTAINER_MODE');
@@ -111,8 +106,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
     // we actually need to open the org
     try {
       this.spinner.start(messages.getMessage('domainWaiting'));
-      const sfdcUrl = new SfdcUrl(url);
-      await sfdcUrl.checkLightningDomain();
+      await new SfdcUrl(url).checkLightningDomain();
       this.spinner.stop();
     } catch (err) {
       if (err instanceof Error) {
@@ -129,48 +123,21 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
       throw err;
     }
 
-    const openOptions = flags.browser
-      ? // assertion can be removed once oclif option flag typings are fixed
-        { app: { name: apps[flags.browser as 'chrome' | 'edge' | 'firefox'] } }
-      : {};
+    const openOptions =
+      // assertions could be removed once oclif flag typins are fixed
+      flags.browser ? { app: { name: apps[flags.browser as 'chrome' | 'edge' | 'firefox'] } } : {};
 
-    await utils.openUrl(url, openOptions);
+    // create a local html file that contains the POST stuff.
+    // for review...there's always an access token, right?
+    const tempFilePath = path.join(tmpdir(), `org:open-${new Date().valueOf()}.html`);
+    await writeFile(tempFilePath, getFileContents(conn.accessToken as string, conn.instanceUrl, retUrl));
+    await utils.openUrl(`file:///${tempFilePath}`, openOptions);
+    // so we don't delete the file while the browser is still using it
+    // open returns when the CP is spawned, but there's not way to know if the browser is still using the file
+    await sleep(1000);
+
+    await rm(tempFilePath, { force: true });
     return output;
-  }
-
-  private async buildFrontdoorUrl(): Promise<string> {
-    await this.org.refreshAuth(); // we need a live accessToken for the frontdoor url
-    const accessToken = this.conn.accessToken;
-    const instanceUrl = this.org.getField<string>(Org.Fields.INSTANCE_URL);
-    const instanceUrlClean = instanceUrl.replace(/\/$/, '');
-    return `${instanceUrlClean}/secur/frontdoor.jsp?sid=${accessToken}`;
-  }
-
-  private async generateFileUrl(file: string): Promise<string> {
-    try {
-      const metadataResolver = new MetadataResolver();
-      const components = metadataResolver.getComponentsFromPath(file);
-      const typeName = components[0]?.type?.name;
-
-      if (typeName === 'FlexiPage') {
-        const flexipage = await this.conn.singleRecordQuery<{ Id: string }>(
-          `SELECT id FROM flexipage WHERE DeveloperName='${path.basename(file, '.flexipage-meta.xml')}'`,
-          { tooling: true }
-        );
-        return `/visualEditor/appBuilder.app?pageId=${flexipage.Id}`;
-      } else if (typeName === 'ApexPage') {
-        return `/apex/${path.basename(file).replace('.page-meta.xml', '').replace('.page', '')}`;
-      } else if (typeName === 'Flow') {
-        return `/builder_platform_interaction/flowBuilder.app?flowId=${await flowFileNameToId(this.conn, file)}`;
-      } else {
-        return 'lightning/setup/FlexiPageList/home';
-      }
-    } catch (error) {
-      if (error instanceof Error && error.name === 'FlowIdNotFoundError') {
-        this.error(error);
-      }
-      return 'lightning/setup/FlexiPageList/home';
-    }
   }
 }
 
@@ -179,6 +146,47 @@ export interface OrgOpenOutput {
   username: string;
   orgId: string;
 }
+
+const buildFrontdoorUrl = async (org: Org, conn: Connection): Promise<string> => {
+  await org.refreshAuth(); // we need a live accessToken for the frontdoor url
+  const accessToken = conn.accessToken;
+  const instanceUrl = org.getField<string>(Org.Fields.INSTANCE_URL);
+  const instanceUrlClean = instanceUrl.replace(/\/$/, '');
+  return `${instanceUrlClean}/secur/frontdoor.jsp?sid=${accessToken}`;
+};
+
+const generateFileUrl = async (file: string, conn: Connection): Promise<string> => {
+  try {
+    const metadataResolver = new MetadataResolver();
+    const components = metadataResolver.getComponentsFromPath(file);
+    const typeName = components[0]?.type?.name;
+
+    switch (typeName) {
+      case 'ApexPage':
+        return `/apex/${path.basename(file).replace('.page-meta.xml', '').replace('.page', '')}`;
+      case 'Flow':
+        return `/builder_platform_interaction/flowBuilder.app?flowId=${await flowFileNameToId(conn, file)}`;
+      case 'FlexiPage':
+        return `/visualEditor/appBuilder.app?pageId=${await flexiPageFilenameToId(conn, file)}`;
+      default:
+        return 'lightning/setup/FlexiPageList/home';
+    }
+  } catch (error) {
+    if (error instanceof Error && error.name === 'FlowIdNotFoundError') {
+      throw error;
+    }
+    return 'lightning/setup/FlexiPageList/home';
+  }
+};
+
+/** query flexipage via toolingPAI to get its ID (starts with 0M0) */
+const flexiPageFilenameToId = async (conn: Connection, filePath: string): Promise<string> =>
+  (
+    await conn.singleRecordQuery<{ Id: string }>(
+      `SELECT id FROM flexipage WHERE DeveloperName='${path.basename(filePath, '.flexipage-meta.xml')}'`,
+      { tooling: true }
+    )
+  ).Id;
 
 /** query the rest API to turn a flow's filepath into a FlowId  (starts with 301) */
 const flowFileNameToId = async (conn: Connection, filePath: string): Promise<string> => {
@@ -194,3 +202,19 @@ const flowFileNameToId = async (conn: Connection, filePath: string): Promise<str
     throw messages.createError('FlowIdNotFound', [filePath]);
   }
 };
+
+/** builds the html file that does an automatic post to the frontdoor url */
+const getFileContents = (
+  authToken: string,
+  instanceUrl: string,
+  // we have to defalt this to get to Setup only on the POST version.  GET goes to Setup automatically
+  retUrl = '/lightning/setup/SetupOneHome/home'
+): string => `
+<html>
+  <body onload="document.body.firstElementChild.submit()">
+    <form method="POST" action="${instanceUrl}/secur/frontdoor.jsp">
+      <input type="hidden" name="sid" value="${authToken}" />
+      <input type="hidden" name="retURL" value="${retUrl}" /> 
+    </form>
+  </body>
+</html>`;
