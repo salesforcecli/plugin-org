@@ -7,7 +7,6 @@
 
 import path from 'node:path';
 
-
 import {
   Flags,
   loglevel,
@@ -21,9 +20,8 @@ import { MetadataResolver } from '@salesforce/source-deploy-retrieve';
 import { apps } from 'open';
 import utils from '../../shared/utils.js';
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
-const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
 
 export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
   public static readonly summary = messages.getMessage('summary');
@@ -91,6 +89,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
 
     // security warning only for --json OR --url-only OR containerMode
     if (flags['url-only'] || Boolean(flags.json) || containerMode) {
+      const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
       this.warn(sharedMessages.getMessage('SecurityWarning'));
       this.log('');
     }
