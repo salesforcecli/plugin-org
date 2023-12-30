@@ -22,7 +22,7 @@
     "@salesforce/ts-sinon": "1.4.19",
     "@types/shelljs": "^0.8.14",
     "eslint-plugin-sf-plugin": "^1.17.0",
-    "moment": "^2.29.1",
+    "moment": "^2.30.1",
     "oclif": "^4.0.4",
     "shelljs": "^0.8.5",
     "shx": "0.3.4",
