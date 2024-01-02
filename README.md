@@ -99,10 +99,6 @@ the [SandboxNuts](https://github.com/salesforcecli/plugin-org/actions/workflows/
 
 <!-- commands -->
 
-- [`sf force org clone`](#sf-force-org-clone)
-- [`sf force org create`](#sf-force-org-create)
-- [`sf force org delete`](#sf-force-org-delete)
-- [`sf force org status`](#sf-force-org-status)
 - [`sf org create sandbox`](#sf-org-create-sandbox)
 - [`sf org create scratch`](#sf-org-create-scratch)
 - [`sf org delete sandbox`](#sf-org-delete-sandbox)
@@ -116,174 +112,6 @@ the [SandboxNuts](https://github.com/salesforcecli/plugin-org/actions/workflows/
 - [`sf org open`](#sf-org-open)
 - [`sf org resume sandbox`](#sf-org-resume-sandbox)
 - [`sf org resume scratch`](#sf-org-resume-scratch)
-
-## `sf force org clone`
-
-Clone a sandbox org.
-
-```
-USAGE
-  $ sf force org clone -o <value> -t sandbox [--json] [--api-version <value>] [-f <value>] [-s] [-a <value>] [-w
-    <value>]
-
-FLAGS
-  -a, --setalias=<value>        Alias for the cloned org.
-  -f, --definitionfile=<value>  Path to the sandbox definition file.
-  -o, --target-org=<value>      (required) Username or alias of the target org. Not required if the `target-org`
-                                configuration variable is already set.
-  -s, --setdefaultusername      Set the cloned org as your default.
-  -t, --type=<option>           (required) Type of org to create.
-                                <options: sandbox>
-  -w, --wait=<value>            [default: 6 minutes] Number of minutes to wait while polling for status.
-      --api-version=<value>     Override the api version used for api requests made by this command
-
-GLOBAL FLAGS
-  --json  Format output as json.
-
-DESCRIPTION
-  Clone a sandbox org.
-
-  There are two ways to clone a sandbox: either specify a sandbox definition file or provide key=value pairs at the
-  command line. Key-value pairs at the command-line override their equivalent sandbox definition file values. In either
-  case, you must specify both the "SandboxName" and "SourceSandboxName" options to set the names of the new sandbox and
-  the one being cloned, respectively.
-
-  Set the --targetusername (-u) parameter to a production org with sandbox licenses. The --type (-t) parameter is
-  required and must be set to "sandbox".
-
-EXAMPLES
-  $ sf force org clone -t sandbox -f config/dev-sandbox-def.json -u prodOrg -a MyDevSandbox
-
-  $ sf force org clone -t sandbox SandboxName=NewClonedSandbox SourceSandboxName=ExistingSandbox -u prodOrg -a MyDevSandbox
-
-FLAG DESCRIPTIONS
-  -w, --wait=<value>  Number of minutes to wait while polling for status.
-
-    Sets the streaming client socket timeout, in minutes. If the streaming client socket has no contact from the server
-    for a number of minutes, the client exits. Specify a longer wait time if timeouts occur frequently.
-```
-
-_See code: [src/commands/force/org/clone.ts](https://github.com/salesforcecli/plugin-org/blob/3.1.8/src/commands/force/org/clone.ts)_
-
-## `sf force org create`
-
-Create a scratch org or sandbox.
-
-```
-USAGE
-  $ sf force org create [--json] [-o <value>] [-v <value>] [--api-version <value>] [-t scratch|sandbox] [-f <value>]
-    [-n] [-c] [-i <value>] [-s] [-a <value>] [-w <value>] [-d <value>]
-
-FLAGS
-  -a, --setalias=<value>        Alias for the created org.
-  -c, --noancestors             Do not include second-generation package ancestors in the scratch org.
-  -d, --durationdays=<value>    [default: 7] Duration of the scratch org (in days) (default:7, min:1, max:30).
-  -f, --definitionfile=<value>  Path to an org definition file.
-  -i, --clientid=<value>        Connected app consumer key; not supported for sandbox org creation.
-  -n, --nonamespace             Create the scratch org with no namespace.
-  -o, --target-org=<value>      Username or alias of the production org that contains the sandbox license.
-  -s, --setdefaultusername      Set the created org as the default username.
-  -t, --type=<option>           [default: scratch] Type of org to create.
-                                <options: scratch|sandbox>
-  -v, --target-dev-hub=<value>  Username or alias of the Dev Hub org. Not required if the `target-dev-hub` configuration
-                                variable is already set.
-  -w, --wait=<value>            [default: 6 minutes] Streaming client socket timeout (in minutes).
-      --api-version=<value>     Override the api version used for api requests made by this command
-
-GLOBAL FLAGS
-  --json  Format output as json.
-
-DESCRIPTION
-  Create a scratch org or sandbox.
-
-  Creates a scratch org or a sandbox org using the values specified in a configuration file or key=value pairs that you
-  specify on the command line. Values specified on the command line override values in the configuration file. Specify a
-  configuration file or provide key=value pairs while creating a scratch org or a sandbox. When creating scratch orgs,
-  —targetdevhubusername (-v) must be a Dev Hub org. When creating sandboxes, the --targetusername (-u) must be a
-  production org with sandbox licenses. The —type (-t) is required if creating a sandbox.
-
-EXAMPLES
-  $ sf force org create -f config/enterprise-scratch-def.json -a MyScratchOrg
-
-  $ sf force org create edition=Developer -a MyScratchOrg -s -v devHub
-
-  $ sf force org create -f config/enterprise-scratch-def.json -a ScratchOrgWithOverrides username=testuser1@mycompany.org
-
-  $ sf force org create -t sandbox -f config/dev-sandbox-def.json -a MyDevSandbox -u prodOrg
-```
-
-_See code: [src/commands/force/org/create.ts](https://github.com/salesforcecli/plugin-org/blob/3.1.8/src/commands/force/org/create.ts)_
-
-## `sf force org delete`
-
-Delete a scratch or sandbox org.
-
-```
-USAGE
-  $ sf force org delete -o <value> [--json] [--api-version <value>] [-p]
-
-FLAGS
-  -o, --target-org=<value>   (required) Username or alias of the target org.
-  -p, --no-prompt            No prompt to confirm deletion.
-      --api-version=<value>  Override the api version used for api requests made by this command
-
-GLOBAL FLAGS
-  --json  Format output as json.
-
-DESCRIPTION
-  Delete a scratch or sandbox org.
-
-  Salesforce CLI marks the org for deletion in either the Dev Hub org (for scratch orgs) or production org (for
-  sandboxes) and then deletes all local references to the org from your computer.
-
-  To mark the org for deletion without being prompted to confirm, specify --noprompt.
-
-EXAMPLES
-  $ sf force org delete -u me@my.org
-
-  $ sf force org delete -u MyOrgAlias -p
-```
-
-_See code: [src/commands/force/org/delete.ts](https://github.com/salesforcecli/plugin-org/blob/3.1.8/src/commands/force/org/delete.ts)_
-
-## `sf force org status`
-
-Check the status of a sandbox, and if complete, authenticate to it.
-
-```
-USAGE
-  $ sf force org status -o <value> -n <value> [--json] [--api-version <value>] [-s] [-a <value>] [-w <value>]
-
-FLAGS
-  -a, --setalias=<value>     Alias for the created or cloned org.
-  -n, --sandboxname=<value>  (required) Name of the sandbox org to check status for.
-  -o, --target-org=<value>   (required) Username or alias of the target org. Not required if the `target-org`
-                             configuration variable is already set.
-  -s, --setdefaultusername   Set the created or cloned org as your default.
-  -w, --wait=<value>         [default: 6 minutes] Number of minutes to wait while polling for status.
-      --api-version=<value>  Override the api version used for api requests made by this command
-
-GLOBAL FLAGS
-  --json  Format output as json.
-
-DESCRIPTION
-  Check the status of a sandbox, and if complete, authenticate to it.
-
-  Use this command to check the status of your sandbox creation or clone and, if the sandbox is ready, authenticate to
-  it.
-
-  Use the --wait (-w) parameter to specify the number of minutes that the command waits for the sandbox creation or
-  clone to complete before returning control of the terminal to you.
-
-  Set the --target-org (-o) parameter to the username or alias of the production org that contains the sandbox license.
-
-EXAMPLES
-  $ sf force org status --sandboxname DevSbx1 --setalias MySandbox -u prodOrg
-
-  $ sf force org status --sandboxname DevSbx1 --wait 45 --setdefaultusername -u prodOrg
-```
-
-_See code: [src/commands/force/org/status.ts](https://github.com/salesforcecli/plugin-org/blob/3.1.8/src/commands/force/org/status.ts)_
 
 ## `sf org create sandbox`
 
@@ -388,7 +216,7 @@ FLAG DESCRIPTIONS
     sandbox.
 ```
 
-_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.1.8/src/commands/org/create/sandbox.ts)_
+_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.2.0/src/commands/org/create/sandbox.ts)_
 
 ## `sf org create scratch`
 
@@ -541,7 +369,7 @@ FLAG DESCRIPTIONS
     Omit this flag to have Salesforce generate a unique username for your org.
 ```
 
-_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.1.8/src/commands/org/create/scratch.ts)_
+_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.2.0/src/commands/org/create/scratch.ts)_
 
 ## `sf org delete sandbox`
 
@@ -585,7 +413,7 @@ EXAMPLES
     $ sf org delete sandbox --target-org my-sandbox --no-prompt
 ```
 
-_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.1.8/src/commands/org/delete/sandbox.ts)_
+_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.2.0/src/commands/org/delete/sandbox.ts)_
 
 ## `sf org delete scratch`
 
@@ -627,7 +455,7 @@ EXAMPLES
     $ sf org delete scratch --target-org my-scratch-org --no-prompt
 ```
 
-_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.1.8/src/commands/org/delete/scratch.ts)_
+_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.2.0/src/commands/org/delete/scratch.ts)_
 
 ## `sf org disable tracking`
 
@@ -665,7 +493,7 @@ EXAMPLES
     $ sf org disable tracking
 ```
 
-_See code: [src/commands/org/disable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/3.1.8/src/commands/org/disable/tracking.ts)_
+_See code: [src/commands/org/disable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/3.2.0/src/commands/org/disable/tracking.ts)_
 
 ## `sf org display`
 
@@ -709,7 +537,7 @@ EXAMPLES
     $ sf org display --target-org TestOrg1 --verbose
 ```
 
-_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/3.1.8/src/commands/org/display.ts)_
+_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/3.2.0/src/commands/org/display.ts)_
 
 ## `sf org enable tracking`
 
@@ -750,7 +578,7 @@ EXAMPLES
     $ sf org enable tracking
 ```
 
-_See code: [src/commands/org/enable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/3.1.8/src/commands/org/enable/tracking.ts)_
+_See code: [src/commands/org/enable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/3.2.0/src/commands/org/enable/tracking.ts)_
 
 ## `sf org list`
 
@@ -788,7 +616,7 @@ EXAMPLES
     $ sf org list --clean
 ```
 
-_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/3.1.8/src/commands/org/list.ts)_
+_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/3.2.0/src/commands/org/list.ts)_
 
 ## `sf org list metadata`
 
@@ -853,7 +681,7 @@ FLAG DESCRIPTIONS
     Examples of metadata types that use folders are Dashboard, Document, EmailTemplate, and Report.
 ```
 
-_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/3.1.8/src/commands/org/list/metadata.ts)_
+_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/3.2.0/src/commands/org/list/metadata.ts)_
 
 ## `sf org list metadata-types`
 
@@ -907,7 +735,7 @@ FLAG DESCRIPTIONS
     Override the api version used for api requests made by this command
 ```
 
-_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/3.1.8/src/commands/org/list/metadata-types.ts)_
+_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/3.2.0/src/commands/org/list/metadata-types.ts)_
 
 ## `sf org open`
 
@@ -973,7 +801,7 @@ EXAMPLES
     $ sf org open --source-file force-app/main/default/flows/Hello.flow-meta.xml
 ```
 
-_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/3.1.8/src/commands/org/open.ts)_
+_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/3.2.0/src/commands/org/open.ts)_
 
 ## `sf org resume sandbox`
 
@@ -1035,7 +863,7 @@ FLAG DESCRIPTIONS
     returns the job ID. To resume checking the sandbox creation, rerun this command.
 ```
 
-_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.1.8/src/commands/org/resume/sandbox.ts)_
+_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.2.0/src/commands/org/resume/sandbox.ts)_
 
 ## `sf org resume scratch`
 
@@ -1081,6 +909,6 @@ FLAG DESCRIPTIONS
     The job ID is valid for 24 hours after you start the scratch org creation.
 ```
 
-_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.1.8/src/commands/org/resume/scratch.ts)_
+_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.2.0/src/commands/org/resume/scratch.ts)_
 
 <!-- commandsstop -->
