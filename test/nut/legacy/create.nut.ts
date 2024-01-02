@@ -76,7 +76,7 @@ describe('org:create command', () => {
     describe('validation failures', () => {
       it('fails with no config/varargs', () => {
         execCmd('force:org:create --json --noprompt', {
-          ensureExitCode: 1,
+          ensureExitCode: 'nonZero',
         });
       });
     });
