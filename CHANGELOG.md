@@ -1,3 +1,9 @@
+## [3.1.8](https://github.com/salesforcecli/plugin-org/compare/3.1.7...3.1.8) (2024-01-02)
+
+### Bug Fixes
+
+- properly parse edition flag ([b2889ed](https://github.com/salesforcecli/plugin-org/commit/b2889ed3913aee1d05041290bfcb80bc14052458))
+
 ## [3.1.7](https://github.com/salesforcecli/plugin-org/compare/3.1.6...3.1.7) (2023-12-31)
 
 ### Bug Fixes
