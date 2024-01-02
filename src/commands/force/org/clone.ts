@@ -5,8 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
-
 import {
   Flags,
   SfCommand,
@@ -31,7 +29,7 @@ import {
 import requestFunctions from '../../../shared/sandboxRequest.js';
 import { SandboxReporter } from '../../../shared/sandboxReporter.js';
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'clone');
 
 export class OrgCloneCommand extends SfCommand<SandboxProcessObject> {
@@ -40,6 +38,7 @@ export class OrgCloneCommand extends SfCommand<SandboxProcessObject> {
   public static readonly description = messages.getMessage('description');
   public static readonly strict = false;
   public static state = 'deprecated';
+  public static readonly hidden = true;
   public static deprecationOptions = {
     to: 'org:create:sandbox',
     version: '60.0',

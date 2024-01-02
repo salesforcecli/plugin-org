@@ -5,8 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
-
 import { Interfaces } from '@oclif/core';
 import {
   Flags,
@@ -38,7 +36,7 @@ import {
 import requestFunctions from '../../../shared/sandboxRequest.js';
 import { SandboxReporter } from '../../../shared/sandboxReporter.js';
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
 
 export interface ScratchOrgProcessObject {
@@ -57,6 +55,7 @@ export class Create extends SfCommand<CreateResult> {
   public static readonly examples = messages.getMessages('examples');
 
   public static state = 'deprecated';
+  public static readonly hidden = true;
   public static deprecationOptions = {
     message: messages.getMessage('deprecation'),
   };
