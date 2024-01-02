@@ -5,8 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
-
 import {
   Flags,
   SfCommand,
@@ -28,7 +26,7 @@ import {
 } from '@salesforce/core';
 import { SandboxReporter } from '../../../shared/sandboxReporter.js';
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'status');
 
 export class OrgStatusCommand extends SfCommand<SandboxProcessObject> {
@@ -36,6 +34,7 @@ export class OrgStatusCommand extends SfCommand<SandboxProcessObject> {
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
   public static state = 'deprecated';
+  public static readonly hidden = true;
   public static deprecationOptions = {
     to: 'org:resume:sandbox',
     version: '60.0',
