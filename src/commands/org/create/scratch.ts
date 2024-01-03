@@ -5,8 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
-
 import {
   Messages,
   Lifecycle,
@@ -21,7 +19,7 @@ import { Duration } from '@salesforce/kit';
 import { buildScratchOrgRequest } from '../../../shared/scratchOrgRequest.js';
 import { buildStatus } from '../../../shared/scratchOrgOutput.js';
 import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create_scratch');
 
 export const secretTimeout = 60000;
@@ -79,6 +77,15 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
         'partner-group',
         'partner-professional',
       ],
+      // eslint-disable-next-line @typescript-eslint/require-await
+      parse: async (value: string) => {
+        // the API expects partner editions in `partner <EDITION>` format.
+        // so we replace the hyphen here with a space.
+        if (value.startsWith('partner-')) {
+          return value.replace('-', ' ');
+        }
+        return value;
+      },
       helpGroup: definitionFileHelpGroupName,
     }),
     'no-namespace': Flags.boolean({
