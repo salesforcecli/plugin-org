@@ -5,12 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
 import { Flags, loglevel, orgApiVersionFlagWithDeprecations, SfCommand } from '@salesforce/sf-plugins-core';
 import { AuthInfo, AuthRemover, Messages, Org, StateAggregator } from '@salesforce/core';
 import { orgThatMightBeDeleted } from '../../../shared/flags.js';
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete');
 
 export type DeleteResult = {
@@ -61,7 +60,9 @@ export class Delete extends SfCommand<DeleteResult> {
     // we either need permission to proceed without a prompt OR get the user to confirm
     if (
       flags['no-prompt'] ||
-      (await this.confirm(messages.getMessage('confirmDelete', [isSandbox ? 'sandbox' : 'scratch', resolvedUsername])))
+      (await this.confirm({
+        message: messages.getMessage('confirmDelete', [isSandbox ? 'sandbox' : 'scratch', resolvedUsername]),
+      }))
     ) {
       let alreadyDeleted = false;
       let successMessageKey = 'commandSandboxSuccess';

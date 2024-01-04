@@ -4,10 +4,10 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import chalk from 'chalk';
+import chalk, { ChalkInstance } from 'chalk';
 import { ExtendedAuthFields, FullyPopulatedScratchOrgFields } from './orgTypes.js';
 
-const styledProperties = new Map<string, Map<string, chalk.Chalk>>([
+const styledProperties = new Map<string, Map<string, ChalkInstance>>([
   [
     'status',
     new Map([
@@ -31,7 +31,7 @@ export const getStyledValue = (key: string, value: string): string => {
   if (!prop) return value;
 
   // I'm not sure how to type the inner Map so that it knows else is definitely there
-  const chalkMethod = prop.get(value) ?? (prop.get('else') as chalk.Chalk);
+  const chalkMethod = prop.get(value) ?? (prop.get('else') as ChalkInstance);
   return chalkMethod(value);
 };
 

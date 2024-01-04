@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import os from 'node:os';
-import chalk from 'chalk';
+import chalk, { ChalkInstance } from 'chalk';
 import { StandardColors } from '@salesforce/sf-plugins-core';
 import { SfError } from '@salesforce/core';
 
@@ -19,7 +19,7 @@ export type State = 'inProgress' | 'completed' | 'failed' | 'unknown';
 export type StageAttributes = {
   state: State;
   char: string;
-  color: chalk.Chalk;
+  color: ChalkInstance;
   index: number;
   visited: boolean;
 };
