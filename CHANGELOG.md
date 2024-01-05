@@ -1,3 +1,21 @@
+# [3.2.0](https://github.com/salesforcecli/plugin-org/compare/3.1.8...3.2.0) (2024-01-02)
+
+### Features
+
+- hide deprecated commands ([c231c98](https://github.com/salesforcecli/plugin-org/commit/c231c985f838339948a8348e7d05062007ccc2ad))
+
+## [3.1.8](https://github.com/salesforcecli/plugin-org/compare/3.1.7...3.1.8) (2024-01-02)
+
+### Bug Fixes
+
+- properly parse edition flag ([b2889ed](https://github.com/salesforcecli/plugin-org/commit/b2889ed3913aee1d05041290bfcb80bc14052458))
+
+## [3.1.7](https://github.com/salesforcecli/plugin-org/compare/3.1.6...3.1.7) (2023-12-31)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve from 10.2.4 to 10.2.5 ([d33f3ed](https://github.com/salesforcecli/plugin-org/commit/d33f3edb0fada902e3621ab6facf33bd8e6244ff))
+
 ## [3.1.6](https://github.com/salesforcecli/plugin-org/compare/3.1.5...3.1.6) (2023-12-24)
 
 ### Bug Fixes

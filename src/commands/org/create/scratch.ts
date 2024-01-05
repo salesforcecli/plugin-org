@@ -77,6 +77,15 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
         'partner-group',
         'partner-professional',
       ],
+      // eslint-disable-next-line @typescript-eslint/require-await
+      parse: async (value: string) => {
+        // the API expects partner editions in `partner <EDITION>` format.
+        // so we replace the hyphen here with a space.
+        if (value.startsWith('partner-')) {
+          return value.replace('-', ' ');
+        }
+        return value;
+      },
       helpGroup: definitionFileHelpGroupName,
     }),
     'no-namespace': Flags.boolean({

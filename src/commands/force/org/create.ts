@@ -55,6 +55,7 @@ export class Create extends SfCommand<CreateResult> {
   public static readonly examples = messages.getMessages('examples');
 
   public static state = 'deprecated';
+  public static readonly hidden = true;
   public static deprecationOptions = {
     message: messages.getMessage('deprecation'),
   };
