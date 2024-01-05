@@ -129,14 +129,14 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
 
     // create a local html file that contains the POST stuff.
     // for review...there's always an access token, right?
-    const tempFilePath = path.join(tmpdir(), `org:open-${new Date().valueOf()}.html`);
+    const tempFilePath = path.join(tmpdir(), `org-open-${new Date().valueOf()}.html`);
     await writeFile(tempFilePath, getFileContents(conn.accessToken as string, conn.instanceUrl, retUrl));
     await utils.openUrl(`file:///${tempFilePath}`, openOptions);
     // so we don't delete the file while the browser is still using it
     // open returns when the CP is spawned, but there's not way to know if the browser is still using the file
     await sleep(1000);
 
-    await rm(tempFilePath, { force: true });
+    await rm(tempFilePath, { force: true, maxRetries: 3, recursive: true });
     return output;
   }
 }
