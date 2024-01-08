@@ -36,7 +36,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
     browser: Flags.option({
       char: 'b',
       summary: messages.getMessage('flags.browser.summary'),
-      options: ['chrome', 'edge', 'firefox'] as const, // These are ones supported by "open" package
+      options: ['chrome', 'edge', 'firefox', 'browserPrivate'] as const, // These are ones supported by "open" package
       exclusive: ['url-only'],
     })(),
     path: Flags.string({
