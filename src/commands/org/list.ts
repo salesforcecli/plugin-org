@@ -5,17 +5,15 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
-
 import { Flags, loglevel, SfCommand } from '@salesforce/sf-plugins-core';
 import { AuthInfo, ConfigAggregator, ConfigInfo, Connection, Org, SfError, Messages, Logger } from '@salesforce/core';
 import { Interfaces } from '@oclif/core';
-import chalk from 'chalk';
+import chalk, { ChalkInstance } from 'chalk';
 import { OrgListUtil, identifyActiveOrgByStatus } from '../../shared/orgListUtil.js';
 import { getStyledObject } from '../../shared/orgHighlighter.js';
 import { ExtendedAuthFields, FullyPopulatedScratchOrgFields } from '../../shared/orgTypes.js';
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'list');
 
 export const defaultOrgEmoji = '🍁';
@@ -117,7 +115,7 @@ Legend:  ${defaultHubEmoji}=Default DevHub, ${defaultOrgEmoji}=Default Org ${
   }
 
   protected async cleanScratchOrgs(scratchOrgs: ExtendedAuthFields[], prompt?: boolean): Promise<void> {
-    if (prompt && (await this.confirm(messages.getMessage('prompt', [scratchOrgs.length]))) === false) {
+    if (prompt && (await this.confirm({ message: messages.getMessage('prompt', [scratchOrgs.length]) })) === false) {
       return;
     }
 
@@ -259,7 +257,7 @@ const addType =
   (val: ExtendedAuthFields): ExtendedAuthFieldsWithType => ({ ...val, type });
 
 const colorEveryFieldButConnectedStatus =
-  (colorFn: chalk.Chalk) =>
+  (colorFn: ChalkInstance) =>
   (row: ExtendedAuthFieldsWithType): ExtendedAuthFieldsWithType =>
     Object.fromEntries(
       Object.entries(row).map(([key, val]) => [

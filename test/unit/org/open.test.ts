@@ -265,7 +265,7 @@ describe('org:open', () => {
 
       expect(spies.get('resolver').callCount).to.equal(1);
       expect(spies.get('open').callCount).to.equal(1);
-      expect(spies.get('open').args[0][1]).to.eql({});
+      expect(spies.get('open').args[0][1]).to.deep.equal({ newInstance: true });
     });
 
     it('calls open with a browser argument', async () => {

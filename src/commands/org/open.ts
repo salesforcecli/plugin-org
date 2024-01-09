@@ -6,7 +6,7 @@
  */
 
 import path from 'node:path';
-import { tmpdir } from 'node:os';
+import { platform, tmpdir } from 'node:os';
 import { writeFile, rm } from 'node:fs/promises';
 import {
   Flags,
@@ -34,12 +34,12 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
   public static readonly flags = {
     'target-org': requiredOrgFlagWithDeprecations,
     'api-version': orgApiVersionFlagWithDeprecations,
-    browser: Flags.string({
+    browser: Flags.option({
       char: 'b',
       summary: messages.getMessage('flags.browser.summary'),
-      options: ['chrome', 'edge', 'firefox'], // These are ones supported by "open" package
+      options: ['chrome', 'edge', 'firefox'] as const, // These are ones supported by "open" package
       exclusive: ['url-only'],
-    }),
+    })(),
     path: Flags.string({
       char: 'p',
       summary: messages.getMessage('flags.path.summary'),
@@ -123,9 +123,11 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
       throw err;
     }
 
-    const openOptions =
+    const openOptions = {
+      newInstance: true,
       // assertions could be removed once oclif flag typins are fixed
-      flags.browser ? { app: { name: apps[flags.browser as 'chrome' | 'edge' | 'firefox'] } } : {};
+      ...(flags.browser ? { app: { name: apps[flags.browser as 'chrome' | 'edge' | 'firefox'] } } : {}),
+    };
 
     // create a local html file that contains the POST stuff.
     // for review...there's always an access token, right?
@@ -134,7 +136,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
     await utils.openUrl(`file:///${tempFilePath}`, openOptions);
     // so we don't delete the file while the browser is still using it
     // open returns when the CP is spawned, but there's not way to know if the browser is still using the file
-    await sleep(1000);
+    await sleep(platform() === 'win32' ? 7000 : 2000);
 
     await rm(tempFilePath, { force: true, maxRetries: 3, recursive: true });
     return output;

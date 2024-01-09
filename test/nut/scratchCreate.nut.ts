@@ -10,10 +10,9 @@ import path from 'node:path';
 import { execCmd, genUniqueString, TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
 import { AuthFields, Messages, Global, StateAggregator } from '@salesforce/core';
-import { secretTimeout } from '../../src/commands/org/create/scratch.js';
 import { ScratchCreateResponse } from '../../src/shared/orgTypes.js';
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create_scratch');
 describe('env create scratch NUTs', () => {
   let session: TestSession;
@@ -57,7 +56,8 @@ describe('env create scratch NUTs', () => {
         ensureExitCode: 'nonZero',
       }).shellOutput;
       expect(error.stdout).to.include(messages.getMessage('prompt.secret'));
-      expect(error.stderr).to.include(`Timed out after ${secretTimeout} ms.`);
+      // this is the message from the prompt library when .cancel is called on timeout
+      expect(error.stderr).to.include('Prompt was canceled');
     });
   });
 

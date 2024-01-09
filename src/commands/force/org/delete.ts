@@ -61,7 +61,9 @@ export class Delete extends SfCommand<DeleteResult> {
     // we either need permission to proceed without a prompt OR get the user to confirm
     if (
       flags['no-prompt'] ||
-      (await this.confirm(messages.getMessage('confirmDelete', [isSandbox ? 'sandbox' : 'scratch', resolvedUsername])))
+      (await this.confirm({
+        message: messages.getMessage('confirmDelete', [isSandbox ? 'sandbox' : 'scratch', resolvedUsername]),
+      }))
     ) {
       let alreadyDeleted = false;
       let successMessageKey = 'commandSandboxSuccess';
