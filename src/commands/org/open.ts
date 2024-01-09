@@ -15,6 +15,7 @@ import {
   requiredOrgFlagWithDeprecations,
   SfCommand,
 } from '@salesforce/sf-plugins-core';
+import isWsl from 'is-wsl';
 import { Connection, Logger, Messages, Org, SfdcUrl, SfError } from '@salesforce/core';
 import { Duration, Env, sleep } from '@salesforce/kit';
 import { MetadataResolver } from '@salesforce/source-deploy-retrieve';
@@ -136,7 +137,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
     await utils.openUrl(`file:///${tempFilePath}`, openOptions);
     // so we don't delete the file while the browser is still using it
     // open returns when the CP is spawned, but there's not way to know if the browser is still using the file
-    await sleep(platform() === 'win32' ? 7000 : 2000);
+    await sleep(platform() === 'win32' || isWsl ? 7000 : 2000);
 
     await rm(tempFilePath, { force: true, maxRetries: 3, recursive: true });
     return output;
