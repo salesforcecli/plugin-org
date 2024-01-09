@@ -38,7 +38,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
     browser: Flags.option({
       char: 'b',
       summary: messages.getMessage('flags.browser.summary'),
-      options: ['chrome', 'edge', 'firefox'] as const, // These are ones supported by "open" package
+      options: ['chrome', 'edge', 'firefox', 'browserPrivate'] as const, // These are ones supported by "open" package
       exclusive: ['url-only'],
     })(),
     path: Flags.string({
@@ -124,17 +124,14 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
       throw err;
     }
 
-    const openOptions = {
-      // ...(platform() === 'darwin' ? { newInstance: true } : {}),
-      // assertions could be removed once oclif flag typins are fixed
-      ...(flags.browser ? { app: { name: apps[flags.browser as 'chrome' | 'edge' | 'firefox'] } } : {}),
-    };
-
     // create a local html file that contains the POST stuff.
     // for review...there's always an access token, right?
     const tempFilePath = path.join(tmpdir(), `org-open-${new Date().valueOf()}.html`);
     await writeFile(tempFilePath, getFileContents(conn.accessToken as string, conn.instanceUrl, retUrl));
-    await utils.openUrl(`file:///${tempFilePath}`, openOptions);
+    await utils.openUrl(`file:///${tempFilePath}`, {
+      ...(flags.browser ? { app: { name: apps[flags.browser] } } : {}),
+      ...(flags.browser === 'browserPrivate' ? { newInstance: true } : {}),
+    });
     // so we don't delete the file while the browser is still using it
     // open returns when the CP is spawned, but there's not way to know if the browser is still using the file
     await sleep(platform() === 'win32' || isWsl ? 7000 : 5000);
