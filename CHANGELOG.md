@@ -1,3 +1,9 @@
+## [3.2.2](https://github.com/salesforcecli/plugin-org/compare/3.2.1...3.2.2) (2024-01-09)
+
+### Bug Fixes
+
+- use new inquirer via sf-plugins-core ([#917](https://github.com/salesforcecli/plugin-org/issues/917)) ([b68e48d](https://github.com/salesforcecli/plugin-org/commit/b68e48d242ae48581e44f5e70e790cee38e623d5))
+
 ## [3.2.1](https://github.com/salesforcecli/plugin-org/compare/3.2.0...3.2.1) (2024-01-07)
 
 ### Bug Fixes
