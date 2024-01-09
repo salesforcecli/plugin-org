@@ -56,7 +56,8 @@ describe('env create scratch NUTs', () => {
         ensureExitCode: 'nonZero',
       }).shellOutput;
       expect(error.stdout).to.include(messages.getMessage('prompt.secret'));
-      expect(error.stderr).to.include('Prompt timed out.');
+      // this is the message from the prompt library when .cancel is called on timeout
+      expect(error.stderr).to.include('Prompt was canceled');
     });
   });
 
