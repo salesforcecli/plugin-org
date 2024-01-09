@@ -12,7 +12,7 @@ To generate a URL but not launch it in your browser, specify --url-only.
 
 To open in a specific browser, use the --browser flag. Supported browsers are "chrome", "edge", and "firefox". If you don't specify --browser, the org opens in your default browser.
 
-To open in an incognito window using your default browser use `--browser browserPrivate`
+To open in an incognito window using your default browser, use `--browser browserPrivate`. 
 
 # examples
 
@@ -20,7 +20,7 @@ To open in an incognito window using your default browser use `--browser browser
 
   $ <%= config.bin %> <%= command.id %>
 
-- Open your default org in your default browser using an incognito window
+- Open your default org in an incognito window of your default browser:
 
   $ <%= config.bin %> <%= command.id %> --browser browserPrivate
 
