@@ -125,7 +125,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
     }
 
     const openOptions = {
-      newInstance: true,
+      // ...(platform() === 'darwin' ? { newInstance: true } : {}),
       // assertions could be removed once oclif flag typins are fixed
       ...(flags.browser ? { app: { name: apps[flags.browser as 'chrome' | 'edge' | 'firefox'] } } : {}),
     };
@@ -137,7 +137,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
     await utils.openUrl(`file:///${tempFilePath}`, openOptions);
     // so we don't delete the file while the browser is still using it
     // open returns when the CP is spawned, but there's not way to know if the browser is still using the file
-    await sleep(platform() === 'win32' || isWsl ? 7000 : 2000);
+    await sleep(platform() === 'win32' || isWsl ? 7000 : 5000);
 
     await rm(tempFilePath, { force: true, maxRetries: 3, recursive: true });
     return output;
