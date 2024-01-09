@@ -6,8 +6,6 @@
  */
 
 import path from 'node:path';
-
-
 import {
   Flags,
   loglevel,
@@ -21,7 +19,7 @@ import { MetadataResolver } from '@salesforce/source-deploy-retrieve';
 import { apps } from 'open';
 import utils from '../../shared/utils.js';
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
 const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
 
@@ -35,12 +33,12 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
   public static readonly flags = {
     'target-org': requiredOrgFlagWithDeprecations,
     'api-version': orgApiVersionFlagWithDeprecations,
-    browser: Flags.string({
+    browser: Flags.option({
       char: 'b',
       summary: messages.getMessage('flags.browser.summary'),
-      options: ['chrome', 'edge', 'firefox'], // These are ones supported by "open" package
+      options: ['chrome', 'edge', 'firefox'] as const, // These are ones supported by "open" package
       exclusive: ['url-only'],
-    }),
+    })(),
     path: Flags.string({
       char: 'p',
       summary: messages.getMessage('flags.path.summary'),
@@ -130,12 +128,11 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
       throw err;
     }
 
-    const openOptions = flags.browser
-      ? // assertion can be removed once oclif option flag typings are fixed
-        { app: { name: apps[flags.browser as 'chrome' | 'edge' | 'firefox'] } }
-      : {};
-
-    await utils.openUrl(url, openOptions);
+    await utils.openUrl(url, {
+      ...(flags.browser ? { app: { name: apps[flags.browser] } } : {}),
+      // only applies on macOS.  open library ignores this property as it is the default behavior on other OS
+      newInstance: true,
+    });
     return output;
   }
 

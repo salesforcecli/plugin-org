@@ -263,15 +263,6 @@ export class Create extends SfCommand<CreateResult> {
 
     this.logger.debug('validation complete');
 
-    // If the user supplied a specific client ID, we have no way of knowing if it's
-    // a certificate-based Connected App or not. Therefore, we have to assume that
-    // we'll need the client secret, so prompt the user for it.
-    const { clientSecret } = this.flags.clientid
-      ? await this.prompt<{ clientSecret: string }>([
-          { name: 'clientSecret', type: 'mask', message: messages.getMessage('secretPrompt') },
-        ])
-      : { clientSecret: undefined };
-
     const createCommandOptions: ScratchOrgRequest = {
       connectedAppConsumerKey: this.flags.clientid,
       durationDays: this.flags.durationdays,
@@ -282,7 +273,12 @@ export class Create extends SfCommand<CreateResult> {
       apiversion: this.flags['api-version'],
       definitionfile: this.flags.definitionfile,
       orgConfig: this.varArgs,
-      clientSecret,
+      // If the user supplied a specific client ID, we have no way of knowing if it's
+      // a certificate-based Connected App or not. Therefore, we have to assume that
+      // we'll need the client secret, so prompt the user for it.
+      clientSecret: this.flags.clientid
+        ? await this.secretPrompt({ message: messages.getMessage('secretPrompt') })
+        : undefined,
       setDefault: this.flags.setdefaultusername === true,
       alias: this.flags.setalias,
       tracksSource: true,

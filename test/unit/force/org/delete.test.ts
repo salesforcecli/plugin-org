@@ -5,7 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
 import { Messages, Org, SfError } from '@salesforce/core';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup.js';
 
@@ -15,7 +14,7 @@ import { SandboxAccessor } from '@salesforce/core/lib/stateAggregator/accessors/
 import { Delete as LegacyDelete } from '../../../../src/commands/force/org/delete.js';
 
 config.truncateThreshold = 0;
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete');
 
 describe('[DEPRECATED] force:org:delete', () => {
@@ -48,10 +47,10 @@ describe('[DEPRECATED] force:org:delete', () => {
   it('will prompt before attempting to delete', async () => {
     await $$.stubConfig({ 'target-org': testOrg.username });
     const res = await LegacyDelete.run([]);
-    expect(prompterStubs.confirm.calledOnce).to.equal(true);
-    expect(prompterStubs.confirm.firstCall.args[0]).to.equal(
-      messages.getMessage('confirmDelete', ['scratch', testOrg.username])
-    );
+    expect(prompterStubs.confirm.callCount).to.equal(1);
+    expect(prompterStubs.confirm.firstCall.args[0]).to.deep.equal({
+      message: messages.getMessage('confirmDelete', ['scratch', testOrg.username]),
+    });
     expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
   });
 
@@ -59,20 +58,20 @@ describe('[DEPRECATED] force:org:delete', () => {
     await $$.stubConfig({ 'target-org': 'myAlias' });
     $$.stubAliases({ myAlias: testOrg.username });
     const res = await LegacyDelete.run([]);
-    expect(prompterStubs.confirm.calledOnce).to.equal(true);
-    expect(prompterStubs.confirm.firstCall.args[0]).to.equal(
-      messages.getMessage('confirmDelete', ['scratch', testOrg.username])
-    );
+    expect(prompterStubs.confirm.callCount).to.equal(1);
+    expect(prompterStubs.confirm.firstCall.args[0]).to.deep.equal({
+      message: messages.getMessage('confirmDelete', ['scratch', testOrg.username]),
+    });
     expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
   });
 
   it('will determine sandbox vs scratch org and delete sandbox', async () => {
     $$.SANDBOX.stub(SandboxAccessor.prototype, 'hasFile').resolves(true);
     const res = await LegacyDelete.run(['--target-org', testOrg.username]);
-    expect(prompterStubs.confirm.calledOnce).to.equal(true);
-    expect(prompterStubs.confirm.firstCall.args[0]).to.equal(
-      messages.getMessage('confirmDelete', ['sandbox', testOrg.username])
-    );
+    expect(prompterStubs.confirm.callCount).to.equal(1);
+    expect(prompterStubs.confirm.firstCall.args[0]).to.deep.equal({
+      message: messages.getMessage('confirmDelete', ['sandbox', testOrg.username]),
+    });
     expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
   });
 

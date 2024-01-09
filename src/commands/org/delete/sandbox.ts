@@ -5,12 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
 import { AuthInfo, AuthRemover, Messages, Org, SfError, StateAggregator } from '@salesforce/core';
 import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
 import { orgThatMightBeDeleted } from '../../../shared/flags.js';
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete_sandbox');
 
 export interface SandboxDeleteResponse {
@@ -62,7 +61,7 @@ export default class DeleteSandbox extends SfCommand<SandboxDeleteResponse> {
       throw messages.createError('error.unknownSandbox', [username]);
     }
 
-    if (flags['no-prompt'] || (await this.confirm(messages.getMessage('prompt.confirm', [username])))) {
+    if (flags['no-prompt'] || (await this.confirm({ message: messages.getMessage('prompt.confirm', [username]) }))) {
       try {
         const org = await Org.create({ aliasOrUsername: username });
         await org.delete();

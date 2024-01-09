@@ -166,7 +166,7 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
 
     const createCommandOptions = await buildScratchOrgRequest(
       flags,
-      flags['client-id'] ? await this.clientSecretPrompt() : undefined
+      flags['client-id'] ? await this.secretPrompt({ message: messages.getMessage('prompt.secret') }) : undefined
     );
     let lastStatus: string | undefined;
 
@@ -209,19 +209,5 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
         throw error;
       }
     }
-  }
-
-  private async clientSecretPrompt(): Promise<string> {
-    const { secret } = await this.timedPrompt<{ secret: string }>(
-      [
-        {
-          name: 'secret',
-          message: messages.getMessage('prompt.secret'),
-          type: 'password',
-        },
-      ],
-      secretTimeout
-    );
-    return secret;
   }
 }

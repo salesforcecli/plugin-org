@@ -5,8 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
-
 import { Duration } from '@salesforce/kit';
 import { Flags } from '@salesforce/sf-plugins-core';
 import { Lifecycle, Messages, SandboxEvents, SandboxProcessObject, SandboxRequest, SfError } from '@salesforce/core';
@@ -16,7 +14,7 @@ import requestFunctions from '../../../shared/sandboxRequest.js';
 import { SandboxCommandBase } from '../../../shared/sandboxCommandBase.js';
 import { SandboxLicenseType } from '../../../shared/orgTypes.js';
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create.sandbox');
 
 const getLicenseTypes = (): string[] => Object.values(SandboxLicenseType);
@@ -225,17 +223,11 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
     this.styledHeader('Config Sandbox Request');
     this.table(data, columns, {});
 
-    const configurationCorrect = await this.timedPrompt<{ continue: boolean }>(
-      [
-        {
-          name: 'continue',
-          type: 'confirm',
-          message: messages.getMessage('isConfigurationOk'),
-        },
-      ],
-      10_000
-    );
-    if (!configurationCorrect.continue) {
+    if (
+      !(await this.confirm({
+        message: messages.getMessage('isConfigurationOk'),
+      }))
+    ) {
       throw messages.createError('error.UserNotSatisfiedWithSandboxConfig');
     }
   }

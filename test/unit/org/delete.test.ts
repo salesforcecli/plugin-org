@@ -5,7 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
 import { AuthInfo, Messages, Org, SfError } from '@salesforce/core';
 import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup.js';
 import { SinonStub } from 'sinon';
@@ -17,7 +16,7 @@ import DeleteScratch from '../../../src/commands/org/delete/scratch.js';
 
 config.truncateThreshold = 0;
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const sbxOrgMessages = Messages.loadMessages('@salesforce/plugin-org', 'delete_sandbox');
 const scratchOrgMessages = Messages.loadMessages('@salesforce/plugin-org', 'delete_scratch');
 const deleteMessages = Messages.loadMessages('@salesforce/plugin-org', 'delete');
@@ -88,10 +87,10 @@ describe('org delete', () => {
       $$.SANDBOX.stub(SandboxAccessor.prototype, 'hasFile').resolves(true);
       await $$.stubConfig({ 'target-org': testOrg.username });
       const res = await DeleteSandbox.run([]);
-      expect(prompterStubs.confirm.calledOnce).to.equal(true);
-      expect(prompterStubs.confirm.firstCall.args[0]).to.equal(
-        sbxOrgMessages.getMessage('prompt.confirm', [testOrg.username])
-      );
+      expect(prompterStubs.confirm.callCount).to.equal(1);
+      expect(prompterStubs.confirm.firstCall.args[0]).to.deep.equal({
+        message: sbxOrgMessages.getMessage('prompt.confirm', [testOrg.username]),
+      });
       expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
     });
 
@@ -100,17 +99,17 @@ describe('org delete', () => {
       await $$.stubConfig({ 'target-org': 'myAlias' });
       $$.stubAliases({ myAlias: testOrg.username });
       const res = await DeleteSandbox.run([]);
-      expect(prompterStubs.confirm.calledOnce).to.equal(true);
-      expect(prompterStubs.confirm.firstCall.args[0]).to.equal(
-        sbxOrgMessages.getMessage('prompt.confirm', [testOrg.username])
-      );
+      expect(prompterStubs.confirm.callCount).to.equal(1);
+      expect(prompterStubs.confirm.firstCall.args[0]).to.deep.equal({
+        message: sbxOrgMessages.getMessage('prompt.confirm', [testOrg.username]),
+      });
       expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
     });
 
     it('will NOT prompt before deleting sandbox when flag is provided', async () => {
       $$.SANDBOX.stub(SandboxAccessor.prototype, 'hasFile').resolves(true);
       const res = await DeleteSandbox.run(['--no-prompt', '--target-org', testOrg.username]);
-      expect(prompterStubs.confirm.calledOnce).to.equal(false);
+      expect(prompterStubs.confirm.callCount).to.equal(0);
       expect(sfCommandUxStubs.logSuccess.callCount).to.equal(1);
       expect(sfCommandUxStubs.logSuccess.getCalls().flatMap((call) => call.args)).to.deep.include(
         sbxOrgMessages.getMessage('success', [testOrg.username])
@@ -148,10 +147,10 @@ describe('org delete', () => {
     it('will prompt before attempting to delete by username', async () => {
       await $$.stubConfig({ 'target-org': testOrg.username });
       const res = await DeleteScratch.run([]);
-      expect(prompterStubs.confirm.calledOnce).to.equal(true);
-      expect(prompterStubs.confirm.firstCall.args[0]).to.equal(
-        scratchOrgMessages.getMessage('prompt.confirm', [testOrg.username])
-      );
+      expect(prompterStubs.confirm.callCount).to.equal(1);
+      expect(prompterStubs.confirm.firstCall.args[0]).to.deep.equal({
+        message: scratchOrgMessages.getMessage('prompt.confirm', [testOrg.username]),
+      });
       expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
     });
 
@@ -159,10 +158,10 @@ describe('org delete', () => {
       await $$.stubConfig({ 'target-org': 'myAlias' });
       $$.stubAliases({ myAlias: testOrg.username });
       const res = await DeleteScratch.run(['--target-org', 'myAlias']);
-      expect(prompterStubs.confirm.calledOnce).to.equal(true);
-      expect(prompterStubs.confirm.firstCall.args[0]).to.equal(
-        scratchOrgMessages.getMessage('prompt.confirm', [testOrg.username])
-      );
+      expect(prompterStubs.confirm.callCount).to.equal(1);
+      expect(prompterStubs.confirm.firstCall.args[0]).to.deep.equal({
+        message: scratchOrgMessages.getMessage('prompt.confirm', [testOrg.username]),
+      });
       expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
     });
 

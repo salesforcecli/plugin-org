@@ -6,16 +6,15 @@
  */
 import fs from 'node:fs';
 
-
 import { MockTestOrgData, shouldThrow, TestContext } from '@salesforce/core/lib/testSetup.js';
 import { SfError, Messages, Org } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { Prompter, stubSfCommandUx } from '@salesforce/sf-plugins-core';
+import { stubPrompter, stubSfCommandUx } from '@salesforce/sf-plugins-core';
 import { Create } from '../../../../src/commands/force/org/create.js';
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
 
 const CREATE_RESULT = {
@@ -40,19 +39,19 @@ describe('[DEPRECATED] force:org:create', () => {
   const $$ = new TestContext();
   const testHub = new MockTestOrgData();
   testHub.isDevHub = true;
+  let promptStubs: ReturnType<typeof stubPrompter>;
 
   beforeEach(async () => {
     await $$.stubAuths(testHub);
     $$.stubAliases({});
     await $$.stubConfig({ defaultdevhubusername: testHub.username });
+    promptStubs = stubPrompter($$.SANDBOX);
   });
 
   const clientSecret = '123456';
   // stubs
   let scratchOrgCreateStub: sinon.SinonStub;
-  let promptStub: sinon.SinonStub;
   let sfCommandUxStubs: ReturnType<typeof stubSfCommandUx>;
-
   const runCreateCommand = (params: string[]) => {
     // so the `exists` flag on definition file passes
     $$.SANDBOX.stub(fs, 'existsSync')
@@ -127,7 +126,7 @@ describe('[DEPRECATED] force:org:create', () => {
       const connectedAppConsumerKey = 'abcdef';
       const definitionfile = 'myScratchDef.json';
       const prodOrg = stubMethod($$.SANDBOX, Org.prototype, 'scratchOrgCreate').resolves(CREATE_RESULT);
-      promptStub = stubMethod($$.SANDBOX, Prompter.prototype, 'prompt').resolves({ clientSecret });
+      promptStubs.secret.resolves(clientSecret);
 
       await runCreateCommand([
         '--type',
@@ -140,7 +139,7 @@ describe('[DEPRECATED] force:org:create', () => {
         testHub.username,
       ]);
 
-      expect(promptStub.callCount).to.equal(1);
+      expect(promptStubs.secret.callCount).to.equal(1);
       expect(prodOrg.firstCall.args[0]).to.deep.equal({
         alias: undefined,
         apiversion: undefined,
@@ -159,8 +158,6 @@ describe('[DEPRECATED] force:org:create', () => {
         tracksSource: true,
         orgConfig: {},
       });
-      expect(promptStub.callCount).to.equal(1);
-      expect(promptStub.callCount).to.equal(1);
       expect(sfCommandUxStubs.log.firstCall.firstArg).to.equal(
         'Successfully created scratch org: 12345, username: sfdx-cli@salesforce.com.'
       );

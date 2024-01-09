@@ -5,13 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
-
 import { AuthInfo, AuthRemover, Messages, Org } from '@salesforce/core';
 import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
 import { orgThatMightBeDeleted } from '../../../shared/flags.js';
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete_scratch');
 
 export interface ScratchDeleteResponse {
@@ -41,7 +39,10 @@ export default class DeleteScratch extends SfCommand<ScratchDeleteResponse> {
     const resolvedUsername = flags['target-org'];
     const orgId = (await AuthInfo.create({ username: resolvedUsername })).getFields().orgId as string;
 
-    if (flags['no-prompt'] || (await this.confirm(messages.getMessage('prompt.confirm', [resolvedUsername])))) {
+    if (
+      flags['no-prompt'] ||
+      (await this.confirm({ message: messages.getMessage('prompt.confirm', [resolvedUsername]) }))
+    ) {
       try {
         const org = await Org.create({ aliasOrUsername: resolvedUsername });
 
