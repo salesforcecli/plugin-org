@@ -1,3 +1,9 @@
+# [3.3.0](https://github.com/salesforcecli/plugin-org/compare/3.2.2...3.3.0) (2024-01-10)
+
+### Features
+
+- frontdoor via post + `--private` flag ([#913](https://github.com/salesforcecli/plugin-org/issues/913)) ([3bb3176](https://github.com/salesforcecli/plugin-org/commit/3bb3176e9b621431802f45ef052088d32594b24f))
+
 ## [3.2.2](https://github.com/salesforcecli/plugin-org/compare/3.2.1...3.2.2) (2024-01-09)
 
 ### Bug Fixes
