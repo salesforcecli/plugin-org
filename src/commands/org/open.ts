@@ -35,11 +35,15 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
   public static readonly flags = {
     'target-org': requiredOrgFlagWithDeprecations,
     'api-version': orgApiVersionFlagWithDeprecations,
+    private: Flags.boolean({
+      summary: messages.getMessage('flags.private.summary'),
+      exclusive: ['url-only', 'browser'],
+    }),
     browser: Flags.option({
       char: 'b',
       summary: messages.getMessage('flags.browser.summary'),
-      options: ['chrome', 'edge', 'firefox', 'browserPrivate'] as const, // These are ones supported by "open" package
-      exclusive: ['url-only'],
+      options: ['chrome', 'edge', 'firefox'] as const, // These are ones supported by "open" package
+      exclusive: ['url-only', 'private'],
     })(),
     path: Flags.string({
       char: 'p',
@@ -127,16 +131,22 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
     // create a local html file that contains the POST stuff.
     // for review...there's always an access token, right?
     const tempFilePath = path.join(tmpdir(), `org-open-${new Date().valueOf()}.html`);
-    await writeFile(tempFilePath, getFileContents(conn.accessToken as string, conn.instanceUrl, retUrl));
-    await utils.openUrl(`file:///${tempFilePath}`, {
-      ...(flags.browser ? { app: { name: apps[flags.browser] } } : {}),
-      ...(flags.browser === 'browserPrivate' ? { newInstance: true } : {}),
-    });
-    // so we don't delete the file while the browser is still using it
-    // open returns when the CP is spawned, but there's not way to know if the browser is still using the file
-    await sleep(platform() === 'win32' || isWsl ? 7000 : 5000);
-
-    await rm(tempFilePath, { force: true, maxRetries: 3, recursive: true });
+    try {
+      await writeFile(tempFilePath, getFileContents(conn.accessToken as string, conn.instanceUrl, retUrl));
+      await utils.openUrl(`file:///${tempFilePath}`, {
+        ...(flags.browser ? { app: { name: apps[flags.browser] } } : {}),
+        ...(flags.private ? { newInstance: platform() === 'darwin', app: { name: apps.browserPrivate } } : {}),
+      });
+      // so we don't delete the file while the browser is still using it
+      // open returns when the CP is spawned, but there's not way to know if the browser is still using the file
+      await sleep(platform() === 'win32' || isWsl ? 7000 : 5000);
+    } catch (e) {
+      if (e instanceof Error) {
+        throw SfError.wrap(e);
+      } else throw e;
+    } finally {
+      await rm(tempFilePath, { force: true, maxRetries: 3, recursive: true });
+    }
     return output;
   }
 }

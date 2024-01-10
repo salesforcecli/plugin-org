@@ -12,8 +12,6 @@ To generate a URL but not launch it in your browser, specify --url-only.
 
 To open in a specific browser, use the --browser flag. Supported browsers are "chrome", "edge", and "firefox". If you don't specify --browser, the org opens in your default browser.
 
-To open in an incognito window using your default browser, use `--browser browserPrivate`. 
-
 # examples
 
 - Open your default org in your default browser:
@@ -22,7 +20,7 @@ To open in an incognito window using your default browser, use `--browser browse
 
 - Open your default org in an incognito window of your default browser:
 
-  $ <%= config.bin %> <%= command.id %> --browser browserPrivate
+  $ <%= config.bin %> <%= command.id %> --private
 
 - Open the org with alias MyTestOrg1 in the Firefox browser:
 
@@ -39,6 +37,10 @@ To open in an incognito window using your default browser, use `--browser browse
 - Open a local Flow in Flow Builder:
 
   $ <%= config.bin %> <%= command.id %> --source-file force-app/main/default/flows/Hello.flow-meta.xml
+
+# flags.private.summary
+
+Open the org in the default browser using private (incognito) mode.
 
 # flags.browser.summary
 
