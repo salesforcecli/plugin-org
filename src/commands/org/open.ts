@@ -7,7 +7,7 @@
 
 import path from 'node:path';
 import { platform, tmpdir } from 'node:os';
-import { writeFile, rm } from 'node:fs/promises';
+import fs from 'node:fs';
 import {
   Flags,
   loglevel,
@@ -129,24 +129,21 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
     }
 
     // create a local html file that contains the POST stuff.
-    // for review...there's always an access token, right?
     const tempFilePath = path.join(tmpdir(), `org-open-${new Date().valueOf()}.html`);
-    try {
-      await writeFile(tempFilePath, getFileContents(conn.accessToken as string, conn.instanceUrl, retUrl));
-      await utils.openUrl(`file:///${tempFilePath}`, {
-        ...(flags.browser ? { app: { name: apps[flags.browser] } } : {}),
-        ...(flags.private ? { newInstance: platform() === 'darwin', app: { name: apps.browserPrivate } } : {}),
-      });
-      // so we don't delete the file while the browser is still using it
-      // open returns when the CP is spawned, but there's not way to know if the browser is still using the file
-      await sleep(platform() === 'win32' || isWsl ? 7000 : 5000);
-    } catch (e) {
-      if (e instanceof Error) {
-        throw SfError.wrap(e);
-      } else throw e;
-    } finally {
-      await rm(tempFilePath, { force: true, maxRetries: 3, recursive: true });
-    }
+    await fs.promises.writeFile(tempFilePath, getFileContents(conn.accessToken as string, conn.instanceUrl, retUrl));
+    const cp = await utils.openUrl(`file:///${tempFilePath}`, {
+      ...(flags.browser ? { app: { name: apps[flags.browser] } } : {}),
+      ...(flags.private ? { newInstance: platform() === 'darwin', app: { name: apps.browserPrivate } } : {}),
+    });
+    cp.on('error', (err) => {
+      fileCleanup(tempFilePath);
+      throw SfError.wrap(err);
+    });
+    // so we don't delete the file while the browser is still using it
+    // open returns when the CP is spawned, but there's not way to know if the browser is still using the file
+    await sleep(platform() === 'win32' || isWsl ? 7000 : 5000);
+    fileCleanup(tempFilePath);
+
     return output;
   }
 }
@@ -156,6 +153,9 @@ export interface OrgOpenOutput {
   username: string;
   orgId: string;
 }
+
+const fileCleanup = (tempFilePath: string): void =>
+  fs.rmSync(tempFilePath, { force: true, maxRetries: 3, recursive: true });
 
 const buildFrontdoorUrl = async (org: Org, conn: Connection): Promise<string> => {
   await org.refreshAuth(); // we need a live accessToken for the frontdoor url
