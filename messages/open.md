@@ -18,6 +18,10 @@ To open in a specific browser, use the --browser flag. Supported browsers are "c
 
   $ <%= config.bin %> <%= command.id %>
 
+- Open your default org in an incognito window of your default browser:
+
+  $ <%= config.bin %> <%= command.id %> --private
+
 - Open the org with alias MyTestOrg1 in the Firefox browser:
 
   $ <%= config.bin %> <%= command.id %> --target-org MyTestOrg1 --browser firefox
@@ -33,6 +37,10 @@ To open in a specific browser, use the --browser flag. Supported browsers are "c
 - Open a local Flow in Flow Builder:
 
   $ <%= config.bin %> <%= command.id %> --source-file force-app/main/default/flows/Hello.flow-meta.xml
+
+# flags.private.summary
+
+Open the org in the default browser using private (incognito) mode.
 
 # flags.browser.summary
 

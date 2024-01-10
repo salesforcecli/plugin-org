@@ -4,10 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
+import { EventEmitter } from 'node:events';
 import fs from 'node:fs';
 import { join } from 'node:path';
-
 import { assert, expect } from 'chai';
 import { MyDomainResolver, Messages, Connection, SfError } from '@salesforce/core';
 import { Config } from '@oclif/core';
@@ -45,7 +44,7 @@ describe('org:open', () => {
     stubUx($$.SANDBOX);
     stubSpinner($$.SANDBOX);
     await $$.stubAuths(testOrg);
-    spies.set('open', stubMethod($$.SANDBOX, utils, 'openUrl').resolves());
+    spies.set('open', stubMethod($$.SANDBOX, utils, 'openUrl').resolves(new EventEmitter()));
   });
 
   afterEach(() => {
@@ -266,7 +265,7 @@ describe('org:open', () => {
 
       expect(spies.get('resolver').callCount).to.equal(1);
       expect(spies.get('open').callCount).to.equal(1);
-      expect(spies.get('open').args[0][1]).to.deep.equal({ newInstance: true });
+      expect(spies.get('open').args[0][1]).to.deep.equal({});
     });
 
     it('calls open with a browser argument', async () => {
