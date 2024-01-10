@@ -177,7 +177,7 @@
     "command": "org:open",
     "flagAliases": ["apiversion", "sourcefile", "targetusername", "u", "urlonly"],
     "flagChars": ["b", "f", "o", "p", "r"],
-    "flags": ["api-version", "browser", "json", "loglevel", "path", "source-file", "target-org", "url-only"],
+    "flags": ["api-version", "browser", "json", "loglevel", "path", "private", "source-file", "target-org", "url-only"],
     "plugin": "@salesforce/plugin-org"
   },
   {
