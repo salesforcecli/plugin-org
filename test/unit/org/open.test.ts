@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
+import { EventEmitter } from 'node:events';
 import fs from 'node:fs';
 import { join } from 'node:path';
 import { assert, expect } from 'chai';
@@ -44,7 +44,7 @@ describe('org:open', () => {
     stubUx($$.SANDBOX);
     stubSpinner($$.SANDBOX);
     await $$.stubAuths(testOrg);
-    spies.set('open', stubMethod($$.SANDBOX, utils, 'openUrl').resolves());
+    spies.set('open', stubMethod($$.SANDBOX, utils, 'openUrl').resolves(new EventEmitter()));
   });
 
   afterEach(() => {
