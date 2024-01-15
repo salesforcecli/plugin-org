@@ -2337,10 +2337,10 @@ change-case@^4, change-case@^4.1.2:
     snake-case "^3.0.4"
     tslib "^2.0.3"
 
-change-case@^5.3.0:
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/change-case/-/change-case-5.3.0.tgz#b2fc5a8bea0cf8b4856a5a9aaf79abd8ea5309f6"
-  integrity sha512-Eykca0fGS/xYlx2fG5NqnGSnsWauhSGiSXYhB1kO6E909GUfo8S54u4UZNS7lMJmgZumZ2SUpWaoLgAcfQRICg==
+change-case@^5.4.1:
+  version "5.4.1"
+  resolved "https://registry.yarnpkg.com/change-case/-/change-case-5.4.1.tgz#edec6c906a8a1db8c5bdefcd4e4f49e7b21eaf9c"
+  integrity sha512-Agf3w7rZRy4aLy0gQ0M/fhufTIxN17rFfUuQ8OxETDJhB8QdoxgDpd9FbbFOMocR7+3wiSv8KKrFVL6HfM1Ylw==
 
 chardet@^0.7.0:
   version "0.7.0"
