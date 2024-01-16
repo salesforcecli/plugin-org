@@ -1,3 +1,9 @@
+## [3.3.5](https://github.com/salesforcecli/plugin-org/compare/3.3.4...3.3.5) (2024-01-16)
+
+### Bug Fixes
+
+- decode `path` flag before writing it to form ([#934](https://github.com/salesforcecli/plugin-org/issues/934)) ([c7009fb](https://github.com/salesforcecli/plugin-org/commit/c7009fbe13f00d33237653977df04c6bfab8e180))
+
 ## [3.3.4](https://github.com/salesforcecli/plugin-org/compare/3.3.3...3.3.4) (2024-01-15)
 
 ### Bug Fixes
