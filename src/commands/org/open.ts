@@ -130,7 +130,16 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
 
     // create a local html file that contains the POST stuff.
     const tempFilePath = path.join(tmpdir(), `org-open-${new Date().valueOf()}.html`);
-    await fs.promises.writeFile(tempFilePath, getFileContents(conn.accessToken as string, conn.instanceUrl, retUrl));
+    await fs.promises.writeFile(
+      tempFilePath,
+      getFileContents(
+        conn.accessToken as string,
+        conn.instanceUrl,
+        // the path flag is URI-encoded in its `parse` func.
+        // For the form redirect to work we need it decoded.
+        flags.path ? decodeURIComponent(flags.path) : retUrl
+      )
+    );
     const cp = await utils.openUrl(`file:///${tempFilePath}`, {
       ...(flags.browser ? { app: { name: apps[flags.browser] } } : {}),
       ...(flags.private ? { newInstance: platform() === 'darwin', app: { name: apps.browserPrivate } } : {}),
