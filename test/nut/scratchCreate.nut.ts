@@ -7,6 +7,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
+import { parseJsonMap } from '@salesforce/kit';
 import { execCmd, genUniqueString, TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
 import { AuthFields, Messages, Global, StateAggregator } from '@salesforce/core';
@@ -64,6 +65,39 @@ describe('env create scratch NUTs', () => {
   describe('successes', () => {
     const keys = ['username', 'orgId', 'scratchOrgInfo', 'authFields', 'warnings'];
 
+    it('creates an org with capitalized record types', async () => {
+      const scratchDefJson = parseJsonMap(
+        await fs.promises.readFile(path.join(session.project.dir, 'config', 'project-scratch-def.json'), 'utf8')
+      );
+      scratchDefJson.objectSettings = {
+        case: {
+          defaultRecordType: 'Svc_Technical_Support',
+        },
+      };
+
+      await fs.promises.writeFile(
+        path.join(session.project.dir, 'config', 'project-scratch-def-1.json'),
+        JSON.stringify(scratchDefJson),
+        'utf-8'
+      );
+
+      const username = execCmd<ScratchCreateResponse>(
+        'org create scratch -d -f config/project-scratch-def-1.json -a dreamhouse --duration-days 1',
+        {
+          ensureExitCode: 1,
+        }
+      ).jsonOutput?.result.username;
+
+      const recordTypes = execCmd<{ recordTypeInfos: Array<{ name: string }> }>(
+        `sobject describe --sobject Case --target-org ${username}`,
+        {
+          cli: 'sf',
+          ensureExitCode: 0,
+        }
+      ).jsonOutput?.result.recordTypeInfos;
+
+      expect(recordTypes?.find((rt) => rt.name === 'Svc_Technical_Support'));
+    });
     it('creates an org from edition flag only and sets tracking to true by default', async () => {
       const resp = execCmd<ScratchCreateResponse>('env:create:scratch --edition developer --json  --wait 60', {
         ensureExitCode: 0,

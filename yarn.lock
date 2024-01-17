@@ -1020,6 +1020,30 @@
     semver "^7.5.4"
     ts-retry-promise "^0.7.1"
 
+"@salesforce/core@^6.4.8-dev.0":
+  version "6.4.8-dev.0"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-6.4.8-dev.0.tgz#59bbf008780886554822fdb0bd657c4bdd33cfd5"
+  integrity sha512-mnew/eyEyXNXm80sRkYD4kB8t0CuLmLfQASjVdxflCmFrl0dIYykd2xT5gCd/dERadBy1rvFHQfDlBx8mZp3MQ==
+  dependencies:
+    "@salesforce/kit" "^3.0.15"
+    "@salesforce/schemas" "^1.6.1"
+    "@salesforce/ts-types" "^2.0.9"
+    "@types/semver" "^7.5.6"
+    ajv "^8.12.0"
+    change-case "^4.1.2"
+    faye "^1.4.0"
+    form-data "^4.0.0"
+    js2xmlparser "^4.0.1"
+    jsforce "^2.0.0-beta.29"
+    jsonwebtoken "9.0.2"
+    jszip "3.10.1"
+    pino "^8.17.2"
+    pino-abstract-transport "^1.1.0"
+    pino-pretty "^10.3.1"
+    proper-lockfile "^4.1.2"
+    semver "^7.5.4"
+    ts-retry-promise "^0.7.1"
+
 "@salesforce/dev-config@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@salesforce/dev-config/-/dev-config-4.1.0.tgz#e529576466d074e7a5f1441236510fef123da01e"
