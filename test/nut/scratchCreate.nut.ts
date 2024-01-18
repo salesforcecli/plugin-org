@@ -84,7 +84,7 @@ describe('env create scratch NUTs', () => {
       const username = execCmd<ScratchCreateResponse>(
         'org create scratch -d -f config/project-scratch-def-1.json -a dreamhouse --duration-days 1',
         {
-          ensureExitCode: 1,
+          ensureExitCode: 0,
         }
       ).jsonOutput?.result.username;
 
