@@ -65,7 +65,7 @@ describe('env create scratch NUTs', () => {
   describe('successes', () => {
     const keys = ['username', 'orgId', 'scratchOrgInfo', 'authFields', 'warnings'];
 
-    it('creates an org with capitalized record types', async () => {
+    it('creates an org with capitalized record types if no config var is set', async () => {
       const scratchDefJson = parseJsonMap(
         await fs.promises.readFile(path.join(session.project.dir, 'config', 'project-scratch-def.json'), 'utf8')
       );
@@ -75,18 +75,33 @@ describe('env create scratch NUTs', () => {
         },
       };
 
+      // NOTE: remove this once it starts capitalizing record types by default.
+      // we are unsetting it here to ensure the warning from sfdx-core is emitted.
+      await execCmd('config unset org-capitalize-record-types', {
+        async: true,
+        cli: 'sf',
+        ensureExitCode: 0,
+      });
+
       await fs.promises.writeFile(
         path.join(session.project.dir, 'config', 'project-scratch-def-1.json'),
         JSON.stringify(scratchDefJson),
         'utf-8'
       );
 
-      const username = execCmd<ScratchCreateResponse>(
+      const jsonOutput = execCmd<ScratchCreateResponse>(
         'org create scratch -d -f config/project-scratch-def-1.json -a dreamhouse --duration-days 1',
         {
           ensureExitCode: 0,
         }
-      ).jsonOutput?.result.username;
+      ).jsonOutput;
+
+      const noConfigVarWarning =
+        'Record types defined in the scratch org definition file will stop being capitalized by default in a future release.\nSet the `org-capitalize-record-types` config var to `true` to enforce capitalization.';
+
+      expect(jsonOutput?.warnings[0] === noConfigVarWarning);
+
+      const username = jsonOutput?.result.username;
 
       const recordTypes = execCmd<{ recordTypeInfos: Array<{ name: string }> }>(
         `sobject describe --sobject Case --target-org ${username}`,
@@ -97,6 +112,48 @@ describe('env create scratch NUTs', () => {
       ).jsonOutput?.result.recordTypeInfos;
 
       expect(recordTypes?.find((rt) => rt.name === 'Svc_Technical_Support'));
+    });
+    it('creates an org without capitalized record types', async () => {
+      const scratchDefJson = parseJsonMap(
+        await fs.promises.readFile(path.join(session.project.dir, 'config', 'project-scratch-def.json'), 'utf8')
+      );
+      scratchDefJson.objectSettings = {
+        case: {
+          defaultRecordType: 'Svc_Technical_Support',
+        },
+      };
+
+      // NOTE: remove this once it starts capitalizing record types by default.
+      await execCmd('config set org-capitalize-record-types=false', {
+        async: true,
+        cli: 'sf',
+        ensureExitCode: 0,
+      });
+
+      await fs.promises.writeFile(
+        path.join(session.project.dir, 'config', 'project-scratch-def-1.json'),
+        JSON.stringify(scratchDefJson),
+        'utf-8'
+      );
+
+      const jsonOutput = execCmd<ScratchCreateResponse>(
+        'org create scratch -d -f config/project-scratch-def-1.json -a dreamhouse --duration-days 1',
+        {
+          ensureExitCode: 0,
+        }
+      ).jsonOutput;
+
+      const username = jsonOutput?.result.username;
+
+      const recordTypes = execCmd<{ recordTypeInfos: Array<{ name: string }> }>(
+        `sobject describe --sobject Case --target-org ${username}`,
+        {
+          cli: 'sf',
+          ensureExitCode: 0,
+        }
+      ).jsonOutput?.result.recordTypeInfos;
+
+      expect(recordTypes?.find((rt) => rt.name === 'svc_Technical_Support'));
     });
     it('creates an org from edition flag only and sets tracking to true by default', async () => {
       const resp = execCmd<ScratchCreateResponse>('env:create:scratch --edition developer --json  --wait 60', {
