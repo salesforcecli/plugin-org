@@ -90,7 +90,7 @@ describe('env create scratch NUTs', () => {
       );
 
       const jsonOutput = execCmd<ScratchCreateResponse>(
-        'org create scratch -d -f config/project-scratch-def-1.json -a dreamhouse --duration-days 1',
+        'org create scratch -d -f config/project-scratch-def-1.json -a dreamhouse --duration-days 1 --json',
         {
           ensureExitCode: 0,
         }
@@ -137,7 +137,7 @@ describe('env create scratch NUTs', () => {
       );
 
       const jsonOutput = execCmd<ScratchCreateResponse>(
-        'org create scratch -d -f config/project-scratch-def-1.json -a dreamhouse --duration-days 1',
+        'org create scratch -d -f config/project-scratch-def-1.json -a dreamhouse --duration-days 1 --json',
         {
           ensureExitCode: 0,
         }
