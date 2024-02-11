@@ -24,7 +24,7 @@
     "@types/shelljs": "^0.8.14",
     "eslint-plugin-sf-plugin": "^1.17.3",
     "moment": "^2.30.1",
-    "oclif": "^4.4.2",
+    "oclif": "^4.4.8",
     "shelljs": "^0.8.5",
     "shx": "0.3.4",
     "ts-node": "^10.9.2",
