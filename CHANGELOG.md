@@ -1,3 +1,9 @@
+## [3.3.14](https://github.com/salesforcecli/plugin-org/compare/3.3.13...3.3.14) (2024-02-21)
+
+### Bug Fixes
+
+- **deps:** bump ip from 1.1.8 to 1.1.9 ([ecb8bba](https://github.com/salesforcecli/plugin-org/commit/ecb8bbab01d260bece102d0b2e0f6841775ef0f2))
+
 ## [3.3.13](https://github.com/salesforcecli/plugin-org/compare/3.3.12...3.3.13) (2024-02-18)
 
 ### Bug Fixes
