@@ -8,6 +8,7 @@
 import path from 'node:path';
 import { platform, tmpdir } from 'node:os';
 import fs from 'node:fs';
+import { execSync } from 'node:child_process';
 import {
   Flags,
   loglevel,
@@ -140,7 +141,10 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
         flags.path ? decodeURIComponent(flags.path) : retUrl
       )
     );
-    const cp = await utils.openUrl(`file:///${tempFilePath}`, {
+    const filePathUrl = isWsl
+      ? 'file:///' + execSync(`wslpath -m ${tempFilePath}`).toString().trim()
+      : `file:///${tempFilePath}`;
+    const cp = await utils.openUrl(filePathUrl, {
       ...(flags.browser ? { app: { name: apps[flags.browser] } } : {}),
       ...(flags.private ? { newInstance: platform() === 'darwin', app: { name: apps.browserPrivate } } : {}),
     });
