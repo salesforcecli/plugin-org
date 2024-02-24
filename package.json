@@ -11,7 +11,7 @@
     "@salesforce/sf-plugins-core": "^7.1.9",
     "@salesforce/source-deploy-retrieve": "^10.3.8",
     "chalk": "^5.3.0",
-    "change-case": "^5.4.2",
+    "change-case": "^5.4.3",
     "is-wsl": "^3.1.0",
     "open": "^10.0.3"
   },
