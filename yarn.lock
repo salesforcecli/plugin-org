@@ -1449,7 +1449,7 @@
     read-package-json-fast "^3.0.0"
     which "^3.0.0"
 
-"@oclif/core@^3.15.1", "@oclif/core@^3.16.0", "@oclif/core@^3.18.1", "@oclif/core@^3.18.2", "@oclif/core@^3.19.1", "@oclif/core@^3.19.6":
+"@oclif/core@^3.15.1", "@oclif/core@^3.16.0", "@oclif/core@^3.18.1", "@oclif/core@^3.18.2", "@oclif/core@^3.19.1", "@oclif/core@^3.19.2", "@oclif/core@^3.19.6":
   version "3.19.6"
   resolved "https://registry.yarnpkg.com/@oclif/core/-/core-3.19.6.tgz#12e5cb073016d8c32c469d2fec0cd585ac5c1c09"
   integrity sha512-1ryQWAx7VOf+Wq6pv00uilOo56DrG0drr42crmCQ3eYrPPz252EmNCoFkoOBk7McN6x0f4ega83c0yNNCXmiXw==
@@ -1482,19 +1482,19 @@
     wordwrap "^1.0.0"
     wrap-ansi "^7.0.0"
 
-"@oclif/plugin-command-snapshot@^5.0.6":
-  version "5.0.6"
-  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-5.0.6.tgz#f32d0e7fedc588ef08bbab88db5c60d25eb3ca07"
-  integrity sha512-/DZsDPrUD/Wd4NMjMZ7gkLZIwH3tb1QWGP8m1JebvTi1Rntn/JG+YEz+iE5zKtu12gmSbjAEYPt92itXQLDbbg==
+"@oclif/plugin-command-snapshot@^5.0.9":
+  version "5.0.9"
+  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-5.0.9.tgz#d6d8e565602aab8581ee6d8f203a41d93f0679ea"
+  integrity sha512-lzvdYzGSW2/XGcH+RWyI+EfYcqDQ9Il7/EudTTKsODdhiry6B7IQoRxzs0soRB2myZTZrP+j2HcfG0XWrfXa4Q==
   dependencies:
-    "@oclif/core" "^3.16.0"
+    "@oclif/core" "^3.19.2"
     "@types/lodash.difference" "^4.5.9"
     chalk "^5.3.0"
     just-diff "^5.2.0"
     lodash.difference "^4.5.0"
     lodash.get "^4.4.2"
     lodash.sortby "^4.7.0"
-    semver "^7.5.4"
+    semver "^7.6.0"
     ts-json-schema-generator "^1.5.0"
 
 "@oclif/plugin-help@^6.0.12":
