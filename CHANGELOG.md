@@ -1,3 +1,9 @@
+## [3.3.15](https://github.com/salesforcecli/plugin-org/compare/3.3.14...3.3.15) (2024-02-25)
+
+### Bug Fixes
+
+- **deps:** bump change-case from 5.4.2 to 5.4.3 ([189585a](https://github.com/salesforcecli/plugin-org/commit/189585af1f59bd82d857868f85aa63bccb258aef))
+
 ## [3.3.14](https://github.com/salesforcecli/plugin-org/compare/3.3.13...3.3.14) (2024-02-21)
 
 ### Bug Fixes
