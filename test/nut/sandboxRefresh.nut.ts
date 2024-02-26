@@ -327,8 +327,8 @@ describe('Sandbox Refresh', () => {
       loginUrl: 'https://test.salesforce.com',
     };
     // This call is to auth a completed sandbox refresh
-    // @ts-expect-error stubbing private function
     const sandboxSignupCompleteStub = sinonSandbox
+      // @ts-expect-error stubbing private function
       .stub(Org.prototype, 'sandboxSignupComplete')
       .resolves(sbxAuthResponse);
 

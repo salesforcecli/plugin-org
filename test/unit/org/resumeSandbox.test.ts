@@ -5,7 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
 import {
   Lifecycle,
   Messages,
@@ -49,6 +48,7 @@ const sandboxProcessObj: SandboxProcessObject = {
 
 const sandboxRequestData: SandboxRequestCacheEntry = {
   prodOrgUsername,
+  action: 'Create',
   sandboxRequest: {},
   sandboxProcessObject: {
     SandboxName: sandboxName,
@@ -57,7 +57,7 @@ const sandboxRequestData: SandboxRequestCacheEntry = {
 };
 
 describe('[org resume sandbox]', () => {
-  Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+  Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
   const messages = Messages.loadMessages('@salesforce/plugin-org', 'sandboxbase');
 
   const sandbox = sinon.createSandbox();
