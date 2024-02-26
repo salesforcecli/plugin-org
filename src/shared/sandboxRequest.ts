@@ -6,12 +6,11 @@
  */
 import fs from 'node:fs';
 
-
-import { Logger, SandboxRequest, Messages, SfError, Lifecycle } from '@salesforce/core';
+import { Logger, SandboxInfo, SandboxRequest, Messages, SfError, Lifecycle } from '@salesforce/core';
 import { lowerToUpper } from './utils.js';
 import { SandboxLicenseType } from './orgTypes.js';
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const cloneMessages = Messages.loadMessages('@salesforce/plugin-org', 'clone');
 
 export const generateSboxName = async (): Promise<string> => {
@@ -21,6 +20,13 @@ export const generateSboxName = async (): Promise<string> => {
   await Lifecycle.getInstance().emitWarning(`No SandboxName defined, generating new SandboxName: ${generated}`);
   return generated;
 };
+
+// Reads the sandbox definition file and converts properties to CapCase.
+export function readSandboxDefFile(defFile: string): Partial<SandboxInfo> {
+  const fileContent = fs.readFileSync(defFile, 'utf-8');
+  const parsedContent = JSON.parse(fileContent) as Record<string, unknown>;
+  return lowerToUpper(parsedContent) as Partial<SandboxInfo>;
+}
 
 export async function createSandboxRequest(
   isClone: true,
@@ -45,14 +51,12 @@ export async function createSandboxRequest(
   }
   logger.debug('Varargs: %s ', properties);
 
-  const sandboxDefFileContents = definitionFile
-    ? lowerToUpper(JSON.parse(fs.readFileSync(definitionFile, 'utf-8')) as Record<string, unknown>)
-    : {};
+  const sandboxDefFileContents = definitionFile ? readSandboxDefFile(definitionFile) : {};
   const capitalizedVarArgs = properties ? lowerToUpper(properties) : {};
 
   // varargs override file input
   const sandboxReqWithName: SandboxRequest & { SourceSandboxName?: string } = {
-    ...sandboxDefFileContents,
+    ...(sandboxDefFileContents as Record<string, unknown>),
     ...capitalizedVarArgs,
     SandboxName:
       (capitalizedVarArgs.SandboxName as string) ??
@@ -83,4 +87,5 @@ export async function createSandboxRequest(
 export default {
   createSandboxRequest,
   generateSboxName,
+  readSandboxDefFile,
 };

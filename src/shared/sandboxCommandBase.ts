@@ -6,7 +6,6 @@
  */
 import os from 'node:os';
 
-
 import { SfCommand } from '@salesforce/sf-plugins-core';
 import { Config } from '@oclif/core';
 import {
@@ -25,7 +24,7 @@ import {
 import { SandboxProgress, SandboxStatusData } from './sandboxProgress.js';
 import { State } from './stagedProgress.js';
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'sandboxbase');
 export abstract class SandboxCommandBase<T> extends SfCommand<T> {
   protected sandboxProgress: SandboxProgress;
@@ -36,9 +35,16 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
   // initialized at top of run method
   protected sandboxRequestConfig!: SandboxRequestCache;
   protected sandboxRequestData: SandboxRequestCacheEntry | undefined;
+  protected action: 'Create' | 'Refresh' | 'Create/Refresh';
   public constructor(argv: string[], config: Config) {
     super(argv, config);
-    this.sandboxProgress = new SandboxProgress();
+    this.action =
+      this.constructor.name === 'RefreshSandbox'
+        ? 'Refresh'
+        : this.constructor.name === 'CreateSandbox'
+        ? 'Create'
+        : 'Create/Refresh';
+    this.sandboxProgress = new SandboxProgress({ action: this.action });
   }
   protected async getSandboxRequestConfig(): Promise<SandboxRequestCache> {
     if (!this.sandboxRequestConfig) {
@@ -75,7 +81,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
 
   protected registerLifecycleListeners(
     lifecycle: Lifecycle,
-    options: { isAsync: boolean; alias?: string; setDefault: boolean; prodOrg?: Org; tracksSource?: boolean }
+    options: { isAsync: boolean; alias?: string; setDefault?: boolean; prodOrg?: Org; tracksSource?: boolean }
   ): void {
     lifecycle.on('POLLING_TIME_OUT', async () => {
       this.pollingTimeOut = true;
@@ -111,7 +117,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
         );
       }
       if (this.pollingTimeOut) {
-        this.warn(messages.getMessage('warning.ClientTimeoutWaitingForSandboxCreate'));
+        this.warn(messages.getMessage('warning.ClientTimeoutWaitingForSandboxProcess', [this.action.toLowerCase()]));
       }
       this.log(this.sandboxProgress.formatProgressStatus(false));
       return Promise.resolve(this.info(messages.getMessage('checkSandboxStatus', this.getCheckSandboxStatusParams())));
@@ -143,7 +149,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
         const authInfo = await AuthInfo.create({ username: results.sandboxRes?.authUserName });
         await authInfo.handleAliasAndDefaultSettings({
           alias: options.alias,
-          setDefault: options.setDefault,
+          setDefault: options.setDefault ?? false,
           setDefaultDevHub: false,
           setTracksSource: await this.calculateTrackingSetting(options.tracksSource),
         });
@@ -174,11 +180,11 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
 
   protected reportResults(results: ResultEvent): void {
     this.log();
-    this.styledHeader('Sandbox Org Creation Status');
+    this.styledHeader(`Sandbox Org ${this.action} Status`);
     this.log(this.sandboxProgress.formatProgressStatus(false));
     this.logSuccess(
       [
-        messages.getMessage('sandboxSuccess'),
+        messages.getMessage('sandboxSuccess', [this.action.toLowerCase()]),
         messages.getMessages('sandboxSuccess.actions', [
           results.sandboxRes?.authUserName,
           this.config.bin,

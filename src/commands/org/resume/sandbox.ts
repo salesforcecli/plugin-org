@@ -5,8 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
-
 import { Flags } from '@salesforce/sf-plugins-core';
 import {
   StateAggregator,
@@ -25,7 +23,7 @@ import { Duration } from '@salesforce/kit';
 import { Interfaces } from '@oclif/core';
 import { SandboxCommandBase } from '../../../shared/sandboxCommandBase.js';
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'resume.sandbox');
 
 export default class ResumeSandbox extends SandboxCommandBase<SandboxProcessObject> {
@@ -142,10 +140,10 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxProcessObje
     const sandboxReq = this.createResumeSandboxRequest();
 
     if (this.flags.wait?.seconds && this.flags.wait.seconds > 0) {
-      this.spinner.start('Resume Create');
+      this.spinner.start(`Resume ${this.sandboxRequestData.action ?? 'Create/Refresh'}`);
     }
 
-    this.debug('Calling create with ResumeSandboxRequest: %s ', sandboxReq);
+    this.debug('Calling resume with ResumeSandboxRequest: %s ', sandboxReq);
 
     try {
       return await this.prodOrg.resumeSandbox(sandboxReq, {
@@ -188,6 +186,12 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxProcessObje
       sandboxRequestCacheEntry = sce;
     }
 
+    // If the action is in the cache entry, use it.
+    if (sandboxRequestCacheEntry?.action) {
+      this.action = sandboxRequestCacheEntry?.action;
+      this.sandboxProgress.action = sandboxRequestCacheEntry?.action;
+    }
+
     return {
       ...(sandboxRequestCacheEntry ?? {
         sandboxProcessObject: { SandboxName: this.flags.name },
@@ -195,6 +199,7 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxProcessObje
         setDefault: false,
       }),
       prodOrgUsername: sandboxRequestCacheEntry?.prodOrgUsername ?? (this.flags['target-org']?.getUsername() as string),
+      action: sandboxRequestCacheEntry?.action ?? 'Create', // default to Create
     };
   }
 
