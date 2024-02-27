@@ -22,7 +22,7 @@ import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create_scratch');
 
-export const secretTimeout = 60000;
+export const secretTimeout = 60_000;
 
 const definitionFileHelpGroupName = 'Definition File Override';
 export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {

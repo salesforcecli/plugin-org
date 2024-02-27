@@ -6,7 +6,6 @@
  */
 
 import { Duration, omit } from '@salesforce/kit';
-import { isString } from '@salesforce/ts-types';
 import { Flags } from '@salesforce/sf-plugins-core';
 import { Lifecycle, Messages, SandboxInfo, SandboxEvents, SandboxProcessObject, SfError } from '@salesforce/core';
 import { Ux } from '@salesforce/sf-plugins-core';
@@ -204,7 +203,8 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxProcessObj
       const sandboxInfoRecord = await prodOrgConnection.singleRecordQuery<SandboxInfoRecord>(soql, { tooling: true });
       sandboxInfo = omit(sandboxInfoRecord, 'attributes');
     } catch (error: unknown) {
-      const err = error instanceof Error ? error : isString(error) ? SfError.wrap(error) : new SfError('unknown');
+      const err =
+        error instanceof Error ? error : typeof error === 'string' ? SfError.wrap(error) : new SfError('unknown');
       if (err.name === 'SingleRecordQuery_NoRecords') {
         throw messages.createError('error.SandboxNotFound', [sbxName, prodOrg.getUsername()]);
       }

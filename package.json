@@ -6,9 +6,9 @@
   "bugs": "https://github.com/forcedotcom/cli/issues",
   "dependencies": {
     "@oclif/core": "^3.18.1",
-    "@salesforce/core": "^6.5.1",
+    "@salesforce/core": "^6.6.0",
     "@salesforce/kit": "^3.0.15",
-    "@salesforce/sf-plugins-core": "^7.1.4",
+    "@salesforce/sf-plugins-core": "^7.1.14",
     "@salesforce/source-deploy-retrieve": "^10.3.8",
     "chalk": "^5.3.0",
     "change-case": "^5.4.2",
@@ -26,7 +26,6 @@
     "moment": "^2.30.1",
     "oclif": "^4.4.2",
     "shelljs": "^0.8.5",
-    "shx": "0.3.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },
@@ -36,8 +35,9 @@
   "files": [
     "/lib",
     "/messages",
-    "/oclif.manifest.json",
-    "/oclif.lock"
+    "/npm-shrinkwrap.json",
+    "/oclif.lock",
+    "/oclif.manifest.json"
   ],
   "homepage": "https://github.com/salesforcecli/plugin-org",
   "keywords": [
@@ -100,13 +100,12 @@
     "build": "wireit",
     "clean": "sf-clean",
     "clean-all": "sf-clean all",
-    "clean:lib": "shx rm -rf lib && shx rm -rf coverage && shx rm -rf .nyc_output && shx rm -f oclif.manifest.json oclif.lock",
     "compile": "wireit",
     "docs": "sf-docs",
     "format": "wireit",
     "link-check": "wireit",
     "lint": "wireit",
-    "postpack": "shx rm -f oclif.manifest.json oclif.lock",
+    "postpack": "sf-clean --ignore-signing-artifacts",
     "prepack": "sf-prepack",
     "prepare": "sf-install",
     "test": "wireit",
