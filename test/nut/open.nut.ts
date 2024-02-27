@@ -56,7 +56,7 @@ describe('test org:open command', () => {
     // we need stuff in the org
     const cs = await ComponentSetBuilder.build({ sourcepath: [path.join(session.project.dir, 'force-app')] });
     const deploy = await cs.deploy({ usernameOrConnection: defaultUsername });
-    const deployResult = await deploy.pollStatus(1000, 60000);
+    const deployResult = await deploy.pollStatus(1000, 60_000);
     expect(deployResult.getFileResponses().length).to.not.equal(0);
     const result = execCmd<OrgOpenOutput>(`force:source:open --sourcefile ${flexiPagePath} --urlonly --json`, {
       ensureExitCode: 0,

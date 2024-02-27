@@ -31,9 +31,18 @@ export type SandboxStatusData = {
   sandboxProcessObj?: SandboxProcessObject | undefined;
 };
 
+export type SandboxProgressConfig = {
+  stageNames?: string[];
+  action?: 'Create' | 'Refresh' | 'Create/Refresh';
+};
+
 export class SandboxProgress extends StagedProgress<SandboxStatusData> {
-  public constructor(stageNames: string[] = ['Pending', 'Processing', 'Activating', 'Authenticating']) {
+  public action: SandboxProgressConfig['action'];
+
+  public constructor(config?: SandboxProgressConfig) {
+    const stageNames = config?.stageNames ?? ['Pending', 'Processing', 'Activating', 'Authenticating'];
     super(stageNames);
+    this.action = config?.action ?? 'Create/Refresh';
   }
   // eslint-disable-next-line class-methods-use-this
   public getLogSandboxProcessResult(result: ResultEvent): string {
@@ -72,7 +81,7 @@ export class SandboxProgress extends StagedProgress<SandboxStatusData> {
         : undefined,
       table,
       '---------------------',
-      'Sandbox Create Stages',
+      `Sandbox ${this.action} Stages`,
       this.formatStages(),
     ]
       .filter(isDefined)
@@ -105,7 +114,6 @@ export const getTableDataFromProcessObj = (
   { key: 'Created Date', value: sandboxProcessObj.CreatedDate },
   { key: 'CopyProgress', value: `${sandboxProcessObj.CopyProgress}%` },
   ...(sandboxProcessObj.SourceId ? [{ key: 'SourceId', value: sandboxProcessObj.SourceId }] : []),
-  ...(sandboxProcessObj.Description ? [{ key: 'Description', value: sandboxProcessObj.Description }] : []),
   ...(sandboxProcessObj.SandboxOrganization
     ? [{ key: 'SandboxOrg', value: sandboxProcessObj.SandboxOrganization }]
     : []),

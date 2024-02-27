@@ -201,6 +201,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
       alias: this.flags.alias,
       setDefault: this.flags['set-default'],
       prodOrgUsername: this.flags['target-org'].getUsername() as string,
+      action: 'Create',
       sandboxProcessObject: {
         SandboxName: sandboxReq.SandboxName,
       },

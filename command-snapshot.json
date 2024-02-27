@@ -189,6 +189,23 @@
     "plugin": "@salesforce/plugin-org"
   },
   {
+    "command": "org:refresh:sandbox",
+    "flagAliases": [],
+    "flagChars": ["i", "f", "n", "o", "w"],
+    "flags": [
+      "auto-activate",
+      "async",
+      "json",
+      "name",
+      "definition-file",
+      "no-prompt",
+      "target-org",
+      "poll-interval",
+      "wait"
+    ],
+    "plugin": "@salesforce/plugin-org"
+  },
+  {
     "alias": ["env:resume:scratch"],
     "command": "org:resume:scratch",
     "flagAliases": [],

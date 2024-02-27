@@ -25,8 +25,8 @@ export const getClockForSeconds = (timeInSec: number): string => {
 };
 export const getTimeComponentsFromSeconds = (timeInSec: number): TimeComponents => {
   const days = Duration.days(Math.floor(timeInSec / 86_400));
-  const hours = Duration.hours(Math.floor((timeInSec % 86_400) / 3_600));
-  const minutes = Duration.minutes(Math.floor((timeInSec % 3_600) / 60));
+  const hours = Duration.hours(Math.floor((timeInSec % 86_400) / 3600));
+  const minutes = Duration.minutes(Math.floor((timeInSec % 3600) / 60));
   const seconds = Duration.seconds(Math.floor(timeInSec % 60));
 
   return { days, hours, minutes, seconds };

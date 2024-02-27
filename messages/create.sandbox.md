@@ -6,15 +6,21 @@ Create a sandbox org.
 
 There are two ways to create a sandbox org: specify a definition file that contains the sandbox options or use the --name and --license-type flags to specify the two required options. If you want to set an option other than name or license type, such as apexClassId, you must use a definition file.
 
+You can also use this command to clone an existing sandbox. Use the --clone flag to specify the existing sandbox name and the --name flag to the name of the new sandbox.
+
 # examples
 
 - Create a sandbox org using a definition file and give it the alias "MyDevSandbox". The production org that contains the sandbox license has the alias "prodOrg".
 
-  <%= config.bin %> <%= command.id %> -f config/dev-sandbox-def.json --alias MyDevSandbox --target-org prodOrg
+  <%= config.bin %> <%= command.id %> --definition-file config/dev-sandbox-def.json --alias MyDevSandbox --target-org prodOrg
 
 - Create a sandbox org by directly specifying its name and type of license (Developer) instead of using a definition file. Set the sandbox org as your default.
 
   <%= config.bin %> <%= command.id %> --name mysandbox --license-type Developer --alias MyDevSandbox --target-org prodOrg --set-default
+
+- Clone the existing sandbox with name "ExistingSandbox" and name the new sandbox "NewClonedSandbox". Set the new sandbox as your default org. Wait for 30 minutes for the sandbox creation to complete.
+
+  <%= config.bin %> <%= command.id %> --clone ExistingSandbox --name NewClonedSandbox --target-org prodOrg --alias MyDevSandbox --set-default --wait 30
 
 # flags.setDefault.summary
 
@@ -42,7 +48,7 @@ Path to a sandbox definition file.
 
 # flags.definitionFile.description
 
-The sandbox definition file is a blueprint for the sandbox. You can create different definition files for each sandbox type that you use in the development process. See <https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_sandbox_definition.htm> for all the options you can specify in the defintion file.
+The sandbox definition file is a blueprint for the sandbox. You can create different definition files for each sandbox type that you use in the development process. See <https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_sandbox_definition.htm> for all the options you can specify in the definition file.
 
 # flags.name.summary
 
@@ -58,7 +64,7 @@ Name of the sandbox org to clone.
 
 # flags.clone.description
 
-The value of clone must be an existing sandbox in the same target-org.
+The value of --clone must be an existing sandbox. The existing sandbox, and the new sandbox specified with the --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
 
 # flags.licenseType.summary
 
