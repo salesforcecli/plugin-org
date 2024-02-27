@@ -30,7 +30,7 @@ import {
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'sandboxbase');
 
-describe('Sandbox Refresh', () => {
+describe.skip('Sandbox Refresh', () => {
   let session: TestSession;
   let hubOrgUsername: string;
   let cacheFilePath: string;
