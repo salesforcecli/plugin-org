@@ -1,3 +1,27 @@
+## [3.3.16](https://github.com/salesforcecli/plugin-org/compare/3.3.15...3.3.16) (2024-02-25)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/sf-plugins-core from 7.1.9 to 7.1.12 ([7f55922](https://github.com/salesforcecli/plugin-org/commit/7f55922f857f9ba5ed1adf4b7c95926fa2de498d))
+
+## [3.3.15](https://github.com/salesforcecli/plugin-org/compare/3.3.14...3.3.15) (2024-02-25)
+
+### Bug Fixes
+
+- **deps:** bump change-case from 5.4.2 to 5.4.3 ([189585a](https://github.com/salesforcecli/plugin-org/commit/189585af1f59bd82d857868f85aa63bccb258aef))
+
+## [3.3.14](https://github.com/salesforcecli/plugin-org/compare/3.3.13...3.3.14) (2024-02-21)
+
+### Bug Fixes
+
+- **deps:** bump ip from 1.1.8 to 1.1.9 ([ecb8bba](https://github.com/salesforcecli/plugin-org/commit/ecb8bbab01d260bece102d0b2e0f6841775ef0f2))
+
+## [3.3.13](https://github.com/salesforcecli/plugin-org/compare/3.3.12...3.3.13) (2024-02-18)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/sf-plugins-core from 7.1.4 to 7.1.9 ([864eb6d](https://github.com/salesforcecli/plugin-org/commit/864eb6d63c5eb2ea5c9d19b36f3d035c058d57e4))
+
 ## [3.3.12](https://github.com/salesforcecli/plugin-org/compare/3.3.11...3.3.12) (2024-02-11)
 
 ### Bug Fixes
