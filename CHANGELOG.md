@@ -1,3 +1,16 @@
+# [3.4.0](https://github.com/salesforcecli/plugin-org/compare/3.3.16...3.4.0) (2024-02-27)
+
+### Bug Fixes
+
+- add command schema file for sandbox refresh ([5d0a29f](https://github.com/salesforcecli/plugin-org/commit/5d0a29fbc0e69b808aa98ca1eb2541427d5ef8e0))
+- bump core and sf-plugins-core versions ([e7763a4](https://github.com/salesforcecli/plugin-org/commit/e7763a4b88710a49112d55b26f0a35a81c9b1c79))
+- edit new refresh sandbox messages, and tweak other messages ([c0d7067](https://github.com/salesforcecli/plugin-org/commit/c0d7067de7bc4273274324d93392bac4f2d5f904))
+- update snapshot ([65de15f](https://github.com/salesforcecli/plugin-org/commit/65de15febc94cd544e270ad381601a0f8ffaf870))
+
+### Features
+
+- add support for refreshing sandboxes ([3f9d5ca](https://github.com/salesforcecli/plugin-org/commit/3f9d5cac9038eadf3df82d836e6300ecdeaaae6d))
+
 ## [3.3.16](https://github.com/salesforcecli/plugin-org/compare/3.3.15...3.3.16) (2024-02-25)
 
 ### Bug Fixes

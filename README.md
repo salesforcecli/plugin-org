@@ -110,6 +110,7 @@ the [SandboxNuts](https://github.com/salesforcecli/plugin-org/actions/workflows/
 - [`sf org list metadata`](#sf-org-list-metadata)
 - [`sf org list metadata-types`](#sf-org-list-metadata-types)
 - [`sf org open`](#sf-org-open)
+- [`sf org refresh sandbox`](#sf-org-refresh-sandbox)
 - [`sf org resume sandbox`](#sf-org-resume-sandbox)
 - [`sf org resume scratch`](#sf-org-resume-scratch)
 
@@ -147,6 +148,9 @@ DESCRIPTION
   --name and --license-type flags to specify the two required options. If you want to set an option other than name or
   license type, such as apexClassId, you must use a definition file.
 
+  You can also use this command to clone an existing sandbox. Use the --clone flag to specify the existing sandbox name
+  and the --name flag to the name of the new sandbox.
+
 ALIASES
   $ sf env create sandbox
 
@@ -154,13 +158,19 @@ EXAMPLES
   Create a sandbox org using a definition file and give it the alias "MyDevSandbox". The production org that contains
   the sandbox license has the alias "prodOrg".
 
-    $ sf org create sandbox -f config/dev-sandbox-def.json --alias MyDevSandbox --target-org prodOrg
+    $ sf org create sandbox --definition-file config/dev-sandbox-def.json --alias MyDevSandbox --target-org prodOrg
 
   Create a sandbox org by directly specifying its name and type of license (Developer) instead of using a definition
   file. Set the sandbox org as your default.
 
     $ sf org create sandbox --name mysandbox --license-type Developer --alias MyDevSandbox --target-org prodOrg \
       --set-default
+
+  Clone the existing sandbox with name "ExistingSandbox" and name the new sandbox "NewClonedSandbox". Set the new
+  sandbox as your default org. Wait for 30 minutes for the sandbox creation to complete.
+
+    $ sf org create sandbox --clone ExistingSandbox --name NewClonedSandbox --target-org prodOrg --alias \
+      MyDevSandbox --set-default --wait 30
 
 FLAG DESCRIPTIONS
   -a, --alias=<value>  Alias for the sandbox org.
@@ -173,14 +183,15 @@ FLAG DESCRIPTIONS
 
   -c, --clone=<value>  Name of the sandbox org to clone.
 
-    The value of clone must be an existing sandbox in the same target-org.
+    The value of --clone must be an existing sandbox. The existing sandbox, and the new sandbox specified with the
+    --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
 
   -f, --definition-file=<value>  Path to a sandbox definition file.
 
     The sandbox definition file is a blueprint for the sandbox. You can create different definition files for each
     sandbox type that you use in the development process. See
     <https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_sandbox_definition.htm> for all
-    the options you can specify in the defintion file.
+    the options you can specify in the definition file.
 
   -n, --name=<value>  Name of the sandbox org.
 
@@ -216,7 +227,7 @@ FLAG DESCRIPTIONS
     sandbox.
 ```
 
-_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.3.16/src/commands/org/create/sandbox.ts)_
+_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.0/src/commands/org/create/sandbox.ts)_
 
 ## `sf org create scratch`
 
@@ -369,7 +380,7 @@ FLAG DESCRIPTIONS
     Omit this flag to have Salesforce generate a unique username for your org.
 ```
 
-_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.3.16/src/commands/org/create/scratch.ts)_
+_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.0/src/commands/org/create/scratch.ts)_
 
 ## `sf org delete sandbox`
 
@@ -413,7 +424,7 @@ EXAMPLES
     $ sf org delete sandbox --target-org my-sandbox --no-prompt
 ```
 
-_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.3.16/src/commands/org/delete/sandbox.ts)_
+_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.0/src/commands/org/delete/sandbox.ts)_
 
 ## `sf org delete scratch`
 
@@ -455,7 +466,7 @@ EXAMPLES
     $ sf org delete scratch --target-org my-scratch-org --no-prompt
 ```
 
-_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.3.16/src/commands/org/delete/scratch.ts)_
+_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.0/src/commands/org/delete/scratch.ts)_
 
 ## `sf org disable tracking`
 
@@ -493,7 +504,7 @@ EXAMPLES
     $ sf org disable tracking
 ```
 
-_See code: [src/commands/org/disable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/3.3.16/src/commands/org/disable/tracking.ts)_
+_See code: [src/commands/org/disable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.0/src/commands/org/disable/tracking.ts)_
 
 ## `sf org display`
 
@@ -537,7 +548,7 @@ EXAMPLES
     $ sf org display --target-org TestOrg1 --verbose
 ```
 
-_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/3.3.16/src/commands/org/display.ts)_
+_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.0/src/commands/org/display.ts)_
 
 ## `sf org enable tracking`
 
@@ -578,7 +589,7 @@ EXAMPLES
     $ sf org enable tracking
 ```
 
-_See code: [src/commands/org/enable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/3.3.16/src/commands/org/enable/tracking.ts)_
+_See code: [src/commands/org/enable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.0/src/commands/org/enable/tracking.ts)_
 
 ## `sf org list`
 
@@ -616,7 +627,7 @@ EXAMPLES
     $ sf org list --clean
 ```
 
-_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/3.3.16/src/commands/org/list.ts)_
+_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.0/src/commands/org/list.ts)_
 
 ## `sf org list metadata`
 
@@ -681,7 +692,7 @@ FLAG DESCRIPTIONS
     Examples of metadata types that use folders are Dashboard, Document, EmailTemplate, and Report.
 ```
 
-_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/3.3.16/src/commands/org/list/metadata.ts)_
+_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.0/src/commands/org/list/metadata.ts)_
 
 ## `sf org list metadata-types`
 
@@ -735,7 +746,7 @@ FLAG DESCRIPTIONS
     Override the api version used for api requests made by this command
 ```
 
-_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/3.3.16/src/commands/org/list/metadata-types.ts)_
+_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.0/src/commands/org/list/metadata-types.ts)_
 
 ## `sf org open`
 
@@ -806,7 +817,79 @@ EXAMPLES
     $ sf org open --source-file force-app/main/default/flows/Hello.flow-meta.xml
 ```
 
-_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/3.3.16/src/commands/org/open.ts)_
+_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.0/src/commands/org/open.ts)_
+
+## `sf org refresh sandbox`
+
+Refresh a sandbox org using the sandbox name.
+
+```
+USAGE
+  $ sf org refresh sandbox -o <value> [--json] [--auto-activate] [-w <value> | --async] [-i <value> | ] [-n <value>] [-f
+    <value>] [--no-prompt]
+
+FLAGS
+  -f, --definition-file=<value>  Path to a sandbox definition file for overriding its configuration when you refresh it.
+  -i, --poll-interval=<seconds>  [default: 30 seconds] Number of seconds to wait between status polling requests.
+  -n, --name=<value>             Name of the existing sandbox org in your production org that you want to refresh.
+  -o, --target-org=<value>       (required) Username or alias of the production org that contains the sandbox license.
+  -w, --wait=<minutes>           [default: 30 minutes] Number of minutes to poll for sandbox refresh status.
+      --async                    Request the sandbox refresh, but don't wait for it to complete.
+      --[no-]auto-activate       Activates the sandbox after a successful refresh.
+      --no-prompt                Don't prompt for confirmation about the sandbox refresh.
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+DESCRIPTION
+  Refresh a sandbox org using the sandbox name.
+
+  Refreshing a sandbox copies the metadata, and optionally data, from your production org to the refreshed sandbox org.
+  You can optionally specify a definition file if you want to change the configuration of the refreshed sandbox, such as
+  its license type or template ID.
+
+  You're not allowed to change the sandbox name when you refresh it with this command. If you want to change the sandbox
+  name, first delete it with the "org delete sandbox" command. And then recreate it with the "org create sandbox"
+  command and give it a new name.
+
+EXAMPLES
+  Refresh the sandbox named "devSbx1". The production org that contains the sandbox license has the alias "prodOrg".
+
+    $ sf org refresh sandbox --name devSbx1 --target-org prodOrg
+
+  Refresh the sandbox named "devSbx2", and override the configuration of the refreshed sandbox with the properties in
+  the specified defintion file. The default target org is the production org, so you don't need to specify the
+  `--target-org` flag in this case.
+
+    $ sf org refresh sandbox --name devSbx2 --definition-file devSbx2-config.json
+
+  Refresh the sandbox using the name defined in the definition file. The production org that contains the sandbox
+  license has the alias "prodOrg".
+
+    $ sf org refresh sandbox --definition-file devSbx3-config.json --target-org prodOrg
+
+FLAG DESCRIPTIONS
+  -f, --definition-file=<value>  Path to a sandbox definition file for overriding its configuration when you refresh it.
+
+    The sandbox definition file is a blueprint for the sandbox; use the file to change the sandbox configuration during
+    a refresh. If you don't want to change the sandbox configuration when you refresh it, then simply use the --name
+    flag to specify the sandbox and don't use this flag. See
+    <https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_sandbox_definition.htm> for all
+    the options you can specify in the definition file.
+
+  -w, --wait=<minutes>  Number of minutes to poll for sandbox refresh status.
+
+    If the command continues to run after the wait period, the CLI returns control of the terminal to you and displays
+    the "sf org resume sandbox" command for you run to check the status of the refresh. The displayed command includes
+    the job ID for the running sandbox refresh.
+
+  --async  Request the sandbox refresh, but don't wait for it to complete.
+
+    The command immediately displays the job ID and returns control of the terminal to you. This way, you can continue
+    to use the CLI. To check the status of the sandbox refresh, run "sf org resume sandbox".
+```
+
+_See code: [src/commands/org/refresh/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.0/src/commands/org/refresh/sandbox.ts)_
 
 ## `sf org resume sandbox`
 
@@ -868,7 +951,7 @@ FLAG DESCRIPTIONS
     returns the job ID. To resume checking the sandbox creation, rerun this command.
 ```
 
-_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.3.16/src/commands/org/resume/sandbox.ts)_
+_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.0/src/commands/org/resume/sandbox.ts)_
 
 ## `sf org resume scratch`
 
@@ -914,6 +997,6 @@ FLAG DESCRIPTIONS
     The job ID is valid for 24 hours after you start the scratch org creation.
 ```
 
-_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.3.16/src/commands/org/resume/scratch.ts)_
+_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.0/src/commands/org/resume/scratch.ts)_
 
 <!-- commandsstop -->
