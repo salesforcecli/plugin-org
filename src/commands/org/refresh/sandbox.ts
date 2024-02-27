@@ -50,7 +50,6 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxProcessObj
   public static flags = {
     'auto-activate': Flags.boolean({
       summary: messages.getMessage('flags.auto-activate.summary'),
-      description: messages.getMessage('flags.auto-activate.description'),
       default: true,
       allowNo: true,
     }),
@@ -81,7 +80,6 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxProcessObj
     name: Flags.string({
       char: 'n',
       summary: messages.getMessage('flags.name.summary'),
-      description: messages.getMessage('flags.name.description'),
       parse: (name: string): Promise<string> => {
         if (name.length > 10) {
           throw messages.createError('error.SandboxNameLength', [name]);
@@ -98,7 +96,6 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxProcessObj
     'target-org': Flags.requiredOrg({
       char: 'o',
       summary: messages.getMessage('flags.targetOrg.summary'),
-      description: messages.getMessage('flags.targetOrg.description'),
       required: true,
     }),
     'no-prompt': Flags.boolean({
