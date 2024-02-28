@@ -30,7 +30,7 @@ import {
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'sandboxbase');
 
-describe.skip('Sandbox Refresh', () => {
+describe('Sandbox Refresh', () => {
   let session: TestSession;
   let hubOrgUsername: string;
   let cacheFilePath: string;
@@ -190,6 +190,7 @@ describe.skip('Sandbox Refresh', () => {
 
     try {
       await RefreshSandbox.run(['--name', sbxName, '-o', hubOrgUsername, '--async', '--json']);
+      assert(false, 'Expected SandboxNotFoundError');
     } catch (e) {
       assert(e instanceof SfError, 'Expect error to be an instance of SfError');
       expect(e.name).to.equal('SandboxNotFoundError');
@@ -299,7 +300,7 @@ describe.skip('Sandbox Refresh', () => {
     expect(sfCommandUxStubs.info.firstCall.args[0]).to.equal(sbxStatusMsg);
   });
 
-  it.skip('should poll and report a success and write an auth file', async () => {
+  it('should poll and report a success and write an auth file', async () => {
     const sbxInfo = getSandboxInfo();
     const sbxName = sbxInfo.SandboxName;
     const sbxProcess = getSandboxProcess();

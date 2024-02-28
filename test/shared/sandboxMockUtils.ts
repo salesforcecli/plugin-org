@@ -114,7 +114,7 @@ export const stubProdOrgConnection = async (
     .stub(Org, 'create')
     .withArgs({ aliasOrUsername: username })
     .callsFake(async (opts) => {
-      const org = (await orgCreateFn.call(Org, opts)) as Org;
+      const org = (await orgCreateFn(opts)) as Org;
       // @ts-expect-error re-assigning a private property
       org.connection = connection;
       return org;
