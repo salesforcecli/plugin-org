@@ -9,7 +9,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { assert, expect } from 'chai';
 import sinon from 'sinon';
-import { TestSession } from '@salesforce/cli-plugins-testkit';
+import { TestSession, genUniqueString } from '@salesforce/cli-plugins-testkit';
 import { Org, SandboxProcessObject, SandboxRequestCache, SfError, Messages, AuthInfo } from '@salesforce/core';
 import { stubSfCommandUx, stubSpinner, stubUx } from '@salesforce/sf-plugins-core';
 import RefreshSandbox from '../../src/commands/org/refresh/sandbox.js';
@@ -43,9 +43,11 @@ describe('Sandbox Refresh', () => {
   const sandboxProcessSoql = getSandboxProcessSoql();
 
   before(async () => {
+    const uid = genUniqueString('sbxRefresh_%s');
     session = await TestSession.create({
       project: { name: 'sandboxRefresh' },
       devhubAuthStrategy: 'AUTO',
+      sessionDir: path.join(process.cwd(), `test_session_${uid}`),
     });
     assert(session.hubOrg.username);
     hubOrgUsername = session.hubOrg.username;
@@ -67,13 +69,13 @@ describe('Sandbox Refresh', () => {
     await session?.clean();
   });
 
-  afterEach(async () => {
-    sinonSandbox.restore();
+  afterEach(() => {
     try {
-      await deleteSandboxCacheFile(cacheFilePath);
+      deleteSandboxCacheFile(cacheFilePath);
     } catch (err) {
       // ignore since there isn't always a cache file written
     }
+    sinonSandbox.restore();
   });
 
   //
@@ -110,7 +112,7 @@ describe('Sandbox Refresh', () => {
     expect(toolingQueryStub.calledOnce).to.be.true;
 
     // check the sandbox cache entry
-    const cache = await readSandboxCacheFile(cacheFilePath);
+    const cache = readSandboxCacheFile(cacheFilePath);
     expect(cache).to.have.property(sbxName);
     expect(cache[sbxName]).to.have.property('action', 'Refresh');
     expect(cache[sbxName]).to.have.property('prodOrgUsername', hubOrgUsername);
@@ -154,7 +156,7 @@ describe('Sandbox Refresh', () => {
     expect(toolingQueryStub.calledOnce).to.be.true;
 
     // check the sandbox cache entry
-    const cache = await readSandboxCacheFile(cacheFilePath);
+    const cache = readSandboxCacheFile(cacheFilePath);
     expect(cache).to.have.property(sbxName);
     expect(cache[sbxName]).to.have.property('action', 'Refresh');
     expect(cache[sbxName]).to.have.property('prodOrgUsername', hubOrgUsername);
@@ -239,7 +241,7 @@ describe('Sandbox Refresh', () => {
     expect(toolingQueryStub.calledOnce).to.be.true;
 
     // check the sandbox cache entry
-    const cache = await readSandboxCacheFile(cacheFilePath);
+    const cache = readSandboxCacheFile(cacheFilePath);
     expect(cache).to.have.property(sbxName);
     expect(cache[sbxName]).to.have.property('action', 'Refresh');
     expect(cache[sbxName]).to.have.property('prodOrgUsername', hubOrgUsername);
@@ -284,7 +286,7 @@ describe('Sandbox Refresh', () => {
     expect(querySandboxProcessByIdStub.callCount).to.be.greaterThan(2);
 
     // check the sandbox cache entry
-    const cache = await readSandboxCacheFile(cacheFilePath);
+    const cache = readSandboxCacheFile(cacheFilePath);
     expect(cache).to.have.property(sbxName);
     expect(cache[sbxName]).to.have.property('action', 'Refresh');
     expect(cache[sbxName]).to.have.property('prodOrgUsername', hubOrgUsername);
@@ -370,7 +372,7 @@ describe('Sandbox Refresh', () => {
     expect(authInfoCreateStub.called, 'authInfoCreateStub called').to.be.true;
 
     // Check auth files exist
-    const authFileContents = await readAuthFile(session.homeDir, sbxAuthResponse.authUserName);
+    const authFileContents = readAuthFile(session.homeDir, sbxAuthResponse.authUserName);
     expect(authFileContents).to.be.ok;
     expect(authFileContents).to.have.property('username', sbxAuthResponse.authUserName);
     expect(authFileContents).to.have.property('parentUsername', hubOrgUsername);
@@ -380,7 +382,7 @@ describe('Sandbox Refresh', () => {
 
     // check sandbox auth file doesn't exist
     try {
-      await readSandboxCacheFile(cacheFilePath);
+      readSandboxCacheFile(cacheFilePath);
       assert(false, 'should not have found a sandbox cache file');
     } catch (err) {
       // ignore
