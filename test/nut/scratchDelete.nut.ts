@@ -7,7 +7,7 @@
 
 import path from 'node:path';
 import fs from 'node:fs';
-import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
+import { execCmd, TestSession, genUniqueString } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
 import { ScratchDeleteResponse } from '../../src/commands/org/delete/scratch.js';
 
@@ -18,8 +18,10 @@ describe('org:delete:scratch NUTs', () => {
   let session: TestSession;
 
   before(async () => {
+    const uid = genUniqueString('scratchDelete_%s');
     session = await TestSession.create({
       project: { name: 'scratchOrgDelete' },
+      sessionDir: path.join(process.cwd(), `test_session_${uid}`),
       devhubAuthStrategy: 'AUTO',
       scratchOrgs: [
         {

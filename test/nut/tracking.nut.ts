@@ -5,23 +5,25 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
-import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
+import path from 'node:path';
+import { execCmd, TestSession, genUniqueString } from '@salesforce/cli-plugins-testkit';
 import { expect } from 'chai';
 import { Messages } from '@salesforce/core';
 import { OrgEnableTrackingResult } from '../../src/commands/org/enable/tracking.js';
 import { OrgDisableTrackingResult } from '../../src/commands/org/disable/tracking.js';
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'org.enable.tracking');
 
 describe('org enable/disable tracking NUTs', () => {
   let session: TestSession;
 
   before(async () => {
+    const uid = genUniqueString('tracking_%s');
     session = await TestSession.create({
       devhubAuthStrategy: 'AUTO',
       project: { name: 'orgEnableDisableTrackingNut' },
+      sessionDir: path.join(process.cwd(), `test_session_${uid}`),
       scratchOrgs: [{ setDefault: true, edition: 'developer' }],
     });
   });
