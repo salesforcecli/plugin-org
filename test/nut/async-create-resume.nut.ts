@@ -7,7 +7,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
+import { execCmd, TestSession, genUniqueString } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
 import { AuthFields, Global, ScratchOrgCache } from '@salesforce/core';
 import { CachedOptions } from '@salesforce/core/lib/org/scratchOrgCache.js';
@@ -37,8 +37,10 @@ describe('env:create:scratch async/resume', () => {
   };
 
   before(async () => {
+    const uid = genUniqueString('acr_%s');
     session = await TestSession.create({
       project: { name: 'asyncCreateResume' },
+      sessionDir: path.join(process.cwd(), `test_session_${uid}`),
       devhubAuthStrategy: 'AUTO',
     });
     cacheFilePath = path.join(session.dir, '.sf', ScratchOrgCache.getFileName());

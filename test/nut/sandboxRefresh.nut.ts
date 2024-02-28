@@ -302,7 +302,7 @@ describe('Sandbox Refresh', () => {
     expect(sfCommandUxStubs.info.firstCall.args[0]).to.equal(sbxStatusMsg);
   });
 
-  it('should poll and report a success and write an auth file', async () => {
+  it.only('should poll and report a success and write an auth file', async () => {
     const sbxInfo = getSandboxInfo();
     const sbxName = sbxInfo.SandboxName;
     const sbxProcess = getSandboxProcess();

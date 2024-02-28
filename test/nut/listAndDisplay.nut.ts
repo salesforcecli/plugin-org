@@ -8,7 +8,7 @@
 import { join } from 'node:path';
 import os from 'node:os';
 import { expect, config, assert } from 'chai';
-import { TestSession } from '@salesforce/cli-plugins-testkit';
+import { TestSession, genUniqueString } from '@salesforce/cli-plugins-testkit';
 import { execCmd } from '@salesforce/cli-plugins-testkit';
 import { OrgListResult, defaultHubEmoji, defaultOrgEmoji } from '../../src/commands/org/list.js';
 import { OrgOpenOutput } from '../../src/commands/org/open.js';
@@ -52,8 +52,10 @@ describe('Org Command NUT', () => {
   let aliasUserOrgId: string;
 
   before(async () => {
+    const uid = genUniqueString('listAndDisplay_%s');
     session = await TestSession.create({
       project: { name: 'listAndDisplay' },
+      sessionDir: join(process.cwd(), `test_session_${uid}`),
       devhubAuthStrategy: 'AUTO',
       scratchOrgs: [
         {
