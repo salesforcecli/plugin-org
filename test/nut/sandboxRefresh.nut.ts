@@ -302,7 +302,7 @@ describe('Sandbox Refresh', () => {
     expect(sfCommandUxStubs.info.firstCall.args[0]).to.equal(sbxStatusMsg);
   });
 
-  it.only('should poll and report a success and write an auth file', async () => {
+  it('should poll and report a success and write an auth file', async () => {
     const sbxInfo = getSandboxInfo();
     const sbxName = sbxInfo.SandboxName;
     const sbxProcess = getSandboxProcess();
@@ -350,8 +350,6 @@ describe('Sandbox Refresh', () => {
     // @ts-expect-error stubbing private function
     sinonSandbox.stub(AuthInfo.prototype, 'getNamespacePrefix').resolves();
 
-    const authInfoCreateSpy = sinonSandbox.spy(AuthInfo, 'create');
-
     const result: SandboxProcessObject = await RefreshSandbox.run([
       '--name',
       sbxName,
@@ -371,16 +369,7 @@ describe('Sandbox Refresh', () => {
     expect(toolingQueryStub.calledOnce, 'toolingQueryStub called').to.be.true;
     expect(querySandboxProcessByIdStub.called, 'querySandboxProcessByIdStub called').to.be.true;
     expect(sandboxSignupCompleteStub.called, 'sandboxSignupCompleteStub called').to.be.true;
-    // expect(authInfoExchangeTokenStub.called, 'authInfoExchangeTokenStub called').to.be.true;
-    // eslint-disable-next-line no-console
-    console.log(authInfoCreateSpy.callCount);
-    // eslint-disable-next-line no-console
-    console.dir(authInfoCreateSpy.firstCall.args);
-    // eslint-disable-next-line no-console
-    console.dir(authInfoCreateSpy.secondCall.args);
-    // eslint-disable-next-line no-console
-    console.dir(authInfoCreateSpy.thirdCall.args);
-    assert(authInfoExchangeTokenStub);
+    expect(authInfoExchangeTokenStub.called, 'authInfoExchangeTokenStub called').to.be.true;
 
     // Check auth files exist
     const authFileContents = readAuthFile(session.homeDir, sbxAuthResponse.authUserName);
