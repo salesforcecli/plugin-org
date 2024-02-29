@@ -109,7 +109,7 @@
     "prepack": "sf-prepack",
     "prepare": "sf-install",
     "test": "wireit",
-    "test:nuts": "nyc mocha \"./test/nut/sandboxRefresh.nut.ts\" --slow 4500 --timeout 1200000 --parallel --jobs 5",
+    "test:nuts": "nyc mocha \"./test/nut/sandboxRefresh.nut.ts\" --slow 4500 --timeout 1200000",
     "test:nuts:legacy": "nyc mocha \"./test/nut/legacy/*.nut.ts\" --slow 4500 --timeout 1200000 --parallel --jobs 5",
     "test:nuts:sandbox": "nyc mocha \"./test/**/*.sandboxNut.ts\" --slow 450000 --timeout 7200000 --parallel --jobs 5",
     "test:only": "wireit",
