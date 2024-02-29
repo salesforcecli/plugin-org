@@ -187,10 +187,10 @@
     "flagChars": ["f", "i", "n", "o", "w"],
     "flags": [
       "async",
-      "auto-activate",
       "definition-file",
       "json",
       "name",
+      "no-auto-activate",
       "no-prompt",
       "poll-interval",
       "target-org",
