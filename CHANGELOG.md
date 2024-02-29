@@ -1,3 +1,9 @@
+## [3.4.1](https://github.com/salesforcecli/plugin-org/compare/3.4.0...3.4.1) (2024-02-29)
+
+### Bug Fixes
+
+- update snaphshot ([#976](https://github.com/salesforcecli/plugin-org/issues/976)) ([12daaec](https://github.com/salesforcecli/plugin-org/commit/12daaec233c1d63b3f798abd30fa342cf14e8fdd))
+
 # [3.4.0](https://github.com/salesforcecli/plugin-org/compare/3.3.16...3.4.0) (2024-02-27)
 
 ### Bug Fixes
