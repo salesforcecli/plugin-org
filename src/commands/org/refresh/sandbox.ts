@@ -47,10 +47,9 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxProcessObj
   public static examples = messages.getMessages('examples');
 
   public static flags = {
-    'auto-activate': Flags.boolean({
-      summary: messages.getMessage('flags.auto-activate.summary'),
-      default: true,
-      allowNo: true,
+    'no-auto-activate': Flags.boolean({
+      summary: messages.getMessage('flags.no-auto-activate.summary'),
+      description: messages.getMessage('flags.no-auto-activate.description'),
     }),
     wait: Flags.duration({
       char: 'w',
@@ -214,7 +213,7 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxProcessObj
     // assign overrides
     sandboxInfo = Object.assign(sandboxInfo, defFileContent, {
       SandboxName: sbxName,
-      AutoActivate: this.flags['auto-activate'],
+      AutoActivate: !this.flags['no-auto-activate'],
     });
 
     return sandboxInfo;

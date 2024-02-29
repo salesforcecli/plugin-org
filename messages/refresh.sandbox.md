@@ -22,9 +22,13 @@ You're not allowed to change the sandbox name when you refresh it with this comm
 
   <%= config.bin %> <%= command.id %> --definition-file devSbx3-config.json --target-org prodOrg
 
-# flags.auto-activate.summary
+# flags.no-auto-activate.summary
 
-Activates the sandbox after a successful refresh.
+Disable auto-activation of the sandbox after a successful refresh.
+
+# flags.no-auto-activate.description
+
+By default, a sandbox auto-activates after a refresh. Use this flag to control sandbox activation manually.
 
 # flags.targetOrg.summary
 
