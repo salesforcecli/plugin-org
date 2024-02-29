@@ -46,7 +46,7 @@ describe('Sandbox Refresh', () => {
     const uid = genUniqueString('sbxRefresh_%s');
     session = await TestSession.create({
       project: { name: 'sandboxRefresh' },
-      devhubAuthStrategy: 'AUTO',
+      devhubAuthStrategy: 'AUTH_URL',
       sessionDir: path.join(process.cwd(), `test_session_${uid}`),
     });
     assert(session.hubOrg.username);
