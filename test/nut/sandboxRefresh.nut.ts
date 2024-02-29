@@ -350,6 +350,8 @@ describe('Sandbox Refresh', () => {
     // @ts-expect-error stubbing private function
     sinonSandbox.stub(AuthInfo.prototype, 'getNamespacePrefix').resolves();
 
+    const authInfoCreateSpy = sinonSandbox.spy(AuthInfo, 'create');
+
     const result: SandboxProcessObject = await RefreshSandbox.run([
       '--name',
       sbxName,
@@ -371,7 +373,14 @@ describe('Sandbox Refresh', () => {
     expect(sandboxSignupCompleteStub.called, 'sandboxSignupCompleteStub called').to.be.true;
     // expect(authInfoExchangeTokenStub.called, 'authInfoExchangeTokenStub called').to.be.true;
     // eslint-disable-next-line no-console
-    console.dir(authInfoExchangeTokenStub, { depth: 8 });
+    console.log(authInfoCreateSpy.callCount);
+    // eslint-disable-next-line no-console
+    console.dir(authInfoCreateSpy.firstCall.args);
+    // eslint-disable-next-line no-console
+    console.dir(authInfoCreateSpy.secondCall.args);
+    // eslint-disable-next-line no-console
+    console.dir(authInfoCreateSpy.thirdCall.args);
+    assert(authInfoExchangeTokenStub);
 
     // Check auth files exist
     const authFileContents = readAuthFile(session.homeDir, sbxAuthResponse.authUserName);
