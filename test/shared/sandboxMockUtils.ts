@@ -74,12 +74,12 @@ export const updateSuccessResponse: SaveResult = {
   errors: [],
 };
 
-export const readSandboxCacheFile = async (cacheFilePath: string): Promise<Record<string, CachedOptions>> =>
-  JSON.parse(await fs.promises.readFile(cacheFilePath, 'utf8')) as unknown as Record<string, CachedOptions>;
-export const deleteSandboxCacheFile = async (cacheFilePath: string): Promise<void> => fs.promises.unlink(cacheFilePath);
-export const readAuthFile = async (homeDir: string, username: string): Promise<AuthFields> => {
+export const readSandboxCacheFile = (cacheFilePath: string): Record<string, CachedOptions> =>
+  JSON.parse(fs.readFileSync(cacheFilePath, 'utf8')) as unknown as Record<string, CachedOptions>;
+export const deleteSandboxCacheFile = (cacheFilePath: string): void => fs.unlinkSync(cacheFilePath);
+export const readAuthFile = (homeDir: string, username: string): AuthFields => {
   const filePath = path.join(homeDir, Global.STATE_FOLDER, `${username}.json`);
-  return JSON.parse(await fs.promises.readFile(filePath, 'utf8')) as AuthFields;
+  return JSON.parse(fs.readFileSync(filePath, 'utf8')) as AuthFields;
 };
 export const getSandboxInfo = (overrides?: Partial<SandboxInfo>): SandboxInfo =>
   Object.assign({}, sandboxInfo, overrides);
@@ -114,7 +114,7 @@ export const stubProdOrgConnection = async (
     .stub(Org, 'create')
     .withArgs({ aliasOrUsername: username })
     .callsFake(async (opts) => {
-      const org = (await orgCreateFn.call(Org, opts)) as Org;
+      const org = (await orgCreateFn(opts)) as Org;
       // @ts-expect-error re-assigning a private property
       org.connection = connection;
       return org;

@@ -29,9 +29,11 @@ describe('env create scratch NUTs', () => {
   };
 
   before(async () => {
+    const uid = genUniqueString('sbxCreate_%s');
     session = await TestSession.create({
       project: { name: 'scratchOrgCreate' },
       devhubAuthStrategy: 'AUTO',
+      sessionDir: path.join(process.cwd(), `test_session_${uid}`),
     });
   });
 

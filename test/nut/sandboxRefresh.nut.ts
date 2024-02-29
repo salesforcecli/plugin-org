@@ -9,7 +9,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { assert, expect } from 'chai';
 import sinon from 'sinon';
-import { TestSession } from '@salesforce/cli-plugins-testkit';
+import { TestSession, genUniqueString } from '@salesforce/cli-plugins-testkit';
 import { Org, SandboxProcessObject, SandboxRequestCache, SfError, Messages, AuthInfo } from '@salesforce/core';
 import { stubSfCommandUx, stubSpinner, stubUx } from '@salesforce/sf-plugins-core';
 import RefreshSandbox from '../../src/commands/org/refresh/sandbox.js';
@@ -30,7 +30,7 @@ import {
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'sandboxbase');
 
-describe.skip('Sandbox Refresh', () => {
+describe('Sandbox Refresh', () => {
   let session: TestSession;
   let hubOrgUsername: string;
   let cacheFilePath: string;
@@ -43,9 +43,11 @@ describe.skip('Sandbox Refresh', () => {
   const sandboxProcessSoql = getSandboxProcessSoql();
 
   before(async () => {
+    const uid = genUniqueString('sbxRefresh_%s');
     session = await TestSession.create({
       project: { name: 'sandboxRefresh' },
-      devhubAuthStrategy: 'AUTO',
+      devhubAuthStrategy: 'AUTH_URL',
+      sessionDir: path.join(process.cwd(), `test_session_${uid}`),
     });
     assert(session.hubOrg.username);
     hubOrgUsername = session.hubOrg.username;
@@ -67,13 +69,13 @@ describe.skip('Sandbox Refresh', () => {
     await session?.clean();
   });
 
-  afterEach(async () => {
-    sinonSandbox.restore();
+  afterEach(() => {
     try {
-      await deleteSandboxCacheFile(cacheFilePath);
+      deleteSandboxCacheFile(cacheFilePath);
     } catch (err) {
       // ignore since there isn't always a cache file written
     }
+    sinonSandbox.restore();
   });
 
   //
@@ -110,7 +112,7 @@ describe.skip('Sandbox Refresh', () => {
     expect(toolingQueryStub.calledOnce).to.be.true;
 
     // check the sandbox cache entry
-    const cache = await readSandboxCacheFile(cacheFilePath);
+    const cache = readSandboxCacheFile(cacheFilePath);
     expect(cache).to.have.property(sbxName);
     expect(cache[sbxName]).to.have.property('action', 'Refresh');
     expect(cache[sbxName]).to.have.property('prodOrgUsername', hubOrgUsername);
@@ -154,7 +156,7 @@ describe.skip('Sandbox Refresh', () => {
     expect(toolingQueryStub.calledOnce).to.be.true;
 
     // check the sandbox cache entry
-    const cache = await readSandboxCacheFile(cacheFilePath);
+    const cache = readSandboxCacheFile(cacheFilePath);
     expect(cache).to.have.property(sbxName);
     expect(cache[sbxName]).to.have.property('action', 'Refresh');
     expect(cache[sbxName]).to.have.property('prodOrgUsername', hubOrgUsername);
@@ -190,6 +192,7 @@ describe.skip('Sandbox Refresh', () => {
 
     try {
       await RefreshSandbox.run(['--name', sbxName, '-o', hubOrgUsername, '--async', '--json']);
+      assert(false, 'Expected SandboxNotFoundError');
     } catch (e) {
       assert(e instanceof SfError, 'Expect error to be an instance of SfError');
       expect(e.name).to.equal('SandboxNotFoundError');
@@ -238,7 +241,7 @@ describe.skip('Sandbox Refresh', () => {
     expect(toolingQueryStub.calledOnce).to.be.true;
 
     // check the sandbox cache entry
-    const cache = await readSandboxCacheFile(cacheFilePath);
+    const cache = readSandboxCacheFile(cacheFilePath);
     expect(cache).to.have.property(sbxName);
     expect(cache[sbxName]).to.have.property('action', 'Refresh');
     expect(cache[sbxName]).to.have.property('prodOrgUsername', hubOrgUsername);
@@ -283,7 +286,7 @@ describe.skip('Sandbox Refresh', () => {
     expect(querySandboxProcessByIdStub.callCount).to.be.greaterThan(2);
 
     // check the sandbox cache entry
-    const cache = await readSandboxCacheFile(cacheFilePath);
+    const cache = readSandboxCacheFile(cacheFilePath);
     expect(cache).to.have.property(sbxName);
     expect(cache[sbxName]).to.have.property('action', 'Refresh');
     expect(cache[sbxName]).to.have.property('prodOrgUsername', hubOrgUsername);
@@ -299,7 +302,7 @@ describe.skip('Sandbox Refresh', () => {
     expect(sfCommandUxStubs.info.firstCall.args[0]).to.equal(sbxStatusMsg);
   });
 
-  it.skip('should poll and report a success and write an auth file', async () => {
+  it('should poll and report a success and write an auth file', async () => {
     const sbxInfo = getSandboxInfo();
     const sbxName = sbxInfo.SandboxName;
     const sbxProcess = getSandboxProcess();
@@ -334,7 +337,7 @@ describe.skip('Sandbox Refresh', () => {
 
     // Stub AuthInfo functions so an auth file is written without making http calls
     // @ts-expect-error stubbing private function
-    const authInfoCreateStub = sinonSandbox.stub(AuthInfo.prototype, 'exchangeToken').resolves({
+    const authInfoExchangeTokenStub = sinonSandbox.stub(AuthInfo.prototype, 'exchangeToken').resolves({
       username: sbxAuthResponse.authUserName,
       parentUsername: hubOrgUsername,
       instanceUrl: sbxAuthResponse.instanceUrl,
@@ -366,10 +369,10 @@ describe.skip('Sandbox Refresh', () => {
     expect(toolingQueryStub.calledOnce, 'toolingQueryStub called').to.be.true;
     expect(querySandboxProcessByIdStub.called, 'querySandboxProcessByIdStub called').to.be.true;
     expect(sandboxSignupCompleteStub.called, 'sandboxSignupCompleteStub called').to.be.true;
-    expect(authInfoCreateStub.called, 'authInfoCreateStub called').to.be.true;
+    expect(authInfoExchangeTokenStub.called, 'authInfoExchangeTokenStub called').to.be.true;
 
     // Check auth files exist
-    const authFileContents = await readAuthFile(session.homeDir, sbxAuthResponse.authUserName);
+    const authFileContents = readAuthFile(session.homeDir, sbxAuthResponse.authUserName);
     expect(authFileContents).to.be.ok;
     expect(authFileContents).to.have.property('username', sbxAuthResponse.authUserName);
     expect(authFileContents).to.have.property('parentUsername', hubOrgUsername);
@@ -379,7 +382,7 @@ describe.skip('Sandbox Refresh', () => {
 
     // check sandbox auth file doesn't exist
     try {
-      await readSandboxCacheFile(cacheFilePath);
+      readSandboxCacheFile(cacheFilePath);
       assert(false, 'should not have found a sandbox cache file');
     } catch (err) {
       // ignore
