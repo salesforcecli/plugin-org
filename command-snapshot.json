@@ -181,28 +181,29 @@
     "plugin": "@salesforce/plugin-org"
   },
   {
+    "alias": [],
+    "command": "org:refresh:sandbox",
+    "flagAliases": [],
+    "flagChars": ["f", "i", "n", "o", "w"],
+    "flags": [
+      "async",
+      "auto-activate",
+      "definition-file",
+      "json",
+      "name",
+      "no-prompt",
+      "poll-interval",
+      "target-org",
+      "wait"
+    ],
+    "plugin": "@salesforce/plugin-org"
+  },
+  {
     "alias": ["env:resume:sandbox"],
     "command": "org:resume:sandbox",
     "flagAliases": [],
     "flagChars": ["i", "l", "n", "o", "w"],
     "flags": ["job-id", "json", "name", "target-org", "use-most-recent", "wait"],
-    "plugin": "@salesforce/plugin-org"
-  },
-  {
-    "command": "org:refresh:sandbox",
-    "flagAliases": [],
-    "flagChars": ["i", "f", "n", "o", "w"],
-    "flags": [
-      "auto-activate",
-      "async",
-      "json",
-      "name",
-      "definition-file",
-      "no-prompt",
-      "target-org",
-      "poll-interval",
-      "wait"
-    ],
     "plugin": "@salesforce/plugin-org"
   },
   {
