@@ -227,7 +227,7 @@ FLAG DESCRIPTIONS
     sandbox.
 ```
 
-_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.4/src/commands/org/create/sandbox.ts)_
+_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.5/src/commands/org/create/sandbox.ts)_
 
 ## `sf org create scratch`
 
@@ -380,7 +380,7 @@ FLAG DESCRIPTIONS
     Omit this flag to have Salesforce generate a unique username for your org.
 ```
 
-_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.4/src/commands/org/create/scratch.ts)_
+_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.5/src/commands/org/create/scratch.ts)_
 
 ## `sf org delete sandbox`
 
@@ -424,7 +424,7 @@ EXAMPLES
     $ sf org delete sandbox --target-org my-sandbox --no-prompt
 ```
 
-_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.4/src/commands/org/delete/sandbox.ts)_
+_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.5/src/commands/org/delete/sandbox.ts)_
 
 ## `sf org delete scratch`
 
@@ -466,7 +466,7 @@ EXAMPLES
     $ sf org delete scratch --target-org my-scratch-org --no-prompt
 ```
 
-_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.4/src/commands/org/delete/scratch.ts)_
+_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.5/src/commands/org/delete/scratch.ts)_
 
 ## `sf org disable tracking`
 
@@ -504,7 +504,7 @@ EXAMPLES
     $ sf org disable tracking
 ```
 
-_See code: [src/commands/org/disable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.4/src/commands/org/disable/tracking.ts)_
+_See code: [src/commands/org/disable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.5/src/commands/org/disable/tracking.ts)_
 
 ## `sf org display`
 
@@ -548,7 +548,7 @@ EXAMPLES
     $ sf org display --target-org TestOrg1 --verbose
 ```
 
-_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.4/src/commands/org/display.ts)_
+_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.5/src/commands/org/display.ts)_
 
 ## `sf org enable tracking`
 
@@ -589,7 +589,7 @@ EXAMPLES
     $ sf org enable tracking
 ```
 
-_See code: [src/commands/org/enable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.4/src/commands/org/enable/tracking.ts)_
+_See code: [src/commands/org/enable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.5/src/commands/org/enable/tracking.ts)_
 
 ## `sf org list`
 
@@ -627,7 +627,7 @@ EXAMPLES
     $ sf org list --clean
 ```
 
-_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.4/src/commands/org/list.ts)_
+_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.5/src/commands/org/list.ts)_
 
 ## `sf org list metadata`
 
@@ -692,7 +692,7 @@ FLAG DESCRIPTIONS
     Examples of metadata types that use folders are Dashboard, Document, EmailTemplate, and Report.
 ```
 
-_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.4/src/commands/org/list/metadata.ts)_
+_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.5/src/commands/org/list/metadata.ts)_
 
 ## `sf org list metadata-types`
 
@@ -746,7 +746,7 @@ FLAG DESCRIPTIONS
     Override the api version used for api requests made by this command
 ```
 
-_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.4/src/commands/org/list/metadata-types.ts)_
+_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.5/src/commands/org/list/metadata-types.ts)_
 
 ## `sf org open`
 
@@ -817,7 +817,7 @@ EXAMPLES
     $ sf org open --source-file force-app/main/default/flows/Hello.flow-meta.xml
 ```
 
-_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.4/src/commands/org/open.ts)_
+_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.5/src/commands/org/open.ts)_
 
 ## `sf org refresh sandbox`
 
@@ -893,7 +893,7 @@ FLAG DESCRIPTIONS
     By default, a sandbox auto-activates after a refresh. Use this flag to control sandbox activation manually.
 ```
 
-_See code: [src/commands/org/refresh/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.4/src/commands/org/refresh/sandbox.ts)_
+_See code: [src/commands/org/refresh/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.5/src/commands/org/refresh/sandbox.ts)_
 
 ## `sf org resume sandbox`
 
@@ -955,7 +955,7 @@ FLAG DESCRIPTIONS
     returns the job ID. To resume checking the sandbox creation, rerun this command.
 ```
 
-_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.4/src/commands/org/resume/sandbox.ts)_
+_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.5/src/commands/org/resume/sandbox.ts)_
 
 ## `sf org resume scratch`
 
@@ -1001,6 +1001,6 @@ FLAG DESCRIPTIONS
     The job ID is valid for 24 hours after you start the scratch org creation.
 ```
 
-_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.4/src/commands/org/resume/scratch.ts)_
+_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/3.4.5/src/commands/org/resume/scratch.ts)_
 
 <!-- commandsstop -->
