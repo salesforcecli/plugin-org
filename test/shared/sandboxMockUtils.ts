@@ -21,7 +21,7 @@ const sandboxProcessObject: SandboxProcessObject = {
   CreatedDate: '2024-02-21T23:06:58.000+0000',
   CopyProgress: 0,
   SandboxOrganization: '00DDX000000QT3W',
-  Description: 'testing sandbox refresh',
+  Description: 'testing sandbox create and refresh',
 };
 
 const sandboxInfo: SandboxInfo = {
@@ -87,10 +87,15 @@ export const getSandboxProcess = (overrides?: Partial<SandboxProcessObject>): Sa
   Object.assign({}, sandboxProcessObject, overrides);
 export const getSandboxInfoSoql = (sandboxName = sbxName) =>
   `SELECT ${sandboxInfoFields.join(',')} FROM SandboxInfo WHERE SandboxName='${sandboxName}'`;
-export const getSandboxProcessSoql = (sandboxName = sbxName) =>
-  `SELECT ${sandboxProcessFields.join(
-    ','
-  )} FROM SandboxProcess WHERE SandboxName='${sandboxName}' ORDER BY CreatedDate DESC`;
+export const getSandboxProcessSoql = (cfg?: SbxProcessSqlConfig) => {
+  const whereClause = cfg?.sandboxName
+    ? `SandboxName='${cfg.sandboxName}'`
+    : cfg?.sandboxInfoId
+    ? `SandboxInfoId='${cfg.sandboxInfoId}'`
+    : `SandboxName='${sbxName}'`;
+
+  return `SELECT ${sandboxProcessFields.join(',')} FROM SandboxProcess WHERE ${whereClause} ORDER BY CreatedDate DESC`;
+};
 
 /**
  * Decorates the `Org.create()` call for the given username to use a stubbed connection so that
@@ -159,14 +164,31 @@ export const stubToolingUpdate = (config: ToolingUpdateStubConfig): sinon.SinonS
   return sinonSandbox.stub(connection.tooling, 'update').resolves(response);
 };
 
+/**
+ * Stubs the call to create the SandboxInfo
+ *
+ * @param config
+ * @returns sinon.SinonStub
+ */
+export const stubToolingCreate = (config: ToolingUpdateStubConfig): sinon.SinonStub => {
+  const { sinonSandbox, connection, response = updateSuccessResponse } = config;
+  return sinonSandbox.stub(connection.tooling, 'create').resolves(response);
+};
+
 type ToolingQueryStubConfig = {
   sinonSandbox: sinon.SinonSandbox;
   connection: Connection;
   sandboxProcessSoql: string;
   sbxProcess: SandboxProcessObject;
 };
+
+type SbxProcessSqlConfig = {
+  sandboxName?: string;
+  sandboxInfoId?: string;
+};
 /**
- * Stubs the query for the newly created SandboxProcess from the update
+ * Stubs the query for the newly created SandboxProcess from a sandbox update.
+ * Stubs the query for a cloned sandbox process (see `CreateSandbox.getSourceId()`).
  *
  * @param config
  * @returns sinon.SinonStub
