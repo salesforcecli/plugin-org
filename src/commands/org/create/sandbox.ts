@@ -35,7 +35,6 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
       char: 'f',
       summary: messages.getMessage('flags.definitionFile.summary'),
       description: messages.getMessage('flags.definitionFile.description'),
-      exclusive: ['name', 'license-type'],
     }),
     'set-default': Flags.boolean({
       char: 's',
@@ -74,7 +73,6 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
       char: 'n',
       summary: messages.getMessage('flags.name.summary'),
       description: messages.getMessage('flags.name.description'),
-      exclusive: ['definition-file'],
       parse: (name: string): Promise<string> => {
         if (name.length > 10) {
           throw messages.createError('error.SandboxNameLength', [name]);
@@ -93,7 +91,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
     })({
       char: 'l',
       summary: messages.getMessage('flags.licenseType.summary'),
-      exclusive: ['definition-file', 'clone'],
+      exclusive: ['clone'],
     }),
     'target-org': Flags.requiredOrg({
       char: 'o',
