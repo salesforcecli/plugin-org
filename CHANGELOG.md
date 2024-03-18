@@ -1,3 +1,9 @@
+## [3.4.7](https://github.com/salesforcecli/plugin-org/compare/3.4.6...3.4.7) (2024-03-18)
+
+### Bug Fixes
+
+- convert linux file path to Windows one in WSL ([fdb23ef](https://github.com/salesforcecli/plugin-org/commit/fdb23ef14349f0f22f1ebdc74f438266437f8c75))
+
 ## [3.4.6](https://github.com/salesforcecli/plugin-org/compare/3.4.5...3.4.6) (2024-03-17)
 
 ### Bug Fixes
