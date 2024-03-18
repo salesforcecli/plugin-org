@@ -10,7 +10,7 @@ import path from 'node:path';
 import { assert, expect } from 'chai';
 import sinon from 'sinon';
 import { TestSession, genUniqueString } from '@salesforce/cli-plugins-testkit';
-import { SandboxProcessObject, SandboxRequestCache } from '@salesforce/core';
+import { SandboxRequestCache } from '@salesforce/core';
 import { stubSfCommandUx, stubSpinner, stubUx } from '@salesforce/sf-plugins-core';
 import CreateSandbox from '../../src/commands/org/create/sandbox.js';
 import {
@@ -91,14 +91,7 @@ describe('Sandbox Create', () => {
     const toolingCreateStub = stubToolingCreate({ sinonSandbox, connection });
     const toolingQueryStub = stubToolingQuery({ sinonSandbox, connection, sandboxProcessSoql, sbxProcess });
 
-    const result: SandboxProcessObject = await CreateSandbox.run([
-      '--name',
-      sbxName,
-      '-o',
-      hubOrgUsername,
-      '--async',
-      '--json',
-    ]);
+    const result = await CreateSandbox.run(['--name', sbxName, '-o', hubOrgUsername, '--async', '--json']);
 
     expect(result).to.deep.equal(sbxProcess);
     expect(toolingCreateStub.calledOnce, 'toolingCreateStub').to.be.true;
@@ -131,7 +124,7 @@ describe('Sandbox Create', () => {
     const toolingCreateStub = stubToolingCreate({ sinonSandbox, connection });
     const toolingQueryStub = stubToolingQuery({ sinonSandbox, connection, sandboxProcessSoql, sbxProcess });
 
-    const result: SandboxProcessObject = await CreateSandbox.run([
+    const result = await CreateSandbox.run([
       '--definition-file',
       sandboxDefFilePath,
       '--name',
