@@ -1,3 +1,9 @@
+# [3.5.0](https://github.com/salesforcecli/plugin-org/compare/3.4.7...3.5.0) (2024-03-18)
+
+### Features
+
+- allow sandbox name and license-type overrides ([#991](https://github.com/salesforcecli/plugin-org/issues/991)) ([60a001d](https://github.com/salesforcecli/plugin-org/commit/60a001da697f4e69c1d79bd52f8cb660443aef89))
+
 ## [3.4.7](https://github.com/salesforcecli/plugin-org/compare/3.4.6...3.4.7) (2024-03-18)
 
 ### Bug Fixes
