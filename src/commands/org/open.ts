@@ -130,7 +130,15 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
     }
 
     // create a local html file that contains the POST stuff.
-    const tempFilePath = path.join(tmpdir(), `org-open-${new Date().valueOf()}.html`);
+    let tempFilePath = path.join(tmpdir(), `org-open-${new Date().valueOf()}.html`);
+
+    if( platform() === 'linux'){
+        // on linux create the temp file in the home folder as e.g. snaps can not access /tmp
+        let folderPath = path.join(homedir(), `temp`);
+        await fs.promises.mkdir(folderPath, { recursive: true });
+        tempFilePath = path.join(homedir(), `temp`, `org-open-${new Date().valueOf()}.html`);
+    }
+    
     await fs.promises.writeFile(
       tempFilePath,
       getFileContents(
