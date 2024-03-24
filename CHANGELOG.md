@@ -1,3 +1,9 @@
+## [3.5.1](https://github.com/salesforcecli/plugin-org/compare/3.5.0...3.5.1) (2024-03-24)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve from 10.5.2 to 10.5.5 ([dfc90fb](https://github.com/salesforcecli/plugin-org/commit/dfc90fbf8efbe8d0ecdf582e81f20072ef5bbe3c))
+
 # [3.5.0](https://github.com/salesforcecli/plugin-org/compare/3.4.7...3.5.0) (2024-03-18)
 
 ### Features
