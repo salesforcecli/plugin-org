@@ -2060,10 +2060,10 @@
     "@salesforce/ts-types" "^2.0.9"
     chalk "^5.3.0"
 
-"@salesforce/source-deploy-retrieve@^10.5.2":
-  version "10.5.2"
-  resolved "https://registry.yarnpkg.com/@salesforce/source-deploy-retrieve/-/source-deploy-retrieve-10.5.2.tgz#aecf7147f48c65286c92fdba20f8a2ed289fd58e"
-  integrity sha512-J82cNDJF7gA1/VQ/igfpR2Aa31htDvym5LnGJv2Yhd3BRaa7kTR8lJdzseN8m/EFrBfqYfRT14yzSewsR686EQ==
+"@salesforce/source-deploy-retrieve@^10.5.5":
+  version "10.5.5"
+  resolved "https://registry.yarnpkg.com/@salesforce/source-deploy-retrieve/-/source-deploy-retrieve-10.5.5.tgz#c2680de777e4b392a5f02631ca1cd385cad72c93"
+  integrity sha512-o+c/qD9QojXIPMOuteUSdrbx/GI9HS0jFv49NcVrZX1Rzm/ZUk5JHkLzJtiUVQOEnBg4VVnFh2rBarPh0x6dWg==
   dependencies:
     "@salesforce/core" "^6.7.0"
     "@salesforce/kit" "^3.0.15"
