@@ -5,8 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
-
 import {
   Flags,
   SfCommand,
@@ -21,7 +19,7 @@ import { getAliasByUsername } from '../../shared/utils.js';
 import { getStyledValue } from '../../shared/orgHighlighter.js';
 import { OrgListUtil } from '../../shared/orgListUtil.js';
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'display');
 const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
 export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {

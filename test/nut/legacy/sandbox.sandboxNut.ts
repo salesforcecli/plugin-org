@@ -5,14 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import { Lifecycle, Messages, SandboxEvents, SandboxProcessObject, SfError, StatusEvent } from '@salesforce/core';
 import { assert, expect, config } from 'chai';
 import { OrgOpenOutput } from '../../../src/commands/org/open.js';
 
 config.truncateThreshold = 0;
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
 
 describe('Sandbox Orgs via legacy org:create', () => {
