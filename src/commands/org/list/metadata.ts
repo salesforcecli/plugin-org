@@ -7,12 +7,11 @@
 
 import fs from 'node:fs';
 
-
 import { Messages } from '@salesforce/core';
 import type { FileProperties, ListMetadataQuery } from 'jsforce/api/metadata';
 import { Flags, loglevel, requiredOrgFlagWithDeprecations, SfCommand } from '@salesforce/sf-plugins-core';
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'list.metadata');
 
 export type ListMetadataCommandResult = FileProperties[];

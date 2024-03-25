@@ -7,6 +7,7 @@
     "flags": [
       "api-version",
       "definitionfile",
+      "flags-dir",
       "json",
       "loglevel",
       "setalias",
@@ -27,6 +28,7 @@
       "clientid",
       "definitionfile",
       "durationdays",
+      "flags-dir",
       "json",
       "loglevel",
       "noancestors",
@@ -46,7 +48,7 @@
     "command": "force:org:delete",
     "flagAliases": ["apiversion", "noprompt", "targetusername", "u"],
     "flagChars": ["o", "p", "v"],
-    "flags": ["api-version", "json", "loglevel", "no-prompt", "target-org", "targetdevhubusername"],
+    "flags": ["api-version", "flags-dir", "json", "loglevel", "no-prompt", "target-org", "targetdevhubusername"],
     "plugin": "@salesforce/plugin-org"
   },
   {
@@ -54,7 +56,17 @@
     "command": "force:org:status",
     "flagAliases": ["apiversion", "targetusername", "u"],
     "flagChars": ["a", "n", "o", "s", "w"],
-    "flags": ["api-version", "json", "loglevel", "sandboxname", "setalias", "setdefaultusername", "target-org", "wait"],
+    "flags": [
+      "api-version",
+      "flags-dir",
+      "json",
+      "loglevel",
+      "sandboxname",
+      "setalias",
+      "setdefaultusername",
+      "target-org",
+      "wait"
+    ],
     "plugin": "@salesforce/plugin-org"
   },
   {
@@ -67,6 +79,7 @@
       "async",
       "clone",
       "definition-file",
+      "flags-dir",
       "json",
       "license-type",
       "name",
@@ -94,6 +107,7 @@
       "description",
       "duration-days",
       "edition",
+      "flags-dir",
       "json",
       "name",
       "no-ancestors",
@@ -113,7 +127,7 @@
     "command": "org:delete:sandbox",
     "flagAliases": ["targetusername", "u"],
     "flagChars": ["o", "p"],
-    "flags": ["json", "no-prompt", "target-org"],
+    "flags": ["flags-dir", "json", "no-prompt", "target-org"],
     "plugin": "@salesforce/plugin-org"
   },
   {
@@ -121,7 +135,7 @@
     "command": "org:delete:scratch",
     "flagAliases": ["targetusername", "u"],
     "flagChars": ["o", "p"],
-    "flags": ["json", "no-prompt", "target-org"],
+    "flags": ["flags-dir", "json", "no-prompt", "target-org"],
     "plugin": "@salesforce/plugin-org"
   },
   {
@@ -129,7 +143,7 @@
     "command": "org:disable:tracking",
     "flagAliases": [],
     "flagChars": ["o"],
-    "flags": ["json", "target-org"],
+    "flags": ["flags-dir", "json", "target-org"],
     "plugin": "@salesforce/plugin-org"
   },
   {
@@ -137,7 +151,7 @@
     "command": "org:display",
     "flagAliases": ["apiversion", "targetusername", "u"],
     "flagChars": ["o"],
-    "flags": ["api-version", "json", "loglevel", "target-org", "verbose"],
+    "flags": ["api-version", "flags-dir", "json", "loglevel", "target-org", "verbose"],
     "plugin": "@salesforce/plugin-org"
   },
   {
@@ -145,7 +159,7 @@
     "command": "org:enable:tracking",
     "flagAliases": [],
     "flagChars": ["o"],
-    "flags": ["json", "target-org"],
+    "flags": ["flags-dir", "json", "target-org"],
     "plugin": "@salesforce/plugin-org"
   },
   {
@@ -153,7 +167,7 @@
     "command": "org:list",
     "flagAliases": ["noprompt", "skipconnectionstatus"],
     "flagChars": ["p"],
-    "flags": ["all", "clean", "json", "loglevel", "no-prompt", "skip-connection-status", "verbose"],
+    "flags": ["all", "clean", "flags-dir", "json", "loglevel", "no-prompt", "skip-connection-status", "verbose"],
     "plugin": "@salesforce/plugin-org"
   },
   {
@@ -161,7 +175,7 @@
     "command": "org:list:metadata",
     "flagAliases": ["a", "apiversion", "metadatatype", "resultfile", "targetusername", "u"],
     "flagChars": ["f", "m", "o"],
-    "flags": ["api-version", "folder", "json", "loglevel", "metadata-type", "output-file", "target-org"],
+    "flags": ["api-version", "flags-dir", "folder", "json", "loglevel", "metadata-type", "output-file", "target-org"],
     "plugin": "@salesforce/plugin-org"
   },
   {
@@ -169,7 +183,7 @@
     "command": "org:list:metadata-types",
     "flagAliases": ["a", "apiversion", "filterknown", "resultfile", "targetusername", "u"],
     "flagChars": ["f", "k", "o"],
-    "flags": ["api-version", "filter-known", "json", "loglevel", "output-file", "target-org"],
+    "flags": ["api-version", "filter-known", "flags-dir", "json", "loglevel", "output-file", "target-org"],
     "plugin": "@salesforce/plugin-org"
   },
   {
@@ -177,7 +191,18 @@
     "command": "org:open",
     "flagAliases": ["apiversion", "sourcefile", "targetusername", "u", "urlonly"],
     "flagChars": ["b", "f", "o", "p", "r"],
-    "flags": ["api-version", "browser", "json", "loglevel", "path", "private", "source-file", "target-org", "url-only"],
+    "flags": [
+      "api-version",
+      "browser",
+      "flags-dir",
+      "json",
+      "loglevel",
+      "path",
+      "private",
+      "source-file",
+      "target-org",
+      "url-only"
+    ],
     "plugin": "@salesforce/plugin-org"
   },
   {
@@ -188,6 +213,7 @@
     "flags": [
       "async",
       "definition-file",
+      "flags-dir",
       "json",
       "name",
       "no-auto-activate",
@@ -203,7 +229,7 @@
     "command": "org:resume:sandbox",
     "flagAliases": [],
     "flagChars": ["i", "l", "n", "o", "w"],
-    "flags": ["job-id", "json", "name", "target-org", "use-most-recent", "wait"],
+    "flags": ["flags-dir", "job-id", "json", "name", "target-org", "use-most-recent", "wait"],
     "plugin": "@salesforce/plugin-org"
   },
   {
@@ -211,7 +237,7 @@
     "command": "org:resume:scratch",
     "flagAliases": [],
     "flagChars": ["i", "r"],
-    "flags": ["job-id", "json", "use-most-recent"],
+    "flags": ["flags-dir", "job-id", "json", "use-most-recent"],
     "plugin": "@salesforce/plugin-org"
   }
 ]

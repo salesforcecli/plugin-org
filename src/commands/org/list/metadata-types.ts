@@ -6,13 +6,12 @@
  */
 import fs from 'node:fs';
 
-
 import { Messages } from '@salesforce/core';
 import type { DescribeMetadataResult } from 'jsforce/api/metadata';
 import { RegistryAccess } from '@salesforce/source-deploy-retrieve';
 import { Flags, loglevel, requiredOrgFlagWithDeprecations, SfCommand } from '@salesforce/sf-plugins-core';
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'metadata-types');
 
 export class ListMetadataTypes extends SfCommand<DescribeMetadataResult> {

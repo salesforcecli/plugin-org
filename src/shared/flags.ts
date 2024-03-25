@@ -5,12 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
-
 import { Flags } from '@oclif/core';
 import { ConfigAggregator, StateAggregator, Messages, SfError } from '@salesforce/core';
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete');
 
 const resolveUsername = async (usernameOrAlias?: string): Promise<string> => {

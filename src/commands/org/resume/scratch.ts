@@ -7,7 +7,6 @@
 
 import { strict as assert } from 'node:assert';
 
-
 import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
 import {
   Messages,
@@ -20,7 +19,7 @@ import {
 import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
 import { buildStatus } from '../../../shared/scratchOrgOutput.js';
 
-Messages.importMessagesDirectoryFromMetaUrl(import.meta.url)
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'resume_scratch');
 
 export default class EnvResumeScratch extends SfCommand<ScratchCreateResponse> {
