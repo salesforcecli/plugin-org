@@ -1932,6 +1932,30 @@
     semver "^7.6.0"
     ts-retry-promise "^0.7.1"
 
+"@salesforce/core@^6.7.3":
+  version "6.7.3"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-6.7.3.tgz#5d8f30c40ac3cebb898c8e845fe9a067bc729268"
+  integrity sha512-uU+PuZZGXxByhvnXLH1V3eY5P1caw401dIZ/QvhzYxoP/alPLk7dpChnZNJYH5Rw3dc/AhSPw+eg0cvUyjhP1Q==
+  dependencies:
+    "@salesforce/kit" "^3.0.15"
+    "@salesforce/schemas" "^1.6.1"
+    "@salesforce/ts-types" "^2.0.9"
+    "@types/semver" "^7.5.8"
+    ajv "^8.12.0"
+    change-case "^4.1.2"
+    faye "^1.4.0"
+    form-data "^4.0.0"
+    js2xmlparser "^4.0.1"
+    jsforce "^2.0.0-beta.29"
+    jsonwebtoken "9.0.2"
+    jszip "3.10.1"
+    pino "^8.19.0"
+    pino-abstract-transport "^1.1.0"
+    pino-pretty "^10.3.1"
+    proper-lockfile "^4.1.2"
+    semver "^7.6.0"
+    ts-retry-promise "^0.7.1"
+
 "@salesforce/dev-config@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@salesforce/dev-config/-/dev-config-4.1.0.tgz#e529576466d074e7a5f1441236510fef123da01e"
@@ -2014,15 +2038,15 @@
     chalk "^4"
     inquirer "^8.2.5"
 
-"@salesforce/sf-plugins-core@^7.1.15":
-  version "7.1.15"
-  resolved "https://registry.yarnpkg.com/@salesforce/sf-plugins-core/-/sf-plugins-core-7.1.15.tgz#4d6033d56d78cf6046abfce96c119a8a60ee7c07"
-  integrity sha512-dQSSIHEpeFIadkWqZE24068m01vy31hVJdGWYvgscTnNrR30jIC5fXRevYvGG0l+8vVEJkCYYnJFQabUjSw3Eg==
+"@salesforce/sf-plugins-core@^8.0.1":
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/@salesforce/sf-plugins-core/-/sf-plugins-core-8.0.1.tgz#f155cddfd7695aab0d8264848b634b2a91cdbf2c"
+  integrity sha512-R6SqJ1XqSINSWdZruKtC2SKGnLBh7KbFI7+qS0FYlyPU4IlWoa+AZkGwWvlczuSOumqnlhT95rNKwZTS5rJugA==
   dependencies:
     "@inquirer/confirm" "^2.0.17"
     "@inquirer/password" "^1.1.16"
     "@oclif/core" "^3.23.0"
-    "@salesforce/core" "^6.6.0"
+    "@salesforce/core" "^6.7.3"
     "@salesforce/kit" "^3.0.15"
     "@salesforce/ts-types" "^2.0.9"
     chalk "^5.3.0"
