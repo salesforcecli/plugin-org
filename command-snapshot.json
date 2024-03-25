@@ -20,10 +20,106 @@
   },
   {
     "alias": [],
+    "command": "force:org:create",
+    "flagAliases": ["apiversion", "targetdevhubusername", "targetusername", "u"],
+    "flagChars": ["a", "c", "d", "f", "i", "n", "o", "s", "t", "v", "w"],
+    "flags": [
+      "api-version",
+      "clientid",
+      "definitionfile",
+      "durationdays",
+      "flags-dir",
+      "json",
+      "loglevel",
+      "noancestors",
+      "nonamespace",
+      "retry",
+      "setalias",
+      "setdefaultusername",
+      "target-dev-hub",
+      "target-org",
+      "type",
+      "wait"
+    ],
+    "plugin": "@salesforce/plugin-org"
+  },
+  {
+    "alias": [],
     "command": "force:org:delete",
     "flagAliases": ["apiversion", "noprompt", "targetusername", "u"],
     "flagChars": ["o", "p", "v"],
     "flags": ["api-version", "flags-dir", "json", "loglevel", "no-prompt", "target-org", "targetdevhubusername"],
+    "plugin": "@salesforce/plugin-org"
+  },
+  {
+    "alias": [],
+    "command": "force:org:status",
+    "flagAliases": ["apiversion", "targetusername", "u"],
+    "flagChars": ["a", "n", "o", "s", "w"],
+    "flags": [
+      "api-version",
+      "flags-dir",
+      "json",
+      "loglevel",
+      "sandboxname",
+      "setalias",
+      "setdefaultusername",
+      "target-org",
+      "wait"
+    ],
+    "plugin": "@salesforce/plugin-org"
+  },
+  {
+    "alias": ["env:create:sandbox"],
+    "command": "org:create:sandbox",
+    "flagAliases": [],
+    "flagChars": ["a", "c", "f", "i", "l", "n", "o", "s", "w"],
+    "flags": [
+      "alias",
+      "async",
+      "clone",
+      "definition-file",
+      "flags-dir",
+      "json",
+      "license-type",
+      "name",
+      "no-prompt",
+      "no-track-source",
+      "poll-interval",
+      "set-default",
+      "target-org",
+      "wait"
+    ],
+    "plugin": "@salesforce/plugin-org"
+  },
+  {
+    "alias": ["env:create:scratch"],
+    "command": "org:create:scratch",
+    "flagAliases": [],
+    "flagChars": ["a", "c", "d", "e", "f", "i", "m", "t", "v", "w", "y"],
+    "flags": [
+      "admin-email",
+      "alias",
+      "api-version",
+      "async",
+      "client-id",
+      "definition-file",
+      "description",
+      "duration-days",
+      "edition",
+      "flags-dir",
+      "json",
+      "name",
+      "no-ancestors",
+      "no-namespace",
+      "release",
+      "set-default",
+      "source-org",
+      "target-dev-hub",
+      "track-source",
+      "username",
+      "wait"
+    ],
     "plugin": "@salesforce/plugin-org"
   },
   {
@@ -48,6 +144,14 @@
     "flagAliases": [],
     "flagChars": ["o"],
     "flags": ["flags-dir", "json", "target-org"],
+    "plugin": "@salesforce/plugin-org"
+  },
+  {
+    "alias": ["force:org:display"],
+    "command": "org:display",
+    "flagAliases": ["apiversion", "targetusername", "u"],
+    "flagChars": ["o"],
+    "flags": ["api-version", "flags-dir", "json", "loglevel", "target-org", "verbose"],
     "plugin": "@salesforce/plugin-org"
   },
   {
@@ -80,6 +184,52 @@
     "flagAliases": ["a", "apiversion", "filterknown", "resultfile", "targetusername", "u"],
     "flagChars": ["f", "k", "o"],
     "flags": ["api-version", "filter-known", "flags-dir", "json", "loglevel", "output-file", "target-org"],
+    "plugin": "@salesforce/plugin-org"
+  },
+  {
+    "alias": ["force:org:open", "force:source:open"],
+    "command": "org:open",
+    "flagAliases": ["apiversion", "sourcefile", "targetusername", "u", "urlonly"],
+    "flagChars": ["b", "f", "o", "p", "r"],
+    "flags": [
+      "api-version",
+      "browser",
+      "flags-dir",
+      "json",
+      "loglevel",
+      "path",
+      "private",
+      "source-file",
+      "target-org",
+      "url-only"
+    ],
+    "plugin": "@salesforce/plugin-org"
+  },
+  {
+    "alias": [],
+    "command": "org:refresh:sandbox",
+    "flagAliases": [],
+    "flagChars": ["f", "i", "n", "o", "w"],
+    "flags": [
+      "async",
+      "definition-file",
+      "flags-dir",
+      "json",
+      "name",
+      "no-auto-activate",
+      "no-prompt",
+      "poll-interval",
+      "target-org",
+      "wait"
+    ],
+    "plugin": "@salesforce/plugin-org"
+  },
+  {
+    "alias": ["env:resume:sandbox"],
+    "command": "org:resume:sandbox",
+    "flagAliases": [],
+    "flagChars": ["i", "l", "n", "o", "w"],
+    "flags": ["flags-dir", "job-id", "json", "name", "target-org", "use-most-recent", "wait"],
     "plugin": "@salesforce/plugin-org"
   },
   {
