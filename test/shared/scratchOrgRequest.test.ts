@@ -19,7 +19,7 @@ class Wrapper extends EnvCreateScratch {
 
 /** pass in the params in array form, get back the parsed flags */
 const paramsToFlags = async (params: string[]): Promise<Interfaces.InferredFlags<typeof EnvCreateScratch.flags>> =>
-  new Wrapper(params, {} as Config).getFlags();
+  new Wrapper(params, { runHook: () => ({ successes: [], failures: [] }) } as unknown as Config).getFlags();
 
 describe('buildScratchOrgRequest function', () => {
   const $$ = new TestContext();
