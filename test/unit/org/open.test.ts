@@ -20,6 +20,10 @@ Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
 const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
 
+const config = {
+  runHook: () => ({ successes: [], failures: [] }),
+} as unknown as Config;
+
 describe('org:open', () => {
   const $$ = new TestContext();
   const testOrg = new MockTestOrgData();
@@ -100,7 +104,7 @@ describe('org:open', () => {
       it('--source-file to flexipage', async () => {
         const cmd = new OrgOpenCommand(
           ['--json', '--targetusername', testOrg.username, '--urlonly', '--source-file', flexipagePath],
-          {} as Config
+          config
         );
 
         $$.SANDBOX.stub(Connection.prototype, 'singleRecordQuery').resolves({ Id: '123' });
@@ -112,7 +116,7 @@ describe('org:open', () => {
       it('--source-file to an ApexPage', async () => {
         const cmd = new OrgOpenCommand(
           ['--json', '--targetusername', testOrg.username, '--urlonly', '--source-file', apexPath],
-          {} as Config
+          config
         );
 
         const response = await cmd.run();
@@ -122,7 +126,7 @@ describe('org:open', () => {
       it('--source-file when flexipage query errors', async () => {
         const cmd = new OrgOpenCommand(
           ['--json', '--targetusername', testOrg.username, '--urlonly', '--source-file', flexipagesDir],
-          {} as Config
+          config
         );
 
         const response = await cmd.run();
@@ -132,7 +136,7 @@ describe('org:open', () => {
       it('--source-file to neither flexipage or apexpage', async () => {
         const cmd = new OrgOpenCommand(
           ['--json', '--targetusername', testOrg.username, '--urlonly', '--source-file', apexDir],
-          {} as Config
+          config
         );
 
         const response = await cmd.run();
