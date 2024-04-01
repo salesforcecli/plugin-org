@@ -9,7 +9,6 @@ import fs from 'node:fs';
 import { join } from 'node:path';
 import { assert, expect } from 'chai';
 import { MyDomainResolver, Messages, Connection, SfError } from '@salesforce/core';
-import { Config } from '@oclif/core';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { MockTestOrgData, shouldThrow, TestContext } from '@salesforce/core/lib/testSetup.js';
 import { stubSfCommandUx, stubSpinner, stubUx } from '@salesforce/sf-plugins-core';
@@ -19,10 +18,6 @@ import utils from '../../../src/shared/utils.js';
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
 const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
-
-const config = {
-  runHook: () => ({ successes: [], failures: [] }),
-} as unknown as Config;
 
 describe('org:open', () => {
   const $$ = new TestContext();
@@ -102,44 +97,52 @@ describe('org:open', () => {
       });
 
       it('--source-file to flexipage', async () => {
-        const cmd = new OrgOpenCommand(
-          ['--json', '--targetusername', testOrg.username, '--urlonly', '--source-file', flexipagePath],
-          config
-        );
-
         $$.SANDBOX.stub(Connection.prototype, 'singleRecordQuery').resolves({ Id: '123' });
 
-        const response = await cmd.run();
+        const response = await OrgOpenCommand.run([
+          '--json',
+          '--targetusername',
+          testOrg.username,
+          '--urlonly',
+          '--source-file',
+          flexipagePath,
+        ]);
         expect(response.url).to.include('visualEditor/appBuilder.app?pageId=123');
       });
 
       it('--source-file to an ApexPage', async () => {
-        const cmd = new OrgOpenCommand(
-          ['--json', '--targetusername', testOrg.username, '--urlonly', '--source-file', apexPath],
-          config
-        );
-
-        const response = await cmd.run();
+        const response = await OrgOpenCommand.run([
+          '--json',
+          '--targetusername',
+          testOrg.username,
+          '--urlonly',
+          '--source-file',
+          apexPath,
+        ]);
         expect(response.url).to.include('&retURL=/apex/test');
       });
 
       it('--source-file when flexipage query errors', async () => {
-        const cmd = new OrgOpenCommand(
-          ['--json', '--targetusername', testOrg.username, '--urlonly', '--source-file', flexipagesDir],
-          config
-        );
-
-        const response = await cmd.run();
+        const response = await OrgOpenCommand.run([
+          '--json',
+          '--targetusername',
+          testOrg.username,
+          '--urlonly',
+          '--source-file',
+          flexipagesDir,
+        ]);
         expect(response.url).to.include('lightning/setup/FlexiPageList/home');
       });
 
       it('--source-file to neither flexipage or apexpage', async () => {
-        const cmd = new OrgOpenCommand(
-          ['--json', '--targetusername', testOrg.username, '--urlonly', '--source-file', apexDir],
-          config
-        );
-
-        const response = await cmd.run();
+        const response = await OrgOpenCommand.run([
+          '--json',
+          '--targetusername',
+          testOrg.username,
+          '--urlonly',
+          '--source-file',
+          apexDir,
+        ]);
         expect(response.url).to.include('lightning/setup/FlexiPageList/home');
       });
     });
