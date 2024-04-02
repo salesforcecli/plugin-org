@@ -198,9 +198,8 @@ export class Create extends SfCommand<CreateResult> {
       if (results.sandboxRes?.authUserName) {
         if (this.flags.setalias) {
           const stateAggregator = await StateAggregator.getInstance();
-          stateAggregator.aliases.set(this.flags.setalias, results.sandboxRes.authUserName);
-          const result = await stateAggregator.aliases.write();
-          this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
+          await stateAggregator.aliases.setAndSave(this.flags.setalias, results.sandboxRes.authUserName);
+          this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, stateAggregator.aliases.getAll());
         }
         if (this.flags.setdefaultusername) {
           const globalConfig: Config = this.configAggregator.getGlobalConfig();
@@ -230,9 +229,8 @@ export class Create extends SfCommand<CreateResult> {
         // there was most likely an issue with DNS when auth'ing to the new sandbox, but it was created.
         if (this.flags.setalias && this.sandboxAuth) {
           const stateAggregator = await StateAggregator.getInstance();
-          stateAggregator.aliases.set(this.flags.setalias, this.sandboxAuth.authUserName);
-          const result = await stateAggregator.aliases.write();
-          this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, result);
+          await stateAggregator.aliases.setAndSave(this.flags.setalias, this.sandboxAuth.authUserName);
+          this.logger.debug('Set Alias: %s result: %s', this.flags.setalias, stateAggregator.aliases.getAll());
         }
         if (this.flags.setdefaultusername && this.sandboxAuth) {
           const globalConfig: Config = this.configAggregator.getGlobalConfig();
