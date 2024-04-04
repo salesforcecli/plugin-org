@@ -1,3 +1,17 @@
+# [4.0.0](https://github.com/salesforcecli/plugin-org/compare/3.6.3...4.0.0) (2024-04-04)
+
+- feat!: core7 prep (#1009) ([d882aac](https://github.com/salesforcecli/plugin-org/commit/d882aac0f1a03ce3c9be4e103601541b56dc2413)), closes [#1009](https://github.com/salesforcecli/plugin-org/issues/1009)
+
+### BREAKING CHANGES
+
+- remove force:org:status and force:org:clone commands
+
+- refactor: remove deprecated AliasAccessor references
+
+- chore: remove shelljs dependency
+
+- chore: fix message from PR
+
 ## [3.6.3](https://github.com/salesforcecli/plugin-org/compare/3.6.2...3.6.3) (2024-04-01)
 
 ### Bug Fixes
