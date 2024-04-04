@@ -1,25 +1,6 @@
 [
   {
     "alias": [],
-    "command": "force:org:clone",
-    "flagAliases": ["apiversion", "targetusername", "u"],
-    "flagChars": ["a", "f", "o", "s", "t", "w"],
-    "flags": [
-      "api-version",
-      "definitionfile",
-      "flags-dir",
-      "json",
-      "loglevel",
-      "setalias",
-      "setdefaultusername",
-      "target-org",
-      "type",
-      "wait"
-    ],
-    "plugin": "@salesforce/plugin-org"
-  },
-  {
-    "alias": [],
     "command": "force:org:create",
     "flagAliases": ["apiversion", "targetdevhubusername", "targetusername", "u"],
     "flagChars": ["a", "c", "d", "f", "i", "n", "o", "s", "t", "v", "w"],
@@ -49,24 +30,6 @@
     "flagAliases": ["apiversion", "noprompt", "targetusername", "u"],
     "flagChars": ["o", "p", "v"],
     "flags": ["api-version", "flags-dir", "json", "loglevel", "no-prompt", "target-org", "targetdevhubusername"],
-    "plugin": "@salesforce/plugin-org"
-  },
-  {
-    "alias": [],
-    "command": "force:org:status",
-    "flagAliases": ["apiversion", "targetusername", "u"],
-    "flagChars": ["a", "n", "o", "s", "w"],
-    "flags": [
-      "api-version",
-      "flags-dir",
-      "json",
-      "loglevel",
-      "sandboxname",
-      "setalias",
-      "setdefaultusername",
-      "target-org",
-      "wait"
-    ],
     "plugin": "@salesforce/plugin-org"
   },
   {
