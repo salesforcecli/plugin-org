@@ -39,7 +39,7 @@ import { SandboxReporter } from '../../../shared/sandboxReporter.js';
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create');
 
-export interface ScratchOrgProcessObject {
+export type ScratchOrgProcessObject = {
   username?: string;
   scratchOrgInfo: ScratchOrgInfo;
   authFields?: AuthFields;
