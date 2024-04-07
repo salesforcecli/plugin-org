@@ -6119,10 +6119,10 @@ object.values@^1.1.7:
     define-properties "^1.2.0"
     es-abstract "^1.22.1"
 
-oclif@^4.7.5:
-  version "4.7.5"
-  resolved "https://registry.yarnpkg.com/oclif/-/oclif-4.7.5.tgz#ddd8e8c7742927ca7af734017b724b3758bb7215"
-  integrity sha512-bXxT81jGcr7lI3OzxDpcGTV9bkxwV5ZiikZsN05WrC/GKCqYPSYGb5M/u35bcyt9Ez860wtj5wNuOaCiL/pmow==
+oclif@^4.7.6:
+  version "4.7.6"
+  resolved "https://registry.yarnpkg.com/oclif/-/oclif-4.7.6.tgz#2cb7ecfdaa0db9bc2131fa56abff28ba7c88c073"
+  integrity sha512-R2Fdef6R8n1UIVAJTCP0oEIRkExMniei4QqmK7ue9iN8PTf+6q5ROrl7/pxMH/DzDCKnkTsi5mBhyT3HqFAZ1w==
   dependencies:
     "@aws-sdk/client-cloudfront" "^3.535.0"
     "@aws-sdk/client-s3" "^3.535.0"
