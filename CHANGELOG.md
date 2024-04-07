@@ -1,3 +1,9 @@
+## [4.0.1](https://github.com/salesforcecli/plugin-org/compare/4.0.0...4.0.1) (2024-04-07)
+
+### Bug Fixes
+
+- **deps:** bump change-case from 5.4.3 to 5.4.4 ([9923365](https://github.com/salesforcecli/plugin-org/commit/9923365ff29304a4dfce41f1a2c0d4b1695fe19b))
+
 # [4.0.0](https://github.com/salesforcecli/plugin-org/compare/3.6.3...4.0.0) (2024-04-04)
 
 - feat!: core7 prep (#1009) ([d882aac](https://github.com/salesforcecli/plugin-org/commit/d882aac0f1a03ce3c9be4e103601541b56dc2413)), closes [#1009](https://github.com/salesforcecli/plugin-org/issues/1009)
