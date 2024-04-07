@@ -1306,7 +1306,7 @@
     wordwrap "^1.0.0"
     wrap-ansi "^7.0.0"
 
-"@oclif/core@^3.15.1", "@oclif/core@^3.20.0", "@oclif/core@^3.23.0", "@oclif/core@^3.26.0":
+"@oclif/core@^3.15.1", "@oclif/core@^3.23.0", "@oclif/core@^3.26.0":
   version "3.26.0"
   resolved "https://registry.yarnpkg.com/@oclif/core/-/core-3.26.0.tgz#959d5e9f13f4ad6a4e98235ad125189df9ee4279"
   integrity sha512-TpMdfD4tfA2tVVbd4l0PrP02o5KoUXYmudBbTC7CeguDo/GLoprw4uL8cMsaVA26+cbcy7WYtOEydQiHVtJixA==
@@ -1405,7 +1405,7 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.8.0"
 
-"@salesforce/core@^6.4.1", "@salesforce/core@^6.5.3", "@salesforce/core@^6.6.0", "@salesforce/core@^6.7.0", "@salesforce/core@^6.7.3", "@salesforce/core@^6.7.6":
+"@salesforce/core@^6.4.1", "@salesforce/core@^6.6.0", "@salesforce/core@^6.7.0", "@salesforce/core@^6.7.3", "@salesforce/core@^6.7.6":
   version "6.7.6"
   resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-6.7.6.tgz#6a73c6a4e615ce837be5b5c142cfc63a6c8db3bd"
   integrity sha512-0ZZ1GgUQTwTs8/xa+hmZd+wwKXkK8MNcI2Kn20HmHShsweA2Jp3Yaxx0+EbRPqhSBARXso+TADSnsOjlZvQ3tg==
@@ -1473,14 +1473,14 @@
     "@salesforce/ts-types" "^2.0.9"
     tslib "^2.6.2"
 
-"@salesforce/plugin-command-reference@^3.0.70":
-  version "3.0.70"
-  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.0.70.tgz#0573fcdaf86679a98e0e8088ed75f2e7d0388639"
-  integrity sha512-MwgdWn5OzY3d+6PgW/aopYqnGmeLvs/7JXS5VNOO63bnYYfhwCwzoJL9gRkL8v+PWeU6wZhEDITNPOM6x7K+YA==
+"@salesforce/plugin-command-reference@^3.0.74":
+  version "3.0.74"
+  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.0.74.tgz#910277267b31f97b94b49d6f22b5ad046a729011"
+  integrity sha512-YJR4kUes+wCBshCDEL3gooxwXmsJrH08ITZfwn4VvpM/KLQtiZAzMQXarvqge9Gp8rcxAv7HREsulT7SCffafg==
   dependencies:
-    "@oclif/core" "^3.20.0"
-    "@salesforce/core" "^6.5.3"
-    "@salesforce/kit" "^3.0.15"
+    "@oclif/core" "^3.26.0"
+    "@salesforce/core" "^6.7.3"
+    "@salesforce/kit" "^3.1.0"
     "@salesforce/sf-plugins-core" "^5.0.13"
     "@salesforce/ts-types" "^2.0.9"
     chalk "^4"
