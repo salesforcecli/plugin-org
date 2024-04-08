@@ -6,10 +6,10 @@
   "bugs": "https://github.com/forcedotcom/cli/issues",
   "dependencies": {
     "@oclif/core": "^3.26.0",
-    "@salesforce/core": "^6.6.0",
+    "@salesforce/core": "^6.7.6",
     "@salesforce/kit": "^3.1.0",
     "@salesforce/sf-plugins-core": "^8.0.3",
-    "@salesforce/source-deploy-retrieve": "^10.5.5",
+    "@salesforce/source-deploy-retrieve": "^10.9.1",
     "chalk": "^5.3.0",
     "change-case": "^5.4.4",
     "is-wsl": "^3.1.0",
