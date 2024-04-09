@@ -1,3 +1,9 @@
+## [4.0.4](https://github.com/salesforcecli/plugin-org/compare/4.0.3...4.0.4) (2024-04-09)
+
+### Bug Fixes
+
+- typo in description ([d1c2200](https://github.com/salesforcecli/plugin-org/commit/d1c2200e42afafdbc5b53b3e404fcfbe4b43250c))
+
 ## [4.0.3](https://github.com/salesforcecli/plugin-org/compare/4.0.2...4.0.3) (2024-04-09)
 
 ### Bug Fixes
