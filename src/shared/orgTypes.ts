@@ -51,7 +51,7 @@ export type FullyPopulatedScratchOrgFields = ScratchOrgFields &
   };
 
 // developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_objects_scratchorginfo.htm
-export interface ScratchOrgInfoSObject {
+export type ScratchOrgInfoSObject = {
   Id: string;
   CreatedDate: string;
   Status: 'New' | 'Deleted' | 'Active' | 'Error';
@@ -66,7 +66,7 @@ export interface ScratchOrgInfoSObject {
 }
 
 /** fields in the  */
-export interface ScratchOrgFields {
+export type ScratchOrgFields = {
   createdBy: string;
   createdDate: string;
   expirationDate: string;
@@ -80,7 +80,7 @@ export interface ScratchOrgFields {
   signupUsername: string;
 }
 
-export interface OrgListFields {
+export type OrgListFields = {
   connectedStatus?: string;
   isDefaultUsername?: boolean;
   isDefaultDevHubUsername?: boolean;
@@ -90,7 +90,7 @@ export interface OrgListFields {
 }
 
 /** If the scratch org is resumed, but doesn't get very far in the process, it won't have much information on it */
-export interface ScratchCreateResponse {
+export type ScratchCreateResponse = {
   username?: string;
   scratchOrgInfo?: ScratchOrgInfo;
   authFields?: AuthFields;

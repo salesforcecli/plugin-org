@@ -185,35 +185,32 @@ Legend:  ${defaultHubEmoji}=Default DevHub, ${defaultOrgEmoji}=Default Org ${
         .map(statusToEmoji),
     ];
 
-    this.table(
-      allOrgs.map((org) => Object.fromEntries(Object.entries(org).filter(fieldFilter))),
-      {
-        defaultMarker: {
-          header: '',
-        },
-        type: {
-          header: 'Type',
-        },
-        alias: {
-          header: 'Alias',
-        },
-        username: { header: 'Username' },
-        orgId: { header: 'Org ID' },
-        ...(!skipconnectionstatus ? { connectedStatus: { header: 'Status' } } : {}),
-        ...(this.flags.verbose
-          ? {
-              instanceUrl: { header: 'Instance URL' },
-              namespacePrefix: { header: 'Namespace' },
-              devHubOrgId: { header: 'Dev Hub ID' },
-              createdDate: {
-                header: 'Created',
-                get: (data): string => (data.createdDate as string)?.split('T')?.[0] ?? '',
-              },
-            }
-          : {}),
-        expirationDate: { header: 'Expires' },
-      }
-    );
+    this.table(allOrgs, {
+      defaultMarker: {
+        header: '',
+      },
+      type: {
+        header: 'Type',
+      },
+      alias: {
+        header: 'Alias',
+      },
+      username: { header: 'Username' },
+      orgId: { header: 'Org ID' },
+      ...(!skipconnectionstatus ? { connectedStatus: { header: 'Status' } } : {}),
+      ...(this.flags.verbose
+        ? {
+            instanceUrl: { header: 'Instance URL' },
+            namespacePrefix: { header: 'Namespace' },
+            devHubOrgId: { header: 'Dev Hub ID' },
+            createdDate: {
+              header: 'Created',
+              get: (data): string => ('createdDate' in data ? data.createdDate?.split('T')?.[0] ?? '' : ''),
+            },
+          }
+        : {}),
+      expirationDate: { header: 'Expires' },
+    });
   }
 }
 
@@ -266,23 +263,6 @@ const colorEveryFieldButConnectedStatus =
       ])
       // TS is not smart enough to know this didn't change any types
     ) as ExtendedAuthFieldsWithType;
-
-const fieldFilter = ([key]: [string, string]): boolean =>
-  [
-    'defaultMarker',
-    'namespacePrefix',
-    'alias',
-    'username',
-    'orgId',
-    'status',
-    'connectedStatus',
-    'expirationDate',
-    'devHubOrgId',
-    'createdDate',
-    'instanceUrl',
-    'type',
-    'createdDate',
-  ].includes(key);
 
 const convertScratchOrgStatus = (
   row: FullyPopulatedScratchOrgFields

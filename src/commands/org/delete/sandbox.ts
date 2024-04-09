@@ -12,7 +12,7 @@ import { orgThatMightBeDeleted } from '../../../shared/flags.js';
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete_sandbox');
 
-export interface SandboxDeleteResponse {
+export type SandboxDeleteResponse = {
   orgId: string;
   username: string;
 }

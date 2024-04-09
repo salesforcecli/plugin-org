@@ -161,7 +161,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
   }
 }
 
-export interface OrgOpenOutput {
+export type OrgOpenOutput = {
   url: string;
   username: string;
   orgId: string;
