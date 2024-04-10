@@ -6,7 +6,7 @@
  */
 import fs from 'node:fs';
 import { SfError } from '@salesforce/core';
-import { shouldThrow, TestContext } from '@salesforce/core/lib/testSetup.js';
+import { shouldThrow, TestContext } from '@salesforce/core/testSetup';
 import { assert, expect } from 'chai';
 import { createSandboxRequest } from '../../src/shared/sandboxRequest.js';
 

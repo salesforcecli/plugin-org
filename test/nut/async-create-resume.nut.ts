@@ -10,8 +10,8 @@ import path from 'node:path';
 import { execCmd, TestSession, genUniqueString } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
 import { AuthFields, Global, ScratchOrgCache } from '@salesforce/core';
-import { CachedOptions } from '@salesforce/core/lib/org/scratchOrgCache.js';
 import { Duration, sleep } from '@salesforce/kit';
+import type { CachedOptions } from '../../node_modules/@salesforce/core/lib/org/scratchOrgCache.js';
 import { ScratchCreateResponse } from '../../src/shared/orgTypes.js';
 
 describe('env:create:scratch async/resume', () => {

@@ -6,7 +6,7 @@
  */
 import { Config, Interfaces } from '@oclif/core';
 import { expect } from 'chai';
-import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup.js';
+import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import { buildScratchOrgRequest } from '../../src/shared/scratchOrgRequest.js';
 import EnvCreateScratch from '../../src/commands/org/create/scratch.js';
 

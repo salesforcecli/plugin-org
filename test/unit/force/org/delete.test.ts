@@ -6,11 +6,10 @@
  */
 
 import { Messages, Org, SfError } from '@salesforce/core';
-import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup.js';
-
+import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import { config, expect } from 'chai';
 import { stubPrompter, stubSfCommandUx } from '@salesforce/sf-plugins-core';
-import { SandboxAccessor } from '@salesforce/core/lib/stateAggregator/accessors/sandboxAccessor.js';
+import { SandboxAccessor } from '../../../../node_modules/@salesforce/core/lib/stateAggregator/accessors/sandboxAccessor.js';
 import { Delete as LegacyDelete } from '../../../../src/commands/force/org/delete.js';
 
 config.truncateThreshold = 0;
