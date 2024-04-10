@@ -9,7 +9,7 @@ import path from 'node:path';
 import { SaveResult } from 'jsforce';
 import sinon from 'sinon';
 import { AuthFields, AuthInfo, Connection, Global, Org, SandboxInfo, SandboxProcessObject } from '@salesforce/core';
-import { CachedOptions } from '@salesforce/core/lib/org/scratchOrgCache.js';
+import { CachedOptions } from '../../node_modules/@salesforce/core/lib/org/scratchOrgCache.js';
 
 const sbxName = 'testSbx1';
 const sandboxProcessObject: SandboxProcessObject = {

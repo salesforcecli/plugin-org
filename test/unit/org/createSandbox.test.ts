@@ -8,8 +8,8 @@ import { Lifecycle, Org, SandboxEvents, SandboxProcessObject, AuthFields } from 
 import { stubMethod } from '@salesforce/ts-sinon';
 import sinon from 'sinon';
 import { expect, config } from 'chai';
-import { OrgAccessor } from '@salesforce/core/lib/stateAggregator/accessors/orgAccessor.js';
 import { stubSfCommandUx, stubSpinner, stubUx } from '@salesforce/sf-plugins-core';
+import { OrgAccessor } from '../../../node_modules/@salesforce/core/lib/stateAggregator/accessors/orgAccessor.js';
 import CreateSandbox from '../../../src/commands/org/create/sandbox.js';
 
 config.truncateThreshold = 0;

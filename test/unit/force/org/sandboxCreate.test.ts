@@ -18,7 +18,7 @@ import {
 } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
 import sinon from 'sinon';
-import { MockTestOrgData, shouldThrow, TestContext } from '@salesforce/core/lib/testSetup.js';
+import { MockTestOrgData, shouldThrow, TestContext } from '@salesforce/core/testSetup';
 import { expect, config, assert } from 'chai';
 import { stubSfCommandUx } from '@salesforce/sf-plugins-core';
 import { Create } from '../../../../src/commands/force/org/create.js';

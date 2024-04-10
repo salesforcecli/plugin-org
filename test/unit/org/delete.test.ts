@@ -6,11 +6,11 @@
  */
 
 import { AuthInfo, Messages, Org, SfError } from '@salesforce/core';
-import { MockTestOrgData, TestContext } from '@salesforce/core/lib/testSetup.js';
+import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import { SinonStub } from 'sinon';
 import { config, expect } from 'chai';
 import { stubPrompter, stubSfCommandUx } from '@salesforce/sf-plugins-core';
-import { SandboxAccessor } from '@salesforce/core/lib/stateAggregator/accessors/sandboxAccessor.js';
+import { SandboxAccessor } from '../../../node_modules/@salesforce/core/lib/stateAggregator/accessors/sandboxAccessor.js';
 import DeleteSandbox from '../../../src/commands/org/delete/sandbox.js';
 import DeleteScratch from '../../../src/commands/org/delete/scratch.js';
 
