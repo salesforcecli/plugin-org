@@ -378,5 +378,5 @@ const authErrorHandler = async (err: unknown, username: string): Promise<string>
   if (error.message.includes('maintenance')) return 'Down (Maintenance)';
   // handle other potential html responses
   if (error.message.includes('<html>') || error.message.includes('<!DOCTYPE HTML>')) return 'Bad Response';
-  return (error.code ?? error.message) as string;
+  return (error.code ?? error.message);
 };
