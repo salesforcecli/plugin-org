@@ -1,3 +1,9 @@
+# [4.1.0](https://github.com/salesforcecli/plugin-org/compare/4.0.4...4.1.0) (2024-04-10)
+
+### Features
+
+- core7, jsforce-node ([4aaaeb5](https://github.com/salesforcecli/plugin-org/commit/4aaaeb56cde11bd77dcb552e6a972bf92d25f5a7))
+
 ## [4.0.4](https://github.com/salesforcecli/plugin-org/compare/4.0.3...4.0.4) (2024-04-09)
 
 ### Bug Fixes
