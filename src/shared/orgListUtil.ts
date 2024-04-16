@@ -18,7 +18,7 @@ import {
   ConfigAggregator,
   OrgConfigProperties,
 } from '@salesforce/core';
-import type { Record } from 'jsforce';
+import type { Record } from '@jsforce/jsforce-node';
 import { omit } from '@salesforce/kit';
 import utils, { isDefined } from './utils.js';
 import type {
@@ -378,5 +378,5 @@ const authErrorHandler = async (err: unknown, username: string): Promise<string>
   if (error.message.includes('maintenance')) return 'Down (Maintenance)';
   // handle other potential html responses
   if (error.message.includes('<html>') || error.message.includes('<!DOCTYPE HTML>')) return 'Bad Response';
-  return (error.code ?? error.message);
+  return error.code ?? error.message;
 };
