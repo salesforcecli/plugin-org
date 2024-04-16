@@ -8,7 +8,7 @@
 import fs from 'node:fs';
 
 import { Messages } from '@salesforce/core';
-import type { FileProperties, ListMetadataQuery } from 'jsforce/api/metadata';
+import type { FileProperties, ListMetadataQuery } from '@jsforce/jsforce-node/lib/api/metadata.js';
 import { Flags, loglevel, requiredOrgFlagWithDeprecations, SfCommand } from '@salesforce/sf-plugins-core';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);

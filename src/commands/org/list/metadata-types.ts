@@ -7,7 +7,7 @@
 import fs from 'node:fs';
 
 import { Messages } from '@salesforce/core';
-import type { DescribeMetadataResult } from 'jsforce/api/metadata';
+import type { DescribeMetadataResult } from '@jsforce/jsforce-node/lib/api/metadata.js';
 import { RegistryAccess } from '@salesforce/source-deploy-retrieve';
 import { Flags, loglevel, requiredOrgFlagWithDeprecations, SfCommand } from '@salesforce/sf-plugins-core';
 
