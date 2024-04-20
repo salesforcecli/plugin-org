@@ -1494,41 +1494,7 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@oclif/core@3.26.0":
-  version "3.26.0"
-  resolved "https://registry.yarnpkg.com/@oclif/core/-/core-3.26.0.tgz#959d5e9f13f4ad6a4e98235ad125189df9ee4279"
-  integrity sha512-TpMdfD4tfA2tVVbd4l0PrP02o5KoUXYmudBbTC7CeguDo/GLoprw4uL8cMsaVA26+cbcy7WYtOEydQiHVtJixA==
-  dependencies:
-    "@types/cli-progress" "^3.11.5"
-    ansi-escapes "^4.3.2"
-    ansi-styles "^4.3.0"
-    cardinal "^2.1.1"
-    chalk "^4.1.2"
-    clean-stack "^3.0.1"
-    cli-progress "^3.12.0"
-    color "^4.2.3"
-    debug "^4.3.4"
-    ejs "^3.1.9"
-    get-package-type "^0.1.0"
-    globby "^11.1.0"
-    hyperlinker "^1.0.0"
-    indent-string "^4.0.0"
-    is-wsl "^2.2.0"
-    js-yaml "^3.14.1"
-    minimatch "^9.0.3"
-    natural-orderby "^2.0.3"
-    object-treeify "^1.1.33"
-    password-prompt "^1.1.3"
-    slice-ansi "^4.0.0"
-    string-width "^4.2.3"
-    strip-ansi "^6.0.1"
-    supports-color "^8.1.1"
-    supports-hyperlinks "^2.2.0"
-    widest-line "^3.1.0"
-    wordwrap "^1.0.0"
-    wrap-ansi "^7.0.0"
-
-"@oclif/core@^3.26.0", "@oclif/core@^3.26.2", "@oclif/core@^3.26.3":
+"@oclif/core@3.26.3", "@oclif/core@^3.26.0", "@oclif/core@^3.26.2", "@oclif/core@^3.26.3":
   version "3.26.3"
   resolved "https://registry.yarnpkg.com/@oclif/core/-/core-3.26.3.tgz#2416f4f5e3e5b9434999edb2f94983c5ac07e8a2"
   integrity sha512-e6Vwu+cb2Sn4qFFpmY1fQLRWIY5ugruMuN94xb7+kyUzxrirYjJATPhuCT1G5xj9Dk+hTMH+Sp6XcHcVTS1lHg==
@@ -1562,12 +1528,12 @@
     wordwrap "^1.0.0"
     wrap-ansi "^7.0.0"
 
-"@oclif/plugin-command-snapshot@^5.1.5":
-  version "5.1.5"
-  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-5.1.5.tgz#5fe95b2a131d66663fe6e245811b634cf20bb022"
-  integrity sha512-JJNiIdezzk3Pv95ig0mhoM540k3OJ/FA2yyesTSoFRbnNOucalEi7EGqMtu1xsCoPe2P/qSiBpxpL/2uqpbBTA==
+"@oclif/plugin-command-snapshot@^5.1.6":
+  version "5.1.6"
+  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-5.1.6.tgz#7bf028cbbaac1dcb1b979b7e34cf6de75cedd104"
+  integrity sha512-i44oUyDOaMiUdloKN7darp4gE/Lio+K8yV0Qz04XkYzjHmGOz/41K5wcSMGvZc1EPmxCK2NBjR4W89TmCS8OjA==
   dependencies:
-    "@oclif/core" "3.26.0"
+    "@oclif/core" "3.26.3"
     "@types/lodash.difference" "^4.5.9"
     chalk "^5.3.0"
     globby "^14.0.1"
@@ -7247,7 +7213,16 @@ srcset@^5.0.0:
   resolved "https://registry.yarnpkg.com/srcset/-/srcset-5.0.1.tgz#e660a728f195419e4afa95121099bc9efb7a1e36"
   integrity sha512-/P1UYbGfJVlxZag7aABNRrulEXAwCSDo7fklafOQrantuPTDmYgijJMks2zusPCVzgW9+4P69mq7w6pYuZpgxw==
 
-"string-width-cjs@npm:string-width@^4.2.0", string-width@^4.0.0, string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
+"string-width-cjs@npm:string-width@^4.2.0":
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
+  integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
+  dependencies:
+    emoji-regex "^8.0.0"
+    is-fullwidth-code-point "^3.0.0"
+    strip-ansi "^6.0.1"
+
+string-width@^4.0.0, string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
@@ -7306,7 +7281,14 @@ string_decoder@~1.1.1:
   dependencies:
     safe-buffer "~5.1.0"
 
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@6.0.1, strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
+  integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
+  dependencies:
+    ansi-regex "^5.0.1"
+
+strip-ansi@6.0.1, strip-ansi@^6.0.0, strip-ansi@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
@@ -7854,7 +7836,7 @@ workerpool@6.2.1:
   resolved "https://registry.yarnpkg.com/workerpool/-/workerpool-6.2.1.tgz#46fc150c17d826b86a008e5a4508656777e9c343"
   integrity sha512-ILEIE97kDZvF9Wb9f6h5aXK4swSlKGUcOEGiIYb2OOu/IrDU9iwj0fD//SsA6E5ibwJxpEvhullJY4Sl4GcpAw==
 
-"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
+"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
@@ -7867,6 +7849,15 @@ wrap-ansi@^6.2.0:
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-6.2.0.tgz#e9393ba07102e6c91a3b221478f0257cd2856e53"
   integrity sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==
+  dependencies:
+    ansi-styles "^4.0.0"
+    string-width "^4.1.0"
+    strip-ansi "^6.0.0"
+
+wrap-ansi@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
+  integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
   dependencies:
     ansi-styles "^4.0.0"
     string-width "^4.1.0"
