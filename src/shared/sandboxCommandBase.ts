@@ -226,6 +226,9 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
   protected saveSandboxProgressConfig(): void {
     if (this.sandboxRequestData?.sandboxProcessObject.SandboxName && this.sandboxRequestData) {
       this.sandboxRequestConfig.set(this.sandboxRequestData.sandboxProcessObject.SandboxName, this.sandboxRequestData);
+      console.log('--- writing sandbox config ---');
+      console.dir(this.sandboxRequestData, { depth: 8 });
+      console.log('--- ---------------------- ---');
       this.sandboxRequestConfig.writeSync();
     }
   }

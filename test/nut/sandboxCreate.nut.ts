@@ -86,6 +86,9 @@ describe('Sandbox Create', () => {
     const sbxName = sbxInfo.SandboxName;
     const sbxLicenseType = 'Developer';
     const sbxProcess = getSandboxProcess();
+    console.log('--- sandboxCreateNut test 1 ---');
+    console.dir(sbxProcess, { depth: 8 });
+    console.log('-------------------------------');
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
 
     const toolingCreateStub = stubToolingCreate({ sinonSandbox, connection });
@@ -103,6 +106,9 @@ describe('Sandbox Create', () => {
 
     // check the sandbox cache entry
     const cache = readSandboxCacheFile(cacheFilePath);
+    console.log('--- sandboxCreateNut test 1 ---');
+    console.dir(cache, { depth: 8 });
+    console.log('-------------------------------');
     expect(cache).to.have.property(sbxName);
     expect(cache[sbxName]).to.have.property('action', 'Create');
     expect(cache[sbxName]).to.have.property('prodOrgUsername', hubOrgUsername);
@@ -119,6 +125,9 @@ describe('Sandbox Create', () => {
     const sbxName = 'OvrSbxName';
     const sbxLicenseType = 'Partial';
     const sbxProcess = getSandboxProcess({ SandboxName: sbxName, LicenseType: sbxLicenseType });
+    console.log('--- sandboxCreateNut test 2 ---');
+    console.dir(sbxProcess, { depth: 8 });
+    console.log('-------------------------------');
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
 
     const toolingCreateStub = stubToolingCreate({ sinonSandbox, connection });
@@ -147,6 +156,9 @@ describe('Sandbox Create', () => {
 
     // check the sandbox cache entry
     const cache = readSandboxCacheFile(cacheFilePath);
+    console.log('--- sandboxCreateNut test 2 ---');
+    console.dir(cache, { depth: 8 });
+    console.log('-------------------------------');
     expect(cache).to.have.property(sbxName);
     expect(cache[sbxName]).to.have.property('action', 'Create');
     expect(cache[sbxName]).to.have.property('prodOrgUsername', hubOrgUsername);
