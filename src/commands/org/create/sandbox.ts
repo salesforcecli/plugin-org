@@ -5,6 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+/* eslint-disable no-console */
+
 import { Duration } from '@salesforce/kit';
 import { Flags } from '@salesforce/sf-plugins-core';
 import { Lifecycle, Messages, SandboxEvents, SandboxProcessObject, SandboxRequest, SfError } from '@salesforce/core';
@@ -168,6 +170,8 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
         interval: this.flags['poll-interval'],
         async: this.flags.async,
       });
+      console.log('Assigning this.latestSandboxProgressObj from command (below)');
+      console.dir(sandboxProcessObject, { depth: 8 });
       this.latestSandboxProgressObj = sandboxProcessObject;
       this.saveSandboxProgressConfig();
       if (this.flags.async) {

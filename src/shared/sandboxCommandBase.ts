@@ -92,6 +92,8 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     });
 
     lifecycle.on(SandboxEvents.EVENT_RESUME, async (results: SandboxProcessObject) => {
+      console.log('Assigning this.latestSandboxProgressObj from "resume" event (below)');
+      console.dir(results, { depth: 8 });
       this.latestSandboxProgressObj = results;
       this.sandboxProgress.markPreviousStagesAsCompleted(
         results.Status !== 'Completed' ? results.Status : 'Authenticating'
@@ -100,6 +102,8 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     });
 
     lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results?: SandboxProcessObject) => {
+      console.log('Assigning this.latestSandboxProgressObj from "asyncResult" event (below)');
+      console.dir(results ?? this.latestSandboxProgressObj, { depth: 8 });
       this.latestSandboxProgressObj = results ?? this.latestSandboxProgressObj;
       this.updateSandboxRequestData();
       if (!options.isAsync) {
@@ -127,6 +131,8 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     });
 
     lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) => {
+      console.log('Assigning this.latestSandboxProgressObj from "status" event (below)');
+      console.dir(results.sandboxProcessObj, { depth: 8 });
       this.latestSandboxProgressObj = results.sandboxProcessObj;
       this.updateSandboxRequestData();
       const progress = this.sandboxProgress.getSandboxProgress(results);
@@ -141,6 +147,8 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     });
 
     lifecycle.on(SandboxEvents.EVENT_RESULT, async (results: ResultEvent) => {
+      console.log('Assigning this.latestSandboxProgressObj from "result" event (below)');
+      console.dir(results.sandboxProcessObj, { depth: 8 });
       this.latestSandboxProgressObj = results.sandboxProcessObj;
       this.updateSandboxRequestData();
       this.sandboxProgress.markPreviousStagesAsCompleted();
@@ -229,9 +237,9 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
   protected saveSandboxProgressConfig(): void {
     if (this.sandboxRequestData?.sandboxProcessObject.SandboxName && this.sandboxRequestData) {
       this.sandboxRequestConfig.set(this.sandboxRequestData.sandboxProcessObject.SandboxName, this.sandboxRequestData);
-      console.log('--- writing sandbox config ---');
-      console.dir(this.sandboxRequestData, { depth: 8 });
-      console.log('--- ---------------------- ---');
+      // console.log('--- writing sandbox config ---');
+      // console.dir(this.sandboxRequestData, { depth: 8 });
+      // console.log('--- ---------------------- ---');
       this.sandboxRequestConfig.writeSync();
     }
   }
