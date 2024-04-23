@@ -67,7 +67,9 @@ describe('Sandbox Create', () => {
 
   afterEach(() => {
     try {
+      console.log('before deleting sandbox cache file');
       deleteSandboxCacheFile(cacheFilePath);
+      console.log('after deleting sandbox cache file');
     } catch (err) {
       // ignore since there isn't always a cache file written
     }

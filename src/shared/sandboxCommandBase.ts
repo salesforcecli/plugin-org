@@ -249,6 +249,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected async finally(_: Error | undefined): Promise<any> {
+    console.log('removing all listeners');
     const lifecycle = Lifecycle.getInstance();
     lifecycle.removeAllListeners('POLLING_TIME_OUT');
     lifecycle.removeAllListeners(SandboxEvents.EVENT_RESUME);
