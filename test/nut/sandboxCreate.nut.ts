@@ -5,6 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+/* eslint-disable no-console */
+
 import fs from 'node:fs';
 import path from 'node:path';
 import { assert, expect } from 'chai';
