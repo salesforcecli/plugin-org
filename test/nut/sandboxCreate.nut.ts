@@ -108,7 +108,7 @@ describe('Sandbox Create', () => {
 
     // check the sandbox cache entry
     const cache = readSandboxCacheFile(cacheFilePath);
-    console.log('--- sandboxCreateNut test 1 ---');
+    console.log('--- sandboxCreateNut test 1 cacheFile ---');
     console.dir(cache, { depth: 8 });
     console.log('-------------------------------');
     expect(cache).to.have.property(sbxName);
@@ -158,7 +158,7 @@ describe('Sandbox Create', () => {
 
     // check the sandbox cache entry
     const cache = readSandboxCacheFile(cacheFilePath);
-    console.log('--- sandboxCreateNut test 2 ---');
+    console.log('--- sandboxCreateNut test 2 cacheFile ---');
     console.dir(cache, { depth: 8 });
     console.log('-------------------------------');
     expect(cache).to.have.property(sbxName);
