@@ -82,10 +82,9 @@ describe('Sandbox Create', () => {
   //
 
   it('should return a SandboxProcessObject without polling (--async) using --name', async () => {
-    const sbxInfo = getSandboxInfo();
-    const sbxName = sbxInfo.SandboxName;
+    const sbxName = 'createSbx1';
     const sbxLicenseType = 'Developer';
-    const sbxProcess = getSandboxProcess();
+    const sbxProcess = getSandboxProcess({ SandboxName: sbxName });
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
 
     const toolingCreateStub = stubToolingCreate({ sinonSandbox, connection });
@@ -116,7 +115,7 @@ describe('Sandbox Create', () => {
 
   // This test uses a sandbox definition file and flags to override the name and LicenseType.
   it('should override existing SandboxInfo with definition-file values', async () => {
-    const sbxName = 'OvrSbxName';
+    const sbxName = 'createSbx2';
     const sbxLicenseType = 'Partial';
     const sbxProcess = getSandboxProcess({ SandboxName: sbxName, LicenseType: sbxLicenseType });
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);

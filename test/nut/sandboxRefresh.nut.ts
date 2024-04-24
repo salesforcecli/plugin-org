@@ -37,10 +37,9 @@ describe('Sandbox Refresh', () => {
   let sandboxDefFilePath: string;
   let sfCommandUxStubs: ReturnType<typeof stubSfCommandUx>;
 
-  const sinonSandbox = sinon.createSandbox();
+  const defaultSbxName = 'refrshSbx';
 
-  const sandboxInfoSoql = getSandboxInfoSoql();
-  const sandboxProcessSoql = getSandboxProcessSoql();
+  const sinonSandbox = sinon.createSandbox();
 
   before(async () => {
     const uid = genUniqueString('sbxRefresh_%s');
@@ -55,7 +54,7 @@ describe('Sandbox Refresh', () => {
     sandboxDefFilePath = path.join(session.project.dir, 'sandboxDef.json');
 
     // add a sandbox definition file to the project
-    const { SandboxName, LicenseType } = getSandboxInfo();
+    const { SandboxName, LicenseType } = getSandboxInfo({ SandboxName: defaultSbxName });
     fs.writeFileSync(sandboxDefFilePath, JSON.stringify({ SandboxName, LicenseType }));
   });
 
@@ -88,9 +87,11 @@ describe('Sandbox Refresh', () => {
   //
 
   it('should return a SandboxProcessObject without polling (--async) using --name', async () => {
-    const sbxInfo = getSandboxInfo();
-    const sbxName = sbxInfo.SandboxName;
-    const sbxProcess = getSandboxProcess();
+    const sbxName = 'refrshSbx1';
+    const sbxInfo = getSandboxInfo({ SandboxName: sbxName });
+    const sbxProcess = getSandboxProcess({ SandboxName: sbxName });
+    const sandboxInfoSoql = getSandboxInfoSoql(sbxName);
+    const sandboxProcessSoql = getSandboxProcessSoql({ sandboxName: sbxName });
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
 
     const singleRecordQueryStub = stubSingleRecordQuery({ sinonSandbox, connection, sandboxInfoSoql, sbxInfo });
@@ -123,9 +124,12 @@ describe('Sandbox Refresh', () => {
   // This test uses a sandbox definition file to override the LicenseType from
   // DEVELOPER_PRO to DEVELOPER.
   it('should override existing SandboxInfo with definition-file values', async () => {
-    const sbxInfo = getSandboxInfo({ LicenseType: 'DEVELOPER PRO' });
-    const sbxName = sbxInfo.SandboxName;
-    const sbxProcess = getSandboxProcess();
+    // This test needs to use the SandboxName from the definition file; defaultSbxName
+    const sbxName = defaultSbxName;
+    const sbxInfo = getSandboxInfo({ LicenseType: 'DEVELOPER PRO', SandboxName: sbxName });
+    const sbxProcess = getSandboxProcess({ SandboxName: sbxName });
+    const sandboxInfoSoql = getSandboxInfoSoql(sbxName);
+    const sandboxProcessSoql = getSandboxProcessSoql({ sandboxName: sbxName });
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
 
     const singleRecordQueryStub = stubSingleRecordQuery({ sinonSandbox, connection, sandboxInfoSoql, sbxInfo });
@@ -144,7 +148,9 @@ describe('Sandbox Refresh', () => {
     expect(result).to.deep.equal(sbxProcess);
     expect(singleRecordQueryStub.calledOnce).to.be.true;
     expect(toolingUpdateStub.calledOnce).to.be.true;
-    const { Id, SandboxName, LicenseType, HistoryDays, CopyChatter, AutoActivate } = getSandboxInfo();
+    const { Id, SandboxName, LicenseType, HistoryDays, CopyChatter, AutoActivate } = getSandboxInfo({
+      SandboxName: sbxName,
+    });
     expect(toolingUpdateStub.firstCall.args[1]).to.deep.equal({
       Id,
       SandboxName,
@@ -161,7 +167,7 @@ describe('Sandbox Refresh', () => {
     expect(cache[sbxName]).to.have.property('action', 'Refresh');
     expect(cache[sbxName]).to.have.property('prodOrgUsername', hubOrgUsername);
     expect(cache[sbxName]).to.have.deep.property('sandboxProcessObject', sbxProcess);
-    expect(cache[sbxName]).to.have.deep.property('sandboxRequest', getSandboxInfo());
+    expect(cache[sbxName]).to.have.deep.property('sandboxRequest', getSandboxInfo({ SandboxName: sbxName }));
   });
 
   it('should error when no sandbox name provided', async () => {
@@ -176,9 +182,10 @@ describe('Sandbox Refresh', () => {
   });
 
   it('should error when no SandboxInfo found', async () => {
-    const sbxInfo = getSandboxInfo();
-    const sbxName = sbxInfo.SandboxName;
-    const sbxProcess = getSandboxProcess();
+    const sbxName = 'refrshSbx3';
+    const sbxProcess = getSandboxProcess({ SandboxName: sbxName });
+    const sandboxInfoSoql = getSandboxInfoSoql(sbxName);
+    const sandboxProcessSoql = getSandboxProcessSoql({ sandboxName: sbxName });
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
 
     const noRecordsError = new Error('no SandboxInfo records');
@@ -206,9 +213,12 @@ describe('Sandbox Refresh', () => {
   });
 
   it('should set AutoActivate to false on SandboxInfo with --no-auto-activate flag', async () => {
-    const sbxInfo = getSandboxInfo();
-    const sbxName = sbxInfo.SandboxName;
-    const sbxProcess = getSandboxProcess();
+    const sbxName = 'refrshSbx4';
+    const sbxInfo = getSandboxInfo({ SandboxName: sbxName });
+    const sbxProcess = getSandboxProcess({ SandboxName: sbxName });
+    const sandboxInfoSoql = getSandboxInfoSoql(sbxName);
+    const sandboxProcessSoql = getSandboxProcessSoql({ sandboxName: sbxName });
+
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
 
     const singleRecordQueryStub = stubSingleRecordQuery({ sinonSandbox, connection, sandboxInfoSoql, sbxInfo });
@@ -228,7 +238,7 @@ describe('Sandbox Refresh', () => {
     expect(result).to.deep.equal(sbxProcess);
     expect(singleRecordQueryStub.calledOnce).to.be.true;
     expect(toolingUpdateStub.calledOnce).to.be.true;
-    const sbxInfoNoAutoActivate = getSandboxInfo({ AutoActivate: false });
+    const sbxInfoNoAutoActivate = getSandboxInfo({ AutoActivate: false, SandboxName: sbxName });
     const { Id, SandboxName, LicenseType, HistoryDays, CopyChatter, AutoActivate } = sbxInfoNoAutoActivate;
     expect(toolingUpdateStub.firstCall.args[1]).to.deep.equal({
       Id,
@@ -250,10 +260,13 @@ describe('Sandbox Refresh', () => {
   });
 
   it('should poll and report a timeout', async () => {
-    const sbxInfo = getSandboxInfo();
-    const sbxName = sbxInfo.SandboxName;
-    const sbxProcess = getSandboxProcess();
-    const updatedSbxProcess = getSandboxProcess({ Status: 'Processing', CopyProgress: 90 });
+    const sbxName = 'refrshSbx5';
+    const sbxInfo = getSandboxInfo({ SandboxName: sbxName });
+    const sbxProcess = getSandboxProcess({ SandboxName: sbxName });
+    const sandboxInfoSoql = getSandboxInfoSoql(sbxName);
+    const sandboxProcessSoql = getSandboxProcessSoql({ sandboxName: sbxName });
+
+    const updatedSbxProcess = getSandboxProcess({ Status: 'Processing', CopyProgress: 90, SandboxName: sbxName });
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
 
     const singleRecordQueryStub = stubSingleRecordQuery({ sinonSandbox, connection, sandboxInfoSoql, sbxInfo });
@@ -280,9 +293,9 @@ describe('Sandbox Refresh', () => {
 
     // result will be the last SandboxProcess
     expect(result, 'checking result').to.deep.equal(updatedSbxProcess);
-    expect(singleRecordQueryStub.calledOnce).to.be.true;
-    expect(toolingUpdateStub.calledOnce).to.be.true;
-    expect(toolingQueryStub.calledOnce).to.be.true;
+    expect(singleRecordQueryStub.calledOnce, 'singleRecordQueryStub.calledOnce').to.be.true;
+    expect(toolingUpdateStub.calledOnce, 'toolingUpdateStub.calledOnce').to.be.true;
+    expect(toolingQueryStub.calledOnce, 'toolingQueryStub.calledOnce').to.be.true;
     expect(querySandboxProcessByIdStub.callCount).to.be.greaterThan(2);
 
     // check the sandbox cache entry
@@ -294,18 +307,21 @@ describe('Sandbox Refresh', () => {
     expect(cache[sbxName]).to.have.deep.property('sandboxRequest', sbxInfo);
 
     // check the command output for the `org resume sandbox` suggestion
-    expect(sfCommandUxStubs.warn.called).to.be.true;
+    expect(sfCommandUxStubs.warn.called, 'sfCommandUxStubs.warn.called').to.be.true;
     const timeoutMsg = messages.getMessage('warning.ClientTimeoutWaitingForSandboxProcess', ['refresh']);
     expect(sfCommandUxStubs.warn.firstCall.args[0]).to.equal(timeoutMsg);
-    expect(sfCommandUxStubs.info.called).to.be.true;
+    expect(sfCommandUxStubs.info.called, 'sfCommandUxStubs.info.called').to.be.true;
     const sbxStatusMsg = messages.getMessage('checkSandboxStatus', ['mocha', updatedSbxProcess.Id, hubOrgUsername]);
     expect(sfCommandUxStubs.info.firstCall.args[0]).to.equal(sbxStatusMsg);
   });
 
   it('should poll and report a success and write an auth file', async () => {
-    const sbxInfo = getSandboxInfo();
-    const sbxName = sbxInfo.SandboxName;
-    const sbxProcess = getSandboxProcess();
+    const sbxName = 'refrshSbx6';
+    const sbxInfo = getSandboxInfo({ SandboxName: sbxName });
+    const sbxProcess = getSandboxProcess({ SandboxName: sbxName });
+    const sandboxInfoSoql = getSandboxInfoSoql(sbxName);
+    const sandboxProcessSoql = getSandboxProcessSoql({ sandboxName: sbxName });
+
     const completeSbxProcess = getSandboxProcess({
       Status: 'Completed',
       CopyProgress: 100,
