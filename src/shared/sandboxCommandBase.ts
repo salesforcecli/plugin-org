@@ -88,7 +88,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
   ): void {
     lifecycle.on('POLLING_TIME_OUT', async () => {
       this.pollingTimeOut = true;
-      return this.updateSandboxRequestData();
+      return Promise.resolve(this.updateSandboxRequestData());
     });
 
     lifecycle.on(SandboxEvents.EVENT_RESUME, async (results: SandboxProcessObject) => {
@@ -98,14 +98,14 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
       this.sandboxProgress.markPreviousStagesAsCompleted(
         results.Status !== 'Completed' ? results.Status : 'Authenticating'
       );
-      return this.updateSandboxRequestData();
+      return Promise.resolve(this.updateSandboxRequestData());
     });
 
     lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results?: SandboxProcessObject) => {
       // console.log('Assigning this.latestSandboxProgressObj from "asyncResult" event (below)');
       // console.dir(results ?? this.latestSandboxProgressObj, { depth: 8 });
       this.latestSandboxProgressObj = results ?? this.latestSandboxProgressObj;
-      await this.updateSandboxRequestData();
+      this.updateSandboxRequestData();
       if (!options.isAsync) {
         this.spinner.stop();
       }
@@ -134,7 +134,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
       // console.log('Assigning this.latestSandboxProgressObj from "status" event (below)');
       // console.dir(results.sandboxProcessObj, { depth: 8 });
       this.latestSandboxProgressObj = results.sandboxProcessObj;
-      await this.updateSandboxRequestData();
+      this.updateSandboxRequestData();
       const progress = this.sandboxProgress.getSandboxProgress(results);
       const currentStage = progress.status;
       this.updateStage(currentStage, 'inProgress');
@@ -150,7 +150,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
       // console.log('Assigning this.latestSandboxProgressObj from "result" event (below)');
       // console.dir(results.sandboxProcessObj, { depth: 8 });
       this.latestSandboxProgressObj = results.sandboxProcessObj;
-      await this.updateSandboxRequestData();
+      this.updateSandboxRequestData();
       this.sandboxProgress.markPreviousStagesAsCompleted();
       this.updateProgress(results, options.isAsync);
       if (!options.isAsync) {
@@ -227,30 +227,22 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     }
   }
 
-  protected async updateSandboxRequestData(): Promise<void> {
+  protected updateSandboxRequestData(): void {
     if (this.sandboxRequestData && this.latestSandboxProgressObj) {
       this.sandboxRequestData.sandboxProcessObject = this.latestSandboxProgressObj;
     }
-    return this.saveSandboxProgressConfig();
+    this.saveSandboxProgressConfig();
   }
 
-  protected async saveSandboxProgressConfig(): Promise<void> {
+  protected saveSandboxProgressConfig(): void {
     if (this.sandboxRequestData?.sandboxProcessObject.SandboxName && this.sandboxRequestData) {
-      // this.sandboxRequestConfig.set(this.sandboxRequestData.sandboxProcessObject.SandboxName, this.sandboxRequestData);
-      // console.log('--- writing sandbox config ---');
-      // console.dir(this.sandboxRequestData, { depth: 8 });
-      // if (!this.sandboxRequestData.sandboxProcessObject.Id) {
-      //   console.trace();
-      // }
-      // console.log('--- ---------------------- ---');
-      // this.sandboxRequestConfig.writeSync();
-      return SandboxRequestCache.set(this.sandboxRequestData.sandboxProcessObject.SandboxName, this.sandboxRequestData);
+      this.sandboxRequestConfig.set(this.sandboxRequestData.sandboxProcessObject.SandboxName, this.sandboxRequestData);
+      this.sandboxRequestConfig.writeSync();
     }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected async finally(_: Error | undefined): Promise<any> {
-    console.log('removing all listeners');
     const lifecycle = Lifecycle.getInstance();
     lifecycle.removeAllListeners('POLLING_TIME_OUT');
     lifecycle.removeAllListeners(SandboxEvents.EVENT_RESUME);

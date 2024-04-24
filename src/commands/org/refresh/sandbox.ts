@@ -132,7 +132,7 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxProcessObj
     // remove uneditable fields before refresh
     const updateableSandboxInfo = omit(this.sbxConfig, uneditableFields);
     this.debug('Calling refresh with SandboxInfo: %s ', updateableSandboxInfo);
-    await this.initSandboxProcessData(this.sbxConfig);
+    this.initSandboxProcessData(this.sbxConfig);
 
     try {
       if (!this.flags.async) {
@@ -153,7 +153,7 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxProcessObj
         sandboxProcessObject,
         sandboxRequest: this.sbxConfig,
       };
-      await this.saveSandboxProgressConfig();
+      this.saveSandboxProgressConfig();
       if (this.flags.async) {
         process.exitCode = 68;
       }
@@ -232,7 +232,7 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxProcessObj
     }
   }
 
-  private async initSandboxProcessData(sandboxInfo: SandboxInfo): Promise<void> {
+  private initSandboxProcessData(sandboxInfo: SandboxInfo): void {
     this.sandboxRequestData = {
       ...this.sandboxRequestData,
       prodOrgUsername: this.flags['target-org'].getUsername() as string,
@@ -243,7 +243,7 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxProcessObj
       sandboxRequest: sandboxInfo,
     };
 
-    return this.saveSandboxProgressConfig();
+    this.saveSandboxProgressConfig();
   }
 
   private async confirmSandboxRefresh(sandboxInfo: SandboxInfo): Promise<void> {
