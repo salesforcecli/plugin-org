@@ -88,24 +88,24 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
   ): void {
     lifecycle.on('POLLING_TIME_OUT', async () => {
       this.pollingTimeOut = true;
-      return Promise.resolve(this.updateSandboxRequestData());
+      return this.updateSandboxRequestData();
     });
 
     lifecycle.on(SandboxEvents.EVENT_RESUME, async (results: SandboxProcessObject) => {
-      console.log('Assigning this.latestSandboxProgressObj from "resume" event (below)');
-      console.dir(results, { depth: 8 });
+      // console.log('Assigning this.latestSandboxProgressObj from "resume" event (below)');
+      // console.dir(results, { depth: 8 });
       this.latestSandboxProgressObj = results;
       this.sandboxProgress.markPreviousStagesAsCompleted(
         results.Status !== 'Completed' ? results.Status : 'Authenticating'
       );
-      return Promise.resolve(this.updateSandboxRequestData());
+      return this.updateSandboxRequestData();
     });
 
     lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results?: SandboxProcessObject) => {
-      console.log('Assigning this.latestSandboxProgressObj from "asyncResult" event (below)');
-      console.dir(results ?? this.latestSandboxProgressObj, { depth: 8 });
+      // console.log('Assigning this.latestSandboxProgressObj from "asyncResult" event (below)');
+      // console.dir(results ?? this.latestSandboxProgressObj, { depth: 8 });
       this.latestSandboxProgressObj = results ?? this.latestSandboxProgressObj;
-      this.updateSandboxRequestData();
+      await this.updateSandboxRequestData();
       if (!options.isAsync) {
         this.spinner.stop();
       }
@@ -131,10 +131,10 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     });
 
     lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) => {
-      console.log('Assigning this.latestSandboxProgressObj from "status" event (below)');
-      console.dir(results.sandboxProcessObj, { depth: 8 });
+      // console.log('Assigning this.latestSandboxProgressObj from "status" event (below)');
+      // console.dir(results.sandboxProcessObj, { depth: 8 });
       this.latestSandboxProgressObj = results.sandboxProcessObj;
-      this.updateSandboxRequestData();
+      await this.updateSandboxRequestData();
       const progress = this.sandboxProgress.getSandboxProgress(results);
       const currentStage = progress.status;
       this.updateStage(currentStage, 'inProgress');
@@ -147,10 +147,10 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     });
 
     lifecycle.on(SandboxEvents.EVENT_RESULT, async (results: ResultEvent) => {
-      console.log('Assigning this.latestSandboxProgressObj from "result" event (below)');
-      console.dir(results.sandboxProcessObj, { depth: 8 });
+      // console.log('Assigning this.latestSandboxProgressObj from "result" event (below)');
+      // console.dir(results.sandboxProcessObj, { depth: 8 });
       this.latestSandboxProgressObj = results.sandboxProcessObj;
-      this.updateSandboxRequestData();
+      await this.updateSandboxRequestData();
       this.sandboxProgress.markPreviousStagesAsCompleted();
       this.updateProgress(results, options.isAsync);
       if (!options.isAsync) {
@@ -227,23 +227,24 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     }
   }
 
-  protected updateSandboxRequestData(): void {
+  protected async updateSandboxRequestData(): Promise<void> {
     if (this.sandboxRequestData && this.latestSandboxProgressObj) {
       this.sandboxRequestData.sandboxProcessObject = this.latestSandboxProgressObj;
     }
-    this.saveSandboxProgressConfig();
+    return this.saveSandboxProgressConfig();
   }
 
-  protected saveSandboxProgressConfig(): void {
+  protected async saveSandboxProgressConfig(): Promise<void> {
     if (this.sandboxRequestData?.sandboxProcessObject.SandboxName && this.sandboxRequestData) {
-      this.sandboxRequestConfig.set(this.sandboxRequestData.sandboxProcessObject.SandboxName, this.sandboxRequestData);
-      console.log('--- writing sandbox config ---');
-      console.dir(this.sandboxRequestData, { depth: 8 });
-      if (!this.sandboxRequestData.sandboxProcessObject.Id) {
-        console.trace();
-      }
-      console.log('--- ---------------------- ---');
-      this.sandboxRequestConfig.writeSync();
+      // this.sandboxRequestConfig.set(this.sandboxRequestData.sandboxProcessObject.SandboxName, this.sandboxRequestData);
+      // console.log('--- writing sandbox config ---');
+      // console.dir(this.sandboxRequestData, { depth: 8 });
+      // if (!this.sandboxRequestData.sandboxProcessObject.Id) {
+      //   console.trace();
+      // }
+      // console.log('--- ---------------------- ---');
+      // this.sandboxRequestConfig.writeSync();
+      return SandboxRequestCache.set(this.sandboxRequestData.sandboxProcessObject.SandboxName, this.sandboxRequestData);
     }
   }
 

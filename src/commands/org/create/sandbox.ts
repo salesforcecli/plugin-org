@@ -156,7 +156,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
     });
     const sandboxReq = await this.createSandboxRequest();
     await this.confirmSandboxReq({ ...sandboxReq, ...(this.flags.clone ? { CloneSource: this.flags.clone } : {}) });
-    this.initSandboxProcessData(sandboxReq);
+    await this.initSandboxProcessData(sandboxReq);
 
     if (!this.flags.async) {
       this.spinner.start('Sandbox Create');
@@ -170,10 +170,10 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
         interval: this.flags['poll-interval'],
         async: this.flags.async,
       });
-      console.log('Assigning this.latestSandboxProgressObj from command (below)');
-      console.dir(sandboxProcessObject, { depth: 8 });
+      // console.log('Assigning this.latestSandboxProgressObj from command (below)');
+      // console.dir(sandboxProcessObject, { depth: 8 });
       this.latestSandboxProgressObj = sandboxProcessObject;
-      this.saveSandboxProgressConfig();
+      await this.saveSandboxProgressConfig();
       if (this.flags.async) {
         process.exitCode = 68;
       }
@@ -197,7 +197,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
     }
   }
 
-  private initSandboxProcessData(sandboxReq: SandboxRequest): void {
+  private async initSandboxProcessData(sandboxReq: SandboxRequest): Promise<void> {
     this.sandboxRequestData = {
       ...this.sandboxRequestData,
       alias: this.flags.alias,
@@ -211,7 +211,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
       tracksSource: this.flags['no-track-source'] === true ? false : undefined,
     };
 
-    this.saveSandboxProgressConfig();
+    return this.saveSandboxProgressConfig();
   }
 
   private async confirmSandboxReq(sandboxReq: SandboxConfirmData): Promise<void> {
