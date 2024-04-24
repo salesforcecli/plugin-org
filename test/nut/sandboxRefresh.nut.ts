@@ -5,8 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-/* eslint-disable no-console */
-
 import fs from 'node:fs';
 import path from 'node:path';
 import { assert, expect } from 'chai';
@@ -94,9 +92,6 @@ describe('Sandbox Refresh', () => {
     const sbxProcess = getSandboxProcess({ SandboxName: sbxName });
     const sandboxInfoSoql = getSandboxInfoSoql(sbxName);
     const sandboxProcessSoql = getSandboxProcessSoql({ sandboxName: sbxName });
-    console.log('--- sandboxRefreshNut test 1 ---');
-    console.dir(sbxProcess, { depth: 8 });
-    console.log('-------------------------------');
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
 
     const singleRecordQueryStub = stubSingleRecordQuery({ sinonSandbox, connection, sandboxInfoSoql, sbxInfo });
@@ -119,9 +114,6 @@ describe('Sandbox Refresh', () => {
 
     // check the sandbox cache entry
     const cache = readSandboxCacheFile(cacheFilePath);
-    console.log('--- sandboxRefreshNut test 1 cacheFile ---');
-    console.dir(cache, { depth: 8 });
-    console.log('-------------------------------');
     expect(cache).to.have.property(sbxName);
     expect(cache[sbxName]).to.have.property('action', 'Refresh');
     expect(cache[sbxName]).to.have.property('prodOrgUsername', hubOrgUsername);
@@ -138,9 +130,6 @@ describe('Sandbox Refresh', () => {
     const sbxProcess = getSandboxProcess({ SandboxName: sbxName });
     const sandboxInfoSoql = getSandboxInfoSoql(sbxName);
     const sandboxProcessSoql = getSandboxProcessSoql({ sandboxName: sbxName });
-    console.log('--- sandboxRefreshNut test 2 ---');
-    console.dir(sbxProcess, { depth: 8 });
-    console.log('-------------------------------');
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
 
     const singleRecordQueryStub = stubSingleRecordQuery({ sinonSandbox, connection, sandboxInfoSoql, sbxInfo });
@@ -174,9 +163,6 @@ describe('Sandbox Refresh', () => {
 
     // check the sandbox cache entry
     const cache = readSandboxCacheFile(cacheFilePath);
-    console.log('--- sandboxRefreshNut test 2 cacheFile ---');
-    console.dir(cache, { depth: 8 });
-    console.log('-------------------------------');
     expect(cache).to.have.property(sbxName);
     expect(cache[sbxName]).to.have.property('action', 'Refresh');
     expect(cache[sbxName]).to.have.property('prodOrgUsername', hubOrgUsername);
@@ -233,9 +219,6 @@ describe('Sandbox Refresh', () => {
     const sandboxInfoSoql = getSandboxInfoSoql(sbxName);
     const sandboxProcessSoql = getSandboxProcessSoql({ sandboxName: sbxName });
 
-    console.log('--- sandboxRefreshNut test 3 ---');
-    console.dir(sbxProcess, { depth: 8 });
-    console.log('-------------------------------');
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
 
     const singleRecordQueryStub = stubSingleRecordQuery({ sinonSandbox, connection, sandboxInfoSoql, sbxInfo });
@@ -269,9 +252,6 @@ describe('Sandbox Refresh', () => {
 
     // check the sandbox cache entry
     const cache = readSandboxCacheFile(cacheFilePath);
-    console.log('--- sandboxRefreshNut test 3 cacheFile ---');
-    console.dir(cache, { depth: 8 });
-    console.log('-------------------------------');
     expect(cache).to.have.property(sbxName);
     expect(cache[sbxName]).to.have.property('action', 'Refresh');
     expect(cache[sbxName]).to.have.property('prodOrgUsername', hubOrgUsername);
