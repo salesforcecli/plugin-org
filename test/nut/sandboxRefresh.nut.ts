@@ -5,6 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+/* eslint-disable no-console */
+
 import fs from 'node:fs';
 import path from 'node:path';
 import { assert, expect } from 'chai';
@@ -59,6 +61,7 @@ describe('Sandbox Refresh', () => {
   });
 
   beforeEach(() => {
+    fs.writeFileSync(cacheFilePath, '{}');
     sfCommandUxStubs = stubSfCommandUx(sinonSandbox);
     stubUx(sinonSandbox);
     stubSpinner(sinonSandbox);
@@ -114,6 +117,10 @@ describe('Sandbox Refresh', () => {
 
     // check the sandbox cache entry
     const cache = readSandboxCacheFile(cacheFilePath);
+    console.log('----- Cache Check 1 -----');
+    console.log(performance.now());
+    console.dir(cache);
+    console.log('----- Cache Check 1 -----');
     expect(cache).to.have.property(sbxName);
     expect(cache[sbxName]).to.have.property('action', 'Refresh');
     expect(cache[sbxName]).to.have.property('prodOrgUsername', hubOrgUsername);
@@ -163,6 +170,10 @@ describe('Sandbox Refresh', () => {
 
     // check the sandbox cache entry
     const cache = readSandboxCacheFile(cacheFilePath);
+    console.log('----- Cache Check 2 -----');
+    console.log(performance.now());
+    console.dir(cache);
+    console.log('----- Cache Check 2 -----');
     expect(cache).to.have.property(sbxName);
     expect(cache[sbxName]).to.have.property('action', 'Refresh');
     expect(cache[sbxName]).to.have.property('prodOrgUsername', hubOrgUsername);
@@ -252,6 +263,10 @@ describe('Sandbox Refresh', () => {
 
     // check the sandbox cache entry
     const cache = readSandboxCacheFile(cacheFilePath);
+    console.log('----- Cache Check 4 -----');
+    console.log(performance.now());
+    console.dir(cache);
+    console.log('----- Cache Check 4 -----');
     expect(cache).to.have.property(sbxName);
     expect(cache[sbxName]).to.have.property('action', 'Refresh');
     expect(cache[sbxName]).to.have.property('prodOrgUsername', hubOrgUsername);
@@ -300,6 +315,10 @@ describe('Sandbox Refresh', () => {
 
     // check the sandbox cache entry
     const cache = readSandboxCacheFile(cacheFilePath);
+    console.log('----- Cache Check 5 -----');
+    console.log(performance.now());
+    console.dir(cache);
+    console.log('----- Cache Check 5 -----');
     expect(cache).to.have.property(sbxName);
     expect(cache[sbxName]).to.have.property('action', 'Refresh');
     expect(cache[sbxName]).to.have.property('prodOrgUsername', hubOrgUsername);
