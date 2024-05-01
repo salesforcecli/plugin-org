@@ -93,6 +93,9 @@
     "flexibleTaxonomy": true,
     "topicSeparator": " "
   },
+  "resolutions": {
+    "@salesforce/core": "7.3.3-dev.0"
+  },
   "repository": "salesforcecli/plugin-org",
   "scripts": {
     "build": "wireit",

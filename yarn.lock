@@ -1637,7 +1637,7 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.8.0"
 
-"@salesforce/core@7.3.3-dev.0":
+"@salesforce/core@7.3.3-dev.0", "@salesforce/core@^7.0.0", "@salesforce/core@^7.1.0", "@salesforce/core@^7.2.0":
   version "7.3.3-dev.0"
   resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-7.3.3-dev.0.tgz#b8b41e4bf7af9549ae447428fa3c2ae2b19c36f0"
   integrity sha512-EcURhLvU5/P2KNgNtHXWHZpPJa/6ZacPn93o1xJ29WOmbNNgGfLc/50d0obF5DXn53wpK2C040f67q6sPA4pWA==
@@ -1654,29 +1654,6 @@
     jsonwebtoken "9.0.2"
     jszip "3.10.1"
     pino "^8.21.0"
-    pino-abstract-transport "^1.1.0"
-    pino-pretty "^10.3.1"
-    proper-lockfile "^4.1.2"
-    semver "^7.6.0"
-    ts-retry-promise "^0.7.1"
-
-"@salesforce/core@^7.0.0", "@salesforce/core@^7.1.0", "@salesforce/core@^7.2.0":
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-7.2.0.tgz#5034c8a1104e5feb0c2c96609a98e8f63e6f8676"
-  integrity sha512-N/9hv7Vdr9sEuob9vo90odcQ7dJPtfOQVIE5R8vFcfaHK3W3ej9EpHsaV55PkaVG+hxRhZ2oOVA3UaVfp/diOw==
-  dependencies:
-    "@jsforce/jsforce-node" "^3.1.0"
-    "@salesforce/kit" "^3.1.0"
-    "@salesforce/schemas" "^1.7.0"
-    "@salesforce/ts-types" "^2.0.9"
-    ajv "^8.12.0"
-    change-case "^4.1.2"
-    faye "^1.4.0"
-    form-data "^4.0.0"
-    js2xmlparser "^4.0.1"
-    jsonwebtoken "9.0.2"
-    jszip "3.10.1"
-    pino "^8.19.0"
     pino-abstract-transport "^1.1.0"
     pino-pretty "^10.3.1"
     proper-lockfile "^4.1.2"
@@ -6523,7 +6500,7 @@ picomatch@^3.0.1:
   resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-3.0.1.tgz#817033161def55ec9638567a2f3bbc876b3e7516"
   integrity sha512-I3EurrIQMlRc9IaAZnqRR044Phh2DXY+55o7uJ0V+hYZAcQYSuFWsc9q5PvyDHUSCe1Qxn/iBz+78s86zWnGag==
 
-pino-abstract-transport@^1.0.0, pino-abstract-transport@^1.1.0, pino-abstract-transport@v1.1.0:
+pino-abstract-transport@^1.0.0, pino-abstract-transport@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/pino-abstract-transport/-/pino-abstract-transport-1.1.0.tgz#083d98f966262164504afb989bccd05f665937a8"
   integrity sha512-lsleG3/2a/JIWUtf9Q5gUNErBqwIu1tUKTT3dUzaf5DySw9ra1wcqKjJjLX1VTY64Wk1eEOYsVGSaGfCK85ekA==
@@ -6563,23 +6540,6 @@ pino-std-serializers@^6.0.0:
   version "6.2.2"
   resolved "https://registry.yarnpkg.com/pino-std-serializers/-/pino-std-serializers-6.2.2.tgz#d9a9b5f2b9a402486a5fc4db0a737570a860aab3"
   integrity sha512-cHjPPsE+vhj/tnhCy/wiMh3M3z3h/j15zHQX+S9GkTBgqJuTuJzYJ4gUyACLhDaJ7kk9ba9iRDmbH2tJU03OiA==
-
-pino@^8.19.0:
-  version "8.19.0"
-  resolved "https://registry.yarnpkg.com/pino/-/pino-8.19.0.tgz#ccc15ef736f103ec02cfbead0912bc436dc92ce4"
-  integrity sha512-oswmokxkav9bADfJ2ifrvfHUwad6MLp73Uat0IkQWY3iAw5xTRoznXbXksZs8oaOUMpmhVWD+PZogNzllWpJaA==
-  dependencies:
-    atomic-sleep "^1.0.0"
-    fast-redact "^3.1.1"
-    on-exit-leak-free "^2.1.0"
-    pino-abstract-transport v1.1.0
-    pino-std-serializers "^6.0.0"
-    process-warning "^3.0.0"
-    quick-format-unescaped "^4.0.3"
-    real-require "^0.2.0"
-    safe-stable-stringify "^2.3.1"
-    sonic-boom "^3.7.0"
-    thread-stream "^2.0.0"
 
 pino@^8.21.0:
   version "8.21.0"
@@ -7506,13 +7466,6 @@ text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==
-
-thread-stream@^2.0.0:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/thread-stream/-/thread-stream-2.4.1.tgz#6d588b14f0546e59d3f306614f044bc01ce43351"
-  integrity sha512-d/Ex2iWd1whipbT681JmTINKw0ZwOUBZm7+Gjs64DHuX34mmw8vJL2bFAaNacaW72zYiTJxSHi5abUuOi5nsfg==
-  dependencies:
-    real-require "^0.2.0"
 
 thread-stream@^2.6.0:
   version "2.7.0"
