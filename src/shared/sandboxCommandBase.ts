@@ -4,6 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+
+/* eslint-disable no-console */
+
 import os from 'node:os';
 
 import { SfCommand } from '@salesforce/sf-plugins-core';
@@ -84,11 +87,13 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     options: { isAsync: boolean; alias?: string; setDefault?: boolean; prodOrg?: Org; tracksSource?: boolean }
   ): void {
     lifecycle.on('POLLING_TIME_OUT', async () => {
+      console.log('on.POLLING_TIME_OUT', performance.now());
       this.pollingTimeOut = true;
       return Promise.resolve(this.updateSandboxRequestData());
     });
 
     lifecycle.on(SandboxEvents.EVENT_RESUME, async (results: SandboxProcessObject) => {
+      console.log('on.resume', performance.now());
       this.latestSandboxProgressObj = results;
       this.sandboxProgress.markPreviousStagesAsCompleted(
         results.Status !== 'Completed' ? results.Status : 'Authenticating'
@@ -97,6 +102,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     });
 
     lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results?: SandboxProcessObject) => {
+      console.log('on.asyncResult', performance.now());
       this.latestSandboxProgressObj = results ?? this.latestSandboxProgressObj;
       this.updateSandboxRequestData();
       if (!options.isAsync) {
@@ -124,6 +130,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     });
 
     lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) => {
+      console.log('on.status', performance.now());
       this.latestSandboxProgressObj = results.sandboxProcessObj;
       this.updateSandboxRequestData();
       const progress = this.sandboxProgress.getSandboxProgress(results);
@@ -133,11 +140,13 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     });
 
     lifecycle.on(SandboxEvents.EVENT_AUTH, async (results: SandboxUserAuthResponse) => {
+      console.log('on.auth', performance.now());
       this.sandboxAuth = results;
       return Promise.resolve();
     });
 
     lifecycle.on(SandboxEvents.EVENT_RESULT, async (results: ResultEvent) => {
+      console.log('on.result', performance.now());
       this.latestSandboxProgressObj = results.sandboxProcessObj;
       this.updateSandboxRequestData();
       this.sandboxProgress.markPreviousStagesAsCompleted();
@@ -160,6 +169,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     });
 
     lifecycle.on(SandboxEvents.EVENT_MULTIPLE_SBX_PROCESSES, async (results: SandboxProcessObject[]) => {
+      console.log('on.multipleMatchingSbxProcesses', performance.now());
       const [resumingProcess, ...otherSbxProcesses] = results;
       const sbxProcessIds = otherSbxProcesses.map((sbxProcess) => sbxProcess.Id);
       const sbxProcessStatuses = otherSbxProcesses.map((sbxProcess) => sbxProcess.Status);
@@ -225,6 +235,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
 
   protected saveSandboxProgressConfig(): void {
     if (this.sandboxRequestData?.sandboxProcessObject.SandboxName && this.sandboxRequestData) {
+      console.log('baseCommand saveSandboxProgressConfig', performance.now());
       this.sandboxRequestConfig.set(this.sandboxRequestData.sandboxProcessObject.SandboxName, this.sandboxRequestData);
       this.sandboxRequestConfig.writeSync();
     }
@@ -233,6 +244,8 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected async finally(_: Error | undefined): Promise<any> {
     const lifecycle = Lifecycle.getInstance();
+    console.log('start removeAllListeners:', performance.now());
+
     lifecycle.removeAllListeners('POLLING_TIME_OUT');
     lifecycle.removeAllListeners(SandboxEvents.EVENT_RESUME);
     lifecycle.removeAllListeners(SandboxEvents.EVENT_ASYNC_RESULT);
@@ -240,6 +253,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     lifecycle.removeAllListeners(SandboxEvents.EVENT_AUTH);
     lifecycle.removeAllListeners(SandboxEvents.EVENT_RESULT);
     lifecycle.removeAllListeners(SandboxEvents.EVENT_MULTIPLE_SBX_PROCESSES);
+    console.log('end removeAllListeners:', performance.now());
 
     return super.finally(_);
   }

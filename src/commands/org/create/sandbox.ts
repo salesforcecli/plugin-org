@@ -5,6 +5,8 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+/* eslint-disable no-console */
+
 import { Duration } from '@salesforce/kit';
 import { Flags } from '@salesforce/sf-plugins-core';
 import { Lifecycle, Messages, SandboxEvents, SandboxProcessObject, SandboxRequest, SfError } from '@salesforce/core';
@@ -169,6 +171,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
         async: this.flags.async,
       });
       this.latestSandboxProgressObj = sandboxProcessObject;
+      console.log('createSandbox save', performance.now());
       this.saveSandboxProgressConfig();
       if (this.flags.async) {
         process.exitCode = 68;
@@ -206,7 +209,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
       sandboxRequest: sandboxReq,
       tracksSource: this.flags['no-track-source'] === true ? false : undefined,
     };
-
+    console.log('createSandbox init', performance.now());
     this.saveSandboxProgressConfig();
   }
 
