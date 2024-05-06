@@ -105,15 +105,17 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
 
     lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results?: SandboxProcessObject) => {
       console.log('on.asyncResult begin', performance.now());
-      console.dir(results, { depth: 8 });
-      console.log('----------------');
       this.latestSandboxProgressObj = results ?? this.latestSandboxProgressObj;
+      console.log('this.latestSandboxProgressObj:');
       console.dir(this.latestSandboxProgressObj, { depth: 8 });
+      console.log('this.sandboxRequestData:');
+      console.dir(this.sandboxRequestData, { depth: 8 });
       console.log('----------------');
       this.updateSandboxRequestData();
       if (!options.isAsync) {
         this.spinner.stop();
       }
+      console.log('----- Begin update stage -----------');
       // things that require data on latestSandboxProgressObj
       if (this.latestSandboxProgressObj) {
         const progress = this.sandboxProgress.getSandboxProgress({
@@ -128,6 +130,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
           options.isAsync
         );
       }
+      console.log('------- End update stage ---------');
       if (this.pollingTimeOut) {
         this.warn(messages.getMessage('warning.ClientTimeoutWaitingForSandboxProcess', [this.action.toLowerCase()]));
       }
@@ -243,6 +246,8 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
   protected saveSandboxProgressConfig(): void {
     if (this.sandboxRequestData?.sandboxProcessObject.SandboxName && this.sandboxRequestData) {
       console.log('baseCommand saveSandboxProgressConfig', performance.now());
+      console.log('this.sandboxRequestData:');
+      console.dir(this.sandboxRequestData, { depth: 8 });
       this.sandboxRequestConfig.set(this.sandboxRequestData.sandboxProcessObject.SandboxName, this.sandboxRequestData);
       this.sandboxRequestConfig.writeSync();
     }

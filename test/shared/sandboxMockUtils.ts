@@ -198,16 +198,8 @@ type SbxProcessSqlConfig = {
  */
 export const stubToolingQuery = (config: ToolingQueryStubConfig): sinon.SinonStub => {
   const { sinonSandbox, connection, sandboxProcessSoql, sbxProcess } = config;
-  console.log('stubToolingQuery called:', performance.now());
-  console.dir(sbxProcess, { depth: 8 });
   return sinonSandbox
     .stub(connection.tooling, 'query')
     .withArgs(sandboxProcessSoql)
-    .callsFake((soql) => {
-      console.log('stubToolingQuery called:', performance.now());
-      console.log(soql);
-      console.dir(sbxProcess, { depth: 8 });
-      return Promise.resolve({ records: [sbxProcess], done: true, totalSize: 1 }) as any;
-    });
-  // .resolves({ records: [sbxProcess], done: true, totalSize: 1 });
+    .resolves({ records: [sbxProcess], done: true, totalSize: 1 });
 };
