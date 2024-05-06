@@ -39,6 +39,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
   protected sandboxRequestConfig!: SandboxRequestCache;
   protected sandboxRequestData: SandboxRequestCacheEntry | undefined;
   protected action: 'Create' | 'Refresh' | 'Create/Refresh';
+  private createdId;
   public constructor(argv: string[], config: Config) {
     super(argv, config);
     this.action =
@@ -48,6 +49,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
         ? 'Create'
         : 'Create/Refresh';
     this.sandboxProgress = new SandboxProgress({ action: this.action });
+    this.createdId = `${this.action}_${performance.now()}`;
   }
   protected async getSandboxRequestConfig(): Promise<SandboxRequestCache> {
     if (!this.sandboxRequestConfig) {
@@ -102,8 +104,12 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     });
 
     lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results?: SandboxProcessObject) => {
-      console.log('on.asyncResult', performance.now());
+      console.log('on.asyncResult begin', performance.now());
+      console.dir(results, { depth: 8 });
+      console.log('----------------');
       this.latestSandboxProgressObj = results ?? this.latestSandboxProgressObj;
+      console.dir(this.latestSandboxProgressObj, { depth: 8 });
+      console.log('----------------');
       this.updateSandboxRequestData();
       if (!options.isAsync) {
         this.spinner.stop();
@@ -126,6 +132,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
         this.warn(messages.getMessage('warning.ClientTimeoutWaitingForSandboxProcess', [this.action.toLowerCase()]));
       }
       this.log(this.sandboxProgress.formatProgressStatus(false));
+      console.log('on.asyncResult end', performance.now());
       return Promise.resolve(this.info(messages.getMessage('checkSandboxStatus', this.getCheckSandboxStatusParams())));
     });
 
@@ -244,7 +251,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected async finally(_: Error | undefined): Promise<any> {
     const lifecycle = Lifecycle.getInstance();
-    console.log('start removeAllListeners:', performance.now());
+    console.log(`start removeAllListeners: ${this.createdId}`, performance.now());
 
     lifecycle.removeAllListeners('POLLING_TIME_OUT');
     lifecycle.removeAllListeners(SandboxEvents.EVENT_RESUME);
@@ -253,7 +260,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     lifecycle.removeAllListeners(SandboxEvents.EVENT_AUTH);
     lifecycle.removeAllListeners(SandboxEvents.EVENT_RESULT);
     lifecycle.removeAllListeners(SandboxEvents.EVENT_MULTIPLE_SBX_PROCESSES);
-    console.log('end removeAllListeners:', performance.now());
+    console.log(`end removeAllListeners: ${this.createdId}`, performance.now());
 
     return super.finally(_);
   }

@@ -4,6 +4,9 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+
+/* eslint-disable */
+
 import fs from 'node:fs';
 import path from 'node:path';
 import { SaveResult } from '@jsforce/jsforce-node';
@@ -195,8 +198,16 @@ type SbxProcessSqlConfig = {
  */
 export const stubToolingQuery = (config: ToolingQueryStubConfig): sinon.SinonStub => {
   const { sinonSandbox, connection, sandboxProcessSoql, sbxProcess } = config;
+  console.log('stubToolingQuery called:', performance.now());
+  console.dir(sbxProcess, { depth: 8 });
   return sinonSandbox
     .stub(connection.tooling, 'query')
     .withArgs(sandboxProcessSoql)
-    .resolves({ records: [sbxProcess], done: true, totalSize: 1 });
+    .callsFake((soql) => {
+      console.log('stubToolingQuery called:', performance.now());
+      console.log(soql);
+      console.dir(sbxProcess, { depth: 8 });
+      return Promise.resolve({ records: [sbxProcess], done: true, totalSize: 1 }) as any;
+    });
+  // .resolves({ records: [sbxProcess], done: true, totalSize: 1 });
 };
