@@ -1,3 +1,9 @@
+## [4.1.8](https://github.com/salesforcecli/plugin-org/compare/4.1.7...4.1.8) (2024-05-06)
+
+### Bug Fixes
+
+- bump sfdx-core ([#1049](https://github.com/salesforcecli/plugin-org/issues/1049)) ([c9aa0cd](https://github.com/salesforcecli/plugin-org/commit/c9aa0cdabde141f168b14dd5b6f35a26e3b04c06))
+
 ## [4.1.7](https://github.com/salesforcecli/plugin-org/compare/4.1.6...4.1.7) (2024-05-05)
 
 ### Bug Fixes
