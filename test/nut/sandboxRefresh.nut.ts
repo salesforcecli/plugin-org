@@ -167,8 +167,6 @@ describe('Sandbox Refresh', () => {
       AutoActivate,
     });
     expect(toolingQueryStub.calledOnce).to.be.true;
-    console.dir(toolingQueryStub.firstCall.args, { depth: 8 });
-    console.dir(toolingQueryStub.returnValues, { depth: 8 });
 
     // check the sandbox cache entry
     const cache = readSandboxCacheFile(cacheFilePath);

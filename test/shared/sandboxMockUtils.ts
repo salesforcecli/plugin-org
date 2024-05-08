@@ -198,8 +198,16 @@ type SbxProcessSqlConfig = {
  */
 export const stubToolingQuery = (config: ToolingQueryStubConfig): sinon.SinonStub => {
   const { sinonSandbox, connection, sandboxProcessSoql, sbxProcess } = config;
-  return sinonSandbox
-    .stub(connection.tooling, 'query')
-    .withArgs(sandboxProcessSoql)
-    .resolves({ records: [sbxProcess], done: true, totalSize: 1 });
+  return (
+    sinonSandbox
+      .stub(connection.tooling, 'query')
+      .withArgs(sandboxProcessSoql)
+      // @ts-expect-error
+      .callsFake(async () => {
+        const queryResponse = { records: [sbxProcess], done: true, totalSize: 1 };
+        return new Promise((resolve) => {
+          setTimeout(() => resolve(queryResponse), 100);
+        });
+      })
+  );
 };

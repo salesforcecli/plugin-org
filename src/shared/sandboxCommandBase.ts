@@ -39,7 +39,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
   protected sandboxRequestConfig!: SandboxRequestCache;
   protected sandboxRequestData: SandboxRequestCacheEntry | undefined;
   protected action: 'Create' | 'Refresh' | 'Create/Refresh';
-  private createdId;
+
   public constructor(argv: string[], config: Config) {
     super(argv, config);
     this.action =
@@ -49,7 +49,6 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
         ? 'Create'
         : 'Create/Refresh';
     this.sandboxProgress = new SandboxProgress({ action: this.action });
-    this.createdId = `${this.action}_${performance.now()}`;
   }
   protected async getSandboxRequestConfig(): Promise<SandboxRequestCache> {
     if (!this.sandboxRequestConfig) {
@@ -106,11 +105,6 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results?: SandboxProcessObject) => {
       console.log('on.asyncResult begin', performance.now());
       this.latestSandboxProgressObj = results ?? this.latestSandboxProgressObj;
-      // console.log('this.latestSandboxProgressObj:');
-      // console.dir(this.latestSandboxProgressObj, { depth: 8 });
-      // console.log('this.sandboxRequestData:');
-      // console.dir(this.sandboxRequestData, { depth: 8 });
-      // console.log('----------------');
       this.updateSandboxRequestData();
       if (!options.isAsync) {
         this.spinner.stop();
@@ -177,7 +171,6 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     });
 
     lifecycle.on(SandboxEvents.EVENT_MULTIPLE_SBX_PROCESSES, async (results: SandboxProcessObject[]) => {
-      console.log('on.multipleMatchingSbxProcesses', performance.now());
       const [resumingProcess, ...otherSbxProcesses] = results;
       const sbxProcessIds = otherSbxProcesses.map((sbxProcess) => sbxProcess.Id);
       const sbxProcessStatuses = otherSbxProcesses.map((sbxProcess) => sbxProcess.Status);
@@ -247,7 +240,6 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
       console.log('this.sandboxRequestData before cache.set():');
       console.dir(this.sandboxRequestData, { depth: 8 });
       this.sandboxRequestConfig.set(this.sandboxRequestData.sandboxProcessObject.SandboxName, this.sandboxRequestData);
-      console.log('this.sandboxRequestData after cache.set():');
       console.log('this.sandboxRequestConfig.getContents() before writeSync():');
       console.dir(this.sandboxRequestConfig.getContents(), { depth: 8 });
       this.sandboxRequestConfig.writeSync();
@@ -257,7 +249,6 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected async finally(_: Error | undefined): Promise<any> {
     const lifecycle = Lifecycle.getInstance();
-    console.log(`start removeAllListeners: ${this.createdId}`, performance.now());
 
     lifecycle.removeAllListeners('POLLING_TIME_OUT');
     lifecycle.removeAllListeners(SandboxEvents.EVENT_RESUME);
@@ -266,7 +257,6 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     lifecycle.removeAllListeners(SandboxEvents.EVENT_AUTH);
     lifecycle.removeAllListeners(SandboxEvents.EVENT_RESULT);
     lifecycle.removeAllListeners(SandboxEvents.EVENT_MULTIPLE_SBX_PROCESSES);
-    console.log(`end removeAllListeners: ${this.createdId}`, performance.now());
 
     return super.finally(_);
   }
