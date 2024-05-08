@@ -1,3 +1,9 @@
+## [4.1.9](https://github.com/salesforcecli/plugin-org/compare/4.1.8...4.1.9) (2024-05-08)
+
+### Bug Fixes
+
+- delay stubbed query responses for more realistic tests ([29e6118](https://github.com/salesforcecli/plugin-org/commit/29e611880936bc8008b1368e08f17a338d92370f))
+
 ## [4.1.8](https://github.com/salesforcecli/plugin-org/compare/4.1.7...4.1.8) (2024-05-06)
 
 ### Bug Fixes
