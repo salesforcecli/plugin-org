@@ -189,6 +189,8 @@ type SbxProcessSqlConfig = {
 /**
  * Stubs the query for the newly created SandboxProcess from a sandbox update.
  * Stubs the query for a cloned sandbox process (see `CreateSandbox.getSourceId()`).
+ * The query response is delayed 100ms for a more realistic test and to prevent
+ * issues with sandbox cache (ConfigFile) merging/writing.
  *
  * @param config
  * @returns sinon.SinonStub
@@ -198,5 +200,11 @@ export const stubToolingQuery = (config: ToolingQueryStubConfig): sinon.SinonStu
   return sinonSandbox
     .stub(connection.tooling, 'query')
     .withArgs(sandboxProcessSoql)
-    .resolves({ records: [sbxProcess], done: true, totalSize: 1 });
+    .callsFake(
+      async () =>
+        // @ts-expect-error  return type doesn't match the complex query type
+        new Promise((resolve) => {
+          setTimeout(() => resolve({ records: [sbxProcess], done: true, totalSize: 1 }), 100);
+        })
+    );
 };
