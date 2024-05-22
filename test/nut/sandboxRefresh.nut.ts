@@ -90,6 +90,7 @@ describe('Sandbox Refresh', () => {
     const sbxName = 'refrshSbx1';
     const sbxInfo = getSandboxInfo({ SandboxName: sbxName });
     const sbxProcess = getSandboxProcess({ SandboxName: sbxName });
+    const expectedCmdResponse = Object.assign({}, sbxProcess, { SandboxUsername: `${hubOrgUsername}.${sbxName}` });
     const sandboxInfoSoql = getSandboxInfoSoql(sbxName);
     const sandboxProcessSoql = getSandboxProcessSoql({ sandboxName: sbxName });
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
@@ -107,7 +108,7 @@ describe('Sandbox Refresh', () => {
       '--json',
     ]);
 
-    expect(result).to.deep.equal(sbxProcess);
+    expect(result).to.deep.equal(expectedCmdResponse);
     expect(singleRecordQueryStub.calledOnce).to.be.true;
     expect(toolingUpdateStub.calledOnce).to.be.true;
     expect(toolingQueryStub.calledOnce).to.be.true;
@@ -128,6 +129,7 @@ describe('Sandbox Refresh', () => {
     const sbxName = defaultSbxName;
     const sbxInfo = getSandboxInfo({ LicenseType: 'DEVELOPER PRO', SandboxName: sbxName });
     const sbxProcess = getSandboxProcess({ SandboxName: sbxName });
+    const expectedCmdResponse = Object.assign({}, sbxProcess, { SandboxUsername: `${hubOrgUsername}.${sbxName}` });
     const sandboxInfoSoql = getSandboxInfoSoql(sbxName);
     const sandboxProcessSoql = getSandboxProcessSoql({ sandboxName: sbxName });
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
@@ -145,7 +147,7 @@ describe('Sandbox Refresh', () => {
       '--json',
     ]);
 
-    expect(result).to.deep.equal(sbxProcess);
+    expect(result).to.deep.equal(expectedCmdResponse);
     expect(singleRecordQueryStub.calledOnce).to.be.true;
     expect(toolingUpdateStub.calledOnce).to.be.true;
     const { Id, SandboxName, LicenseType, HistoryDays, CopyChatter, AutoActivate } = getSandboxInfo({
@@ -216,6 +218,7 @@ describe('Sandbox Refresh', () => {
     const sbxName = 'refrshSbx4';
     const sbxInfo = getSandboxInfo({ SandboxName: sbxName });
     const sbxProcess = getSandboxProcess({ SandboxName: sbxName });
+    const expectedCmdResponse = Object.assign({}, sbxProcess, { SandboxUsername: `${hubOrgUsername}.${sbxName}` });
     const sandboxInfoSoql = getSandboxInfoSoql(sbxName);
     const sandboxProcessSoql = getSandboxProcessSoql({ sandboxName: sbxName });
 
@@ -235,7 +238,7 @@ describe('Sandbox Refresh', () => {
       '--json',
     ]);
 
-    expect(result).to.deep.equal(sbxProcess);
+    expect(result).to.deep.equal(expectedCmdResponse);
     expect(singleRecordQueryStub.calledOnce).to.be.true;
     expect(toolingUpdateStub.calledOnce).to.be.true;
     const sbxInfoNoAutoActivate = getSandboxInfo({ AutoActivate: false, SandboxName: sbxName });
@@ -267,6 +270,9 @@ describe('Sandbox Refresh', () => {
     const sandboxProcessSoql = getSandboxProcessSoql({ sandboxName: sbxName });
 
     const updatedSbxProcess = getSandboxProcess({ Status: 'Processing', CopyProgress: 90, SandboxName: sbxName });
+    const expectedCmdResponse = Object.assign({}, updatedSbxProcess, {
+      SandboxUsername: `${hubOrgUsername}.${sbxName}`,
+    });
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
 
     const singleRecordQueryStub = stubSingleRecordQuery({ sinonSandbox, connection, sandboxInfoSoql, sbxInfo });
@@ -292,7 +298,7 @@ describe('Sandbox Refresh', () => {
     ]);
 
     // result will be the last SandboxProcess
-    expect(result, 'checking result').to.deep.equal(updatedSbxProcess);
+    expect(result, 'checking result').to.deep.equal(expectedCmdResponse);
     expect(singleRecordQueryStub.calledOnce, 'singleRecordQueryStub.calledOnce').to.be.true;
     expect(toolingUpdateStub.calledOnce, 'toolingUpdateStub.calledOnce').to.be.true;
     expect(toolingQueryStub.calledOnce, 'toolingQueryStub.calledOnce').to.be.true;
@@ -326,6 +332,9 @@ describe('Sandbox Refresh', () => {
       Status: 'Completed',
       CopyProgress: 100,
       EndDate: '2024-02-22T00:37:46.000+0000',
+    });
+    const expectedCmdResponse = Object.assign({}, completeSbxProcess, {
+      SandboxUsername: `${hubOrgUsername}.${sbxName}`,
     });
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
 
@@ -379,7 +388,7 @@ describe('Sandbox Refresh', () => {
     ]);
 
     // result will be the last SandboxProcess
-    expect(result, 'checking result').to.deep.equal(completeSbxProcess);
+    expect(result, 'checking result').to.deep.equal(expectedCmdResponse);
     expect(singleRecordQueryStub.calledOnce, 'singleRecordQueryStub called').to.be.true;
     expect(toolingUpdateStub.calledOnce, 'toolingUpdateStub called').to.be.true;
     expect(toolingQueryStub.calledOnce, 'toolingQueryStub called').to.be.true;
