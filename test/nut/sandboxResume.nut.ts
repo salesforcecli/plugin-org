@@ -133,13 +133,7 @@ describe('Sandbox Resume', () => {
       CopyProgress: 100,
       EndDate: '2024-02-22T00:37:46.000+0000',
     });
-    const expectedCmdResponse = Object.assign({}, completeSbxProcess, {
-      SandboxUsername: `${hubOrgUsername}.${sbxName}`,
-    });
-    // const sandboxProcessSoql = getSandboxProcessSoql({ Id: sbxProcess.Id });
-
-    // const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
-    // const toolingQueryStub = stubToolingQuery({ sinonSandbox, connection, sandboxProcessSoql, sbxProcess });
+    const expectedCmdResponse = { ...completeSbxProcess, SandboxUsername: `${hubOrgUsername}.${sbxName}` };
 
     // This call is used in polling; Org.pollStatusAndAuth()
     const querySandboxProcessByIdStub = sinonSandbox

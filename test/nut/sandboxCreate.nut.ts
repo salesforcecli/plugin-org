@@ -85,7 +85,7 @@ describe('Sandbox Create', () => {
     const sbxName = 'createSbx1';
     const sbxLicenseType = 'Developer';
     const sbxProcess = getSandboxProcess({ SandboxName: sbxName });
-    const expectedCmdResponse = Object.assign({}, sbxProcess, { SandboxUsername: `${hubOrgUsername}.${sbxName}` });
+    const expectedCmdResponse = { ...sbxProcess, SandboxUsername: `${hubOrgUsername}.${sbxName}` };
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
 
     const toolingCreateStub = stubToolingCreate({ sinonSandbox, connection });
@@ -119,7 +119,7 @@ describe('Sandbox Create', () => {
     const sbxName = 'createSbx2';
     const sbxLicenseType = 'Partial';
     const sbxProcess = getSandboxProcess({ SandboxName: sbxName, LicenseType: sbxLicenseType });
-    const expectedCmdResponse = Object.assign({}, sbxProcess, { SandboxUsername: `${hubOrgUsername}.${sbxName}` });
+    const expectedCmdResponse = { ...sbxProcess, SandboxUsername: `${hubOrgUsername}.${sbxName}` };
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
 
     const toolingCreateStub = stubToolingCreate({ sinonSandbox, connection });

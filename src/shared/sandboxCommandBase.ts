@@ -260,7 +260,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
         sbxUsername = this.getSandboxUsername(prodOrgUsername, sandboxName);
       }
     }
-    return Object.assign({}, this.latestSandboxProgressObj, { SandboxUsername: sbxUsername });
+    return { ...(this.latestSandboxProgressObj as SandboxProcessObject), SandboxUsername: sbxUsername };
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
