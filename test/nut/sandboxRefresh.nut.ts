@@ -92,7 +92,7 @@ describe('Sandbox Refresh', () => {
     const sbxProcess = getSandboxProcess({ SandboxName: sbxName });
     const expectedCmdResponse = Object.assign({}, sbxProcess, { SandboxUsername: `${hubOrgUsername}.${sbxName}` });
     const sandboxInfoSoql = getSandboxInfoSoql(sbxName);
-    const sandboxProcessSoql = getSandboxProcessSoql({ sandboxName: sbxName });
+    const sandboxProcessSoql = getSandboxProcessSoql({ SandboxName: sbxName });
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
 
     const singleRecordQueryStub = stubSingleRecordQuery({ sinonSandbox, connection, sandboxInfoSoql, sbxInfo });
@@ -131,7 +131,7 @@ describe('Sandbox Refresh', () => {
     const sbxProcess = getSandboxProcess({ SandboxName: sbxName });
     const expectedCmdResponse = Object.assign({}, sbxProcess, { SandboxUsername: `${hubOrgUsername}.${sbxName}` });
     const sandboxInfoSoql = getSandboxInfoSoql(sbxName);
-    const sandboxProcessSoql = getSandboxProcessSoql({ sandboxName: sbxName });
+    const sandboxProcessSoql = getSandboxProcessSoql({ SandboxName: sbxName });
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
 
     const singleRecordQueryStub = stubSingleRecordQuery({ sinonSandbox, connection, sandboxInfoSoql, sbxInfo });
@@ -187,7 +187,7 @@ describe('Sandbox Refresh', () => {
     const sbxName = 'refrshSbx3';
     const sbxProcess = getSandboxProcess({ SandboxName: sbxName });
     const sandboxInfoSoql = getSandboxInfoSoql(sbxName);
-    const sandboxProcessSoql = getSandboxProcessSoql({ sandboxName: sbxName });
+    const sandboxProcessSoql = getSandboxProcessSoql({ SandboxName: sbxName });
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
 
     const noRecordsError = new Error('no SandboxInfo records');
@@ -220,7 +220,7 @@ describe('Sandbox Refresh', () => {
     const sbxProcess = getSandboxProcess({ SandboxName: sbxName });
     const expectedCmdResponse = Object.assign({}, sbxProcess, { SandboxUsername: `${hubOrgUsername}.${sbxName}` });
     const sandboxInfoSoql = getSandboxInfoSoql(sbxName);
-    const sandboxProcessSoql = getSandboxProcessSoql({ sandboxName: sbxName });
+    const sandboxProcessSoql = getSandboxProcessSoql({ SandboxName: sbxName });
 
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
 
@@ -267,7 +267,7 @@ describe('Sandbox Refresh', () => {
     const sbxInfo = getSandboxInfo({ SandboxName: sbxName });
     const sbxProcess = getSandboxProcess({ SandboxName: sbxName });
     const sandboxInfoSoql = getSandboxInfoSoql(sbxName);
-    const sandboxProcessSoql = getSandboxProcessSoql({ sandboxName: sbxName });
+    const sandboxProcessSoql = getSandboxProcessSoql({ SandboxName: sbxName });
 
     const updatedSbxProcess = getSandboxProcess({ Status: 'Processing', CopyProgress: 90, SandboxName: sbxName });
     const expectedCmdResponse = Object.assign({}, updatedSbxProcess, {
@@ -326,7 +326,7 @@ describe('Sandbox Refresh', () => {
     const sbxInfo = getSandboxInfo({ SandboxName: sbxName });
     const sbxProcess = getSandboxProcess({ SandboxName: sbxName });
     const sandboxInfoSoql = getSandboxInfoSoql(sbxName);
-    const sandboxProcessSoql = getSandboxProcessSoql({ sandboxName: sbxName });
+    const sandboxProcessSoql = getSandboxProcessSoql({ SandboxName: sbxName });
 
     const completeSbxProcess = getSandboxProcess({
       Status: 'Completed',

@@ -49,7 +49,7 @@ describe('Sandbox Create', () => {
 
     // add a sandbox definition file to the project
     const { SandboxName, LicenseType, Id } = getSandboxInfo();
-    sandboxProcessSoql = getSandboxProcessSoql({ sandboxInfoId: Id });
+    sandboxProcessSoql = getSandboxProcessSoql({ SandboxInfoId: Id });
     fs.writeFileSync(sandboxDefFilePath, JSON.stringify({ SandboxName, LicenseType }));
   });
 
