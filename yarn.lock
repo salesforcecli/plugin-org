@@ -1845,10 +1845,10 @@
   resolved "https://registry.yarnpkg.com/@salesforce/schemas/-/schemas-1.9.0.tgz#ba477a112653a20b4edcf989c61c57bdff9aa3ca"
   integrity sha512-LiN37zG5ODT6z70sL1fxF7BQwtCX9JOWofSU8iliSNIM+WDEeinnoFtVqPInRSNt8I0RiJxIKCrqstsmQRBNvA==
 
-"@salesforce/sf-plugins-core@^9.0.11", "@salesforce/sf-plugins-core@^9.0.5":
-  version "9.0.11"
-  resolved "https://registry.yarnpkg.com/@salesforce/sf-plugins-core/-/sf-plugins-core-9.0.11.tgz#baf23e595ddcc0e3cb15db3fa3d56b7b1638b4a6"
-  integrity sha512-wGmTTyxPt8o3s7dfyM668FkkUow+YOUm0IDkXi+XjgVOUnn80SW9yPA1OrjA2sV3jeCdKunCgkf9KNP5e1wGgg==
+"@salesforce/sf-plugins-core@^9.0.12", "@salesforce/sf-plugins-core@^9.0.5":
+  version "9.0.12"
+  resolved "https://registry.yarnpkg.com/@salesforce/sf-plugins-core/-/sf-plugins-core-9.0.12.tgz#8bcacdb412c3570f66220acd6346636d86f81d62"
+  integrity sha512-KtZErzUdBrDDONpE6ZbW3V5WfBwUwo07Snttnu4IFs82rbsOkyCG/m02b+mbnGBrwWWy7auZW4e2ciRrmbZGDQ==
   dependencies:
     "@inquirer/confirm" "^2.0.17"
     "@inquirer/password" "^1.1.16"
