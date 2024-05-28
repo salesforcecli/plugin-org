@@ -23,7 +23,7 @@ import { buildStatus } from '../../../shared/scratchOrgOutput.js';
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'resume_scratch');
 
-export default class EnvResumeScratch extends SfCommand<ScratchCreateResponse> {
+export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
@@ -46,7 +46,7 @@ export default class EnvResumeScratch extends SfCommand<ScratchCreateResponse> {
   };
 
   public async run(): Promise<ScratchCreateResponse> {
-    const { flags } = await this.parse(EnvResumeScratch);
+    const { flags } = await this.parse(OrgResumeScratch);
     const cache = await ScratchOrgCache.create();
     const lifecycle = Lifecycle.getInstance();
 
@@ -81,7 +81,6 @@ export default class EnvResumeScratch extends SfCommand<ScratchCreateResponse> {
       } else {
         throw SfError.wrap(e);
       }
-      return {} as ScratchCreateResponse;
     }
   }
 }
