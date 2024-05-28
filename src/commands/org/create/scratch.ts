@@ -6,26 +6,25 @@
  */
 
 import {
-  Messages,
   Lifecycle,
-  ScratchOrgLifecycleEvent,
-  scratchOrgLifecycleEventName,
+  Messages,
   Org,
   scratchOrgCreate,
+  ScratchOrgLifecycleEvent,
+  scratchOrgLifecycleEventName,
   SfError,
 } from '@salesforce/core';
-import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
+import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
 import { Duration } from '@salesforce/kit';
 import { buildScratchOrgRequest } from '../../../shared/scratchOrgRequest.js';
 import { buildStatus } from '../../../shared/scratchOrgOutput.js';
 import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
+
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create_scratch');
 
-export const secretTimeout = 60_000;
-
 const definitionFileHelpGroupName = 'Definition File Override';
-export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
+export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
@@ -158,7 +157,7 @@ export default class EnvCreateScratch extends SfCommand<ScratchCreateResponse> {
 
   public async run(): Promise<ScratchCreateResponse> {
     const lifecycle = Lifecycle.getInstance();
-    const { flags } = await this.parse(EnvCreateScratch);
+    const { flags } = await this.parse(OrgCreateScratch);
     const baseUrl = flags['target-dev-hub'].getField(Org.Fields.INSTANCE_URL)?.toString();
     if (!baseUrl) {
       throw new SfError('No instance URL found for the dev hub');
