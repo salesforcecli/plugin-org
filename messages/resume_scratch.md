@@ -4,11 +4,9 @@ Resume the creation of an incomplete scratch org.
 
 # description
 
-When the original "<%= config.bin %> org create scratch" command either times out or is run with the --async flag, it
-displays a job ID.
+When the original "<%= config.bin %> org create scratch" command either times out or is run with the --async flag, it displays a job ID.
 
-Run this command by either passing it a job ID or using the --use-most-recent flag to specify the most recent incomplete
-scratch org.
+Run this command by either passing it a job ID or using the --use-most-recent flag to specify the most recent incomplete scratch org.
 
 # examples
 
