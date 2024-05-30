@@ -75,7 +75,7 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
       this.logSuccess(messages.getMessage('success'));
       return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
     } catch (e) {
-      if (cache.keys() && (e as Error).name === 'CacheMissError') {
+      if (cache.keys() && e instanceof Error && e.name === 'CacheMissError') {
         // we have something in the cache, but it didn't match what the user passed in
         throw messages.createError('error.jobIdMismatch', [jobId]);
       } else {
