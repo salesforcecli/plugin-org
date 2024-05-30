@@ -23,7 +23,7 @@ Specify a scratch org with either the username or the alias you gave the scratch
 
 # flags.target-org.summary
 
-Scratch org alias or login user.
+Username or alias of the target org. Not required if the `target-org` configuration variable is already set.
 
 # flags.no-prompt.summary
 
