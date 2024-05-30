@@ -1,3 +1,9 @@
+## [4.1.16](https://github.com/salesforcecli/plugin-org/compare/4.1.15...4.1.16) (2024-05-30)
+
+### Bug Fixes
+
+- improve --target-org summaries ([#1080](https://github.com/salesforcecli/plugin-org/issues/1080)) ([fe5efc9](https://github.com/salesforcecli/plugin-org/commit/fe5efc905b22bf45641f2101116f9a7dffca9b93))
+
 ## [4.1.15](https://github.com/salesforcecli/plugin-org/compare/4.1.14...4.1.15) (2024-05-30)
 
 ### Bug Fixes
