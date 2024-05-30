@@ -1,3 +1,9 @@
+## [4.1.15](https://github.com/salesforcecli/plugin-org/compare/4.1.14...4.1.15) (2024-05-30)
+
+### Bug Fixes
+
+- check cache keys, add helpful error when a miss happens ([7d41f5f](https://github.com/salesforcecli/plugin-org/commit/7d41f5f0ade95ec741965dcbce08c47e1795b42d))
+
 ## [4.1.14](https://github.com/salesforcecli/plugin-org/compare/4.1.13...4.1.14) (2024-05-26)
 
 ### Bug Fixes
