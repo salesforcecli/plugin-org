@@ -24,7 +24,7 @@ Both the sandbox and the associated production org must already be authenticated
 
 # flags.target-org.summary
 
-Sandbox alias or login user.
+Username or alias of the target org. Not required if the `target-org` configuration variable is already set.
 
 # flags.no-prompt.summary
 
