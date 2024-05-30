@@ -7,14 +7,15 @@
 
 import { strict as assert } from 'node:assert';
 
-import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
+import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
 import {
-  Messages,
-  scratchOrgResume,
-  ScratchOrgCache,
   Lifecycle,
+  Messages,
+  ScratchOrgCache,
   ScratchOrgLifecycleEvent,
   scratchOrgLifecycleEventName,
+  scratchOrgResume,
+  SfError,
 } from '@salesforce/core';
 import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
 import { buildStatus } from '../../../shared/scratchOrgOutput.js';
@@ -22,7 +23,7 @@ import { buildStatus } from '../../../shared/scratchOrgOutput.js';
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'resume_scratch');
 
-export default class EnvResumeScratch extends SfCommand<ScratchCreateResponse> {
+export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
@@ -45,7 +46,7 @@ export default class EnvResumeScratch extends SfCommand<ScratchCreateResponse> {
   };
 
   public async run(): Promise<ScratchCreateResponse> {
-    const { flags } = await this.parse(EnvResumeScratch);
+    const { flags } = await this.parse(OrgResumeScratch);
     const cache = await ScratchOrgCache.create();
     const lifecycle = Lifecycle.getInstance();
 
@@ -54,7 +55,7 @@ export default class EnvResumeScratch extends SfCommand<ScratchCreateResponse> {
 
     // oclif doesn't know that the exactlyOne flag will ensure that one of these is set, and there we definitely have a jobID.
     assert(jobId);
-    const { hubBaseUrl } = cache.get(jobId);
+    const hubBaseUrl = cache.get(jobId)?.hubBaseUrl;
     let lastStatus: string | undefined;
 
     lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
@@ -66,11 +67,20 @@ export default class EnvResumeScratch extends SfCommand<ScratchCreateResponse> {
     this.log();
     this.spinner.start('Creating Scratch Org');
 
-    const { username, scratchOrgInfo, authFields, warnings } = await scratchOrgResume(jobId);
-    this.spinner.stop(lastStatus);
+    try {
+      const { username, scratchOrgInfo, authFields, warnings } = await scratchOrgResume(jobId);
+      this.spinner.stop(lastStatus);
 
-    this.log();
-    this.logSuccess(messages.getMessage('success'));
-    return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
+      this.log();
+      this.logSuccess(messages.getMessage('success'));
+      return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
+    } catch (e) {
+      if (cache.keys() && e instanceof Error && e.name === 'CacheMissError') {
+        // we have something in the cache, but it didn't match what the user passed in
+        throw messages.createError('error.jobIdMismatch', [jobId]);
+      } else {
+        throw SfError.wrap(e);
+      }
+    }
   }
 }

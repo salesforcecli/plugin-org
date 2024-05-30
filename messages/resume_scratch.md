@@ -36,6 +36,10 @@ Use the job ID of the most recent incomplete scratch org.
 
 There are no recent job IDs (ScratchOrgInfo requests) in your cache. Maybe it completed or already resumed?
 
+# error.jobIdMismatch
+
+There are no recent job IDs (ScratchOrgInfo requests) in your cache that match %s. Maybe it completed?
+
 # success
 
 Your scratch org is ready.
