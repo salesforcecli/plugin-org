@@ -1,3 +1,11 @@
+## [4.1.17](https://github.com/salesforcecli/plugin-org/compare/4.1.16...4.1.17) (2024-05-31)
+
+### Bug Fixes
+
+- delete unnecessary unit test ([57e4362](https://github.com/salesforcecli/plugin-org/commit/57e4362d1222de68109af018dde4086cedb348c1))
+- add sandbox resume NUTs ([57a0567](https://github.com/salesforcecli/plugin-org/commit/57a0567d5f6aa3b707967ca0fc1c241746e60066))
+- add sandbox username to command JSON ([a63efdb](https://github.com/salesforcecli/plugin-org/commit/a63efdb432305aa066a2c620d947456dff7f117e))
+
 ## [4.1.16](https://github.com/salesforcecli/plugin-org/compare/4.1.15...4.1.16) (2024-05-30)
 
 ### Bug Fixes
