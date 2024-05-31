@@ -161,6 +161,9 @@
     },
     "ObjectSetting": {
       "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/Optional%3CAnyJson%3E"
+      },
       "properties": {
         "sharingModel": {
           "type": "string"
@@ -168,9 +171,6 @@
         "defaultRecordType": {
           "type": "string"
         }
-      },
-      "additionalProperties": {
-        "$ref": "#/definitions/Optional%3CAnyJson%3E"
       }
     },
     "Optional<AnyJson>": {

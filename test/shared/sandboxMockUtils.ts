@@ -88,12 +88,8 @@ export const getSandboxProcess = (overrides?: Partial<SandboxProcessObject>): Sa
 export const getSandboxInfoSoql = (sandboxName = sbxName) =>
   `SELECT ${sandboxInfoFields.join(',')} FROM SandboxInfo WHERE SandboxName='${sandboxName}'`;
 export const getSandboxProcessSoql = (cfg?: SbxProcessSqlConfig) => {
-  const whereClause = cfg?.sandboxName
-    ? `SandboxName='${cfg.sandboxName}'`
-    : cfg?.sandboxInfoId
-    ? `SandboxInfoId='${cfg.sandboxInfoId}'`
-    : `SandboxName='${sbxName}'`;
-
+  const entries = cfg ? Object.entries(cfg)[0] : ['SandboxName', sbxName];
+  const whereClause = `${entries[0]}='${entries[1]}'`;
   return `SELECT ${sandboxProcessFields.join(',')} FROM SandboxProcess WHERE ${whereClause} ORDER BY CreatedDate DESC`;
 };
 
@@ -182,10 +178,8 @@ type ToolingQueryStubConfig = {
   sbxProcess: SandboxProcessObject;
 };
 
-type SbxProcessSqlConfig = {
-  sandboxName?: string;
-  sandboxInfoId?: string;
-};
+type SbxProcessSqlConfig = { SandboxName: string } | { SandboxInfoId: string } | { Id: string };
+
 /**
  * Stubs the query for the newly created SandboxProcess from a sandbox update.
  * Stubs the query for a cloned sandbox process (see `CreateSandbox.getSourceId()`).

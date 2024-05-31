@@ -7,11 +7,11 @@
 
 import { Duration } from '@salesforce/kit';
 import { Flags } from '@salesforce/sf-plugins-core';
-import { Lifecycle, Messages, SandboxEvents, SandboxProcessObject, SandboxRequest, SfError } from '@salesforce/core';
+import { Lifecycle, Messages, SandboxEvents, SandboxRequest, SfError } from '@salesforce/core';
 import { Ux } from '@salesforce/sf-plugins-core';
 import { Interfaces } from '@oclif/core';
 import requestFunctions from '../../../shared/sandboxRequest.js';
-import { SandboxCommandBase } from '../../../shared/sandboxCommandBase.js';
+import { SandboxCommandBase, SandboxCommandResponse } from '../../../shared/sandboxCommandBase.js';
 import { SandboxLicenseType } from '../../../shared/orgTypes.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
@@ -21,7 +21,7 @@ const getLicenseTypes = (): string[] => Object.values(SandboxLicenseType);
 
 type SandboxConfirmData = SandboxRequest & { CloneSource?: string };
 
-export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObject> {
+export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResponse> {
   public static summary = messages.getMessage('summary');
   public static description = messages.getMessage('description');
   public static examples = messages.getMessages('examples');
@@ -110,7 +110,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
   };
   private flags!: Interfaces.InferredFlags<typeof CreateSandbox.flags>;
 
-  public async run(): Promise<SandboxProcessObject> {
+  public async run(): Promise<SandboxCommandResponse> {
     this.sandboxRequestConfig = await this.getSandboxRequestConfig();
     this.flags = (await this.parse(CreateSandbox)).flags;
     this.debug('Create started with args %s ', this.flags);
@@ -142,14 +142,16 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
     };
   }
 
-  private async createSandbox(): Promise<SandboxProcessObject> {
+  private async createSandbox(): Promise<SandboxCommandResponse> {
     const lifecycle = Lifecycle.getInstance();
+
+    this.prodOrg = this.flags['target-org'];
 
     this.registerLifecycleListeners(lifecycle, {
       isAsync: this.flags.async,
       setDefault: this.flags['set-default'],
       alias: this.flags.alias,
-      prodOrg: this.flags['target-org'],
+      prodOrg: this.prodOrg,
       tracksSource: this.flags['no-track-source'] === true ? false : undefined,
     });
     const sandboxReq = await this.createSandboxRequest();
@@ -163,7 +165,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
     this.debug('Calling create with SandboxRequest: %s ', sandboxReq);
 
     try {
-      const sandboxProcessObject = await this.flags['target-org'].createSandbox(sandboxReq, {
+      const sandboxProcessObject = await this.prodOrg.createSandbox(sandboxReq, {
         wait: this.flags.wait,
         interval: this.flags['poll-interval'],
         async: this.flags.async,
@@ -173,13 +175,13 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxProcessObje
       if (this.flags.async) {
         process.exitCode = 68;
       }
-      return sandboxProcessObject;
+      return this.getSandboxCommandResponse();
     } catch (err) {
       this.spinner.stop();
       if (this.pollingTimeOut && this.latestSandboxProgressObj) {
         void lifecycle.emit(SandboxEvents.EVENT_ASYNC_RESULT, undefined);
         process.exitCode = 68;
-        return this.latestSandboxProgressObj;
+        return this.getSandboxCommandResponse();
       } else if (
         err instanceof SfError &&
         err.name === 'SandboxCreateNotCompleteError' &&

@@ -7,11 +7,11 @@
 
 import { Duration, omit } from '@salesforce/kit';
 import { Flags } from '@salesforce/sf-plugins-core';
-import { Lifecycle, Messages, SandboxInfo, SandboxEvents, SandboxProcessObject, SfError } from '@salesforce/core';
+import { Lifecycle, Messages, SandboxInfo, SandboxEvents, SfError } from '@salesforce/core';
 import { Ux } from '@salesforce/sf-plugins-core';
 import { Interfaces } from '@oclif/core';
 import requestFunctions from '../../../shared/sandboxRequest.js';
-import { SandboxCommandBase } from '../../../shared/sandboxCommandBase.js';
+import { SandboxCommandBase, SandboxCommandResponse } from '../../../shared/sandboxCommandBase.js';
 
 type SandboxInfoRecord = SandboxInfo & {
   attributes: {
@@ -41,7 +41,7 @@ const fields = [
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'refresh.sandbox');
 
-export default class RefreshSandbox extends SandboxCommandBase<SandboxProcessObject> {
+export default class RefreshSandbox extends SandboxCommandBase<SandboxCommandResponse> {
   public static summary = messages.getMessage('summary');
   public static description = messages.getMessage('description');
   public static examples = messages.getMessages('examples');
@@ -104,7 +104,7 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxProcessObj
 
   private sbxConfig!: SandboxInfo;
 
-  public async run(): Promise<SandboxProcessObject> {
+  public async run(): Promise<SandboxCommandResponse> {
     this.sandboxRequestConfig = await this.getSandboxRequestConfig();
     this.flags = (await this.parse(RefreshSandbox)).flags;
     this.validateFlags();
@@ -121,13 +121,13 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxProcessObj
     ];
   }
 
-  private async refreshSandbox(): Promise<SandboxProcessObject> {
-    const prodOrg = this.flags['target-org'];
+  private async refreshSandbox(): Promise<SandboxCommandResponse> {
+    this.prodOrg = this.flags['target-org'];
 
     await this.confirmSandboxRefresh(this.sbxConfig);
 
     const lifecycle = Lifecycle.getInstance();
-    this.registerLifecycleListeners(lifecycle, { isAsync: this.flags['async'], prodOrg });
+    this.registerLifecycleListeners(lifecycle, { isAsync: this.flags['async'], prodOrg: this.prodOrg });
 
     // remove uneditable fields before refresh
     const updateableSandboxInfo = omit(this.sbxConfig, uneditableFields);
@@ -139,7 +139,7 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxProcessObj
         this.spinner.start('Sandbox Refresh');
       }
 
-      const sandboxProcessObject = await prodOrg.refreshSandbox(updateableSandboxInfo, {
+      const sandboxProcessObject = await this.prodOrg.refreshSandbox(updateableSandboxInfo, {
         wait: this.flags['wait'],
         interval: this.flags['poll-interval'],
         async: this.flags['async'],
@@ -157,13 +157,13 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxProcessObj
       if (this.flags.async) {
         process.exitCode = 68;
       }
-      return sandboxProcessObject;
+      return this.getSandboxCommandResponse();
     } catch (err) {
       this.spinner.stop();
       if (this.pollingTimeOut && this.latestSandboxProgressObj) {
         void lifecycle.emit(SandboxEvents.EVENT_ASYNC_RESULT, undefined);
         process.exitCode = 68;
-        return this.latestSandboxProgressObj;
+        return this.getSandboxCommandResponse();
       } else if (
         err instanceof SfError &&
         err.name === 'SandboxRefreshNotCompleteError' &&

@@ -21,12 +21,12 @@ import {
 } from '@salesforce/core';
 import { Duration } from '@salesforce/kit';
 import { Interfaces } from '@oclif/core';
-import { SandboxCommandBase } from '../../../shared/sandboxCommandBase.js';
+import { SandboxCommandBase, SandboxCommandResponse } from '../../../shared/sandboxCommandBase.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'resume.sandbox');
 
-export default class ResumeSandbox extends SandboxCommandBase<SandboxProcessObject> {
+export default class ResumeSandbox extends SandboxCommandBase<SandboxCommandResponse> {
   public static summary = messages.getMessage('summary');
   public static description = messages.getMessage('description');
   public static examples = messages.getMessages('examples');
@@ -72,7 +72,7 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxProcessObje
   };
   private flags!: Interfaces.InferredFlags<typeof ResumeSandbox.flags>;
 
-  public async run(): Promise<SandboxProcessObject> {
+  public async run(): Promise<SandboxCommandResponse> {
     this.sandboxRequestConfig = await this.getSandboxRequestConfig();
     this.flags = (await this.parse(ResumeSandbox)).flags;
     this.debug('Resume started with args %s ', this.flags);
@@ -104,9 +104,9 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxProcessObje
     };
   }
 
-  private async resumeSandbox(): Promise<SandboxProcessObject> {
+  private async resumeSandbox(): Promise<SandboxCommandResponse> {
     this.sandboxRequestData = this.buildSandboxRequestCacheEntry();
-    const prodOrgUsername: string = this.sandboxRequestData.prodOrgUsername;
+    const prodOrgUsername = this.sandboxRequestData.prodOrgUsername;
 
     if (!this.sandboxRequestData.sandboxProcessObject.SandboxName) {
       if (!this.flags['name'] && !this.flags['job-id']) {
@@ -134,7 +134,7 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxProcessObje
         lifecycle,
       }))
     ) {
-      return this.latestSandboxProgressObj;
+      return this.getSandboxCommandResponse();
     }
 
     const sandboxReq = this.createResumeSandboxRequest();
@@ -146,10 +146,11 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxProcessObje
     this.debug('Calling resume with ResumeSandboxRequest: %s ', sandboxReq);
 
     try {
-      return await this.prodOrg.resumeSandbox(sandboxReq, {
+      this.latestSandboxProgressObj = await this.prodOrg.resumeSandbox(sandboxReq, {
         wait: this.flags.wait ?? Duration.seconds(0),
         interval: Duration.seconds(30),
       });
+      return this.getSandboxCommandResponse();
     } catch (err) {
       this.spinner.stop();
       if (this.latestSandboxProgressObj && this.pollingTimeOut) {
@@ -215,13 +216,13 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxProcessObje
     lifecycle: Lifecycle;
   }): Promise<boolean> {
     const sandboxProcessObject: SandboxProcessObject = await getSandboxProcessObject(prodOrg, sandboxName, jobId);
-    const sandboxUsername = `${prodOrg.getUsername()}.${sandboxProcessObject.SandboxName}`;
-    const exists = await (await StateAggregator.getInstance()).orgs.exists(sandboxUsername);
+    this.sandboxUsername = this.getSandboxUsername(prodOrg.getUsername() as string, sandboxProcessObject.SandboxName);
+    const exists = await (await StateAggregator.getInstance()).orgs.exists(this.sandboxUsername);
     if (exists) {
       this.latestSandboxProgressObj = sandboxProcessObject;
       const resultEvent = {
         sandboxProcessObj: this.latestSandboxProgressObj,
-        sandboxRes: { authUserName: sandboxUsername } as Partial<SandboxUserAuthResponse>,
+        sandboxRes: { authUserName: this.sandboxUsername } as Partial<SandboxUserAuthResponse>,
       } as ResultEvent;
       await lifecycle.emit(SandboxEvents.EVENT_RESULT, resultEvent as Partial<ResultEvent>);
       return true;

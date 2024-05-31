@@ -49,7 +49,7 @@ describe('Sandbox Create', () => {
 
     // add a sandbox definition file to the project
     const { SandboxName, LicenseType, Id } = getSandboxInfo();
-    sandboxProcessSoql = getSandboxProcessSoql({ sandboxInfoId: Id });
+    sandboxProcessSoql = getSandboxProcessSoql({ SandboxInfoId: Id });
     fs.writeFileSync(sandboxDefFilePath, JSON.stringify({ SandboxName, LicenseType }));
   });
 
@@ -85,6 +85,7 @@ describe('Sandbox Create', () => {
     const sbxName = 'createSbx1';
     const sbxLicenseType = 'Developer';
     const sbxProcess = getSandboxProcess({ SandboxName: sbxName });
+    const expectedCmdResponse = { ...sbxProcess, SandboxUsername: `${hubOrgUsername}.${sbxName}` };
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
 
     const toolingCreateStub = stubToolingCreate({ sinonSandbox, connection });
@@ -92,7 +93,7 @@ describe('Sandbox Create', () => {
 
     const result = await CreateSandbox.run(['--name', sbxName, '-o', hubOrgUsername, '--async', '--json']);
 
-    expect(result).to.deep.equal(sbxProcess);
+    expect(result).to.deep.equal(expectedCmdResponse);
     expect(toolingCreateStub.calledOnce, 'toolingCreateStub').to.be.true;
     expect(toolingCreateStub.firstCall.args[1]).to.deep.equal({
       SandboxName: sbxName,
@@ -118,6 +119,7 @@ describe('Sandbox Create', () => {
     const sbxName = 'createSbx2';
     const sbxLicenseType = 'Partial';
     const sbxProcess = getSandboxProcess({ SandboxName: sbxName, LicenseType: sbxLicenseType });
+    const expectedCmdResponse = { ...sbxProcess, SandboxUsername: `${hubOrgUsername}.${sbxName}` };
     const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
 
     const toolingCreateStub = stubToolingCreate({ sinonSandbox, connection });
@@ -136,7 +138,7 @@ describe('Sandbox Create', () => {
       '--json',
     ]);
 
-    expect(result).to.deep.equal(sbxProcess);
+    expect(result).to.deep.equal(expectedCmdResponse);
     expect(toolingCreateStub.calledOnce).to.be.true;
     expect(toolingCreateStub.firstCall.args[1]).to.deep.equal({
       SandboxName: sbxName,
@@ -154,5 +156,40 @@ describe('Sandbox Create', () => {
       SandboxName: sbxName,
       LicenseType: sbxLicenseType,
     });
+  });
+
+  it('should have correct output written to stdout', async () => {
+    const sbxName = 'createSbx3';
+    const sbxLicenseType = 'Developer';
+    const sbxProcess = getSandboxProcess({ SandboxName: sbxName });
+    const expectedCmdResponse = { ...sbxProcess, SandboxUsername: `${hubOrgUsername}.${sbxName}` };
+    const connection = await stubProdOrgConnection(sinonSandbox, hubOrgUsername);
+
+    const toolingCreateStub = stubToolingCreate({ sinonSandbox, connection });
+    const toolingQueryStub = stubToolingQuery({ sinonSandbox, connection, sandboxProcessSoql, sbxProcess });
+
+    const result = await CreateSandbox.run(['--name', sbxName, '-o', hubOrgUsername, '--async', '--no-prompt']);
+
+    expect(result).to.deep.equal(expectedCmdResponse);
+    expect(toolingCreateStub.calledOnce, 'toolingCreateStub').to.be.true;
+    expect(toolingCreateStub.firstCall.args[1]).to.deep.equal({
+      SandboxName: sbxName,
+      LicenseType: sbxLicenseType,
+    });
+    expect(toolingQueryStub.calledOnce, 'toolingQueryStub').to.be.true;
+
+    // check the sandbox cache entry
+    const cache = readSandboxCacheFile(cacheFilePath);
+    expect(cache).to.have.property(sbxName);
+    expect(cache[sbxName]).to.have.property('action', 'Create');
+    expect(cache[sbxName]).to.have.property('prodOrgUsername', hubOrgUsername);
+    expect(cache[sbxName]).to.have.deep.property('sandboxProcessObject', sbxProcess);
+    expect(cache[sbxName]).to.have.deep.property('sandboxRequest', {
+      SandboxName: sbxName,
+      LicenseType: sbxLicenseType,
+    });
+    expect(sfCommandUxStubs).to.be.ok;
+    const expectedInfoMsg = `org resume sandbox --job-id ${sbxProcess.Id} -o ${hubOrgUsername}`;
+    expect(sfCommandUxStubs.info.firstCall.firstArg).to.include(expectedInfoMsg);
   });
 });

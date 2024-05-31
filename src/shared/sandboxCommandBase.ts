@@ -26,6 +26,11 @@ import { State } from './stagedProgress.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'sandboxbase');
+
+export type SandboxCommandResponse = SandboxProcessObject & {
+  SandboxUsername?: string;
+};
+
 export abstract class SandboxCommandBase<T> extends SfCommand<T> {
   protected sandboxProgress: SandboxProgress;
   protected latestSandboxProgressObj?: SandboxProcessObject;
@@ -36,6 +41,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
   protected sandboxRequestConfig!: SandboxRequestCache;
   protected sandboxRequestData: SandboxRequestCacheEntry | undefined;
   protected action: 'Create' | 'Refresh' | 'Create/Refresh';
+  protected sandboxUsername?: string;
   public constructor(argv: string[], config: Config) {
     super(argv, config);
     this.action =
@@ -199,8 +205,9 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     isAsync: boolean
   ): void {
     const sandboxProgress = this.sandboxProgress.getSandboxProgress(event);
+    this.sandboxUsername = (event as ResultEvent).sandboxRes?.authUserName;
     const sandboxData = {
-      sandboxUsername: (event as ResultEvent).sandboxRes?.authUserName,
+      sandboxUsername: this.sandboxUsername,
       sandboxProgress,
       sandboxProcessObj: event.sandboxProcessObj,
     } as SandboxStatusData;
@@ -228,6 +235,32 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
       this.sandboxRequestConfig.set(this.sandboxRequestData.sandboxProcessObject.SandboxName, this.sandboxRequestData);
       this.sandboxRequestConfig.writeSync();
     }
+  }
+
+  // Gets the SandboxName either from the request data or the SandboxProcessObject
+  protected getSandboxName(): string | undefined {
+    return this.sandboxRequestData?.sandboxProcessObject.SandboxName ?? this.latestSandboxProgressObj?.SandboxName;
+  }
+
+  // Not sure why the lint rule is complaining since it's definitely called.
+  // eslint-disable-next-line class-methods-use-this
+  protected getSandboxUsername(prodOrgUsername: string, sandboxName: string): string {
+    return `${prodOrgUsername}.${sandboxName}`;
+  }
+
+  // Adds the sandbox username to the command JSON if we know it.
+  protected getSandboxCommandResponse(): SandboxCommandResponse {
+    let sbxUsername;
+    if (this.sandboxUsername) {
+      sbxUsername = this.sandboxUsername;
+    } else {
+      const prodOrgUsername = this.prodOrg?.getUsername();
+      const sandboxName = this.getSandboxName();
+      if (prodOrgUsername && sandboxName) {
+        sbxUsername = this.getSandboxUsername(prodOrgUsername, sandboxName);
+      }
+    }
+    return { ...(this.latestSandboxProgressObj as SandboxProcessObject), SandboxUsername: sbxUsername };
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
