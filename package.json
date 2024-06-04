@@ -5,12 +5,12 @@
   "author": "Salesforce",
   "bugs": "https://github.com/forcedotcom/cli/issues",
   "dependencies": {
-    "@oclif/core": "^3.26.4",
+    "@oclif/core": "^4",
     "@salesforce/core": "^7.3.9",
     "@salesforce/kit": "^3.1.1",
-    "@salesforce/sf-plugins-core": "^9.1.1",
+    "@salesforce/sf-plugins-core": "^10.0.0-beta.1",
     "@salesforce/source-deploy-retrieve": "^11.6.4",
-    "chalk": "^5.3.0",
+    "ansis": "^3.2.0",
     "change-case": "^5.4.4",
     "is-wsl": "^3.1.0",
     "open": "^10.1.0"

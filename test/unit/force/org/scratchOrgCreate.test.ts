@@ -60,7 +60,7 @@ describe('[DEPRECATED] force:org:create', () => {
       // stub it out here to ensure that it doesn't think an invalid path is the root
       .withArgs(sinon.match('bin'))
       .returns(false);
-    stubMethod($$.SANDBOX, fs.promises, 'stat').resolves({ isFile: () => true });
+    stubMethod($$.SANDBOX, fs.promises, 'stat').resolves({ isFile: () => true, isDirectory: () => true });
 
     sfCommandUxStubs = stubSfCommandUx($$.SANDBOX);
 

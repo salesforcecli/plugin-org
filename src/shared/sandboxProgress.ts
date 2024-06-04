@@ -7,7 +7,6 @@
 import os from 'node:os';
 import { StatusEvent, ResultEvent, SandboxProcessObject } from '@salesforce/core';
 import { Ux } from '@salesforce/sf-plugins-core';
-import { ux } from '@oclif/core';
 import { getClockForSeconds } from '../shared/timeUtils.js';
 import { StagedProgress } from './stagedProgress.js';
 import { isDefined } from './utils.js';
@@ -16,6 +15,8 @@ const columns: Ux.Table.Columns<{ key: string; value: string }> = {
   key: { header: 'Field' },
   value: { header: 'Value' },
 };
+
+const ux = new Ux();
 
 export type SandboxProgressData = {
   id: string;

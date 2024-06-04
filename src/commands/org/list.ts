@@ -8,7 +8,7 @@
 import { Flags, loglevel, SfCommand } from '@salesforce/sf-plugins-core';
 import { AuthInfo, ConfigAggregator, ConfigInfo, Connection, Org, SfError, Messages, Logger } from '@salesforce/core';
 import { Interfaces } from '@oclif/core';
-import chalk, { ChalkInstance } from 'chalk';
+import ansis, { type Ansis } from 'ansis';
 import { OrgListUtil, identifyActiveOrgByStatus } from '../../shared/orgListUtil.js';
 import { getStyledObject } from '../../shared/orgHighlighter.js';
 import { ExtendedAuthFields, FullyPopulatedScratchOrgFields } from '../../shared/orgTypes.js';
@@ -163,18 +163,18 @@ Legend:  ${defaultHubEmoji}=Default DevHub, ${defaultOrgEmoji}=Default Org ${
     const allOrgs: Array<FullyPopulatedScratchOrgFields | ExtendedAuthFieldsWithType> = [
       ...devHubs
         .map(addType('DevHub'))
-        .map(colorEveryFieldButConnectedStatus(chalk.cyanBright))
+        .map(colorEveryFieldButConnectedStatus(ansis.cyanBright))
         .map((row) => getStyledObject(row))
         .map(statusToEmoji),
 
       ...other
-        .map(colorEveryFieldButConnectedStatus(chalk.magentaBright))
+        .map(colorEveryFieldButConnectedStatus(ansis.magentaBright))
         .map((row) => getStyledObject(row))
         .map(statusToEmoji),
 
       ...sandboxes
         .map(addType('Sandbox'))
-        .map(colorEveryFieldButConnectedStatus(chalk.yellowBright))
+        .map(colorEveryFieldButConnectedStatus(ansis.yellowBright))
         .map((row) => getStyledObject(row))
         .map(statusToEmoji),
 
@@ -254,7 +254,7 @@ const addType =
   (val: ExtendedAuthFields): ExtendedAuthFieldsWithType => ({ ...val, type });
 
 const colorEveryFieldButConnectedStatus =
-  (colorFn: ChalkInstance) =>
+  (colorFn: Ansis) =>
   (row: ExtendedAuthFieldsWithType): ExtendedAuthFieldsWithType =>
     Object.fromEntries(
       Object.entries(row).map(([key, val]) => [

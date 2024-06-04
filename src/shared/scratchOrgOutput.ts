@@ -5,12 +5,12 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { ScratchOrgLifecycleEvent, scratchOrgLifecycleStages } from '@salesforce/core';
-import chalk from 'chalk';
+import ansis from 'ansis';
 import { capitalCase } from 'change-case';
 import { StandardColors } from '@salesforce/sf-plugins-core';
 
-const boldBlue = (input: string): string => chalk.rgb(81, 176, 235).bold(input);
-const boldPurple = (input: string): string => chalk.rgb(157, 129, 221).bold(input);
+const boldBlue = (input: string): string => ansis.rgb(81, 176, 235).bold(input);
+const boldPurple = (input: string): string => ansis.rgb(157, 129, 221).bold(input);
 
 export const buildStatus = (data: ScratchOrgLifecycleEvent, baseUrl: string): string => `
 RequestId: ${formatRequest(baseUrl, data.scratchOrgInfo?.Id)}
@@ -31,7 +31,7 @@ export const formatStage = (currentStage: ScratchOrgLifecycleEvent['stage']): st
     .join('\n');
 
 export const formatRequest = (baseUrl: string, id?: string): string =>
-  `${id ? `${chalk.bold(id)} (${baseUrl}/${id})` : ''}`;
+  `${id ? `${ansis.bold(id)} (${baseUrl}/${id})` : ''}`;
 
 export const formatUsername = (username?: string): string => `${username ? `${boldBlue(username)} ` : ''}`;
 export const formatOrgId = (id?: string): string => `${id ? `${boldBlue(id)} ` : ''}`;

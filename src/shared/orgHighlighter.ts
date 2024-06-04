@@ -4,23 +4,23 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import chalk, { ChalkInstance } from 'chalk';
+import ansis, { type Ansis } from 'ansis';
 import { ExtendedAuthFields, FullyPopulatedScratchOrgFields } from './orgTypes.js';
 
-const styledProperties = new Map<string, Map<string, ChalkInstance>>([
+const styledProperties = new Map<string, Map<string, Ansis>>([
   [
     'status',
     new Map([
-      ['Active', chalk.green],
-      ['else', chalk.red],
+      ['Active', ansis.green],
+      ['else', ansis.red],
     ]),
   ],
   [
     'connectedStatus',
     new Map([
-      ['Connected', chalk.green],
-      ['Active', chalk.green],
-      ['else', chalk.red],
+      ['Connected', ansis.green],
+      ['Active', ansis.green],
+      ['else', ansis.red],
     ]),
   ],
 ]);
@@ -31,8 +31,8 @@ export const getStyledValue = (key: string, value: string): string => {
   if (!prop) return value;
 
   // I'm not sure how to type the inner Map so that it knows else is definitely there
-  const chalkMethod = prop.get(value) ?? (prop.get('else') as ChalkInstance);
-  return chalkMethod(value);
+  const colorMethod = prop.get(value) ?? (prop.get('else') as Ansis);
+  return colorMethod(value);
 };
 
 export const getStyledObject = <T extends ExtendedAuthFields | FullyPopulatedScratchOrgFields>(objectToStyle: T): T =>
