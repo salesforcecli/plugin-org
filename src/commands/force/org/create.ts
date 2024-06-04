@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { Interfaces } from '@oclif/core';
+import Interfaces from '@oclif/core/interfaces';
 import {
   Flags,
   loglevel,
@@ -45,7 +45,7 @@ export type ScratchOrgProcessObject = {
   authFields?: AuthFields;
   warnings: string[];
   orgId: string;
-}
+};
 
 export type CreateResult = ScratchOrgProcessObject | SandboxProcessObject;
 
