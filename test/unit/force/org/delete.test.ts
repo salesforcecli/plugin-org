@@ -31,18 +31,6 @@ describe('[DEPRECATED] force:org:delete', () => {
     sfCommandUxStubs = stubSfCommandUx($$.SANDBOX);
   });
 
-  it('will throw an error when no default set', async () => {
-    await $$.stubConfig({});
-    try {
-      await LegacyDelete.run();
-      expect.fail('should have thrown an error');
-    } catch (e) {
-      const err = e as SfError;
-      expect(err.name).to.equal('MissingUsernameError');
-      expect(err.message).to.equal(messages.getMessage('missingUsername'));
-    }
-  });
-
   it('will prompt before attempting to delete', async () => {
     await $$.stubConfig({ 'target-org': testOrg.username });
     const res = await LegacyDelete.run([]);
@@ -62,6 +50,18 @@ describe('[DEPRECATED] force:org:delete', () => {
       message: messages.getMessage('confirmDelete', ['scratch', testOrg.username]),
     });
     expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
+  });
+
+  it('will throw an error when no default set', async () => {
+    await $$.stubConfig({});
+    try {
+      await LegacyDelete.run();
+      expect.fail('should have thrown an error');
+    } catch (e) {
+      const err = e as SfError;
+      expect(err.name).to.equal('MissingUsernameError');
+      expect(err.message).to.equal(messages.getMessage('missingUsername'));
+    }
   });
 
   it('will determine sandbox vs scratch org and delete sandbox', async () => {
