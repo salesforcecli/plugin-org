@@ -6,8 +6,7 @@
  */
 import os from 'node:os';
 import { StatusEvent, ResultEvent, SandboxProcessObject } from '@salesforce/core';
-import { Ux } from '@salesforce/sf-plugins-core';
-import { ux } from '@oclif/core';
+import { Ux } from '@salesforce/sf-plugins-core/Ux';
 import { getClockForSeconds } from '../shared/timeUtils.js';
 import { StagedProgress } from './stagedProgress.js';
 import { isDefined } from './utils.js';
@@ -127,7 +126,7 @@ export const getSandboxTableAsText = (sandboxUsername?: string, sandboxProgress?
     return [];
   }
   const tableRows: string[] = [];
-  ux.table(getTableDataFromProcessObj(sandboxProgress, sandboxUsername), columns, {
+  new Ux().table(getTableDataFromProcessObj(sandboxProgress, sandboxUsername), columns, {
     printLine: (s: string): void => {
       tableRows.push(s);
     },

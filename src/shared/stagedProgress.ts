@@ -5,21 +5,21 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import os from 'node:os';
-import chalk, { ChalkInstance } from 'chalk';
-import { StandardColors } from '@salesforce/sf-plugins-core';
-import { SfError } from '@salesforce/core';
+import ansis, { Ansis } from 'ansis';
+import { StandardColors } from '@salesforce/sf-plugins-core/StandardColors';
+import { SfError } from '@salesforce/core/sfError';
 
 const compareStages = ([, aValue]: [string, StageAttributes], [, bValue]: [string, StageAttributes]): number =>
   aValue.index - bValue.index;
 
-export const boldPurple = chalk.rgb(157, 129, 221).bold;
+export const boldPurple = ansis.rgb(157, 129, 221).bold;
 
 export type State = 'inProgress' | 'completed' | 'failed' | 'unknown';
 
 export type StageAttributes = {
   state: State;
   char: string;
-  color: ChalkInstance;
+  color: Ansis;
   index: number;
   visited: boolean;
 };
@@ -27,8 +27,8 @@ export type StageAttributes = {
 export const StateConstants: { [stage: string]: Omit<StageAttributes, 'index'> } = {
   inProgress: { color: boldPurple, char: '…', visited: false, state: 'inProgress' },
   completed: { color: StandardColors.success, char: '✓', visited: false, state: 'completed' },
-  failed: { color: chalk.bold.red, char: '✖', visited: false, state: 'failed' },
-  unknown: { color: chalk.dim, char: '…', visited: false, state: 'unknown' },
+  failed: { color: ansis.bold.red, char: '✖', visited: false, state: 'failed' },
+  unknown: { color: ansis.dim, char: '…', visited: false, state: 'unknown' },
 };
 
 export type Stage = {

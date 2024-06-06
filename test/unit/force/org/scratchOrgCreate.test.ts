@@ -38,45 +38,48 @@ describe('[DEPRECATED] force:org:create', () => {
   const $$ = new TestContext();
   const testHub = new MockTestOrgData();
   testHub.isDevHub = true;
+
+  const clientSecret = '123456';
+  // stubs
   let promptStubs: ReturnType<typeof stubPrompter>;
+  let sfCommandUxStubs: ReturnType<typeof stubSfCommandUx>;
+
+  let scratchOrgCreateStub: sinon.SinonStub;
 
   beforeEach(async () => {
     await $$.stubAuths(testHub);
     $$.stubAliases({});
     await $$.stubConfig({ defaultdevhubusername: testHub.username });
     promptStubs = stubPrompter($$.SANDBOX);
-  });
-
-  const clientSecret = '123456';
-  // stubs
-  let scratchOrgCreateStub: sinon.SinonStub;
-  let sfCommandUxStubs: ReturnType<typeof stubSfCommandUx>;
-  const runCreateCommand = (params: string[]) => {
-    // so the `exists` flag on definition file passes
-    $$.SANDBOX.stub(fs, 'existsSync')
-      .withArgs(sinon.match('.json'))
-      .returns(true)
-      // oclif/core depends on existsSync to find the root plugin so we have to
-      // stub it out here to ensure that it doesn't think an invalid path is the root
-      .withArgs(sinon.match('bin'))
-      .returns(false);
-    stubMethod($$.SANDBOX, fs.promises, 'stat').resolves({ isFile: () => true });
-
     sfCommandUxStubs = stubSfCommandUx($$.SANDBOX);
-
-    return Create.run(params);
-  };
+    $$.SANDBOX.stub(fs.promises, 'stat')
+      // isFile is for the definition file, isDirectory is for somethign oclif/core/cosmicConf is doing with pjson stacktrace
+      /**
+       * at isDirectory (node_modules/@oclif/core/node_modules/cosmiconfig/src/util.ts:59:17)
+      at async search (node_modules/@oclif/core/node_modules/cosmiconfig/src/Explorer.ts:55:11)
+      at async Explorer.search (node_modules/@oclif/core/node_modules/cosmiconfig/src/Explorer.ts:93:14)
+      at async readPjson (node_modules/@oclif/core/lib/util/read-pjson.js:49:20)
+      at async Plugin.load (node_modules/@oclif/core/lib/config/plugin.js:183:45)
+      at async PluginLoader.loadRoot (node_modules/@oclif/core/lib/config/plugin-loader.js:43:13)
+      at async Config.load (node_modules/@oclif/core/lib/config/config.js:280:27)
+      at async Function.load (node_modules/@oclif/core/lib/config/config.js:167:9)
+      at async Function.run (node_modules/@oclif/core/lib/command.js:150:24)
+      at async Context.<anonymous> (file:///Users/shane.mclaughlin/eng/salesforcecli/plugin-org/test/unit/force/org/scratchOrgCreate.test.ts:233:28)
+       */
+      // @ts-expect-error incomplete stub
+      .resolves({ isFile: () => true, isDirectory: () => true });
+  });
 
   describe('scratch org', () => {
     it('will parse the --type flag correctly to create a scratchOrg', async () => {
       scratchOrgCreateStub = stubMethod($$.SANDBOX, Create.prototype, 'createScratchOrg').resolves();
-      await runCreateCommand(['--type', 'scratch', '-v', testHub.username]);
+      await Create.run(['--type', 'scratch', '-v', testHub.username]);
       expect(scratchOrgCreateStub.callCount).to.equal(1);
     });
 
     it('properly sends varargs, and definition file', async () => {
       scratchOrgCreateStub = stubMethod($$.SANDBOX, Org.prototype, 'scratchOrgCreate').resolves(CREATE_RESULT);
-      await runCreateCommand([
+      await Create.run([
         '--type',
         'scratch',
         'licenseType=LicenseFromVarargs',
@@ -114,7 +117,7 @@ describe('[DEPRECATED] force:org:create', () => {
 
     it('will fail if no definitionfile or not varargs', async () => {
       try {
-        await shouldThrow(runCreateCommand(['--type', 'scratch', '-v', testHub.username]));
+        await shouldThrow(Create.run(['--type', 'scratch', '-v', testHub.username]));
       } catch (e) {
         const error = e as SfError;
         expect(error.message).to.equal(messages.getMessage('noConfig'));
@@ -127,7 +130,7 @@ describe('[DEPRECATED] force:org:create', () => {
       const prodOrg = stubMethod($$.SANDBOX, Org.prototype, 'scratchOrgCreate').resolves(CREATE_RESULT);
       promptStubs.secret.resolves(clientSecret);
 
-      await runCreateCommand([
+      await Create.run([
         '--type',
         'scratch',
         '-i',
@@ -169,7 +172,7 @@ describe('[DEPRECATED] force:org:create', () => {
         username: 'newScratchUsername',
       });
 
-      await runCreateCommand([
+      await Create.run([
         '--type',
         'scratch',
         '--setalias',
@@ -208,7 +211,7 @@ describe('[DEPRECATED] force:org:create', () => {
         username: 'newScratchUsername',
       });
 
-      await runCreateCommand([
+      await Create.run([
         '--type',
         'scratch',
         '--setalias',
@@ -248,7 +251,7 @@ describe('[DEPRECATED] force:org:create', () => {
         username: 'newScratchUsername',
       });
 
-      const result = await runCreateCommand([
+      const result = await Create.run([
         '--type',
         'scratch',
         '--definitionfile',
@@ -286,7 +289,7 @@ describe('[DEPRECATED] force:org:create', () => {
         username: 'newScratchUsername',
         warnings,
       });
-      await runCreateCommand(['--type', 'scratch', '--definitionfile', definitionfile, '-v', testHub.username]);
+      await Create.run(['--type', 'scratch', '--definitionfile', definitionfile, '-v', testHub.username]);
       expect(sfCommandUxStubs.warn.callCount).to.be.greaterThanOrEqual(2);
       expect(sfCommandUxStubs.warn.getCalls().flatMap((c) => c.args)).to.have.include(warnings[0]);
       expect(sfCommandUxStubs.warn.getCalls().flatMap((c) => c.args)).to.have.include(warnings[1]);
@@ -298,9 +301,7 @@ describe('[DEPRECATED] force:org:create', () => {
     const definitionfile = 'myScratchDef.json';
     stubMethod($$.SANDBOX, Org.prototype, 'scratchOrgCreate').rejects(new SfError(errorMessage));
     try {
-      await shouldThrow(
-        runCreateCommand(['--type', 'scratch', '--definitionfile', definitionfile, '-v', testHub.username])
-      );
+      await shouldThrow(Create.run(['--type', 'scratch', '--definitionfile', definitionfile, '-v', testHub.username]));
     } catch (e) {
       const error = e as SfError;
       expect(error.message).to.equal(errorMessage);
