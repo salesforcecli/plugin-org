@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { expect } from 'chai';
-import chalk from 'chalk';
+import ansis from 'ansis';
 import { StagedProgress, StateConstants } from '../../src/shared/stagedProgress.js';
 import { SandboxStatusData } from '../../src/shared/sandboxProgress.js';
 
@@ -73,7 +73,7 @@ describe('stagedProgress', () => {
       const formattedStages = stagedProgress.formatStages();
       expect(formattedStages).to.be.ok;
       expect(formattedStages).to.include(StateConstants.unknown.char);
-      expect(formattedStages).to.include(chalk.dim(''));
+      expect(formattedStages).to.include(ansis.dim(''));
     });
     it('should get formatted stages - pending in progress', () => {
       stagedProgress.updateStages('Pending', 'inProgress');
