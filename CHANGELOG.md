@@ -1,3 +1,9 @@
+# [4.2.0](https://github.com/salesforcecli/plugin-org/compare/4.1.19...4.2.0) (2024-06-06)
+
+### Features
+
+- use oclif/core v4 and sf-plugins-core v10 ([#1087](https://github.com/salesforcecli/plugin-org/issues/1087)) ([84ba1c9](https://github.com/salesforcecli/plugin-org/commit/84ba1c9174bc1f8d249f83d68f04bea3e89b3264))
+
 ## [4.1.19](https://github.com/salesforcecli/plugin-org/compare/4.1.18...4.1.19) (2024-06-03)
 
 ### Bug Fixes
