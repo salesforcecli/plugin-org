@@ -1591,12 +1591,12 @@
   resolved "https://registry.yarnpkg.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz#a77ea742fab25775145434eb1d2328cf5013ac33"
   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
 
-"@salesforce/cli-plugins-testkit@^5.3.9":
-  version "5.3.9"
-  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-5.3.9.tgz#864cb3e2421c1734c3d4ba838aa7e6447abaf201"
-  integrity sha512-v9WQZCCX1Izs4e/4hMn5nCsPyoE3iUmdpV5/nT9lfjFdtdUlwpfhdwUJqNczEz8g2qkJnebYETrB+KklHAQj2A==
+"@salesforce/cli-plugins-testkit@^5.3.10":
+  version "5.3.10"
+  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-5.3.10.tgz#d2dbd19525b0c91ae6ea037c90d437f604855b03"
+  integrity sha512-D41LFxtkZGExooVecva5q/oGM+ggsoK7BDcxfdpHS+wD4c62pzQC9qeH7qb3QZczmvXf5Iyt1g/c9ajBzvk74g==
   dependencies:
-    "@salesforce/core" "^7.3.9"
+    "@salesforce/core" "^7.3.12"
     "@salesforce/kit" "^3.1.2"
     "@salesforce/ts-types" "^2.0.9"
     "@types/shelljs" "^0.8.15"
@@ -1607,17 +1607,18 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.8.1"
 
-"@salesforce/core@^7.3.10", "@salesforce/core@^7.3.9":
-  version "7.3.10"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-7.3.10.tgz#83da85c4e93ca625e2c13118aad9c1df2931bc0f"
-  integrity sha512-kEKoqkmhWNoiucAE3Ylv6FpC4iVgk4aE0dmcwSmNrMjxSbtjQJGUybprfO/itrLJv+56eM7/4FARQQ2gDbRzQQ==
+"@salesforce/core@^7.3.10", "@salesforce/core@^7.3.12", "@salesforce/core@^7.3.9":
+  version "7.3.12"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-7.3.12.tgz#9138980db21566c467f35afe9192f33bf77f160c"
+  integrity sha512-a53KYv2xaJpmFlN4haI7ewaMpRqdRwaqbm11wLn0il6+LNR1/2zkRdqE3opdTW6aXNvVecNu0YQj5/u3Uz3oPw==
   dependencies:
     "@jsforce/jsforce-node" "^3.2.0"
-    "@salesforce/kit" "^3.1.1"
+    "@salesforce/kit" "^3.1.2"
     "@salesforce/schemas" "^1.9.0"
     "@salesforce/ts-types" "^2.0.9"
     ajv "^8.15.0"
     change-case "^4.1.2"
+    fast-levenshtein "^3.0.0"
     faye "^1.4.0"
     form-data "^4.0.0"
     js2xmlparser "^4.0.1"
