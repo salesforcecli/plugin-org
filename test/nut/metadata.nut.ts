@@ -27,7 +27,10 @@ describe('org list metadata*', () => {
         },
       ],
     });
-
+    // eslint-disable-next-line no-console
+    console.log(session.project.dir);
+    // eslint-disable-next-line no-console
+    console.table(session.orgs);
     execCmd('project:deploy:start -d force-app');
   });
 

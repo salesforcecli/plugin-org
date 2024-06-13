@@ -24,6 +24,10 @@ describe('Sandbox Orgs', () => {
     });
     assert(session.hubOrg.username);
     hubOrgUsername = session.hubOrg.username;
+    // eslint-disable-next-line no-console
+    console.log(session.project.dir);
+    // eslint-disable-next-line no-console
+    console.table(session.orgs);
   });
 
   it('will create a sandbox, verify it can be opened, and then attempt to delete it', () => {

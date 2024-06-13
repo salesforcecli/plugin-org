@@ -42,6 +42,10 @@ describe('env:create:scratch async/resume', () => {
       devhubAuthStrategy: 'AUTO',
     });
     cacheFilePath = path.join(session.dir, '.sf', ScratchOrgCache.getFileName());
+    // eslint-disable-next-line no-console
+    console.log(session.project.dir);
+    // eslint-disable-next-line no-console
+    console.table(session.orgs);
   });
 
   after(async () => {

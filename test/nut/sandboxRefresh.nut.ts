@@ -54,6 +54,10 @@ describe('Sandbox Refresh', () => {
     // add a sandbox definition file to the project
     const { SandboxName, LicenseType } = getSandboxInfo({ SandboxName: defaultSbxName });
     fs.writeFileSync(sandboxDefFilePath, JSON.stringify({ SandboxName, LicenseType }));
+    // eslint-disable-next-line no-console
+    console.log(session.project.dir);
+    // eslint-disable-next-line no-console
+    console.table(session.orgs);
   });
 
   beforeEach(() => {

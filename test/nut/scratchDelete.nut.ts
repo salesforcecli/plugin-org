@@ -40,6 +40,10 @@ describe('org:delete:scratch NUTs', () => {
         },
       ],
     });
+    // eslint-disable-next-line no-console
+    console.log(session.project.dir);
+    // eslint-disable-next-line no-console
+    console.table(session.orgs);
   });
 
   after(async () => {
