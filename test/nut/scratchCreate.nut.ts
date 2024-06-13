@@ -155,14 +155,14 @@ describe('env create scratch NUTs', () => {
 
       expect(recordTypes?.find((rt) => rt.name === 'svc_Technical_Support'));
     });
-    it('creates an org from edition flag only and sets tracking to true by default', () => {
+    it('creates an org from edition flag only and sets tracking to true by default', async () => {
       const resp = execCmd<ScratchCreateResponse>('org:create:scratch --edition developer --json  --wait 60', {
         ensureExitCode: 0,
       }).jsonOutput?.result;
       expect(resp).to.have.all.keys(keys);
       assert(resp?.username);
       expect(resp?.orgId).to.match(/^00D.{15}/);
-      expect(readAuthFile(resp.username)).to.have.property('tracksSource', true);
+      expect(await readAuthFile(resp.username)).to.have.property('tracksSource', true);
     });
     it('creates an org from config file flag only', () => {
       const resp = execCmd<ScratchCreateResponse>(
@@ -186,7 +186,7 @@ describe('env create scratch NUTs', () => {
       expect(resp?.username).to.equal(expectedUsername);
       expect(resp?.scratchOrgInfo?.AdminEmail).to.equal('shane@mailinator.com');
     });
-    it('creates an org with tracking disabled ', () => {
+    it('creates an org with tracking disabled ', async () => {
       const resp = execCmd<ScratchCreateResponse>(
         'org:create:scratch --edition developer --no-track-source --json  --wait 60',
         {
@@ -195,7 +195,7 @@ describe('env create scratch NUTs', () => {
       ).jsonOutput?.result;
       expect(resp).to.have.all.keys(keys);
       assert(resp?.username);
-      expect(readAuthFile(resp.username)).to.have.property('tracksSource', false);
+      expect(await readAuthFile(resp.username)).to.have.property('tracksSource', false);
     });
 
     it('stores default in local sf config', async () => {
