@@ -83,6 +83,9 @@ describe('Org Command NUT', () => {
 
     aliasedUsername = aliasOrg?.username;
     aliasUserOrgId = aliasOrg?.orgId;
+
+    // eslint-disable-next-line no-console
+    console.table(session.orgs);
   });
 
   after(async () => {
