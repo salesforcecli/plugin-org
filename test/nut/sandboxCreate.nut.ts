@@ -9,7 +9,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { assert, expect } from 'chai';
 import sinon from 'sinon';
-import { TestSession, genUniqueString } from '@salesforce/cli-plugins-testkit';
+import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { SandboxRequestCache } from '@salesforce/core';
 import { stubSfCommandUx, stubSpinner, stubUx } from '@salesforce/sf-plugins-core';
 import CreateSandbox from '../../src/commands/org/create/sandbox.js';
@@ -36,11 +36,9 @@ describe('Sandbox Create', () => {
   let sandboxProcessSoql: string;
 
   before(async () => {
-    const uid = genUniqueString('sbxCreate_%s');
     session = await TestSession.create({
       project: { name: 'sandboxCreate' },
       devhubAuthStrategy: 'AUTH_URL',
-      sessionDir: path.join(process.cwd(), `test_session_${uid}`),
     });
     assert(session.hubOrg.username);
     hubOrgUsername = session.hubOrg.username;

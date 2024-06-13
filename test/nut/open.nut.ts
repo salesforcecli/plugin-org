@@ -7,7 +7,7 @@
 
 import path from 'node:path';
 import fs from 'node:fs';
-import { TestSession, execCmd, genUniqueString } from '@salesforce/cli-plugins-testkit';
+import { TestSession, execCmd } from '@salesforce/cli-plugins-testkit';
 import { expect, config, assert } from 'chai';
 import { AuthFields } from '@salesforce/core';
 import { ComponentSetBuilder } from '@salesforce/source-deploy-retrieve';
@@ -24,12 +24,10 @@ describe('test org:open command', () => {
   const flowPath = path.join('force-app', 'main', 'default', 'flows', 'Create_property.flow-meta.xml');
 
   before(async () => {
-    const uid = genUniqueString('orgOpen_%s');
     session = await TestSession.create({
       project: {
         gitClone: 'https://github.com/trailheadapps/dreamhouse-lwc.git',
       },
-      sessionDir: path.join(process.cwd(), `test_session_${uid}`),
       devhubAuthStrategy: 'AUTO',
       scratchOrgs: [
         {
