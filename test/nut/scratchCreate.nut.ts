@@ -213,7 +213,7 @@ describe('env create scratch NUTs', () => {
       ).to.have.property('target-org', resp.username);
     });
     it('stores alias in global sf.json', async () => {
-      const testAlias = 'testAlias';
+      const testAlias = 'testAlias-create';
       const resp = execCmd<ScratchCreateResponse>(
         `org:create:scratch --edition developer --json --alias ${testAlias}  --wait 60`,
         {

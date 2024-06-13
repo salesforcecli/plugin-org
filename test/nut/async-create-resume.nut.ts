@@ -93,7 +93,7 @@ describe('env:create:scratch async/resume', () => {
   });
 
   describe('alias, set-default, username, config file, use-most-recent', () => {
-    const testAlias = 'testAlias';
+    const testAlias = 'testAlias-resume';
     it('requests org', () => {
       const resp = execCmd<ScratchCreateResponse>(
         `env:create:scratch --json --async -f ${path.join(
