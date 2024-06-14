@@ -237,4 +237,50 @@ describe('env create scratch NUTs', () => {
       expect(aliases.orgs).to.have.property(testAlias, resp.username);
     });
   });
+
+  describe('partial success', () => {
+    before(async () => {
+      // create settings that will fail to deploy
+      const scratchDefJson = parseJsonMap(
+        await fs.promises.readFile(path.join(session.project.dir, 'config', 'project-scratch-def.json'), 'utf8')
+      );
+      scratchDefJson.objectSettings = {
+        NotAnObject: {
+          defaultRecordType: 'bogusType',
+        },
+      };
+      await fs.promises.writeFile(
+        path.join(session.project.dir, 'config', 'project-scratch-def-1.json'),
+        JSON.stringify(scratchDefJson),
+        'utf-8'
+      );
+    });
+    it('creates org, auths, and sets alias even if settings deploy fails', async () => {
+      const alias = 'badSettingsAlias';
+      const result = execCmd<ScratchCreateResponse>(
+        `org create scratch -d -f config/project-scratch-def-1.json -a ${alias} --duration-days 1 --json`,
+        {
+          ensureExitCode: 68,
+        }
+      ).jsonOutput;
+
+      // message comes from sfdx-core.  if it changes, this test will need to be updated
+      expect(result?.message).to.include('A scratch org was created with username');
+      // eslint-disable-next-line no-console
+      console.log(result?.message);
+      assert(result?.data);
+      assert(typeof result.data === 'object');
+      assert('username' in result.data);
+      assert(typeof result.data.username === 'string');
+      const authFile = await readAuthFile(result.data.username);
+      expect(authFile).to.include.keys(['orgId', 'devHubUsername', 'accessToken']);
+
+      const aliases = await readAliases();
+      expect(aliases.orgs).to.have.property(alias, result.data.username);
+
+      expect(
+        JSON.parse(await fs.promises.readFile(path.join(session.project.dir, '.sf', 'config.json'), 'utf8'))
+      ).to.have.property('target-org', alias);
+    });
+  });
 });
