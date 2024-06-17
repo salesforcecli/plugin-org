@@ -178,7 +178,7 @@ describe('[DEPRECATED] force:org:create (sandbox paths)', () => {
       } catch (err) {
         // shouldThrow doesn't necessarily throw an SfError
         assert(err instanceof SfError, 'Expect error to be an instance of SfError');
-        expect(err.code).to.equal(68);
+        expect(err.exitCode).to.equal(68);
         try {
           // mocha really is the bin during UT
           expect(err.actions).to.deep.equal([
