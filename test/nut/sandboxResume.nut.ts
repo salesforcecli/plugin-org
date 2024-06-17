@@ -9,7 +9,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { assert, expect } from 'chai';
 import sinon from 'sinon';
-import { TestSession, genUniqueString } from '@salesforce/cli-plugins-testkit';
+import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { AuthInfo, Org, SandboxRequestCache } from '@salesforce/core';
 import { stubSfCommandUx, stubSpinner, stubUx } from '@salesforce/sf-plugins-core';
 import ResumeSandbox from '../../src/commands/org/resume/sandbox.js';
@@ -34,11 +34,9 @@ describe('Sandbox Resume', () => {
   const sinonSandbox = sinon.createSandbox();
 
   before(async () => {
-    const uid = genUniqueString('sbxResume_%s');
     session = await TestSession.create({
       project: { name: 'sandboxResume' },
       devhubAuthStrategy: 'AUTH_URL',
-      sessionDir: path.join(process.cwd(), `test_session_${uid}`),
     });
     assert(session.hubOrg.username);
     hubOrgUsername = session.hubOrg.username;

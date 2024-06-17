@@ -13,7 +13,6 @@ jobs:
     uses: salesforcecli/github-workflows/.github/workflows/unitTestsLinux.yml@main
   windows-unit-tests:
     needs: linux-unit-tests
-    # TODO: use main
     uses: salesforcecli/github-workflows/.github/workflows/unitTestsWindows.yml@main
   nuts:
     needs: linux-unit-tests

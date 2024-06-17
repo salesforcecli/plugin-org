@@ -7,19 +7,17 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { expect } from 'chai';
-import { execCmd, TestSession, genUniqueString } from '@salesforce/cli-plugins-testkit';
+import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import type { DescribeMetadataResult } from '@jsforce/jsforce-node/lib/api/metadata/schema.js';
 import type { ListMetadataCommandResult } from '../../src/commands/org/list/metadata.js';
 
 describe('org list metadata*', () => {
   let session: TestSession;
   before(async () => {
-    const uid = genUniqueString('listMetadata_%s');
     session = await TestSession.create({
       project: {
         gitClone: 'https://github.com/trailheadapps/dreamhouse-lwc.git',
       },
-      sessionDir: path.join(process.cwd(), `test_session_${uid}`),
       devhubAuthStrategy: 'AUTO',
       scratchOrgs: [
         {
@@ -29,7 +27,6 @@ describe('org list metadata*', () => {
         },
       ],
     });
-
     execCmd('project:deploy:start -d force-app');
   });
 

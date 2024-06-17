@@ -7,7 +7,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { execCmd, TestSession, genUniqueString } from '@salesforce/cli-plugins-testkit';
+import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
 import { AuthFields, Global, ScratchOrgCache } from '@salesforce/core';
 import { Duration, sleep } from '@salesforce/kit';
@@ -37,10 +37,8 @@ describe('env:create:scratch async/resume', () => {
   };
 
   before(async () => {
-    const uid = genUniqueString('acr_%s');
     session = await TestSession.create({
       project: { name: 'asyncCreateResume' },
-      sessionDir: path.join(process.cwd(), `test_session_${uid}`),
       devhubAuthStrategy: 'AUTO',
     });
     cacheFilePath = path.join(session.dir, '.sf', ScratchOrgCache.getFileName());
@@ -95,7 +93,7 @@ describe('env:create:scratch async/resume', () => {
   });
 
   describe('alias, set-default, username, config file, use-most-recent', () => {
-    const testAlias = 'testAlias';
+    const testAlias = 'testAlias-resume';
     it('requests org', () => {
       const resp = execCmd<ScratchCreateResponse>(
         `env:create:scratch --json --async -f ${path.join(
