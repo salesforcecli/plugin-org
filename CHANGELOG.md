@@ -1,3 +1,9 @@
+## [4.2.4](https://github.com/salesforcecli/plugin-org/compare/4.2.3...4.2.4) (2024-06-17)
+
+### Bug Fixes
+
+- **test:** nut for partial success on scratch org deploy fails ([#1100](https://github.com/salesforcecli/plugin-org/issues/1100)) ([4762f73](https://github.com/salesforcecli/plugin-org/commit/4762f735bc688e2d80673b501f5b1c8102480907))
+
 ## [4.2.3](https://github.com/salesforcecli/plugin-org/compare/4.2.2...4.2.3) (2024-06-17)
 
 ### Bug Fixes
