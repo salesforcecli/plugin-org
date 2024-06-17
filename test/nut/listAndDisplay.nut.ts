@@ -83,11 +83,6 @@ describe('Org Command NUT', () => {
 
     aliasedUsername = aliasOrg?.username;
     aliasUserOrgId = aliasOrg?.orgId;
-
-    // eslint-disable-next-line no-console
-    console.log(session.project.dir);
-    // eslint-disable-next-line no-console
-    console.table(session.orgs);
   });
 
   after(async () => {
@@ -193,8 +188,6 @@ describe('Org Command NUT', () => {
       const lines = execCmd(`force:org:display -o ${aliasedUsername}`, { ensureExitCode: 0 }).shellOutput.stdout.split(
         os.EOL
       );
-      // eslint-disable-next-line no-console
-      console.table(lines);
       expect(lines.length).to.have.greaterThan(0);
       const usernameLine = lines.find((line) => line.includes('Username'));
       expect(usernameLine).to.include(aliasedUsername);

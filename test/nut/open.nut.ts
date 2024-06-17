@@ -41,10 +41,6 @@ describe('test org:open command', () => {
     const defaultOrg = session.orgs.get('default') as AuthFields;
     defaultUsername = defaultOrg.username as string;
     defaultUserOrgId = defaultOrg.orgId as string;
-    // eslint-disable-next-line no-console
-    console.log(session.project.dir);
-    // eslint-disable-next-line no-console
-    console.table(session.orgs);
   });
 
   it('should produce the default URL for a flexipage resource when it not in org in json', () => {

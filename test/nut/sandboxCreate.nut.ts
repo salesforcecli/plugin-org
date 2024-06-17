@@ -49,10 +49,6 @@ describe('Sandbox Create', () => {
     const { SandboxName, LicenseType, Id } = getSandboxInfo();
     sandboxProcessSoql = getSandboxProcessSoql({ SandboxInfoId: Id });
     fs.writeFileSync(sandboxDefFilePath, JSON.stringify({ SandboxName, LicenseType }));
-    // eslint-disable-next-line no-console
-    console.log(session.project.dir);
-    // eslint-disable-next-line no-console
-    console.table(session.orgs);
   });
 
   beforeEach(() => {

@@ -33,10 +33,6 @@ describe('env create scratch NUTs', () => {
       project: { name: 'scratchOrgCreate' },
       devhubAuthStrategy: 'AUTO',
     });
-    // eslint-disable-next-line no-console
-    console.log(session.project.dir);
-    // eslint-disable-next-line no-console
-    console.table(session.orgs);
   });
 
   after(async () => {
