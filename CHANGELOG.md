@@ -1,3 +1,9 @@
+## [4.2.5](https://github.com/salesforcecli/plugin-org/compare/4.2.4...4.2.5) (2024-06-20)
+
+### Bug Fixes
+
+- updates from devScripts ([#1110](https://github.com/salesforcecli/plugin-org/issues/1110)) ([1c2d186](https://github.com/salesforcecli/plugin-org/commit/1c2d1866b2f3276a301f14b3889e8f1964b4e7c0))
+
 ## [4.2.4](https://github.com/salesforcecli/plugin-org/compare/4.2.3...4.2.4) (2024-06-17)
 
 ### Bug Fixes
