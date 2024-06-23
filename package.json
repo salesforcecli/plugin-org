@@ -8,7 +8,7 @@
     "@oclif/core": "^4.0.6",
     "@salesforce/core": "^8.0.3",
     "@salesforce/kit": "^3.1.6",
-    "@salesforce/sf-plugins-core": "^11.1.1",
+    "@salesforce/sf-plugins-core": "^11.1.2",
     "@salesforce/source-deploy-retrieve": "^12.0.1",
     "ansis": "^3.2.0",
     "change-case": "^5.4.4",

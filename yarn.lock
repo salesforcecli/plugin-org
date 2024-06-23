@@ -1697,7 +1697,7 @@
     wordwrap "^1.0.0"
     wrap-ansi "^7.0.0"
 
-"@oclif/core@^4", "@oclif/core@^4.0.3", "@oclif/core@^4.0.6":
+"@oclif/core@^4", "@oclif/core@^4.0.6":
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/@oclif/core/-/core-4.0.6.tgz#05958a928591567b7fe90638e0ee8df9e07eb3ff"
   integrity sha512-z/4YUVQsf2pHsXRze5etbmvAYDhoUhIzpM6oJGEdsdWfvQJ6YQBogH7TdX/ItuGda6+vpfXg/4U1CtPexSF+bA==
@@ -1876,14 +1876,14 @@
   resolved "https://registry.yarnpkg.com/@salesforce/schemas/-/schemas-1.9.0.tgz#ba477a112653a20b4edcf989c61c57bdff9aa3ca"
   integrity sha512-LiN37zG5ODT6z70sL1fxF7BQwtCX9JOWofSU8iliSNIM+WDEeinnoFtVqPInRSNt8I0RiJxIKCrqstsmQRBNvA==
 
-"@salesforce/sf-plugins-core@^11.1.1":
-  version "11.1.1"
-  resolved "https://registry.yarnpkg.com/@salesforce/sf-plugins-core/-/sf-plugins-core-11.1.1.tgz#f0168d8734cd458caa4063691b528a28b2d7b172"
-  integrity sha512-CsAwNNNJpYbaxaYXf8/XUjaSymg4MsWkMD3vNSLu+tbA4HUCuXBNlMFgFC/i3nNYiU/xc1YT1iDSywzHUdBRRQ==
+"@salesforce/sf-plugins-core@^11.1.1", "@salesforce/sf-plugins-core@^11.1.2":
+  version "11.1.2"
+  resolved "https://registry.yarnpkg.com/@salesforce/sf-plugins-core/-/sf-plugins-core-11.1.2.tgz#d18b3cb6603de5d4bedc088fca8c90937ecefb16"
+  integrity sha512-8uM47OfW4ym9KXL/vMAcM9zIF2aEAkSCNins7Ww+QPGA4ssXP3MZKQM2Ncb5tzgvjZK4x0PGP+BAZ3aXUo0pdw==
   dependencies:
     "@inquirer/confirm" "^3.1.9"
     "@inquirer/password" "^2.1.9"
-    "@oclif/core" "^4.0.3"
+    "@oclif/core" "^4.0.6"
     "@salesforce/core" "^8.0.1"
     "@salesforce/kit" "^3.1.6"
     "@salesforce/ts-types" "^2.0.9"
