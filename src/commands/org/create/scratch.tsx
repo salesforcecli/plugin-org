@@ -25,19 +25,19 @@ import { buildScratchOrgRequest } from '../../../shared/scratchOrgRequest.js';
 import { formatOrgId, formatRequest, formatUsername } from '../../../shared/scratchOrgOutput.js';
 import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
 
-type Props = {
+type StatusProps = {
   readonly lifecycle: Lifecycle;
   readonly baseUrl: string;
 };
 
-type State = {
+type StatusState = {
   data?: ScratchOrgLifecycleEvent;
 };
 
-class StatusComponent extends React.Component<Props, State> {
-  public state: State = {};
+class StatusComponent extends React.Component<StatusProps, StatusState> {
+  public state: StatusState = {};
 
-  public constructor(props: Props) {
+  public constructor(props: StatusProps) {
     super(props);
   }
 
@@ -57,7 +57,7 @@ class StatusComponent extends React.Component<Props, State> {
     return (
       <Box flexDirection="column">
         <Text bold>Creating Scratch Org</Text>
-        <Box flexDirection="column" borderStyle="single" marginRight={2} padding={1}>
+        <Box flexDirection="column" marginRight={2} padding={1}>
           {(this.state.data?.scratchOrgInfo?.Id && (
             <Text>Request Id: {formatRequest(this.props.baseUrl, this.state.data?.scratchOrgInfo?.Id)}</Text>
           )) ?? (
@@ -295,7 +295,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       if (!scratchOrgInfo) {
         throw new SfError('The scratch org did not return with any information');
       }
-      // this.log();
+
       if (flags.async) {
         this.info(messages.getMessage('action.resume', [this.config.bin, scratchOrgInfo.Id]));
         this.spinner.stop();
