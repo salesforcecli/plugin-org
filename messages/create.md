@@ -4,7 +4,7 @@ Create a scratch org or sandbox.
 
 # deprecation
 
-The force:org:create command is deprecated. Try "org create scratch" or "org create sandbox" instead.
+The force:org:create command is deprecated and will be removed on November 6, 2024. Use "org create scratch" or "org create sandbox" instead.
 
 # description
 
