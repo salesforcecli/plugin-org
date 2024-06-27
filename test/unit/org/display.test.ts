@@ -89,6 +89,49 @@ describe('org:display', () => {
     expect(result.alias).to.equal('nonscratchalias');
   });
 
+  it('gets the correct org if multiple scratch org records are found', async () => {
+    const testHub = new MockTestOrgData();
+    testOrg.devHubUsername = testHub.username;
+    testOrg.isScratchOrg = true;
+
+    await $$.stubAuths(testOrg, testHub);
+
+    $$.SANDBOX.stub(OrgListUtil, 'retrieveScratchOrgInfoFromDevHub').resolves([
+      {
+        CreatedDate: '2024-06-15T05:52:42.000+0000',
+        Edition: 'Developer',
+        Status: 'Deleted',
+        ExpirationDate: '2024-06-16',
+        Namespace: 'null',
+        OrgName: 'ACME',
+        CreatedBy: {
+          Username: 'admin@integrationtesthubna40.org',
+        },
+        Username: 'johndoe@hi.com',
+        SignupUsername: 'johndoe@hi.com',
+        devHubOrgId: testHub.orgId,
+      },
+      {
+        CreatedDate: '2024-06-16T05:52:42.000+0000',
+        Edition: 'Developer',
+        Status: 'Active',
+        ExpirationDate: '2024-06-17',
+        Namespace: 'null',
+        OrgName: 'Dreamhouse',
+        CreatedBy: {
+          Username: testHub.username,
+        },
+        Username: testOrg.username,
+        SignupUsername: testOrg.username,
+        devHubOrgId: testHub.orgId,
+      },
+    ]);
+    const result = await OrgDisplayCommand.run(['--targetusername', testOrg.username]);
+    expect(commonAssert(result));
+    // check specifically `orgName` because it's one of the fields that comes from the payload instead of the auth file
+    expect(result.orgName).to.equal('Dreamhouse');
+  });
+
   it('gets an org from local auth files by alias', async () => {
     await $$.stubAuths(testOrg);
     $$.stubAliases({ nonscratchalias: testOrg.username });
