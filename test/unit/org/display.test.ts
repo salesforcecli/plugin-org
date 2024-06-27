@@ -200,6 +200,7 @@ describe('org:display', () => {
             Edition: 'Developer',
             OrgName: 'MyOrg',
             CreatedDate: '2020-12-24T15:18:55.000+0000',
+            SignupUsername: testOrg.username,
           },
         ]),
     });
