@@ -165,7 +165,7 @@ export type OrgOpenOutput = {
   url: string;
   username: string;
   orgId: string;
-}
+};
 
 const fileCleanup = (tempFilePath: string): void =>
   fs.rmSync(tempFilePath, { force: true, maxRetries: 3, recursive: true });

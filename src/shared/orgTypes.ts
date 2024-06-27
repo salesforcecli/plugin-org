@@ -63,7 +63,7 @@ export type ScratchOrgInfoSObject = {
   Namespace?: string;
   OrgName: string;
   SignupUsername: string;
-}
+};
 
 /** fields in the  */
 export type ScratchOrgFields = {
@@ -78,7 +78,7 @@ export type ScratchOrgFields = {
   snapshot?: string;
   lastUsed?: Date;
   signupUsername: string;
-}
+};
 
 export type OrgListFields = {
   connectedStatus?: string;
@@ -87,7 +87,7 @@ export type OrgListFields = {
   defaultMarker?: '(D)' | '(U)';
   attributes?: Record<string, unknown>;
   lastUsed?: Date;
-}
+};
 
 /** If the scratch org is resumed, but doesn't get very far in the process, it won't have much information on it */
 export type ScratchCreateResponse = {
@@ -96,7 +96,7 @@ export type ScratchCreateResponse = {
   authFields?: AuthFields;
   warnings: string[];
   orgId?: string;
-}
+};
 
 export enum SandboxLicenseType {
   developer = 'Developer',

@@ -15,7 +15,7 @@ const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete_scratch
 export type ScratchDeleteResponse = {
   orgId: string;
   username: string;
-}
+};
 
 export default class DeleteScratch extends SfCommand<ScratchDeleteResponse> {
   public static readonly summary = messages.getMessage('summary');

@@ -15,7 +15,7 @@ export type UseSpinnerProps = {
    *
    * @default dots
    */
-  type?: SpinnerName;
+  readonly type?: SpinnerName;
 };
 
 export type UseSpinnerResult = {
@@ -49,16 +49,16 @@ export type SpinnerProps = UseSpinnerProps & {
    * Label to show near the spinner.
    */
   readonly label?: string;
-  readonly bold?: boolean;
+  readonly isBold?: boolean;
 };
 
-export function Spinner({ bold, label, type }: SpinnerProps): JSX.Element {
+export function Spinner({ isBold, label, type }: SpinnerProps): JSX.Element {
   const { frame } = useSpinner({ type });
 
   return (
     <Box>
-      {bold ? (
-        <Text color="magenta" bold>
+      {isBold ? (
+        <Text bold color="magenta">
           {frame}
         </Text>
       ) : (
@@ -68,4 +68,12 @@ export function Spinner({ bold, label, type }: SpinnerProps): JSX.Element {
       {label && <Text>{label}</Text>}
     </Box>
   );
+}
+
+export function SpinnerOrError({ error, ...props }: SpinnerProps & { readonly error?: Error }): JSX.Element {
+  if (error) {
+    return <Text color="red">✖</Text>;
+  }
+
+  return <Spinner {...props} />;
 }

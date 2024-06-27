@@ -15,7 +15,7 @@ const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete_sandbox
 export type SandboxDeleteResponse = {
   orgId: string;
   username: string;
-}
+};
 
 export default class DeleteSandbox extends SfCommand<SandboxDeleteResponse> {
   public static readonly summary = messages.getMessage('summary');

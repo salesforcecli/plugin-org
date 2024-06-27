@@ -9,7 +9,9 @@ module.exports = {
     'eslint-config-salesforce-typescript',
     'eslint-config-salesforce-license',
     'plugin:sf-plugin/recommended',
-    'plugin:react/recommended',
-    'plugin:react-hooks/recommended',
+    'xo-react/space',
   ],
+  rules: {
+    'react/jsx-tag-spacing': 'off',
+  },
 };

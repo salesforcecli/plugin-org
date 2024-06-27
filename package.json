@@ -12,7 +12,7 @@
     "@salesforce/source-deploy-retrieve": "^12.0.1",
     "ansis": "^3.2.0",
     "change-case": "^5.4.4",
-    "cli-spinners": "^3.0.0",
+    "cli-spinners": "^2",
     "ink": "^5.0.1",
     "is-wsl": "^3.1.0",
     "open": "^10.1.0",
@@ -25,6 +25,8 @@
     "@salesforce/plugin-command-reference": "^3.1.4",
     "@salesforce/ts-sinon": "1.4.19",
     "@types/react": "^18.3.3",
+    "eslint-config-xo": "^0.45.0",
+    "eslint-config-xo-react": "^0.27.0",
     "eslint-plugin-react": "^7.34.3",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-sf-plugin": "^1.18.8",
@@ -92,6 +94,9 @@
             "description": "Manage your sandbox and scratch orgs."
           }
         }
+      },
+      "foo": {
+        "description": "description for foo"
       }
     },
     "flexibleTaxonomy": true,
