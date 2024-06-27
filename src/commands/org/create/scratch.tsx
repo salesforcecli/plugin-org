@@ -28,6 +28,10 @@ import { formatOrgId, formatRequest, formatUsername } from '../../../shared/scra
 import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
 import { render, BaseComponent } from '../../../components/baseComponent.js';
 
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
+const messages = Messages.loadMessages('@salesforce/plugin-org', 'create_scratch');
+const definitionFileHelpGroupName = 'Definition File Override';
+
 function Status(props: {
   readonly data: ScratchOrgLifecycleEvent;
   readonly baseUrl: string;
@@ -213,9 +217,6 @@ class CreateScratchView extends BaseComponent<CreateScratchViewProps> {
   }
 }
 
-const messages = Messages.loadMessages('@salesforce/plugin-org', 'create_scratch');
-
-const definitionFileHelpGroupName = 'Definition File Override';
 export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
