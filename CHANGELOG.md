@@ -1,3 +1,9 @@
+## [4.3.1](https://github.com/salesforcecli/plugin-org/compare/4.3.0...4.3.1) (2024-06-28)
+
+### Bug Fixes
+
+- ensure org display picks the correct record ([#1119](https://github.com/salesforcecli/plugin-org/issues/1119)) ([cb2f4dc](https://github.com/salesforcecli/plugin-org/commit/cb2f4dc52cddb7c9b0e60a50c6491d49a06a7f25))
+
 # [4.3.0](https://github.com/salesforcecli/plugin-org/compare/4.2.7...4.3.0) (2024-06-25)
 
 ### Features
