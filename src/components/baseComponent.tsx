@@ -11,12 +11,17 @@ import { SfError } from '@salesforce/core';
 
 const ERROR_KEY = Symbol('error');
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-const Context = React.createContext((_state: any) => {});
+const Context = React.createContext({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+  state: (_state: any): void => {},
+  unmount: (): void => {},
+});
 
 type BaseState<T = Record<string | symbol, unknown>> = T & {
   readonly [ERROR_KEY]?: SfError | Error;
 };
+
+const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
 export abstract class BaseComponent<
   Props = Record<string, unknown>,
@@ -30,16 +35,22 @@ export abstract class BaseComponent<
   private error: SfError | Error | undefined;
 
   public componentWillUnmount(): void {
-    this.context(this.state);
+    this.context.state(this.state);
   }
 
   public setError(error: SfError | Error | undefined): void {
     this.error = error;
-    this.context({ ...this.state, [ERROR_KEY]: error });
+    this.context.state({ ...this.state, [ERROR_KEY]: error });
   }
 
   public getError(): SfError | Error | undefined {
     return this.error;
+  }
+
+  public async done(): Promise<void> {
+    await sleep(1);
+    this.context.state(this.state);
+    this.context.unmount();
   }
 }
 
@@ -63,15 +74,22 @@ export async function render<T extends Record<string | symbol, unknown>>(
     finalState = { ...finalState, ...state };
   };
 
-  const instance = inkRender(<Context.Provider value={cb}>{component}</Context.Provider>, {
-    stdout: getStream('stdout', jsonEnabled),
-    stderr: getStream('stderr', jsonEnabled),
+  return new Promise((resolve, reject) => {
+    const callbacks = {
+      state: cb,
+      unmount: (): void => {
+        instance.unmount();
+        if (finalState[ERROR_KEY]) {
+          reject(finalState[ERROR_KEY]);
+        } else {
+          resolve({ instance, finalState });
+        }
+      },
+    };
+
+    const instance = inkRender(<Context.Provider value={callbacks}>{component}</Context.Provider>, {
+      stdout: getStream('stdout', jsonEnabled),
+      stderr: getStream('stderr', jsonEnabled),
+    });
   });
-  await instance.waitUntilExit();
-
-  if (finalState[ERROR_KEY]) {
-    throw finalState[ERROR_KEY];
-  }
-
-  return { instance, finalState };
 }

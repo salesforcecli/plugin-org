@@ -178,6 +178,8 @@ class CreateScratchView extends BaseComponent<CreateScratchViewProps> {
       if (error instanceof SfError || error instanceof Error) {
         this.setError(error);
       }
+    } finally {
+      await this.done();
     }
   }
 
