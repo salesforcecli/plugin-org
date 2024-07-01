@@ -69,14 +69,12 @@ export async function render<T extends Record<string | symbol, unknown>>(
   component: React.ReactElement,
   jsonEnabled = false
 ): Promise<{ instance: Instance; finalState: T }> {
-  let finalState = {} as T;
-  const cb = (state: T): void => {
-    finalState = { ...finalState, ...state };
-  };
-
   return new Promise((resolve, reject) => {
+    let finalState = {} as T;
     const callbacks = {
-      state: cb,
+      state: (state: T): void => {
+        finalState = { ...finalState, ...state };
+      },
       unmount: (): void => {
         instance.unmount();
         if (finalState[ERROR_KEY]) {
@@ -92,4 +90,10 @@ export async function render<T extends Record<string | symbol, unknown>>(
       stderr: getStream('stderr', jsonEnabled),
     });
   });
+}
+
+export function renderOnce(component: React.ReactElement): Instance | undefined {
+  const instance = inkRender(component);
+  instance.unmount();
+  return instance;
 }
