@@ -294,6 +294,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
     } catch (error) {
       if (asyncInstance) {
+        // TODO: show success in the spinner
         asyncInstance.unmount();
       }
 
