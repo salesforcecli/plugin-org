@@ -140,55 +140,50 @@ function Stages(props: {
   );
 
   return (
-    <Box flexDirection="column">
+    <Box flexDirection="column" paddingTop={1}>
       <Divider title={props.title} />
-      {props.stages.map((stage, stageIndex) => {
-        // current stage
-        if (props.currentStage === stage && stage !== 'done') {
-          if (!timings[stage].start) {
-            timings[stage].start = new Date();
-            setTimings({ ...timings });
+      <Box flexDirection="column" paddingTop={1} marginLeft={1}>
+        {props.stages.map((stage, stageIndex) => {
+          // current stage
+          if (props.currentStage === stage && stageIndex < props.stages.length - 1) {
+            if (!timings[stage].start) {
+              timings[stage].start = new Date();
+              setTimings({ ...timings });
+            }
+
+            return (
+              <Box key={stage}>
+                <SpinnerOrError error={props.error} type="dots2" label={capitalCase(stage)} />
+                <Space />
+                <Timer color="dim" />
+              </Box>
+            );
           }
 
-          return (
-            <Box key={stage}>
-              <SpinnerOrError error={props.error} type="dots2" label={capitalCase(stage)} />
-              <Space />
-              <Timer color="dim" />
-            </Box>
-          );
-        }
+          // completed stages
+          if (props.stages.indexOf(props.currentStage) >= stageIndex) {
+            if (!timings[stage].end) {
+              timings[stage].end = new Date();
+              setTimings({ ...timings });
+            }
 
-        // completed stages
-        if (props.stages.indexOf(props.currentStage) > stageIndex) {
-          if (!timings[stage].end) {
-            timings[stage].end = new Date();
-            setTimings({ ...timings });
+            return (
+              <Box key={stage}>
+                <Text color="green">✓ </Text>
+                <Text>{capitalCase(stage)} </Text>
+                <Text color="dim">{diff(timings[stage].start, timings[stage].end)}</Text>
+              </Box>
+            );
           }
 
-          return (
-            <Box key={stage}>
-              <Text color="green">✓ </Text>
-              <Text>{capitalCase(stage)} </Text>
-              <Text color="dim">{diff(timings[stage].start, timings[stage].end)}</Text>
-            </Box>
-          );
-        }
-
-        // done stage
-        if (props.currentStage === stage && stage === 'done') {
-          return <Text key={stage}>{capitalCase(stage)}</Text>;
-        }
-
-        if (stage !== 'done') {
           // future stage
           return (
             <Text key={stage} color="dim">
               ◼ {capitalCase(stage)}
             </Text>
           );
-        }
-      })}
+        })}
+      </Box>
 
       <Box paddingTop={1}>
         <Text>Elapsed Time: </Text>
@@ -407,6 +402,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
         <SpinnerOrError type="dots2" label=" Requesting Scratch Org (will not wait for completion because --async)" />
       );
     } else {
+      // TODO: should this be abstracted?
       statusInstance = render(<Status baseUrl={baseUrl} />);
       lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
         scratchOrgLifecycleData = data;
