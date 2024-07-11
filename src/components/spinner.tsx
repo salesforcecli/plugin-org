@@ -50,30 +50,67 @@ export type SpinnerProps = UseSpinnerProps & {
    */
   readonly label?: string;
   readonly isBold?: boolean;
+  readonly labelPosition?: 'left' | 'right';
 };
 
-export function Spinner({ isBold, label, type }: SpinnerProps): JSX.Element {
+export function Spinner({ isBold, label, type, labelPosition = 'right' }: SpinnerProps): React.ReactElement {
   const { frame } = useSpinner({ type });
 
   return (
     <Box>
+      {label && labelPosition === 'left' && <Text>{label}</Text>}
       {isBold ? (
         <Text bold color="magenta">
           {frame}
         </Text>
       ) : (
-        <Text color="magenta">{frame}</Text>
+        <Text color="magenta">{frame} </Text>
       )}
-
-      {label && <Text>{label}</Text>}
+      {label && labelPosition === 'right' && <Text>{label}</Text>}
     </Box>
   );
 }
 
-export function SpinnerOrError({ error, ...props }: SpinnerProps & { readonly error?: Error }): JSX.Element {
+export function SpinnerOrError({
+  error,
+  labelPosition = 'right',
+  ...props
+}: SpinnerProps & { readonly error?: Error }): React.ReactElement {
   if (error) {
-    return <Text color="red">✖</Text>;
+    return (
+      <Box>
+        {props.label && labelPosition === 'left' && <Text>{props.label}</Text>}
+        <Text color="red">✖</Text>
+        {props.label && labelPosition === 'right' && <Text>{props.label}</Text>}
+      </Box>
+    );
   }
 
-  return <Spinner {...props} />;
+  return <Spinner labelPosition={labelPosition} {...props} />;
+}
+
+export function SpinnerOrErrorOrChildren({
+  children,
+  error,
+  ...props
+}: SpinnerProps & {
+  readonly children?: React.ReactNode;
+  readonly textStyle?: {
+    readonly color?: string;
+    readonly bold?: boolean;
+  };
+  readonly text?: string;
+  readonly error?: Error;
+}): React.ReactElement {
+  if (children) {
+    return (
+      <Box>
+        {props.label && props.labelPosition === 'left' && <Text>{props.label}</Text>}
+        {children}
+        {props.label && props.labelPosition === 'right' && <Text>{props.label}</Text>}
+      </Box>
+    );
+  }
+
+  return <SpinnerOrError error={error} {...props} />;
 }

@@ -20,15 +20,183 @@ import { Duration } from '@salesforce/kit';
 import { Box, Instance, Text, render } from 'ink';
 import { capitalCase } from 'change-case';
 import React from 'react';
-import { SpinnerOrError } from '../../../components/spinner.js';
+import { SpinnerOrError, SpinnerOrErrorOrChildren } from '../../../components/spinner.js';
 import { buildScratchOrgRequest } from '../../../shared/scratchOrgRequest.js';
-import { formatOrgId, formatRequest, formatUsername } from '../../../shared/scratchOrgOutput.js';
 import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create_scratch');
 
 const definitionFileHelpGroupName = 'Definition File Override';
+
+function round(value: number, decimals = 2): number {
+  return Number(Math.round(Number(value + 'e' + decimals)) + 'e-' + decimals);
+}
+
+function timeInMostReadableFormat(time: number): string {
+  // if time < 1000ms, return time in ms
+  if (time < 1000) {
+    return `${time}ms`;
+  }
+
+  // if time < 60s, return time in seconds
+  if (time < 60_000) {
+    return `${round(time / 1000)}s`;
+  }
+
+  // if time < 60m, return time in minutes
+  if (time < 3_600_000) {
+    return `${round(time / 60_000)}m`;
+  }
+
+  return time.toString();
+}
+
+function diff(start: Date | undefined, end: Date | undefined): string {
+  if (!start || !end) {
+    return '0ms';
+  }
+
+  return timeInMostReadableFormat(end.getTime() - start.getTime());
+}
+
+const getSideDividerWidth = (width: number, titleWidth: number): number => (width - titleWidth) / 2;
+const getNumberOfCharsPerWidth = (char: string, width: number): number => width / char.length;
+
+const PAD = ' ';
+
+function Divider({
+  title = '',
+  width = 50,
+  padding = 1,
+  titlePadding = 1,
+  titleColor = 'white',
+  dividerChar = '─',
+  dividerColor = 'dim',
+}: {
+  readonly title?: string;
+  readonly width?: number | 'full';
+  readonly padding?: number;
+  readonly titleColor?: string;
+  readonly titlePadding?: number;
+  readonly dividerChar?: string;
+  readonly dividerColor?: string;
+}): React.ReactNode {
+  const titleString = title ? `${PAD.repeat(titlePadding) + title + PAD.repeat(titlePadding)}` : '';
+  const titleWidth = titleString.length;
+  // width ??= process.stdout.columns ? process.stdout.columns - titlePadding : 80;
+  const terminalWidth = process.stdout.columns ?? 80;
+  const widthToUse = width === 'full' ? terminalWidth - titlePadding : width > terminalWidth ? terminalWidth : width;
+
+  const dividerWidth = getSideDividerWidth(widthToUse, titleWidth);
+  const numberOfCharsPerSide = getNumberOfCharsPerWidth(dividerChar, dividerWidth);
+  const dividerSideString = dividerChar.repeat(numberOfCharsPerSide);
+
+  const paddingString = PAD.repeat(padding);
+
+  return (
+    <Box flexDirection="row">
+      <Text>
+        {paddingString}
+        <Text color={dividerColor}>{dividerSideString}</Text>
+        <Text color={titleColor}>{titleString}</Text>
+        <Text color={dividerColor}>{dividerSideString}</Text>
+        {paddingString}
+      </Text>
+    </Box>
+  );
+}
+
+function Timer(props: { readonly color?: string }): React.ReactNode {
+  const [time, setTime] = React.useState(0);
+
+  const interval = 10;
+
+  React.useEffect(() => {
+    const intervalId = setInterval(() => {
+      setTime((prevTime) => prevTime + interval);
+    }, interval);
+
+    return (): void => {
+      clearInterval(intervalId);
+    };
+  }, [interval]);
+
+  return <Text {...props}>{timeInMostReadableFormat(time)}</Text>;
+}
+
+function Space({ repeat = 1 }: { readonly repeat?: number }): React.ReactNode {
+  return <Text>{' '.repeat(repeat)}</Text>;
+}
+
+function Stages(props: {
+  readonly currentStage: string;
+  readonly stages: string[] | readonly string[];
+  readonly title: string;
+  readonly error?: SfError | Error | undefined;
+}): React.ReactNode {
+  const [timings, setTimings] = React.useState<Record<string, { start?: Date; end?: Date }>>(
+    Object.fromEntries(props.stages.map((stage) => [stage, {}]))
+  );
+
+  return (
+    <Box flexDirection="column">
+      <Divider title={props.title} />
+      {props.stages.map((stage, stageIndex) => {
+        // current stage
+        if (props.currentStage === stage && stage !== 'done') {
+          if (!timings[stage].start) {
+            timings[stage].start = new Date();
+            setTimings({ ...timings });
+          }
+
+          return (
+            <Box key={stage}>
+              <SpinnerOrError error={props.error} type="dots2" label={capitalCase(stage)} />
+              <Space />
+              <Timer color="dim" />
+            </Box>
+          );
+        }
+
+        // completed stages
+        if (props.stages.indexOf(props.currentStage) > stageIndex) {
+          if (!timings[stage].end) {
+            timings[stage].end = new Date();
+            setTimings({ ...timings });
+          }
+
+          return (
+            <Box key={stage}>
+              <Text color="green">✓ </Text>
+              <Text>{capitalCase(stage)} </Text>
+              <Text color="dim">{diff(timings[stage].start, timings[stage].end)}</Text>
+            </Box>
+          );
+        }
+
+        // done stage
+        if (props.currentStage === stage && stage === 'done') {
+          return <Text key={stage}>{capitalCase(stage)}</Text>;
+        }
+
+        if (stage !== 'done') {
+          // future stage
+          return (
+            <Text key={stage} color="dim">
+              ◼ {capitalCase(stage)}
+            </Text>
+          );
+        }
+      })}
+
+      <Box paddingTop={1}>
+        <Text>Elapsed Time: </Text>
+        <Timer />
+      </Box>
+    </Box>
+  );
+}
 
 function Status(props: {
   readonly data?: ScratchOrgLifecycleEvent;
@@ -39,74 +207,48 @@ function Status(props: {
 
   return (
     <Box flexDirection="column">
-      <Text bold>Creating Scratch Org</Text>
-      <Box flexDirection="column" marginRight={2} padding={1}>
-        {(props.data?.scratchOrgInfo?.Id && (
-          <Text>Request Id: {formatRequest(props.baseUrl, props.data?.scratchOrgInfo?.Id)}</Text>
-        )) ?? (
-          <Box>
-            <Text>Request Id: </Text>
-            <SpinnerOrError error={props.error} type="simpleDotsScrolling" />
-          </Box>
-        )}
+      <Stages
+        title="Creating Scratch Org"
+        currentStage={props.data.stage}
+        stages={scratchOrgLifecycleStages}
+        error={props.error}
+      />
 
-        {(props.data?.scratchOrgInfo?.ScratchOrg && (
-          <Text>OrgId: {formatOrgId(props.data?.scratchOrgInfo?.ScratchOrg)}</Text>
-        )) ?? (
-          <Box>
-            <Text>OrgId: </Text>
-            <SpinnerOrError error={props.error} type="simpleDotsScrolling" />
-          </Box>
-        )}
+      <Box flexDirection="column" paddingTop={1}>
+        <SpinnerOrErrorOrChildren
+          label="Request Id: "
+          labelPosition="left"
+          error={props.error}
+          type="simpleDotsScrolling"
+        >
+          {props.data?.scratchOrgInfo?.Id && (
+            <Box>
+              <Text bold>{props.data?.scratchOrgInfo?.Id}</Text>
+              <Text>{` (${props.baseUrl}/${props.data?.scratchOrgInfo?.Id})`}</Text>
+            </Box>
+          )}
+        </SpinnerOrErrorOrChildren>
 
-        {(props.data?.scratchOrgInfo?.SignupUsername && (
-          <Text>Username: {formatUsername(props.data?.scratchOrgInfo?.SignupUsername)}</Text>
-        )) ?? (
-          <Box>
-            <Text>Username: </Text>
-            <SpinnerOrError error={props.error} type="simpleDotsScrolling" />
-          </Box>
-        )}
-      </Box>
+        <SpinnerOrErrorOrChildren label="OrgId: " labelPosition="left" error={props.error} type="simpleDotsScrolling">
+          {props.data?.scratchOrgInfo?.ScratchOrg && (
+            <Text bold color="blue">
+              {props.data?.scratchOrgInfo?.ScratchOrg}
+            </Text>
+          )}
+        </SpinnerOrErrorOrChildren>
 
-      <Box flexDirection="column">
-        {scratchOrgLifecycleStages.map((stage, stageIndex) => {
-          // current stage
-          if (props.data!.stage === stage && stage !== 'done')
-            return (
-              <Box key={stage}>
-                <SpinnerOrError isBold error={props.error} type="arc" />
-                <Text bold color="magenta">
-                  {' '}
-                  {capitalCase(stage)}
-                </Text>
-              </Box>
-            );
-          // completed stages
-          if (scratchOrgLifecycleStages.indexOf(props.data!.stage) > stageIndex)
-            return (
-              <Text key={stage} bold color="green">
-                ✓ {capitalCase(stage)}
-              </Text>
-            );
-
-          // done stage
-          if (props.data!.stage === stage && stage === 'done')
-            return (
-              <Text key={stage} bold color="blue">
-                {capitalCase(stage)}
-              </Text>
-            );
-
-          if (stage !== 'done') {
-            // future stage
-            return (
-              <Text key={stage} color="dim">
-                ◼ {capitalCase(stage)}
-              </Text>
-            );
-          }
-        })}
+        <SpinnerOrErrorOrChildren
+          label="Username: "
+          labelPosition="left"
+          error={props.error}
+          type="simpleDotsScrolling"
+        >
+          {props.data?.scratchOrgInfo?.SignupUsername && (
+            <Text bold color="blue">
+              {props.data?.scratchOrgInfo?.SignupUsername}
+            </Text>
+          )}
+        </SpinnerOrErrorOrChildren>
       </Box>
     </Box>
   );
@@ -307,6 +449,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
         const scratchOrgInfoId = (error.data as { scratchOrgInfoId: string }).scratchOrgInfoId;
         const resumeMessage = messages.getMessage('action.resume', [this.config.bin, scratchOrgInfoId]);
 
+        this.log();
         this.info(resumeMessage);
         this.error('The scratch org did not complete within your wait time', { code: '69', exit: 69 });
       } else {
