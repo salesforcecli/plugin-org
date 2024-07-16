@@ -95,9 +95,6 @@
             "description": "Manage your sandbox and scratch orgs."
           }
         }
-      },
-      "foo": {
-        "description": "description for foo"
       }
     },
     "flexibleTaxonomy": true,
