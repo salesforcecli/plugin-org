@@ -12,16 +12,13 @@ import {
   scratchOrgCreate,
   ScratchOrgLifecycleEvent,
   scratchOrgLifecycleEventName,
-  scratchOrgLifecycleStages,
   SfError,
 } from '@salesforce/core';
 import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
 import { Duration } from '@salesforce/kit';
-import { Box, Instance, Text, render } from 'ink';
-import { capitalCase } from 'change-case';
+import { render } from 'ink';
 import React from 'react';
-import terminalLink from 'terminal-link';
-import { SpinnerOrError, SpinnerOrErrorOrChildren } from '../../../components/spinner.js';
+import { Status } from '../../../components/stages.js';
 import { buildScratchOrgRequest } from '../../../shared/scratchOrgRequest.js';
 import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
 
@@ -29,217 +26,6 @@ Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create_scratch');
 
 const definitionFileHelpGroupName = 'Definition File Override';
-
-function round(value: number, decimals = 2): number {
-  return Number(Math.round(Number(value + 'e' + decimals)) + 'e-' + decimals);
-}
-
-function timeInMostReadableFormat(time: number): string {
-  // if time < 1000ms, return time in ms
-  if (time < 1000) {
-    return `${time}ms`;
-  }
-
-  // if time < 60s, return time in seconds
-  if (time < 60_000) {
-    return `${round(time / 1000)}s`;
-  }
-
-  // if time < 60m, return time in minutes
-  if (time < 3_600_000) {
-    return `${round(time / 60_000)}m`;
-  }
-
-  return time.toString();
-}
-
-function diff(start: Date | undefined, end: Date | undefined): string {
-  if (!start || !end) {
-    return '0ms';
-  }
-
-  return timeInMostReadableFormat(end.getTime() - start.getTime());
-}
-
-const getSideDividerWidth = (width: number, titleWidth: number): number => (width - titleWidth) / 2;
-const getNumberOfCharsPerWidth = (char: string, width: number): number => width / char.length;
-
-const PAD = ' ';
-
-function Divider({
-  title = '',
-  width = 50,
-  padding = 1,
-  titlePadding = 1,
-  titleColor = 'white',
-  dividerChar = '─',
-  dividerColor = 'dim',
-}: {
-  readonly title?: string;
-  readonly width?: number | 'full';
-  readonly padding?: number;
-  readonly titleColor?: string;
-  readonly titlePadding?: number;
-  readonly dividerChar?: string;
-  readonly dividerColor?: string;
-}): React.ReactNode {
-  const titleString = title ? `${PAD.repeat(titlePadding) + title + PAD.repeat(titlePadding)}` : '';
-  const titleWidth = titleString.length;
-  // width ??= process.stdout.columns ? process.stdout.columns - titlePadding : 80;
-  const terminalWidth = process.stdout.columns ?? 80;
-  const widthToUse = width === 'full' ? terminalWidth - titlePadding : width > terminalWidth ? terminalWidth : width;
-
-  const dividerWidth = getSideDividerWidth(widthToUse, titleWidth);
-  const numberOfCharsPerSide = getNumberOfCharsPerWidth(dividerChar, dividerWidth);
-  const dividerSideString = dividerChar.repeat(numberOfCharsPerSide);
-
-  const paddingString = PAD.repeat(padding);
-
-  return (
-    <Box flexDirection="row">
-      <Text>
-        {paddingString}
-        <Text color={dividerColor}>{dividerSideString}</Text>
-        <Text color={titleColor}>{titleString}</Text>
-        <Text color={dividerColor}>{dividerSideString}</Text>
-        {paddingString}
-      </Text>
-    </Box>
-  );
-}
-
-function Timer(props: { readonly color?: string }): React.ReactNode {
-  const [time, setTime] = React.useState(0);
-
-  const interval = 10;
-
-  React.useEffect(() => {
-    const intervalId = setInterval(() => {
-      setTime((prevTime) => prevTime + interval);
-    }, interval);
-
-    return (): void => {
-      clearInterval(intervalId);
-    };
-  }, [interval]);
-
-  return <Text {...props}>{timeInMostReadableFormat(time)}</Text>;
-}
-
-function Space({ repeat = 1 }: { readonly repeat?: number }): React.ReactNode {
-  return <Text>{' '.repeat(repeat)}</Text>;
-}
-
-function Stages(props: {
-  readonly currentStage: string;
-  readonly stages: string[] | readonly string[];
-  readonly title: string;
-  readonly error?: SfError | Error | undefined;
-}): React.ReactNode {
-  const [timings, setTimings] = React.useState<Record<string, { start?: Date; end?: Date }>>(
-    Object.fromEntries(props.stages.map((stage) => [stage, {}]))
-  );
-
-  return (
-    <Box flexDirection="column" paddingTop={1}>
-      <Divider title={props.title} />
-      <Box flexDirection="column" paddingTop={1} marginLeft={1}>
-        {props.stages.map((stage, stageIndex) => {
-          // current stage
-          if (props.currentStage === stage && stageIndex < props.stages.length - 1) {
-            if (!timings[stage].start) {
-              timings[stage].start = new Date();
-              setTimings({ ...timings });
-            }
-
-            return (
-              <Box key={stage}>
-                <SpinnerOrError error={props.error} type="dots2" label={capitalCase(stage)} />
-                <Space />
-                <Timer color="dim" />
-              </Box>
-            );
-          }
-
-          // completed stages
-          if (props.stages.indexOf(props.currentStage) >= stageIndex) {
-            if (!timings[stage].end) {
-              timings[stage].end = new Date();
-              setTimings({ ...timings });
-            }
-
-            return (
-              <Box key={stage}>
-                <Text color="green">✓ </Text>
-                <Text>{capitalCase(stage)} </Text>
-                <Text color="dim">{diff(timings[stage].start, timings[stage].end)}</Text>
-              </Box>
-            );
-          }
-
-          // future stage
-          return (
-            <Text key={stage} color="dim">
-              ◼ {capitalCase(stage)}
-            </Text>
-          );
-        })}
-      </Box>
-
-      <Box paddingTop={1}>
-        <Text>Elapsed Time: </Text>
-        <Timer />
-      </Box>
-    </Box>
-  );
-}
-
-function Status(props: {
-  readonly data?: ScratchOrgLifecycleEvent;
-  readonly baseUrl: string;
-  readonly error?: SfError | Error | undefined;
-}): React.ReactNode {
-  if (!props.data) return;
-
-  return (
-    <Box flexDirection="column">
-      <Stages
-        title="Creating Scratch Org"
-        currentStage={props.data.stage}
-        stages={scratchOrgLifecycleStages}
-        error={props.error}
-      />
-
-      <Box flexDirection="column" paddingTop={1}>
-        <SpinnerOrErrorOrChildren label="Request Id: " labelPosition="left" error={props.error} type="arc">
-          {props.data?.scratchOrgInfo?.Id && (
-            <Box>
-              <Text bold>{props.data?.scratchOrgInfo?.Id}</Text>
-              <Space />
-              <Text>({terminalLink('link', `${props.baseUrl}/${props.data?.scratchOrgInfo?.Id}`)})</Text>
-            </Box>
-          )}
-        </SpinnerOrErrorOrChildren>
-
-        <SpinnerOrErrorOrChildren label="OrgId: " labelPosition="left" error={props.error} type="arc">
-          {props.data?.scratchOrgInfo?.ScratchOrg && (
-            <Text bold color="cyan">
-              {props.data?.scratchOrgInfo?.ScratchOrg}
-            </Text>
-          )}
-        </SpinnerOrErrorOrChildren>
-
-        <SpinnerOrErrorOrChildren label="Username: " labelPosition="left" error={props.error} type="arc">
-          {props.data?.scratchOrgInfo?.SignupUsername && (
-            <Text bold color="cyan">
-              {props.data?.scratchOrgInfo?.SignupUsername}
-            </Text>
-          )}
-        </SpinnerOrErrorOrChildren>
-      </Box>
-    </Box>
-  );
-}
 
 export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
   public static readonly summary = messages.getMessage('summary');
@@ -321,7 +107,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
     wait: Flags.duration({
       unit: 'minutes',
       default: Duration.minutes(5),
-      min: 1,
+      min: 2,
       char: 'w',
       helpValue: '<minutes>',
       summary: messages.getMessage('flags.wait.summary'),
@@ -385,26 +171,17 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       flags['client-id'] ? await this.secretPrompt({ message: messages.getMessage('prompt.secret') }) : undefined
     );
 
-    let asyncInstance: Instance | undefined;
-    let statusInstance: Instance | undefined;
     let scratchOrgLifecycleData: ScratchOrgLifecycleEvent | undefined;
 
-    if (flags.async) {
-      asyncInstance = render(
-        <SpinnerOrError type="dots2" label=" Requesting Scratch Org (will not wait for completion because --async)" />
-      );
-    } else {
-      // TODO: should this be abstracted?
-      statusInstance = render(<Status baseUrl={baseUrl} />);
-      lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
-        scratchOrgLifecycleData = data;
-        statusInstance?.rerender(<Status data={data} baseUrl={baseUrl} />);
-        if (data.stage === 'done') {
-          statusInstance?.unmount();
-        }
-        return Promise.resolve();
-      });
-    }
+    const instance = render(<Status isAsync={flags.async} baseUrl={baseUrl} />);
+    lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
+      scratchOrgLifecycleData = data;
+      instance?.rerender(<Status isAsync={flags.async} data={data} baseUrl={baseUrl} />);
+      if (data.stage === 'done') {
+        instance?.unmount();
+      }
+      return Promise.resolve();
+    });
 
     try {
       const { username, scratchOrgInfo, authFields, warnings } = await scratchOrgCreate(createCommandOptions);
@@ -412,10 +189,13 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       if (!scratchOrgInfo) {
         throw new SfError('The scratch org did not return with any information');
       }
-      this.log();
+
       if (flags.async) {
-        asyncInstance?.clear();
-        asyncInstance?.unmount();
+        instance?.rerender(
+          <Status isAsync data={{ ...scratchOrgLifecycleData, stage: 'done', scratchOrgInfo }} baseUrl={baseUrl} />
+        );
+        instance?.unmount();
+        this.log();
         this.info(messages.getMessage('action.resume', [this.config.bin, scratchOrgInfo.Id]));
       } else {
         this.logSuccess(messages.getMessage('success'));
@@ -423,14 +203,11 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
 
       return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
     } catch (error) {
-      if (asyncInstance) {
-        // TODO: show success in the spinner
-        asyncInstance.unmount();
-      }
-
-      if (statusInstance) {
-        statusInstance.rerender(<Status data={scratchOrgLifecycleData} error={error as Error} baseUrl={baseUrl} />);
-        statusInstance.unmount();
+      if (instance) {
+        instance.rerender(
+          <Status isAsync={flags.async} data={scratchOrgLifecycleData} error={error as Error} baseUrl={baseUrl} />
+        );
+        instance.unmount();
       }
 
       if (error instanceof SfError && error.name === 'ScratchOrgInfoTimeoutError') {
