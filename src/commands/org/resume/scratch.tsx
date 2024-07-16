@@ -17,8 +17,10 @@ import {
   scratchOrgResume,
   SfError,
 } from '@salesforce/core';
+import { render } from 'ink';
+import React from 'react';
+import { Status } from '../../../components/stages.js';
 import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
-import { buildStatus } from '../../../shared/scratchOrgOutput.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'resume_scratch');
@@ -56,25 +58,30 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
     // oclif doesn't know that the exactlyOne flag will ensure that one of these is set, and there we definitely have a jobID.
     assert(jobId);
     const hubBaseUrl = cache.get(jobId)?.hubBaseUrl;
-    let lastStatus: string | undefined;
 
+    let scratchOrgLifecycleData: ScratchOrgLifecycleEvent | undefined;
+
+    const instance = render(<Status baseUrl={hubBaseUrl} />);
     lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
-      lastStatus = buildStatus(data, hubBaseUrl);
-      this.spinner.status = lastStatus;
+      scratchOrgLifecycleData = data;
+      instance?.rerender(<Status data={data} baseUrl={hubBaseUrl} />);
+      if (data.stage === 'done') {
+        instance?.unmount();
+      }
       return Promise.resolve();
     });
 
-    this.log();
-    this.spinner.start('Creating Scratch Org');
-
     try {
       const { username, scratchOrgInfo, authFields, warnings } = await scratchOrgResume(jobId);
-      this.spinner.stop(lastStatus);
-
       this.log();
       this.logSuccess(messages.getMessage('success'));
       return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
     } catch (e) {
+      if (instance) {
+        instance.rerender(<Status data={scratchOrgLifecycleData} error={e as Error} baseUrl={hubBaseUrl} />);
+        instance.unmount();
+      }
+
       if (cache.keys() && e instanceof Error && e.name === 'CacheMissError') {
         // we have something in the cache, but it didn't match what the user passed in
         throw messages.createError('error.jobIdMismatch', [jobId]);
