@@ -173,7 +173,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
 
     let scratchOrgLifecycleData: ScratchOrgLifecycleEvent | undefined;
 
-    const instance = render(<Status isAsync={flags.async} baseUrl={baseUrl} />);
+    const instance = !this.jsonEnabled() ? render(<Status isAsync={flags.async} baseUrl={baseUrl} />) : undefined;
     lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
       scratchOrgLifecycleData = data;
       instance?.rerender(<Status isAsync={flags.async} data={data} baseUrl={baseUrl} />);
