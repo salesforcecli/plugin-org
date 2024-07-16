@@ -196,11 +196,9 @@ export function Status(props: {
       <Box flexDirection="column" paddingTop={1}>
         <SpinnerOrErrorOrChildren label="Request Id: " labelPosition="left" error={props.error} type="arc">
           {props.data?.scratchOrgInfo?.Id && (
-            <Box>
-              <Text bold>{props.data?.scratchOrgInfo?.Id}</Text>
-              <Space />
-              <Text>({terminalLink('link', `${props.baseUrl}/${props.data?.scratchOrgInfo?.Id}`)})</Text>
-            </Box>
+            <Text bold>
+              {terminalLink(props.data?.scratchOrgInfo?.Id, `${props.baseUrl}/${props.data?.scratchOrgInfo?.Id}`)}
+            </Text>
           )}
         </SpinnerOrErrorOrChildren>
 
