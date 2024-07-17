@@ -1,3 +1,33 @@
+## [4.3.5](https://github.com/salesforcecli/plugin-org/compare/4.3.4...4.3.5) (2024-07-14)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/core from 4.0.8 to 4.0.12 ([ce7da68](https://github.com/salesforcecli/plugin-org/commit/ce7da68b5f4a22e0f35e4bedfa35519fbd585e46))
+
+## [4.3.4](https://github.com/salesforcecli/plugin-org/compare/4.3.3...4.3.4) (2024-07-07)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/core from 4.0.7 to 4.0.8 ([b0b38cb](https://github.com/salesforcecli/plugin-org/commit/b0b38cb93dbea999fe82384d77291dcb70332b87))
+
+## [4.3.3](https://github.com/salesforcecli/plugin-org/compare/4.3.2...4.3.3) (2024-06-30)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/core from 4.0.6 to 4.0.7 ([4ae429a](https://github.com/salesforcecli/plugin-org/commit/4ae429aafacdb68f91a863181130835b707cc21c))
+
+## [4.3.2](https://github.com/salesforcecli/plugin-org/compare/4.3.1...4.3.2) (2024-06-30)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 8.0.3 to 8.1.0 ([f2928ed](https://github.com/salesforcecli/plugin-org/commit/f2928ed83d5c7a0faf642f1d45a71a1f50a7e992))
+
+## [4.3.1](https://github.com/salesforcecli/plugin-org/compare/4.3.0...4.3.1) (2024-06-28)
+
+### Bug Fixes
+
+- ensure org display picks the correct record ([#1119](https://github.com/salesforcecli/plugin-org/issues/1119)) ([cb2f4dc](https://github.com/salesforcecli/plugin-org/commit/cb2f4dc52cddb7c9b0e60a50c6491d49a06a7f25))
+
 # [4.3.0](https://github.com/salesforcecli/plugin-org/compare/4.2.7...4.3.0) (2024-06-25)
 
 ### Features

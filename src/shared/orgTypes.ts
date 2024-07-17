@@ -52,7 +52,6 @@ export type FullyPopulatedScratchOrgFields = ScratchOrgFields &
 
 // developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_objects_scratchorginfo.htm
 export type ScratchOrgInfoSObject = {
-  Id: string;
   CreatedDate: string;
   Status: 'New' | 'Deleted' | 'Active' | 'Error';
   ExpirationDate: string;
