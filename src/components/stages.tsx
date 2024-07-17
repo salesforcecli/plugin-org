@@ -168,7 +168,7 @@ export function Stages(props: {
         })}
       </Box>
 
-      <Box paddingTop={1}>
+      <Box paddingTop={1} marginLeft={1}>
         <Text>Elapsed Time: </Text>
         <Timer />
       </Box>
@@ -193,7 +193,7 @@ export function Status(props: {
         error={props.error}
       />
 
-      <Box flexDirection="column" paddingTop={1}>
+      <Box flexDirection="column" paddingTop={1} marginLeft={1}>
         <SpinnerOrErrorOrChildren label="Request Id: " labelPosition="left" error={props.error} type="arc">
           {props.data?.scratchOrgInfo?.Id && (
             <Text bold>

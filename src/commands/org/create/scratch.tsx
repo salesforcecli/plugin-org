@@ -198,6 +198,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
         this.log();
         this.info(messages.getMessage('action.resume', [this.config.bin, scratchOrgInfo.Id]));
       } else {
+        this.log();
         this.logSuccess(messages.getMessage('success'));
       }
 
