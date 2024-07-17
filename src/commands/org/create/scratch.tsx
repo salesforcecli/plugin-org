@@ -12,13 +12,13 @@ import {
   scratchOrgCreate,
   ScratchOrgLifecycleEvent,
   scratchOrgLifecycleEventName,
+  scratchOrgLifecycleStages,
   SfError,
 } from '@salesforce/core';
 import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
 import { Duration } from '@salesforce/kit';
-import { render } from 'ink';
-import React from 'react';
-import { Status } from '../../../components/stages.js';
+import terminalLink from 'terminal-link';
+import { MultiStageRenderer } from '../../../components/stages.js';
 import { buildScratchOrgRequest } from '../../../shared/scratchOrgRequest.js';
 import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
 
@@ -107,7 +107,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
     wait: Flags.duration({
       unit: 'minutes',
       default: Duration.minutes(5),
-      min: 2,
+      min: 1,
       char: 'w',
       helpValue: '<minutes>',
       summary: messages.getMessage('flags.wait.summary'),
@@ -171,14 +171,48 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       flags['client-id'] ? await this.secretPrompt({ message: messages.getMessage('prompt.secret') }) : undefined
     );
 
-    let scratchOrgLifecycleData: ScratchOrgLifecycleEvent | undefined;
+    const ms = new MultiStageRenderer<ScratchOrgLifecycleEvent & { alias: string; edition: string }>({
+      stages: flags.async ? ['prepare request', 'send request', 'done'] : scratchOrgLifecycleStages,
+      title: flags.async ? 'Creating Scratch Org (async)' : 'Creating Scratch Org',
+      timeout: flags.wait,
+      info: [
+        {
+          label: 'Request Id',
+          get: (data) =>
+            data.scratchOrgInfo?.Id && terminalLink(data.scratchOrgInfo.Id, `${baseUrl}/${data.scratchOrgInfo.Id}`),
+          bold: true,
+        },
+        {
+          label: 'OrgId',
+          get: (data) => data.scratchOrgInfo?.ScratchOrg,
+          bold: true,
+          color: 'cyan',
+        },
+        {
+          label: 'Username',
+          get: (data) => data.scratchOrgInfo?.SignupUsername,
+          bold: true,
+          color: 'cyan',
+        },
+        {
+          label: 'Alias',
+          get: (data) => data.alias,
+        },
+        {
+          label: 'Edition',
+          get: (data) => data.edition,
+        },
+      ],
+    });
 
-    const instance = !this.jsonEnabled() ? render(<Status isAsync={flags.async} baseUrl={baseUrl} />) : undefined;
+    if (!this.jsonEnabled()) {
+      ms.start({ alias: flags.alias, edition: flags.edition });
+    }
+
     lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
-      scratchOrgLifecycleData = data;
-      instance?.rerender(<Status isAsync={flags.async} data={data} baseUrl={baseUrl} />);
+      ms.goto(data.stage, data);
       if (data.stage === 'done') {
-        instance?.unmount();
+        ms.stop();
       }
       return Promise.resolve();
     });
@@ -191,10 +225,9 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       }
 
       if (flags.async) {
-        instance?.rerender(
-          <Status isAsync data={{ ...scratchOrgLifecycleData, stage: 'done', scratchOrgInfo }} baseUrl={baseUrl} />
-        );
-        instance?.unmount();
+        ms.last({ scratchOrgInfo });
+        ms.stop();
+
         this.log();
         this.info(messages.getMessage('action.resume', [this.config.bin, scratchOrgInfo.Id]));
       } else {
@@ -204,13 +237,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
 
       return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
     } catch (error) {
-      if (instance) {
-        instance.rerender(
-          <Status isAsync={flags.async} data={scratchOrgLifecycleData} error={error as Error} baseUrl={baseUrl} />
-        );
-        instance.unmount();
-      }
-
+      ms.stop(error as Error);
       if (error instanceof SfError && error.name === 'ScratchOrgInfoTimeoutError') {
         const scratchOrgInfoId = (error.data as { scratchOrgInfoId: string }).scratchOrgInfoId;
         const resumeMessage = messages.getMessage('action.resume', [this.config.bin, scratchOrgInfoId]);

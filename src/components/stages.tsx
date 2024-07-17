@@ -5,18 +5,21 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { format } from 'node:util';
 import { ScratchOrgLifecycleEvent, scratchOrgLifecycleStages, SfError } from '@salesforce/core';
-import { Box, Text } from 'ink';
+import { Box, Instance, render, Text } from 'ink';
 import { capitalCase } from 'change-case';
 import React from 'react';
 import terminalLink from 'terminal-link';
+import { Duration } from '@salesforce/kit';
 import { SpinnerOrError, SpinnerOrErrorOrChildren } from './spinner.js';
 
-function round(value: number, decimals = 2): number {
-  return Number(Math.round(Number(value + 'e' + decimals)) + 'e-' + decimals);
+function round(value: number, decimals = 2): string {
+  const factor = Math.pow(10, decimals);
+  return (Math.round(value * factor) / factor).toFixed(decimals);
 }
 
-function timeInMostReadableFormat(time: number): string {
+function timeInMostReadableFormat(time: number, decimals = 2): string {
   // if time < 1000ms, return time in ms
   if (time < 1000) {
     return `${time}ms`;
@@ -24,12 +27,14 @@ function timeInMostReadableFormat(time: number): string {
 
   // if time < 60s, return time in seconds
   if (time < 60_000) {
-    return `${round(time / 1000)}s`;
+    return `${round(time / 1000, decimals)}s`;
   }
 
-  // if time < 60m, return time in minutes
+  // if time < 60m, return time in minutes and seconds
   if (time < 3_600_000) {
-    return `${round(time / 60_000)}m`;
+    const minutes = Math.floor(time / 60_000);
+    const seconds = round((time % 60_000) / 1000, 0);
+    return `${minutes}m ${seconds}s`;
   }
 
   return time.toString();
@@ -108,19 +113,49 @@ export function Timer(props: { readonly color?: string }): React.ReactNode {
   return <Text {...props}>{timeInMostReadableFormat(time)}</Text>;
 }
 
+export function Countdown(props: {
+  readonly text: string;
+  readonly time: Duration;
+  readonly color?: string;
+}): React.ReactNode {
+  const [time, setTime] = React.useState(props.time.milliseconds);
+
+  React.useEffect(() => {
+    const intervalId = setInterval(() => {
+      setTime((prevTime) => prevTime - 1000);
+    }, 1000);
+
+    return (): void => {
+      clearInterval(intervalId);
+    };
+  }, []);
+
+  if (time <= 0) {
+    return;
+  }
+
+  const formatted = format(props.text, timeInMostReadableFormat(time, 0));
+  return <Text {...props}>{formatted}</Text>;
+}
+
 export function Space({ repeat = 1 }: { readonly repeat?: number }): React.ReactNode {
   return <Text>{' '.repeat(repeat)}</Text>;
 }
 
+// How to integrate with telemetry?
 export function Stages(props: {
+  readonly info?: FormattedInfo[];
   readonly currentStage: string;
   readonly stages: string[] | readonly string[];
   readonly title: string;
   readonly error?: SfError | Error | undefined;
+  readonly timeout?: Duration | undefined;
 }): React.ReactNode {
   const [timings, setTimings] = React.useState<Record<string, { start?: Date; end?: Date }>>(
     Object.fromEntries(props.stages.map((stage) => [stage, {}]))
   );
+
+  const spinnerType = process.platform === 'win32' ? 'line' : 'arc';
 
   return (
     <Box flexDirection="column" paddingTop={1}>
@@ -168,9 +203,36 @@ export function Stages(props: {
         })}
       </Box>
 
+      {/* TODO: figure out why stage time is longer than elapsed time */}
+      {/* TODO: figure out if countdown timer is actually worth having if it's not perfectly synced with the polling */}
+      {/* timeout could be specific to certain stages... so maybe it needs to be rendered on the stage? */}
       <Box paddingTop={1} marginLeft={1}>
         <Text>Elapsed Time: </Text>
         <Timer />
+        {props.timeout && (
+          <Box>
+            <Space />
+            <Countdown text="(timeout in %s)" time={props.timeout} />
+          </Box>
+        )}
+      </Box>
+
+      <Box flexDirection="column" paddingTop={1} marginLeft={1}>
+        {props.info?.map((info) => (
+          <SpinnerOrErrorOrChildren
+            key={info.label}
+            label={`${info.label}: `}
+            labelPosition="left"
+            error={props.error}
+            type={spinnerType}
+          >
+            {info.value && (
+              <Text bold={info.bold} color={info.color}>
+                {info.value}
+              </Text>
+            )}
+          </SpinnerOrErrorOrChildren>
+        ))}
       </Box>
     </Box>
   );
@@ -183,7 +245,7 @@ export function Status(props: {
   readonly error?: SfError | Error | undefined;
 }): React.ReactNode {
   if (!props.data) return;
-
+  const spinnerType = process.platform === 'win32' ? 'line' : 'arc';
   return (
     <Box flexDirection="column">
       <Stages
@@ -194,7 +256,7 @@ export function Status(props: {
       />
 
       <Box flexDirection="column" paddingTop={1} marginLeft={1}>
-        <SpinnerOrErrorOrChildren label="Request Id: " labelPosition="left" error={props.error} type="arc">
+        <SpinnerOrErrorOrChildren label="Request Id: " labelPosition="left" error={props.error} type={spinnerType}>
           {props.data?.scratchOrgInfo?.Id && (
             <Text bold>
               {terminalLink(props.data?.scratchOrgInfo?.Id, `${props.baseUrl}/${props.data?.scratchOrgInfo?.Id}`)}
@@ -202,7 +264,7 @@ export function Status(props: {
           )}
         </SpinnerOrErrorOrChildren>
 
-        <SpinnerOrErrorOrChildren label="OrgId: " labelPosition="left" error={props.error} type="arc">
+        <SpinnerOrErrorOrChildren label="OrgId: " labelPosition="left" error={props.error} type={spinnerType}>
           {props.data?.scratchOrgInfo?.ScratchOrg && (
             <Text bold color="cyan">
               {props.data?.scratchOrgInfo?.ScratchOrg}
@@ -210,7 +272,7 @@ export function Status(props: {
           )}
         </SpinnerOrErrorOrChildren>
 
-        <SpinnerOrErrorOrChildren label="Username: " labelPosition="left" error={props.error} type="arc">
+        <SpinnerOrErrorOrChildren label="Username: " labelPosition="left" error={props.error} type={spinnerType}>
           {props.data?.scratchOrgInfo?.SignupUsername && (
             <Text bold color="cyan">
               {props.data?.scratchOrgInfo?.SignupUsername}
@@ -220,4 +282,123 @@ export function Status(props: {
       </Box>
     </Box>
   );
+}
+
+type Info<T extends Record<string, unknown>> = {
+  label: string;
+  get?: (data: T) => string | undefined;
+  bold?: boolean;
+  color?: string;
+};
+
+type FormattedInfo = {
+  label: string;
+  value: string | undefined;
+  bold?: boolean;
+  color?: string;
+};
+
+type MultiStageRendererOptions<T extends Record<string, unknown>> = {
+  readonly stages: readonly string[] | string[];
+  readonly title: string;
+  readonly info?: Array<Info<T>>;
+  readonly timeout?: Duration;
+};
+
+export class MultiStageRenderer<T extends Record<string, unknown>> {
+  private currentStage: string;
+  private data?: T;
+  private readonly info?: Array<Info<T>>;
+  private readonly stages: readonly string[] | string[];
+  private readonly title: string;
+  private readonly timeout?: Duration | undefined;
+  private instance: Instance | undefined;
+
+  public constructor({ info, stages, title, timeout }: MultiStageRendererOptions<T>) {
+    this.stages = stages;
+    this.title = title;
+    this.info = info;
+    this.timeout = timeout;
+    this.currentStage = stages[0];
+  }
+
+  public start(data?: Partial<T>): void {
+    this.data = { ...this.data, ...data } as T;
+
+    this.instance = render(
+      <Stages
+        timeout={this.timeout}
+        info={this.formatInfo()}
+        currentStage={this.stages[0]}
+        stages={this.stages}
+        title={this.title}
+      />,
+      { debug: false }
+    );
+  }
+
+  public next(data?: Partial<T>): void {
+    const nextStageIndex = this.stages.indexOf(this.currentStage) + 1;
+    if (nextStageIndex < this.stages.length) {
+      this.update(this.stages[nextStageIndex], data);
+    }
+  }
+
+  public previous(data?: Partial<T>): void {
+    const previousStageIndex = this.stages.indexOf(this.currentStage) - 1;
+    if (previousStageIndex >= 0) {
+      this.update(this.stages[previousStageIndex], data);
+    }
+  }
+
+  public goto(stage: string, data?: Partial<T>): void {
+    if (this.stages.includes(stage)) {
+      this.update(stage, data);
+    }
+  }
+
+  public last(data?: Partial<T>): void {
+    this.update(this.stages[this.stages.length - 1], data);
+  }
+
+  public stop(error?: Error | SfError): void {
+    if (error) {
+      this.instance?.rerender(
+        <Stages
+          timeout={this.timeout}
+          info={this.formatInfo()}
+          currentStage={this.currentStage ?? this.stages[0]}
+          stages={this.stages}
+          title={this.title}
+          error={error}
+        />
+      );
+    }
+
+    this.instance?.unmount();
+  }
+
+  private update(stage: string, data?: Partial<T>): void {
+    this.currentStage = stage;
+    this.data = { ...this.data, ...data } as T;
+    this.instance?.rerender(
+      <Stages
+        timeout={this.timeout}
+        info={this.formatInfo()}
+        currentStage={this.currentStage}
+        stages={this.stages}
+        title={this.title}
+      />
+    );
+  }
+
+  private formatInfo(): FormattedInfo[] {
+    return (
+      this.info?.map((info) => {
+        // @ts-expect-error for now
+        const formattedData = info.get ? info.get(this.data) : undefined;
+        return { value: formattedData, label: info.label, bold: info.bold, color: info.color };
+      }) ?? []
+    );
+  }
 }
