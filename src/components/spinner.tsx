@@ -95,11 +95,6 @@ export function SpinnerOrErrorOrChildren({
   ...props
 }: SpinnerProps & {
   readonly children?: React.ReactNode;
-  readonly textStyle?: {
-    readonly color?: string;
-    readonly bold?: boolean;
-  };
-  readonly text?: string;
   readonly error?: Error;
 }): React.ReactElement {
   if (children) {

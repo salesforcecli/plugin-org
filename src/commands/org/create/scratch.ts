@@ -171,42 +171,38 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       flags['client-id'] ? await this.secretPrompt({ message: messages.getMessage('prompt.secret') }) : undefined
     );
 
-    const ms = new MultiStageRenderer<ScratchOrgLifecycleEvent & { alias: string; edition: string }>({
+    const ms = new MultiStageRenderer<ScratchOrgLifecycleEvent & { alias: string }>({
       stages: flags.async ? ['prepare request', 'send request', 'done'] : scratchOrgLifecycleStages,
       title: flags.async ? 'Creating Scratch Org (async)' : 'Creating Scratch Org',
-      timeout: flags.wait,
       info: [
         {
           label: 'Request Id',
           get: (data) =>
             data.scratchOrgInfo?.Id && terminalLink(data.scratchOrgInfo.Id, `${baseUrl}/${data.scratchOrgInfo.Id}`),
-          bold: true,
+          isBold: true,
         },
         {
           label: 'OrgId',
           get: (data) => data.scratchOrgInfo?.ScratchOrg,
-          bold: true,
+          isBold: true,
           color: 'cyan',
         },
         {
           label: 'Username',
           get: (data) => data.scratchOrgInfo?.SignupUsername,
-          bold: true,
+          isBold: true,
           color: 'cyan',
         },
         {
           label: 'Alias',
           get: (data) => data.alias,
-        },
-        {
-          label: 'Edition',
-          get: (data) => data.edition,
+          isStatic: true,
         },
       ],
     });
 
     if (!this.jsonEnabled()) {
-      ms.start({ alias: flags.alias, edition: flags.edition });
+      ms.start({ alias: flags.alias });
     }
 
     lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {

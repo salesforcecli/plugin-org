@@ -14,12 +14,12 @@ import {
   ScratchOrgCache,
   ScratchOrgLifecycleEvent,
   scratchOrgLifecycleEventName,
+  scratchOrgLifecycleStages,
   scratchOrgResume,
   SfError,
 } from '@salesforce/core';
-import { render } from 'ink';
-import React from 'react';
-import { Status } from '../../../components/stages.js';
+import terminalLink from 'terminal-link';
+import { MultiStageRenderer } from '../../../components/stages.js';
 import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
@@ -57,16 +57,46 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
 
     // oclif doesn't know that the exactlyOne flag will ensure that one of these is set, and there we definitely have a jobID.
     assert(jobId);
-    const hubBaseUrl = cache.get(jobId)?.hubBaseUrl;
+    const cached = cache.get(jobId);
+    const hubBaseUrl = cached?.hubBaseUrl;
 
-    let scratchOrgLifecycleData: ScratchOrgLifecycleEvent | undefined;
+    const ms = new MultiStageRenderer<ScratchOrgLifecycleEvent & { alias: string }>({
+      stages: scratchOrgLifecycleStages,
+      title: 'Resuming Scratch Org',
+      info: [
+        {
+          label: 'Request Id',
+          get: (data) =>
+            data.scratchOrgInfo?.Id && terminalLink(data.scratchOrgInfo.Id, `${hubBaseUrl}/${data.scratchOrgInfo.Id}`),
+          isBold: true,
+        },
+        {
+          label: 'OrgId',
+          get: (data) => data.scratchOrgInfo?.ScratchOrg,
+          isBold: true,
+          color: 'cyan',
+        },
+        {
+          label: 'Username',
+          get: (data) => data.scratchOrgInfo?.SignupUsername,
+          isBold: true,
+          color: 'cyan',
+        },
+        {
+          label: 'Alias',
+          get: (data) => data.alias,
+          isStatic: true,
+        },
+      ],
+    });
 
-    const instance = !this.jsonEnabled() ? render(<Status baseUrl={hubBaseUrl} />) : undefined;
+    if (!this.jsonEnabled()) {
+      ms.start({ alias: cached?.alias });
+    }
     lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
-      scratchOrgLifecycleData = data;
-      instance?.rerender(<Status data={data} baseUrl={hubBaseUrl} />);
+      ms.goto(data.stage, data);
       if (data.stage === 'done') {
-        instance?.unmount();
+        ms.stop();
       }
       return Promise.resolve();
     });
@@ -77,10 +107,7 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
       this.logSuccess(messages.getMessage('success'));
       return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
     } catch (e) {
-      if (instance) {
-        instance.rerender(<Status data={scratchOrgLifecycleData} error={e as Error} baseUrl={hubBaseUrl} />);
-        instance.unmount();
-      }
+      ms.stop(e as Error);
 
       if (cache.keys() && e instanceof Error && e.name === 'CacheMissError') {
         // we have something in the cache, but it didn't match what the user passed in

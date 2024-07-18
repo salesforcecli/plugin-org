@@ -5,13 +5,13 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { format } from 'node:util';
 import { ScratchOrgLifecycleEvent, scratchOrgLifecycleStages, SfError } from '@salesforce/core';
 import { Box, Instance, render, Text } from 'ink';
 import { capitalCase } from 'change-case';
 import React from 'react';
 import terminalLink from 'terminal-link';
 import { Duration } from '@salesforce/kit';
+import { Performance } from '@oclif/core';
 import { SpinnerOrError, SpinnerOrErrorOrChildren } from './spinner.js';
 
 function round(value: number, decimals = 2): string {
@@ -38,14 +38,6 @@ function timeInMostReadableFormat(time: number, decimals = 2): string {
   }
 
   return time.toString();
-}
-
-function diff(start: Date | undefined, end: Date | undefined): string {
-  if (!start || !end) {
-    return '0ms';
-  }
-
-  return timeInMostReadableFormat(end.getTime() - start.getTime());
 }
 
 const getSideDividerWidth = (width: number, titleWidth: number): number => (width - titleWidth) / 2;
@@ -95,51 +87,42 @@ export function Divider({
   );
 }
 
-export function Timer(props: { readonly color?: string }): React.ReactNode {
+export function Timer(props: { readonly color?: string; readonly isStopped?: boolean }): React.ReactNode {
   const [time, setTime] = React.useState(0);
 
   const interval = 10;
 
   React.useEffect(() => {
     const intervalId = setInterval(() => {
-      setTime((prevTime) => prevTime + interval);
+      if (!props.isStopped) {
+        setTime((prevTime) => prevTime + interval);
+      }
     }, interval);
 
     return (): void => {
       clearInterval(intervalId);
     };
-  }, [interval]);
+  }, [interval, props.isStopped]);
+
+  if (props.isStopped) {
+    return <Text {...props}>{timeInMostReadableFormat(time)}</Text>;
+  }
 
   return <Text {...props}>{timeInMostReadableFormat(time)}</Text>;
 }
 
-export function Countdown(props: {
-  readonly text: string;
-  readonly time: Duration;
-  readonly color?: string;
-}): React.ReactNode {
-  const [time, setTime] = React.useState(props.time.milliseconds);
-
-  React.useEffect(() => {
-    const intervalId = setInterval(() => {
-      setTime((prevTime) => prevTime - 1000);
-    }, 1000);
-
-    return (): void => {
-      clearInterval(intervalId);
-    };
-  }, []);
-
-  if (time <= 0) {
-    return;
-  }
-
-  const formatted = format(props.text, timeInMostReadableFormat(time, 0));
-  return <Text {...props}>{formatted}</Text>;
-}
-
 export function Space({ repeat = 1 }: { readonly repeat?: number }): React.ReactNode {
   return <Text>{' '.repeat(repeat)}</Text>;
+}
+
+function StaticKeyValue({ label, value, isBold, color, isStatic }: FormattedInfo): React.ReactNode {
+  if (!value || !isStatic) return;
+  return (
+    <Box>
+      <Text bold={isBold}>{label}: </Text>
+      <Text color={color}>{value}</Text>
+    </Box>
+  );
 }
 
 // How to integrate with telemetry?
@@ -151,9 +134,7 @@ export function Stages(props: {
   readonly error?: SfError | Error | undefined;
   readonly timeout?: Duration | undefined;
 }): React.ReactNode {
-  const [timings, setTimings] = React.useState<Record<string, { start?: Date; end?: Date }>>(
-    Object.fromEntries(props.stages.map((stage) => [stage, {}]))
-  );
+  const markers = new Map<string, ReturnType<typeof Performance.mark>>();
 
   const spinnerType = process.platform === 'win32' ? 'line' : 'arc';
 
@@ -162,77 +143,65 @@ export function Stages(props: {
       <Divider title={props.title} />
       <Box flexDirection="column" paddingTop={1} marginLeft={1}>
         {props.stages.map((stage, stageIndex) => {
-          // current stage
-          if (props.currentStage === stage && stageIndex < props.stages.length - 1) {
-            if (!timings[stage].start) {
-              timings[stage].start = new Date();
-              setTimings({ ...timings });
-            }
+          const isCurrent = props.currentStage === stage && stageIndex < props.stages.length - 1;
+          const isCompleted = !isCurrent && props.stages.indexOf(props.currentStage) >= stageIndex;
+          const isFuture = !isCompleted && !isCurrent && props.stages.indexOf(props.currentStage) < stageIndex;
 
-            return (
-              <Box key={stage}>
-                <SpinnerOrError error={props.error} type="dots2" label={capitalCase(stage)} />
-                <Space />
-                <Timer color="dim" />
-              </Box>
-            );
+          if (isCurrent) {
+            markers.set(stage, Performance.mark('plugin-org', stage));
+          }
+          if (isCompleted) {
+            markers.get(stage)?.stop();
           }
 
-          // completed stages
-          if (props.stages.indexOf(props.currentStage) >= stageIndex) {
-            if (!timings[stage].end) {
-              timings[stage].end = new Date();
-              setTimings({ ...timings });
-            }
-
-            return (
-              <Box key={stage}>
-                <Text color="green">✓ </Text>
-                <Text>{capitalCase(stage)} </Text>
-                <Text color="dim">{diff(timings[stage].start, timings[stage].end)}</Text>
-              </Box>
-            );
-          }
-
-          // future stage
           return (
-            <Text key={stage} color="dim">
-              ◼ {capitalCase(stage)}
-            </Text>
+            <Box key={stage}>
+              {isCurrent && <SpinnerOrError error={props.error} type="dots2" label={capitalCase(stage)} />}
+
+              {isCompleted && (
+                <Box>
+                  <Text color="green">✓ </Text>
+                  <Text>{capitalCase(stage)} </Text>
+                </Box>
+              )}
+
+              {isFuture && <Text color="dim">◼ {capitalCase(stage)}</Text>}
+              {!isFuture && (
+                <Box>
+                  <Space />
+                  <Timer color="dim" isStopped={isCompleted} />
+                </Box>
+              )}
+            </Box>
           );
         })}
       </Box>
 
-      {/* TODO: figure out why stage time is longer than elapsed time */}
-      {/* TODO: figure out if countdown timer is actually worth having if it's not perfectly synced with the polling */}
-      {/* timeout could be specific to certain stages... so maybe it needs to be rendered on the stage? */}
       <Box paddingTop={1} marginLeft={1}>
         <Text>Elapsed Time: </Text>
         <Timer />
-        {props.timeout && (
-          <Box>
-            <Space />
-            <Countdown text="(timeout in %s)" time={props.timeout} />
-          </Box>
-        )}
       </Box>
 
       <Box flexDirection="column" paddingTop={1} marginLeft={1}>
-        {props.info?.map((info) => (
-          <SpinnerOrErrorOrChildren
-            key={info.label}
-            label={`${info.label}: `}
-            labelPosition="left"
-            error={props.error}
-            type={spinnerType}
-          >
-            {info.value && (
-              <Text bold={info.bold} color={info.color}>
-                {info.value}
-              </Text>
-            )}
-          </SpinnerOrErrorOrChildren>
-        ))}
+        {props.info?.map((info) =>
+          info.isStatic ? (
+            <StaticKeyValue key={info.label} {...info} />
+          ) : (
+            <SpinnerOrErrorOrChildren
+              key={info.label}
+              label={`${info.label}: `}
+              labelPosition="left"
+              error={props.error}
+              type={spinnerType}
+            >
+              {info.value && (
+                <Text bold={info.isBold} color={info.color}>
+                  {info.value}
+                </Text>
+              )}
+            </SpinnerOrErrorOrChildren>
+          )
+        )}
       </Box>
     </Box>
   );
@@ -285,40 +254,39 @@ export function Status(props: {
 }
 
 type Info<T extends Record<string, unknown>> = {
-  label: string;
-  get?: (data: T) => string | undefined;
-  bold?: boolean;
   color?: string;
+  get?: (data: T) => string | undefined;
+  isBold?: boolean;
+  isStatic?: boolean;
+  label: string;
 };
 
 type FormattedInfo = {
-  label: string;
-  value: string | undefined;
-  bold?: boolean;
-  color?: string;
+  readonly color?: string;
+  readonly isBold?: boolean;
+  readonly isStatic?: boolean;
+  readonly label: string;
+  readonly value: string | undefined;
 };
 
 type MultiStageRendererOptions<T extends Record<string, unknown>> = {
   readonly stages: readonly string[] | string[];
   readonly title: string;
   readonly info?: Array<Info<T>>;
-  readonly timeout?: Duration;
 };
 
-export class MultiStageRenderer<T extends Record<string, unknown>> {
+export class MultiStageRenderer<T extends Record<string, unknown>> implements Disposable {
   private currentStage: string;
   private data?: T;
   private readonly info?: Array<Info<T>>;
   private readonly stages: readonly string[] | string[];
   private readonly title: string;
-  private readonly timeout?: Duration | undefined;
   private instance: Instance | undefined;
 
-  public constructor({ info, stages, title, timeout }: MultiStageRendererOptions<T>) {
+  public constructor({ info, stages, title }: MultiStageRendererOptions<T>) {
     this.stages = stages;
     this.title = title;
     this.info = info;
-    this.timeout = timeout;
     this.currentStage = stages[0];
   }
 
@@ -326,13 +294,7 @@ export class MultiStageRenderer<T extends Record<string, unknown>> {
     this.data = { ...this.data, ...data } as T;
 
     this.instance = render(
-      <Stages
-        timeout={this.timeout}
-        info={this.formatInfo()}
-        currentStage={this.stages[0]}
-        stages={this.stages}
-        title={this.title}
-      />,
+      <Stages info={this.formatInfo()} currentStage={this.stages[0]} stages={this.stages} title={this.title} />,
       { debug: false }
     );
   }
@@ -365,7 +327,6 @@ export class MultiStageRenderer<T extends Record<string, unknown>> {
     if (error) {
       this.instance?.rerender(
         <Stages
-          timeout={this.timeout}
           info={this.formatInfo()}
           currentStage={this.currentStage ?? this.stages[0]}
           stages={this.stages}
@@ -378,26 +339,29 @@ export class MultiStageRenderer<T extends Record<string, unknown>> {
     this.instance?.unmount();
   }
 
+  public [Symbol.dispose](): void {
+    this.instance?.unmount();
+  }
+
   private update(stage: string, data?: Partial<T>): void {
     this.currentStage = stage;
     this.data = { ...this.data, ...data } as T;
     this.instance?.rerender(
-      <Stages
-        timeout={this.timeout}
-        info={this.formatInfo()}
-        currentStage={this.currentStage}
-        stages={this.stages}
-        title={this.title}
-      />
+      <Stages info={this.formatInfo()} currentStage={this.currentStage} stages={this.stages} title={this.title} />
     );
   }
 
   private formatInfo(): FormattedInfo[] {
     return (
       this.info?.map((info) => {
-        // @ts-expect-error for now
-        const formattedData = info.get ? info.get(this.data) : undefined;
-        return { value: formattedData, label: info.label, bold: info.bold, color: info.color };
+        const formattedData = info.get ? info.get(this.data as T) : undefined;
+        return {
+          value: formattedData,
+          label: info.label,
+          isBold: info.isBold,
+          color: info.color,
+          isStatic: info.isStatic,
+        };
       }) ?? []
     );
   }
