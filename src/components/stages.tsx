@@ -5,24 +5,105 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { ScratchOrgLifecycleEvent, scratchOrgLifecycleStages, SfError } from '@salesforce/core';
+import { Performance } from '@oclif/core';
+import { SfError } from '@salesforce/core';
 import { Box, Instance, render, Text } from 'ink';
 import { capitalCase } from 'change-case';
 import React from 'react';
-import terminalLink from 'terminal-link';
-import { Duration } from '@salesforce/kit';
-import { Performance } from '@oclif/core';
+
 import { SpinnerOrError, SpinnerOrErrorOrChildren } from './spinner.js';
+
+type Info<T extends Record<string, unknown>> = {
+  /**
+   * Color of the value.
+   */
+  color?: string;
+  /**
+   * Get the value to display. Takes the data property on the MultiStageRenderer as an argument.
+   * Useful if you want to apply some logic (like rendering a link) to the data before displaying it.
+   *
+   * @param data The data property on the MultiStageRenderer.
+   * @returns {string | undefined}
+   */
+  get?: (data: T) => string | undefined;
+  /**
+   * Whether the value should be bold.
+   */
+  bold?: boolean;
+  /**
+   * Whether the value should be a static key-value pair (not a spinner component).
+   */
+  static?: boolean;
+  /**
+   * Label to display next to the value.
+   */
+  label: string;
+};
+
+type FormattedInfo = {
+  readonly color?: string;
+  readonly isBold?: boolean;
+  readonly isStatic?: boolean;
+  readonly label: string;
+  readonly value: string | undefined;
+};
+
+type MultiStageRendererOptions<T extends Record<string, unknown>> = {
+  /**
+   * Stages to render.
+   */
+  readonly stages: readonly string[] | string[];
+  /**
+   * Title to display at the top of the stages component.
+   */
+  readonly title: string;
+  /**
+   * Information to display at the bottom of the stages component.
+   */
+  readonly info?: Array<Info<T>>;
+  /**
+   * Whether to show the total elapsed time. Defaults to true
+   */
+  readonly showElapsedTime?: boolean;
+  /**
+   * Whether to show the time spent on each stage. Defaults to true
+   */
+  readonly showStageTime?: boolean;
+  /**
+   * The unit to use for the timer. Defaults to 'ms'
+   */
+  readonly timerUnit?: 'ms' | 's';
+};
+
+type StagesProps = {
+  readonly currentStage?: string;
+  readonly error?: SfError | Error | undefined;
+  readonly hasFinished?: boolean;
+  readonly info?: FormattedInfo[];
+  readonly stages: string[] | readonly string[];
+  readonly title: string;
+  readonly hasElapsedTime?: boolean;
+  readonly hasStageTime?: boolean;
+  readonly timerUnit?: 'ms' | 's';
+};
 
 function round(value: number, decimals = 2): string {
   const factor = Math.pow(10, decimals);
   return (Math.round(value * factor) / factor).toFixed(decimals);
 }
 
-function timeInMostReadableFormat(time: number, decimals = 2): string {
+function msInMostReadableFormat(time: number, decimals = 2): string {
   // if time < 1000ms, return time in ms
   if (time < 1000) {
     return `${time}ms`;
+  }
+
+  return secondsInMostReadableFormat(time, decimals);
+}
+
+function secondsInMostReadableFormat(time: number, decimals = 2): string {
+  if (time < 1000) {
+    return '< 1s';
   }
 
   // if time < 60s, return time in seconds
@@ -40,12 +121,14 @@ function timeInMostReadableFormat(time: number, decimals = 2): string {
   return time.toString();
 }
 
+const MARKERS = new Map<string, ReturnType<typeof Performance.mark>>();
+
 const getSideDividerWidth = (width: number, titleWidth: number): number => (width - titleWidth) / 2;
 const getNumberOfCharsPerWidth = (char: string, width: number): number => width / char.length;
 
 const PAD = ' ';
 
-export function Divider({
+function Divider({
   title = '',
   width = 50,
   padding = 1,
@@ -64,7 +147,6 @@ export function Divider({
 }): React.ReactNode {
   const titleString = title ? `${PAD.repeat(titlePadding) + title + PAD.repeat(titlePadding)}` : '';
   const titleWidth = titleString.length;
-  // width ??= process.stdout.columns ? process.stdout.columns - titlePadding : 80;
   const terminalWidth = process.stdout.columns ?? 80;
   const widthToUse = width === 'full' ? terminalWidth - titlePadding : width > terminalWidth ? terminalWidth : width;
 
@@ -87,31 +169,44 @@ export function Divider({
   );
 }
 
-export function Timer(props: { readonly color?: string; readonly isStopped?: boolean }): React.ReactNode {
+function Timer({
+  color,
+  isStopped,
+  unit,
+}: {
+  readonly color?: string;
+  readonly isStopped?: boolean;
+  readonly unit: 'ms' | 's';
+}): React.ReactNode {
   const [time, setTime] = React.useState(0);
-
-  const interval = 10;
+  const [previousDate, setPreviousDate] = React.useState(Date.now());
 
   React.useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (!props.isStopped) {
-        setTime((prevTime) => prevTime + interval);
-      }
-    }, interval);
+    if (isStopped) {
+      setTime(time + (Date.now() - previousDate));
+      setPreviousDate(Date.now());
+      return () => {};
+    }
+
+    const intervalId = setInterval(
+      () => {
+        setTime(time + (Date.now() - previousDate));
+        setPreviousDate(Date.now());
+      },
+      unit === 'ms' ? 1 : 1000
+    );
 
     return (): void => {
       clearInterval(intervalId);
     };
-  }, [interval, props.isStopped]);
+  }, [time, isStopped, previousDate, unit]);
 
-  if (props.isStopped) {
-    return <Text {...props}>{timeInMostReadableFormat(time)}</Text>;
-  }
-
-  return <Text {...props}>{timeInMostReadableFormat(time)}</Text>;
+  return (
+    <Text color={color}>{unit === 'ms' ? msInMostReadableFormat(time) : secondsInMostReadableFormat(time, 0)}</Text>
+  );
 }
 
-export function Space({ repeat = 1 }: { readonly repeat?: number }): React.ReactNode {
+function Space({ repeat = 1 }: { readonly repeat?: number }): React.ReactNode {
   return <Text>{' '.repeat(repeat)}</Text>;
 }
 
@@ -125,38 +220,43 @@ function StaticKeyValue({ label, value, isBold, color, isStatic }: FormattedInfo
   );
 }
 
-// How to integrate with telemetry?
-export function Stages(props: {
-  readonly info?: FormattedInfo[];
-  readonly currentStage: string;
-  readonly stages: string[] | readonly string[];
-  readonly title: string;
-  readonly error?: SfError | Error | undefined;
-  readonly timeout?: Duration | undefined;
-}): React.ReactNode {
-  const markers = new Map<string, ReturnType<typeof Performance.mark>>();
+function Stages({
+  currentStage,
+  error,
+  hasElapsedTime = true,
+  hasFinished,
+  hasStageTime = true,
+  info,
+  stages,
+  timerUnit = 'ms',
+  title,
+}: StagesProps): React.ReactNode {
+  if (!currentStage) return;
 
   const spinnerType = process.platform === 'win32' ? 'line' : 'arc';
-
   return (
     <Box flexDirection="column" paddingTop={1}>
-      <Divider title={props.title} />
+      <Divider title={title} />
       <Box flexDirection="column" paddingTop={1} marginLeft={1}>
-        {props.stages.map((stage, stageIndex) => {
-          const isCurrent = props.currentStage === stage && stageIndex < props.stages.length - 1;
-          const isCompleted = !isCurrent && props.stages.indexOf(props.currentStage) >= stageIndex;
-          const isFuture = !isCompleted && !isCurrent && props.stages.indexOf(props.currentStage) < stageIndex;
+        {stages.map((stage, stageIndex) => {
+          const isCurrent = currentStage === stage && !hasFinished;
+          const isCompleted = hasFinished ?? (!isCurrent && stages.indexOf(currentStage) >= stageIndex);
+          const isFuture = !isCompleted && !isCurrent && stages.indexOf(currentStage) < stageIndex;
 
-          if (isCurrent) {
-            markers.set(stage, Performance.mark('plugin-org', stage));
+          if (isCurrent && !MARKERS.has(stage)) {
+            MARKERS.set(stage, Performance.mark('MultiStageRenderer', stage.replaceAll(' ', '-').toLowerCase()));
           }
+
           if (isCompleted) {
-            markers.get(stage)?.stop();
+            const marker = MARKERS.get(stage);
+            if (marker && !marker.stopped) {
+              marker.stop();
+            }
           }
 
           return (
             <Box key={stage}>
-              {isCurrent && <SpinnerOrError error={props.error} type="dots2" label={capitalCase(stage)} />}
+              {isCurrent && <SpinnerOrError error={error} type="dots2" label={capitalCase(stage)} />}
 
               {isCompleted && (
                 <Box>
@@ -166,10 +266,10 @@ export function Stages(props: {
               )}
 
               {isFuture && <Text color="dim">◼ {capitalCase(stage)}</Text>}
-              {!isFuture && (
+              {!isFuture && hasStageTime && (
                 <Box>
                   <Space />
-                  <Timer color="dim" isStopped={isCompleted} />
+                  <Timer color="dim" isStopped={isCompleted} unit={timerUnit} />
                 </Box>
               )}
             </Box>
@@ -177,26 +277,28 @@ export function Stages(props: {
         })}
       </Box>
 
-      <Box paddingTop={1} marginLeft={1}>
-        <Text>Elapsed Time: </Text>
-        <Timer />
-      </Box>
+      {hasElapsedTime && (
+        <Box paddingTop={1} marginLeft={1}>
+          <Text>Elapsed Time: </Text>
+          <Timer unit={timerUnit} />
+        </Box>
+      )}
 
       <Box flexDirection="column" paddingTop={1} marginLeft={1}>
-        {props.info?.map((info) =>
-          info.isStatic ? (
-            <StaticKeyValue key={info.label} {...info} />
+        {info?.map((i) =>
+          i.isStatic ? (
+            <StaticKeyValue key={i.label} {...i} />
           ) : (
             <SpinnerOrErrorOrChildren
-              key={info.label}
-              label={`${info.label}: `}
+              key={i.label}
+              label={`${i.label}: `}
               labelPosition="left"
-              error={props.error}
+              error={error}
               type={spinnerType}
             >
-              {info.value && (
-                <Text bold={info.isBold} color={info.color}>
-                  {info.value}
+              {i.value && (
+                <Text bold={i.isBold} color={i.color}>
+                  {i.value}
                 </Text>
               )}
             </SpinnerOrErrorOrChildren>
@@ -207,95 +309,46 @@ export function Stages(props: {
   );
 }
 
-export function Status(props: {
-  readonly data?: ScratchOrgLifecycleEvent;
-  readonly baseUrl: string;
-  readonly isAsync?: boolean;
-  readonly error?: SfError | Error | undefined;
-}): React.ReactNode {
-  if (!props.data) return;
-  const spinnerType = process.platform === 'win32' ? 'line' : 'arc';
-  return (
-    <Box flexDirection="column">
-      <Stages
-        title={props.isAsync ? 'Creating Scratch Org (async)' : 'Creating Scratch Org'}
-        currentStage={props.data.stage}
-        stages={props.isAsync ? ['prepare request', 'send request', 'done'] : scratchOrgLifecycleStages}
-        error={props.error}
-      />
-
-      <Box flexDirection="column" paddingTop={1} marginLeft={1}>
-        <SpinnerOrErrorOrChildren label="Request Id: " labelPosition="left" error={props.error} type={spinnerType}>
-          {props.data?.scratchOrgInfo?.Id && (
-            <Text bold>
-              {terminalLink(props.data?.scratchOrgInfo?.Id, `${props.baseUrl}/${props.data?.scratchOrgInfo?.Id}`)}
-            </Text>
-          )}
-        </SpinnerOrErrorOrChildren>
-
-        <SpinnerOrErrorOrChildren label="OrgId: " labelPosition="left" error={props.error} type={spinnerType}>
-          {props.data?.scratchOrgInfo?.ScratchOrg && (
-            <Text bold color="cyan">
-              {props.data?.scratchOrgInfo?.ScratchOrg}
-            </Text>
-          )}
-        </SpinnerOrErrorOrChildren>
-
-        <SpinnerOrErrorOrChildren label="Username: " labelPosition="left" error={props.error} type={spinnerType}>
-          {props.data?.scratchOrgInfo?.SignupUsername && (
-            <Text bold color="cyan">
-              {props.data?.scratchOrgInfo?.SignupUsername}
-            </Text>
-          )}
-        </SpinnerOrErrorOrChildren>
-      </Box>
-    </Box>
-  );
-}
-
-type Info<T extends Record<string, unknown>> = {
-  color?: string;
-  get?: (data: T) => string | undefined;
-  isBold?: boolean;
-  isStatic?: boolean;
-  label: string;
-};
-
-type FormattedInfo = {
-  readonly color?: string;
-  readonly isBold?: boolean;
-  readonly isStatic?: boolean;
-  readonly label: string;
-  readonly value: string | undefined;
-};
-
-type MultiStageRendererOptions<T extends Record<string, unknown>> = {
-  readonly stages: readonly string[] | string[];
-  readonly title: string;
-  readonly info?: Array<Info<T>>;
-};
-
 export class MultiStageRenderer<T extends Record<string, unknown>> implements Disposable {
   private currentStage: string;
   private data?: T;
+  private instance: Instance | undefined;
+
   private readonly info?: Array<Info<T>>;
   private readonly stages: readonly string[] | string[];
   private readonly title: string;
-  private instance: Instance | undefined;
+  private readonly hasElapsedTime?: boolean;
+  private readonly hasStageTime?: boolean;
+  private readonly timerUnit?: 'ms' | 's';
 
-  public constructor({ info, stages, title }: MultiStageRendererOptions<T>) {
+  public constructor({
+    info,
+    stages,
+    title,
+    showElapsedTime,
+    showStageTime,
+    timerUnit: timerUnit,
+  }: MultiStageRendererOptions<T>) {
     this.stages = stages;
     this.title = title;
     this.info = info;
     this.currentStage = stages[0];
+    this.hasElapsedTime = showElapsedTime ?? true;
+    this.hasStageTime = showStageTime ?? true;
+    this.timerUnit = timerUnit ?? 'ms';
   }
 
   public start(data?: Partial<T>): void {
     this.data = { ...this.data, ...data } as T;
-
     this.instance = render(
-      <Stages info={this.formatInfo()} currentStage={this.stages[0]} stages={this.stages} title={this.title} />,
-      { debug: false }
+      <Stages
+        hasElapsedTime={this.hasElapsedTime}
+        hasStageTime={this.hasStageTime}
+        timerUnit={this.timerUnit}
+        info={this.formatInfo()}
+        stages={this.stages}
+        title={this.title}
+      />
     );
   }
 
@@ -327,11 +380,27 @@ export class MultiStageRenderer<T extends Record<string, unknown>> implements Di
     if (error) {
       this.instance?.rerender(
         <Stages
+          currentStage={this.currentStage}
           info={this.formatInfo()}
-          currentStage={this.currentStage ?? this.stages[0]}
           stages={this.stages}
           title={this.title}
           error={error}
+          hasElapsedTime={this.hasElapsedTime}
+          hasStageTime={this.hasStageTime}
+          timerUnit={this.timerUnit}
+        />
+      );
+    } else {
+      this.instance?.rerender(
+        <Stages
+          hasFinished
+          currentStage={this.currentStage}
+          info={this.formatInfo()}
+          stages={this.stages}
+          title={this.title}
+          hasElapsedTime={this.hasElapsedTime}
+          hasStageTime={this.hasStageTime}
+          timerUnit={this.timerUnit}
         />
       );
     }
@@ -347,7 +416,15 @@ export class MultiStageRenderer<T extends Record<string, unknown>> implements Di
     this.currentStage = stage;
     this.data = { ...this.data, ...data } as T;
     this.instance?.rerender(
-      <Stages info={this.formatInfo()} currentStage={this.currentStage} stages={this.stages} title={this.title} />
+      <Stages
+        hasElapsedTime={this.hasElapsedTime}
+        hasStageTime={this.hasStageTime}
+        timerUnit={this.timerUnit}
+        info={this.formatInfo()}
+        currentStage={this.currentStage}
+        stages={this.stages}
+        title={this.title}
+      />
     );
   }
 
@@ -358,9 +435,9 @@ export class MultiStageRenderer<T extends Record<string, unknown>> implements Di
         return {
           value: formattedData,
           label: info.label,
-          isBold: info.isBold,
+          isBold: info.bold,
           color: info.color,
-          isStatic: info.isStatic,
+          isStatic: info.static,
         };
       }) ?? []
     );

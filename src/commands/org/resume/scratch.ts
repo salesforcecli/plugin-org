@@ -68,24 +68,24 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
           label: 'Request Id',
           get: (data) =>
             data.scratchOrgInfo?.Id && terminalLink(data.scratchOrgInfo.Id, `${hubBaseUrl}/${data.scratchOrgInfo.Id}`),
-          isBold: true,
+          bold: true,
         },
         {
           label: 'OrgId',
           get: (data) => data.scratchOrgInfo?.ScratchOrg,
-          isBold: true,
+          bold: true,
           color: 'cyan',
         },
         {
           label: 'Username',
           get: (data) => data.scratchOrgInfo?.SignupUsername,
-          isBold: true,
+          bold: true,
           color: 'cyan',
         },
         {
           label: 'Alias',
           get: (data) => data.alias,
-          isStatic: true,
+          static: true,
         },
       ],
     });

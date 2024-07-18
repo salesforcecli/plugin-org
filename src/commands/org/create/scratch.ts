@@ -107,7 +107,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
     wait: Flags.duration({
       unit: 'minutes',
       default: Duration.minutes(5),
-      min: 1,
+      min: 2,
       char: 'w',
       helpValue: '<minutes>',
       summary: messages.getMessage('flags.wait.summary'),
@@ -179,24 +179,24 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
           label: 'Request Id',
           get: (data) =>
             data.scratchOrgInfo?.Id && terminalLink(data.scratchOrgInfo.Id, `${baseUrl}/${data.scratchOrgInfo.Id}`),
-          isBold: true,
+          bold: true,
         },
         {
           label: 'OrgId',
           get: (data) => data.scratchOrgInfo?.ScratchOrg,
-          isBold: true,
+          bold: true,
           color: 'cyan',
         },
         {
           label: 'Username',
           get: (data) => data.scratchOrgInfo?.SignupUsername,
-          isBold: true,
+          bold: true,
           color: 'cyan',
         },
         {
           label: 'Alias',
           get: (data) => data.alias,
-          isStatic: true,
+          static: true,
         },
       ],
     });
