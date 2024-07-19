@@ -155,7 +155,7 @@ function Stages({
             )}
             {status !== 'pending' && status !== 'skipped' && hasStageTime && (
               <Box>
-                {' '}
+                <Text> </Text>
                 <Timer color="dim" isStopped={status === 'completed'} unit={timerUnit} />
               </Box>
             )}
