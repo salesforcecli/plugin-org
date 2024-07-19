@@ -79,18 +79,100 @@ type MultiStageComponentOptions<T extends Record<string, unknown>> = {
    * The unit to use for the timer. Defaults to 'ms'
    */
   readonly timerUnit?: 'ms' | 's';
+  /**
+   * Data to display in the stages component. This data will be passed to the get function in the info object.
+   */
+  readonly data?: Partial<T>;
+  /**
+   * Whether JSON output is enabled. Defaults to false.
+   *
+   * Pass in this.jsonEnabled() from the command class to determine if JSON output is enabled.
+   */
+  readonly jsonEnabled: boolean;
 };
 
+type StageStatus = 'pending' | 'current' | 'completed' | 'skipped' | 'failed';
+
+class StageTracker extends Map<string, StageStatus> {
+  public current: string | undefined;
+  private markers = new Map<string, ReturnType<typeof Performance.mark>>();
+
+  public constructor(stages: readonly string[] | string[]) {
+    super(stages.map((stage) => [stage, 'pending']));
+  }
+
+  public set(stage: string, status: StageStatus): this {
+    if (status === 'current') {
+      this.current = stage;
+    }
+    return super.set(stage, status);
+  }
+
+  public refresh(nextStage: string, opts?: { hasError?: boolean; isStopping?: boolean }): void {
+    const stages = [...this.keys()];
+    for (const stage of stages) {
+      if (this.get(stage) === 'skipped') continue;
+      if (this.get(stage) === 'failed') continue;
+
+      // .stop() was called with an error => set the stage to failed
+      if (nextStage === stage && opts?.hasError) {
+        this.set(stage, 'failed');
+        this.stopMarker(stage);
+        continue;
+      }
+
+      // .stop() was called without an error => set the stage to completed
+      if (nextStage === stage && opts?.isStopping) {
+        this.set(stage, 'completed');
+        this.stopMarker(stage);
+        continue;
+      }
+
+      // set the current stage
+      if (nextStage === stage) {
+        this.set(stage, 'current');
+        // create a marker for the current stage if it doesn't exist
+        if (!this.markers.has(stage)) {
+          this.markers.set(stage, Performance.mark('MultiStageComponent', stage.replaceAll(' ', '-').toLowerCase()));
+        }
+
+        continue;
+      }
+
+      // any stage before the current stage should be marked as skipped if it's still pending
+      if (stages.indexOf(stage) < stages.indexOf(nextStage) && this.get(stage) === 'pending') {
+        this.set(stage, 'skipped');
+        continue;
+      }
+
+      // any stage before the current stage should be as completed (if it hasn't been marked as skipped or failed yet)
+      if (stages.indexOf(nextStage) > stages.indexOf(stage)) {
+        this.set(stage, 'completed');
+        this.stopMarker(stage);
+        continue;
+      }
+
+      // default to pending
+      this.set(stage, 'pending');
+    }
+  }
+
+  private stopMarker(stage: string): void {
+    const marker = this.markers.get(stage);
+    if (marker && !marker.stopped) {
+      marker.stop();
+    }
+  }
+}
+
 type StagesProps = {
-  readonly currentStage?: string;
   readonly error?: Error | undefined;
-  readonly hasFinished?: boolean;
   readonly info?: FormattedInfo[];
-  readonly stages: string[] | readonly string[];
   readonly title: string;
   readonly hasElapsedTime?: boolean;
   readonly hasStageTime?: boolean;
   readonly timerUnit?: 'ms' | 's';
+  readonly stageTracker: StageTracker;
 };
 
 function round(value: number, decimals = 2): string {
@@ -126,8 +208,6 @@ function secondsInMostReadableFormat(time: number, decimals = 2): string {
 
   return time.toString();
 }
-
-const MARKERS = new Map<string, ReturnType<typeof Performance.mark>>();
 
 const getSideDividerWidth = (width: number, titleWidth: number): number => (width - titleWidth) / 2;
 const getNumberOfCharsPerWidth = (char: string, width: number): number => width / char.length;
@@ -227,60 +307,44 @@ function StaticKeyValue({ label, value, isBold, color, isStatic }: FormattedInfo
 }
 
 function Stages({
-  currentStage,
   error,
   hasElapsedTime = true,
-  hasFinished,
   hasStageTime = true,
   info,
-  stages,
+  stageTracker,
   timerUnit = 'ms',
   title,
 }: StagesProps): React.ReactNode {
-  if (!currentStage) return;
-
   const spinnerType = process.platform === 'win32' ? 'line' : 'arc';
+
   return (
     <Box flexDirection="column" paddingTop={1}>
       <Divider title={title} />
       <Box flexDirection="column" paddingTop={1} marginLeft={1}>
-        {stages.map((stage, stageIndex) => {
-          const isCurrent = currentStage === stage && !hasFinished;
-          const isCompleted = hasFinished ?? (!isCurrent && stages.indexOf(currentStage) >= stageIndex);
-          const isFuture = !isCompleted && !isCurrent && stages.indexOf(currentStage) < stageIndex;
+        {[...stageTracker.entries()].map(([stage, status]) => (
+          <Box key={stage}>
+            {(status === 'current' || status === 'failed') && (
+              <SpinnerOrError error={error} type="dots2" label={capitalCase(stage)} />
+            )}
 
-          if (isCurrent && !MARKERS.has(stage)) {
-            MARKERS.set(stage, Performance.mark('MultiStageComponent', stage.replaceAll(' ', '-').toLowerCase()));
-          }
+            {status === 'skipped' && <Text color="dim">◯ {capitalCase(stage)} - Skipped</Text>}
 
-          if (isCompleted) {
-            const marker = MARKERS.get(stage);
-            if (marker && !marker.stopped) {
-              marker.stop();
-            }
-          }
+            {status === 'completed' && (
+              <Box>
+                <Text color="green">✓ </Text>
+                <Text>{capitalCase(stage)} </Text>
+              </Box>
+            )}
 
-          return (
-            <Box key={stage}>
-              {isCurrent && <SpinnerOrError error={error} type="dots2" label={capitalCase(stage)} />}
-
-              {isCompleted && (
-                <Box>
-                  <Text color="green">✓ </Text>
-                  <Text>{capitalCase(stage)} </Text>
-                </Box>
-              )}
-
-              {isFuture && <Text color="dim">◼ {capitalCase(stage)}</Text>}
-              {!isFuture && hasStageTime && (
-                <Box>
-                  <Space />
-                  <Timer color="dim" isStopped={isCompleted} unit={timerUnit} />
-                </Box>
-              )}
-            </Box>
-          );
-        })}
+            {status === 'pending' && <Text color="dim">◼ {capitalCase(stage)}</Text>}
+            {status !== 'pending' && status !== 'skipped' && hasStageTime && (
+              <Box>
+                <Space />
+                <Timer color="dim" isStopped={status === 'completed'} unit={timerUnit} />
+              </Box>
+            )}
+          </Box>
+        ))}
       </Box>
 
       {hasElapsedTime && (
@@ -316,9 +380,8 @@ function Stages({
 }
 
 class CIMultiStageComponent<T extends Record<string, unknown>> {
-  private completedStages: Set<string>;
-  private currentStage: string;
-  private data?: T;
+  private seenStages: Set<string>;
+  private data?: Partial<T>;
   private startTime: number | undefined;
   private startTimes: Map<string, number> = new Map();
 
@@ -330,25 +393,22 @@ class CIMultiStageComponent<T extends Record<string, unknown>> {
   private readonly timerUnit?: 'ms' | 's';
 
   public constructor({
+    data,
     info,
-    stages,
-    title,
     showElapsedTime,
     showStageTime,
+    stages,
     timerUnit,
+    title,
   }: MultiStageComponentOptions<T>) {
     this.title = title;
     this.stages = stages;
-    this.completedStages = new Set();
+    this.seenStages = new Set();
     this.info = info;
-    this.currentStage = stages[0];
     this.hasElapsedTime = showElapsedTime ?? true;
     this.hasStageTime = showStageTime ?? true;
     this.timerUnit = timerUnit ?? 'ms';
-  }
-
-  public start(data?: Partial<T>): void {
-    this.data = { ...this.data, ...data } as T;
+    this.data = data;
 
     ux.stdout(`───── ${this.title} ─────`);
     ux.stdout('Steps:');
@@ -362,56 +422,49 @@ class CIMultiStageComponent<T extends Record<string, unknown>> {
     }
   }
 
-  public update(newStage: string, opts?: { data?: Partial<T>; hasFinished?: boolean; error?: Error }): void {
-    this.currentStage = newStage;
-    this.data = { ...this.data, ...opts?.data } as T;
+  public update(stageTracker: StageTracker, data?: Partial<T>): void {
+    this.data = { ...this.data, ...data } as T;
 
-    // eslint-disable-next-line complexity
-    this.stages.forEach((stage, stageIndex) => {
-      if (this.completedStages.has(stage)) return;
+    for (const [stage, status] of stageTracker.entries()) {
+      // no need to re-render completed, failed, or skipped stages
+      if (this.seenStages.has(stage)) continue;
 
-      const isCurrent = this.currentStage === stage && !opts?.hasFinished;
-      const isCompleted = opts?.hasFinished ?? (!isCurrent && this.stages.indexOf(this.currentStage) >= stageIndex);
-      const isFuture = !isCompleted && !isCurrent && this.stages.indexOf(this.currentStage) < stageIndex;
+      const icon = status === 'failed' ? '✖' : status === 'completed' ? '✔' : status === 'skipped' ? '◯' : '◼';
 
-      if (isCurrent && !MARKERS.has(stage)) {
-        if (this.hasStageTime) {
+      switch (status) {
+        case 'pending':
+          // do nothing
+          break;
+        case 'current':
           this.startTimes.set(stage, Date.now());
-        }
+          break;
+        case 'failed':
+        case 'skipped':
+        case 'completed':
+          this.seenStages.add(stage);
+          if (this.hasStageTime && status !== 'skipped') {
+            const startTime = this.startTimes.get(stage);
+            const elapsedTime = startTime ? Date.now() - startTime : 0;
+            const displayTime =
+              this.timerUnit === 'ms'
+                ? msInMostReadableFormat(elapsedTime)
+                : secondsInMostReadableFormat(elapsedTime, 0);
+            ux.stdout(`${icon} ${capitalCase(stage)} (${displayTime})`);
+          } else if (status === 'skipped') {
+            ux.stdout(`${icon} ${capitalCase(stage)} - Skipped`);
+          } else {
+            ux.stdout(`${icon} ${capitalCase(stage)}`);
+          }
 
-        MARKERS.set(stage, Performance.mark('MultiStageComponent', stage.replaceAll(' ', '-').toLowerCase()));
+          break;
+        default:
+        // do nothing
       }
-
-      if (isCompleted) {
-        const marker = MARKERS.get(stage);
-        if (marker && !marker.stopped) {
-          marker.stop();
-        }
-      }
-
-      if (isCompleted || (isCurrent && opts?.error)) {
-        this.completedStages.add(stage);
-
-        const icon = opts?.error ? '✖' : '✓';
-        if (this.hasStageTime) {
-          const startTime = this.startTimes.get(stage);
-          const elapsedTime = startTime ? Date.now() - startTime : 0;
-          const displayTime =
-            this.timerUnit === 'ms' ? msInMostReadableFormat(elapsedTime) : secondsInMostReadableFormat(elapsedTime, 0);
-          ux.stdout(`${icon} ${capitalCase(stage)} (${displayTime})`);
-        } else {
-          ux.stdout(`${icon} ${capitalCase(stage)}`);
-        }
-      }
-
-      if (isFuture && opts?.error) {
-        ux.stdout(`◼ ${capitalCase(stage)}`);
-      }
-    });
+    }
   }
 
-  public stop(error?: Error): void {
-    this.update(this.currentStage, { hasFinished: !error, error });
+  public stop(stageTracker: StageTracker): void {
+    this.update(stageTracker);
     if (this.startTime) {
       const elapsedTime = Date.now() - this.startTime;
       ux.stdout();
@@ -431,10 +484,11 @@ class CIMultiStageComponent<T extends Record<string, unknown>> {
 }
 
 export class MultiStageComponent<T extends Record<string, unknown>> implements Disposable {
-  private currentStage: string;
-  private data?: T;
+  private data?: Partial<T>;
   private inkInstance: Instance | undefined;
   private ciInstance: CIMultiStageComponent<T> | undefined;
+  private stageTracker: StageTracker;
+  private stopped = false;
 
   private readonly info?: Array<Info<T>>;
   private readonly stages: readonly string[] | string[];
@@ -450,92 +504,98 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
     showElapsedTime,
     showStageTime,
     timerUnit,
+    jsonEnabled,
+    data,
   }: MultiStageComponentOptions<T>) {
+    this.data = data;
     this.stages = stages;
     this.title = title;
     this.info = info;
-    this.currentStage = stages[0];
     this.hasElapsedTime = showElapsedTime ?? true;
     this.hasStageTime = showStageTime ?? true;
     this.timerUnit = timerUnit ?? 'ms';
-    this.ciInstance = isInCi
-      ? new CIMultiStageComponent({ stages, title, info, showElapsedTime, showStageTime, timerUnit })
-      : undefined;
-  }
+    this.stageTracker = new StageTracker(stages);
 
-  public start(data?: Partial<T>): void {
-    this.data = { ...this.data, ...data } as T;
-
-    if (isInCi) {
-      this.ciInstance?.start();
-    } else {
-      this.inkInstance = render(
-        <Stages
-          hasElapsedTime={this.hasElapsedTime}
-          hasStageTime={this.hasStageTime}
-          timerUnit={this.timerUnit}
-          info={this.formatInfo()}
-          stages={this.stages}
-          title={this.title}
-        />
-      );
+    if (!jsonEnabled) {
+      if (isInCi) {
+        this.ciInstance = new CIMultiStageComponent({
+          stages,
+          title,
+          info,
+          showElapsedTime,
+          showStageTime,
+          timerUnit,
+          data,
+          jsonEnabled,
+        });
+      } else {
+        this.inkInstance = render(
+          <Stages
+            hasElapsedTime={this.hasElapsedTime}
+            hasStageTime={this.hasStageTime}
+            info={this.formatInfo()}
+            stageTracker={this.stageTracker}
+            timerUnit={this.timerUnit}
+            title={this.title}
+          />
+        );
+      }
     }
   }
 
   public next(data?: Partial<T>): void {
-    const nextStageIndex = this.stages.indexOf(this.currentStage) + 1;
+    if (this.stopped) return;
+
+    const nextStageIndex = this.stages.indexOf(this.stageTracker.current ?? this.stages[0]) + 1;
     if (nextStageIndex < this.stages.length) {
       this.update(this.stages[nextStageIndex], data);
     }
   }
 
-  public previous(data?: Partial<T>): void {
-    const previousStageIndex = this.stages.indexOf(this.currentStage) - 1;
-    if (previousStageIndex >= 0) {
-      this.update(this.stages[previousStageIndex], data);
-    }
-  }
-
   public goto(stage: string, data?: Partial<T>): void {
-    if (this.stages.includes(stage)) {
-      this.update(stage, data);
-    }
-  }
+    if (this.stopped) return;
 
-  public last(data?: Partial<T>): void {
-    this.update(this.stages[this.stages.length - 1], data);
+    // ignore non-existent stages
+    if (!this.stages.includes(stage)) return;
+
+    // prevent going to a previous stage
+    if (this.stages.indexOf(stage) < this.stages.indexOf(this.stageTracker.current ?? this.stages[0])) return;
+
+    this.update(stage, data);
   }
 
   public stop(error?: Error): void {
+    if (this.stopped) return;
+    this.stopped = true;
+
+    this.stageTracker.refresh(this.stageTracker.current ?? this.stages[0], { hasError: !!error, isStopping: true });
+
     if (isInCi) {
-      this.ciInstance?.stop(error);
+      this.ciInstance?.stop(this.stageTracker);
       return;
     }
 
     if (error) {
       this.inkInstance?.rerender(
         <Stages
-          currentStage={this.currentStage}
-          info={this.formatInfo()}
-          stages={this.stages}
-          title={this.title}
           error={error}
           hasElapsedTime={this.hasElapsedTime}
           hasStageTime={this.hasStageTime}
+          info={this.formatInfo()}
+          stageTracker={this.stageTracker}
           timerUnit={this.timerUnit}
+          title={this.title}
         />
       );
     } else {
       this.inkInstance?.rerender(
         <Stages
-          hasFinished
-          currentStage={this.currentStage}
-          info={this.formatInfo()}
-          stages={this.stages}
-          title={this.title}
           hasElapsedTime={this.hasElapsedTime}
           hasStageTime={this.hasStageTime}
+          info={this.formatInfo()}
+          stageTracker={this.stageTracker}
           timerUnit={this.timerUnit}
+          title={this.title}
         />
       );
     }
@@ -548,19 +608,20 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
   }
 
   private update(stage: string, data?: Partial<T>): void {
-    this.currentStage = stage;
-    this.data = { ...this.data, ...data } as T;
+    this.data = { ...this.data, ...data } as Partial<T>;
+
+    this.stageTracker.refresh(stage);
+
     if (isInCi) {
-      this.ciInstance?.update(stage, { data });
+      this.ciInstance?.update(this.stageTracker, this.data);
     } else {
       this.inkInstance?.rerender(
         <Stages
           hasElapsedTime={this.hasElapsedTime}
           hasStageTime={this.hasStageTime}
-          timerUnit={this.timerUnit}
           info={this.formatInfo()}
-          currentStage={this.currentStage}
-          stages={this.stages}
+          stageTracker={this.stageTracker}
+          timerUnit={this.timerUnit}
           title={this.title}
         />
       );

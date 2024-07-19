@@ -60,9 +60,11 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
     const cached = cache.get(jobId);
     const hubBaseUrl = cached?.hubBaseUrl;
 
-    const ms = new MultiStageComponent<ScratchOrgLifecycleEvent & { alias: string }>({
+    const ms = new MultiStageComponent<ScratchOrgLifecycleEvent & { alias: string | undefined }>({
       stages: scratchOrgLifecycleStages,
       title: 'Resuming Scratch Org',
+      jsonEnabled: this.jsonEnabled(),
+      data: { alias: cached.alias },
       info: [
         {
           label: 'Request Id',
@@ -90,9 +92,6 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
       ],
     });
 
-    if (!this.jsonEnabled()) {
-      ms.start({ alias: cached?.alias });
-    }
     lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
       ms.goto(data.stage, data);
       if (data.stage === 'done') {

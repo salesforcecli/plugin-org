@@ -171,9 +171,11 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       flags['client-id'] ? await this.secretPrompt({ message: messages.getMessage('prompt.secret') }) : undefined
     );
 
-    const ms = new MultiStageComponent<ScratchOrgLifecycleEvent & { alias: string }>({
+    const ms = new MultiStageComponent<ScratchOrgLifecycleEvent & { alias: string | undefined }>({
       stages: flags.async ? ['prepare request', 'send request', 'done'] : scratchOrgLifecycleStages,
       title: flags.async ? 'Creating Scratch Org (async)' : 'Creating Scratch Org',
+      jsonEnabled: this.jsonEnabled(),
+      data: { alias: flags.alias },
       info: [
         {
           label: 'Request Id',
@@ -201,10 +203,6 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       ],
     });
 
-    if (!this.jsonEnabled()) {
-      ms.start({ alias: flags.alias });
-    }
-
     lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
       ms.goto(data.stage, data);
       if (data.stage === 'done') {
@@ -221,7 +219,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       }
 
       if (flags.async) {
-        ms.last({ scratchOrgInfo });
+        ms.goto('done', { scratchOrgInfo });
         ms.stop();
 
         this.log();
