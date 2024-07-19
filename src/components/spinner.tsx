@@ -7,6 +7,7 @@
 import React, { useEffect, useState } from 'react';
 import spinners, { type SpinnerName } from 'cli-spinners';
 import { Box, Text } from 'ink';
+import { icons } from './design-elements.js';
 
 export type UseSpinnerProps = {
   /**
@@ -80,7 +81,7 @@ export function SpinnerOrError({
     return (
       <Box>
         {props.label && labelPosition === 'left' && <Text>{props.label}</Text>}
-        <Text color="red">✖</Text>
+        <Text color="red">{icons.failed}</Text>
         {props.label && labelPosition === 'right' && <Text>{props.label}</Text>}
       </Box>
     );

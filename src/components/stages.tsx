@@ -6,12 +6,17 @@
  */
 
 import { env } from 'node:process';
-import { Performance, ux } from '@oclif/core';
-import { Box, Instance, render, Text } from 'ink';
+import { ux } from '@oclif/core/ux';
 import { capitalCase } from 'change-case';
+import { Box, Instance, render, Text } from 'ink';
 import React from 'react';
 
 import { SpinnerOrError, SpinnerOrErrorOrChildren } from './spinner.js';
+import { icons, spinners } from './design-elements.js';
+import { StageTracker } from './stage-tracker.js';
+import { msInMostReadableFormat, secondsInMostReadableFormat } from './utils.js';
+import { Divider } from './divider.js';
+import { Timer } from './timer.js';
 
 // Taken from https://github.com/sindresorhus/is-in-ci
 const isInCi =
@@ -91,80 +96,6 @@ type MultiStageComponentOptions<T extends Record<string, unknown>> = {
   readonly jsonEnabled: boolean;
 };
 
-type StageStatus = 'pending' | 'current' | 'completed' | 'skipped' | 'failed';
-
-class StageTracker extends Map<string, StageStatus> {
-  public current: string | undefined;
-  private markers = new Map<string, ReturnType<typeof Performance.mark>>();
-
-  public constructor(stages: readonly string[] | string[]) {
-    super(stages.map((stage) => [stage, 'pending']));
-  }
-
-  public set(stage: string, status: StageStatus): this {
-    if (status === 'current') {
-      this.current = stage;
-    }
-    return super.set(stage, status);
-  }
-
-  public refresh(nextStage: string, opts?: { hasError?: boolean; isStopping?: boolean }): void {
-    const stages = [...this.keys()];
-    for (const stage of stages) {
-      if (this.get(stage) === 'skipped') continue;
-      if (this.get(stage) === 'failed') continue;
-
-      // .stop() was called with an error => set the stage to failed
-      if (nextStage === stage && opts?.hasError) {
-        this.set(stage, 'failed');
-        this.stopMarker(stage);
-        continue;
-      }
-
-      // .stop() was called without an error => set the stage to completed
-      if (nextStage === stage && opts?.isStopping) {
-        this.set(stage, 'completed');
-        this.stopMarker(stage);
-        continue;
-      }
-
-      // set the current stage
-      if (nextStage === stage) {
-        this.set(stage, 'current');
-        // create a marker for the current stage if it doesn't exist
-        if (!this.markers.has(stage)) {
-          this.markers.set(stage, Performance.mark('MultiStageComponent', stage.replaceAll(' ', '-').toLowerCase()));
-        }
-
-        continue;
-      }
-
-      // any stage before the current stage should be marked as skipped if it's still pending
-      if (stages.indexOf(stage) < stages.indexOf(nextStage) && this.get(stage) === 'pending') {
-        this.set(stage, 'skipped');
-        continue;
-      }
-
-      // any stage before the current stage should be as completed (if it hasn't been marked as skipped or failed yet)
-      if (stages.indexOf(nextStage) > stages.indexOf(stage)) {
-        this.set(stage, 'completed');
-        this.stopMarker(stage);
-        continue;
-      }
-
-      // default to pending
-      this.set(stage, 'pending');
-    }
-  }
-
-  private stopMarker(stage: string): void {
-    const marker = this.markers.get(stage);
-    if (marker && !marker.stopped) {
-      marker.stop();
-    }
-  }
-}
-
 type StagesProps = {
   readonly error?: Error | undefined;
   readonly info?: FormattedInfo[];
@@ -174,127 +105,6 @@ type StagesProps = {
   readonly timerUnit?: 'ms' | 's';
   readonly stageTracker: StageTracker;
 };
-
-function round(value: number, decimals = 2): string {
-  const factor = Math.pow(10, decimals);
-  return (Math.round(value * factor) / factor).toFixed(decimals);
-}
-
-function msInMostReadableFormat(time: number, decimals = 2): string {
-  // if time < 1000ms, return time in ms
-  if (time < 1000) {
-    return `${time}ms`;
-  }
-
-  return secondsInMostReadableFormat(time, decimals);
-}
-
-function secondsInMostReadableFormat(time: number, decimals = 2): string {
-  if (time < 1000) {
-    return '< 1s';
-  }
-
-  // if time < 60s, return time in seconds
-  if (time < 60_000) {
-    return `${round(time / 1000, decimals)}s`;
-  }
-
-  // if time < 60m, return time in minutes and seconds
-  if (time < 3_600_000) {
-    const minutes = Math.floor(time / 60_000);
-    const seconds = round((time % 60_000) / 1000, 0);
-    return `${minutes}m ${seconds}s`;
-  }
-
-  return time.toString();
-}
-
-const getSideDividerWidth = (width: number, titleWidth: number): number => (width - titleWidth) / 2;
-const getNumberOfCharsPerWidth = (char: string, width: number): number => width / char.length;
-
-const PAD = ' ';
-
-function Divider({
-  title = '',
-  width = 50,
-  padding = 1,
-  titlePadding = 1,
-  titleColor = 'white',
-  dividerChar = '─',
-  dividerColor = 'dim',
-}: {
-  readonly title?: string;
-  readonly width?: number | 'full';
-  readonly padding?: number;
-  readonly titleColor?: string;
-  readonly titlePadding?: number;
-  readonly dividerChar?: string;
-  readonly dividerColor?: string;
-}): React.ReactNode {
-  const titleString = title ? `${PAD.repeat(titlePadding) + title + PAD.repeat(titlePadding)}` : '';
-  const titleWidth = titleString.length;
-  const terminalWidth = process.stdout.columns ?? 80;
-  const widthToUse = width === 'full' ? terminalWidth - titlePadding : width > terminalWidth ? terminalWidth : width;
-
-  const dividerWidth = getSideDividerWidth(widthToUse, titleWidth);
-  const numberOfCharsPerSide = getNumberOfCharsPerWidth(dividerChar, dividerWidth);
-  const dividerSideString = dividerChar.repeat(numberOfCharsPerSide);
-
-  const paddingString = PAD.repeat(padding);
-
-  return (
-    <Box flexDirection="row">
-      <Text>
-        {paddingString}
-        <Text color={dividerColor}>{dividerSideString}</Text>
-        <Text color={titleColor}>{titleString}</Text>
-        <Text color={dividerColor}>{dividerSideString}</Text>
-        {paddingString}
-      </Text>
-    </Box>
-  );
-}
-
-function Timer({
-  color,
-  isStopped,
-  unit,
-}: {
-  readonly color?: string;
-  readonly isStopped?: boolean;
-  readonly unit: 'ms' | 's';
-}): React.ReactNode {
-  const [time, setTime] = React.useState(0);
-  const [previousDate, setPreviousDate] = React.useState(Date.now());
-
-  React.useEffect(() => {
-    if (isStopped) {
-      setTime(time + (Date.now() - previousDate));
-      setPreviousDate(Date.now());
-      return () => {};
-    }
-
-    const intervalId = setInterval(
-      () => {
-        setTime(time + (Date.now() - previousDate));
-        setPreviousDate(Date.now());
-      },
-      unit === 'ms' ? 1 : 1000
-    );
-
-    return (): void => {
-      clearInterval(intervalId);
-    };
-  }, [time, isStopped, previousDate, unit]);
-
-  return (
-    <Text color={color}>{unit === 'ms' ? msInMostReadableFormat(time) : secondsInMostReadableFormat(time, 0)}</Text>
-  );
-}
-
-function Space({ repeat = 1 }: { readonly repeat?: number }): React.ReactNode {
-  return <Text>{' '.repeat(repeat)}</Text>;
-}
 
 function StaticKeyValue({ label, value, isBold, color, isStatic }: FormattedInfo): React.ReactNode {
   if (!value || !isStatic) return;
@@ -315,8 +125,6 @@ function Stages({
   timerUnit = 'ms',
   title,
 }: StagesProps): React.ReactNode {
-  const spinnerType = process.platform === 'win32' ? 'line' : 'arc';
-
   return (
     <Box flexDirection="column" paddingTop={1}>
       <Divider title={title} />
@@ -324,22 +132,30 @@ function Stages({
         {[...stageTracker.entries()].map(([stage, status]) => (
           <Box key={stage}>
             {(status === 'current' || status === 'failed') && (
-              <SpinnerOrError error={error} type="dots2" label={capitalCase(stage)} />
+              <SpinnerOrError error={error} type={spinners.stage} label={capitalCase(stage)} />
             )}
 
-            {status === 'skipped' && <Text color="dim">◯ {capitalCase(stage)} - Skipped</Text>}
+            {status === 'skipped' && (
+              <Text color="dim">
+                {icons.skipped} {capitalCase(stage)} - Skipped
+              </Text>
+            )}
 
             {status === 'completed' && (
               <Box>
-                <Text color="green">✓ </Text>
+                <Text color="green">{icons.completed} </Text>
                 <Text>{capitalCase(stage)} </Text>
               </Box>
             )}
 
-            {status === 'pending' && <Text color="dim">◼ {capitalCase(stage)}</Text>}
+            {status === 'pending' && (
+              <Text color="dim">
+                {icons.pending} {capitalCase(stage)}
+              </Text>
+            )}
             {status !== 'pending' && status !== 'skipped' && hasStageTime && (
               <Box>
-                <Space />
+                {' '}
                 <Timer color="dim" isStopped={status === 'completed'} unit={timerUnit} />
               </Box>
             )}
@@ -364,7 +180,7 @@ function Stages({
               label={`${i.label}: `}
               labelPosition="left"
               error={error}
-              type={spinnerType}
+              type={spinners.info}
             >
               {i.value && (
                 <Text bold={i.isBold} color={i.color}>
@@ -429,8 +245,6 @@ class CIMultiStageComponent<T extends Record<string, unknown>> {
       // no need to re-render completed, failed, or skipped stages
       if (this.seenStages.has(stage)) continue;
 
-      const icon = status === 'failed' ? '✖' : status === 'completed' ? '✔' : status === 'skipped' ? '◯' : '◼';
-
       switch (status) {
         case 'pending':
           // do nothing
@@ -449,11 +263,11 @@ class CIMultiStageComponent<T extends Record<string, unknown>> {
               this.timerUnit === 'ms'
                 ? msInMostReadableFormat(elapsedTime)
                 : secondsInMostReadableFormat(elapsedTime, 0);
-            ux.stdout(`${icon} ${capitalCase(stage)} (${displayTime})`);
+            ux.stdout(`${icons[status]} ${capitalCase(stage)} (${displayTime})`);
           } else if (status === 'skipped') {
-            ux.stdout(`${icon} ${capitalCase(stage)} - Skipped`);
+            ux.stdout(`${icons[status]} ${capitalCase(stage)} - Skipped`);
           } else {
-            ux.stdout(`${icon} ${capitalCase(stage)}`);
+            ux.stdout(`${icons[status]} ${capitalCase(stage)}`);
           }
 
           break;
