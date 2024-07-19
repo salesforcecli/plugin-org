@@ -236,7 +236,7 @@ const getSandboxProcessObject = async (
   sandboxName?: string,
   jobId?: string
 ): Promise<SandboxProcessObject> => {
-  const where = jobId ? `Id='${jobId}'` : `SandboxName='${sandboxName}'`;
+  const where = getWhere(sandboxName, jobId);
   const queryStr = `SELECT Id, Status, SandboxName, SandboxInfoId, LicenseType, CreatedDate, CopyProgress, SandboxOrganization, SourceId, Description, EndDate FROM SandboxProcess WHERE ${where} AND Status != 'D'`;
   try {
     return await prodOrg.getConnection().singleRecordQuery(queryStr, {
@@ -245,4 +245,10 @@ const getSandboxProcessObject = async (
   } catch (err) {
     throw messages.createError('error.NoSandboxRequestFound');
   }
+};
+
+const getWhere = (sandboxName?: string, jobId?: string): string => {
+  if (jobId) return `Id='${jobId}'`;
+  if (sandboxName) return `SandboxName='${sandboxName}'`;
+  throw new SfError('There must be a sandbox name or job id to query for the sandbox process object');
 };
