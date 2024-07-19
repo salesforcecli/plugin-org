@@ -19,7 +19,7 @@ import {
   SfError,
 } from '@salesforce/core';
 import terminalLink from 'terminal-link';
-import { MultiStageRenderer } from '../../../components/stages.js';
+import { MultiStageComponent } from '../../../components/stages.js';
 import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
@@ -60,7 +60,7 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
     const cached = cache.get(jobId);
     const hubBaseUrl = cached?.hubBaseUrl;
 
-    const ms = new MultiStageRenderer<ScratchOrgLifecycleEvent & { alias: string }>({
+    const ms = new MultiStageComponent<ScratchOrgLifecycleEvent & { alias: string }>({
       stages: scratchOrgLifecycleStages,
       title: 'Resuming Scratch Org',
       info: [

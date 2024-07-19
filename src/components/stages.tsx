@@ -5,13 +5,19 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { Performance } from '@oclif/core';
-import { SfError } from '@salesforce/core';
+import { env } from 'node:process';
+import { Performance, ux } from '@oclif/core';
 import { Box, Instance, render, Text } from 'ink';
 import { capitalCase } from 'change-case';
 import React from 'react';
 
 import { SpinnerOrError, SpinnerOrErrorOrChildren } from './spinner.js';
+
+// Taken from https://github.com/sindresorhus/is-in-ci
+const isInCi =
+  env.CI !== '0' &&
+  env.CI !== 'false' &&
+  ('CI' in env || 'CONTINUOUS_INTEGRATION' in env || Object.keys(env).some((key) => key.startsWith('CI_')));
 
 type Info<T extends Record<string, unknown>> = {
   /**
@@ -19,10 +25,10 @@ type Info<T extends Record<string, unknown>> = {
    */
   color?: string;
   /**
-   * Get the value to display. Takes the data property on the MultiStageRenderer as an argument.
+   * Get the value to display. Takes the data property on the MultiStageComponent as an argument.
    * Useful if you want to apply some logic (like rendering a link) to the data before displaying it.
    *
-   * @param data The data property on the MultiStageRenderer.
+   * @param data The data property on the MultiStageComponent.
    * @returns {string | undefined}
    */
   get?: (data: T) => string | undefined;
@@ -48,7 +54,7 @@ type FormattedInfo = {
   readonly value: string | undefined;
 };
 
-type MultiStageRendererOptions<T extends Record<string, unknown>> = {
+type MultiStageComponentOptions<T extends Record<string, unknown>> = {
   /**
    * Stages to render.
    */
@@ -77,7 +83,7 @@ type MultiStageRendererOptions<T extends Record<string, unknown>> = {
 
 type StagesProps = {
   readonly currentStage?: string;
-  readonly error?: SfError | Error | undefined;
+  readonly error?: Error | undefined;
   readonly hasFinished?: boolean;
   readonly info?: FormattedInfo[];
   readonly stages: string[] | readonly string[];
@@ -244,7 +250,7 @@ function Stages({
           const isFuture = !isCompleted && !isCurrent && stages.indexOf(currentStage) < stageIndex;
 
           if (isCurrent && !MARKERS.has(stage)) {
-            MARKERS.set(stage, Performance.mark('MultiStageRenderer', stage.replaceAll(' ', '-').toLowerCase()));
+            MARKERS.set(stage, Performance.mark('MultiStageComponent', stage.replaceAll(' ', '-').toLowerCase()));
           }
 
           if (isCompleted) {
@@ -309,10 +315,12 @@ function Stages({
   );
 }
 
-export class MultiStageRenderer<T extends Record<string, unknown>> implements Disposable {
+class CIMultiStageComponent<T extends Record<string, unknown>> {
+  private completedStages: Set<string>;
   private currentStage: string;
   private data?: T;
-  private instance: Instance | undefined;
+  private startTime: number | undefined;
+  private startTimes: Map<string, number> = new Map();
 
   private readonly info?: Array<Info<T>>;
   private readonly stages: readonly string[] | string[];
@@ -327,10 +335,11 @@ export class MultiStageRenderer<T extends Record<string, unknown>> implements Di
     title,
     showElapsedTime,
     showStageTime,
-    timerUnit: timerUnit,
-  }: MultiStageRendererOptions<T>) {
-    this.stages = stages;
+    timerUnit,
+  }: MultiStageComponentOptions<T>) {
     this.title = title;
+    this.stages = stages;
+    this.completedStages = new Set();
     this.info = info;
     this.currentStage = stages[0];
     this.hasElapsedTime = showElapsedTime ?? true;
@@ -340,16 +349,137 @@ export class MultiStageRenderer<T extends Record<string, unknown>> implements Di
 
   public start(data?: Partial<T>): void {
     this.data = { ...this.data, ...data } as T;
-    this.instance = render(
-      <Stages
-        hasElapsedTime={this.hasElapsedTime}
-        hasStageTime={this.hasStageTime}
-        timerUnit={this.timerUnit}
-        info={this.formatInfo()}
-        stages={this.stages}
-        title={this.title}
-      />
-    );
+
+    ux.stdout(`───── ${this.title} ─────`);
+    ux.stdout('Steps:');
+    for (const stage of this.stages) {
+      ux.stdout(`${this.stages.indexOf(stage) + 1}. ${capitalCase(stage)}`);
+    }
+    ux.stdout();
+
+    if (this.hasElapsedTime) {
+      this.startTime = Date.now();
+    }
+  }
+
+  public update(newStage: string, opts?: { data?: Partial<T>; hasFinished?: boolean; error?: Error }): void {
+    this.currentStage = newStage;
+    this.data = { ...this.data, ...opts?.data } as T;
+
+    // eslint-disable-next-line complexity
+    this.stages.forEach((stage, stageIndex) => {
+      if (this.completedStages.has(stage)) return;
+
+      const isCurrent = this.currentStage === stage && !opts?.hasFinished;
+      const isCompleted = opts?.hasFinished ?? (!isCurrent && this.stages.indexOf(this.currentStage) >= stageIndex);
+      const isFuture = !isCompleted && !isCurrent && this.stages.indexOf(this.currentStage) < stageIndex;
+
+      if (isCurrent && !MARKERS.has(stage)) {
+        if (this.hasStageTime) {
+          this.startTimes.set(stage, Date.now());
+        }
+
+        MARKERS.set(stage, Performance.mark('MultiStageComponent', stage.replaceAll(' ', '-').toLowerCase()));
+      }
+
+      if (isCompleted) {
+        const marker = MARKERS.get(stage);
+        if (marker && !marker.stopped) {
+          marker.stop();
+        }
+      }
+
+      if (isCompleted || (isCurrent && opts?.error)) {
+        this.completedStages.add(stage);
+
+        const icon = opts?.error ? '✖' : '✓';
+        if (this.hasStageTime) {
+          const startTime = this.startTimes.get(stage);
+          const elapsedTime = startTime ? Date.now() - startTime : 0;
+          const displayTime =
+            this.timerUnit === 'ms' ? msInMostReadableFormat(elapsedTime) : secondsInMostReadableFormat(elapsedTime, 0);
+          ux.stdout(`${icon} ${capitalCase(stage)} (${displayTime})`);
+        } else {
+          ux.stdout(`${icon} ${capitalCase(stage)}`);
+        }
+      }
+
+      if (isFuture && opts?.error) {
+        ux.stdout(`◼ ${capitalCase(stage)}`);
+      }
+    });
+  }
+
+  public stop(error?: Error): void {
+    this.update(this.currentStage, { hasFinished: !error, error });
+    if (this.startTime) {
+      const elapsedTime = Date.now() - this.startTime;
+      ux.stdout();
+      const displayTime =
+        this.timerUnit === 'ms' ? msInMostReadableFormat(elapsedTime) : secondsInMostReadableFormat(elapsedTime, 0);
+      ux.stdout(`Elapsed time: ${displayTime}`);
+    }
+
+    ux.stdout();
+    for (const info of this.info ?? []) {
+      const formattedData = info.get ? info.get(this.data as T) : undefined;
+      if (formattedData) {
+        ux.stdout(`${info.label}: ${formattedData}`);
+      }
+    }
+  }
+}
+
+export class MultiStageComponent<T extends Record<string, unknown>> implements Disposable {
+  private currentStage: string;
+  private data?: T;
+  private inkInstance: Instance | undefined;
+  private ciInstance: CIMultiStageComponent<T> | undefined;
+
+  private readonly info?: Array<Info<T>>;
+  private readonly stages: readonly string[] | string[];
+  private readonly title: string;
+  private readonly hasElapsedTime?: boolean;
+  private readonly hasStageTime?: boolean;
+  private readonly timerUnit?: 'ms' | 's';
+
+  public constructor({
+    info,
+    stages,
+    title,
+    showElapsedTime,
+    showStageTime,
+    timerUnit,
+  }: MultiStageComponentOptions<T>) {
+    this.stages = stages;
+    this.title = title;
+    this.info = info;
+    this.currentStage = stages[0];
+    this.hasElapsedTime = showElapsedTime ?? true;
+    this.hasStageTime = showStageTime ?? true;
+    this.timerUnit = timerUnit ?? 'ms';
+    this.ciInstance = isInCi
+      ? new CIMultiStageComponent({ stages, title, info, showElapsedTime, showStageTime, timerUnit })
+      : undefined;
+  }
+
+  public start(data?: Partial<T>): void {
+    this.data = { ...this.data, ...data } as T;
+
+    if (isInCi) {
+      this.ciInstance?.start();
+    } else {
+      this.inkInstance = render(
+        <Stages
+          hasElapsedTime={this.hasElapsedTime}
+          hasStageTime={this.hasStageTime}
+          timerUnit={this.timerUnit}
+          info={this.formatInfo()}
+          stages={this.stages}
+          title={this.title}
+        />
+      );
+    }
   }
 
   public next(data?: Partial<T>): void {
@@ -376,9 +506,14 @@ export class MultiStageRenderer<T extends Record<string, unknown>> implements Di
     this.update(this.stages[this.stages.length - 1], data);
   }
 
-  public stop(error?: Error | SfError): void {
+  public stop(error?: Error): void {
+    if (isInCi) {
+      this.ciInstance?.stop(error);
+      return;
+    }
+
     if (error) {
-      this.instance?.rerender(
+      this.inkInstance?.rerender(
         <Stages
           currentStage={this.currentStage}
           info={this.formatInfo()}
@@ -391,7 +526,7 @@ export class MultiStageRenderer<T extends Record<string, unknown>> implements Di
         />
       );
     } else {
-      this.instance?.rerender(
+      this.inkInstance?.rerender(
         <Stages
           hasFinished
           currentStage={this.currentStage}
@@ -405,27 +540,31 @@ export class MultiStageRenderer<T extends Record<string, unknown>> implements Di
       );
     }
 
-    this.instance?.unmount();
+    this.inkInstance?.unmount();
   }
 
   public [Symbol.dispose](): void {
-    this.instance?.unmount();
+    this.inkInstance?.unmount();
   }
 
   private update(stage: string, data?: Partial<T>): void {
     this.currentStage = stage;
     this.data = { ...this.data, ...data } as T;
-    this.instance?.rerender(
-      <Stages
-        hasElapsedTime={this.hasElapsedTime}
-        hasStageTime={this.hasStageTime}
-        timerUnit={this.timerUnit}
-        info={this.formatInfo()}
-        currentStage={this.currentStage}
-        stages={this.stages}
-        title={this.title}
-      />
-    );
+    if (isInCi) {
+      this.ciInstance?.update(stage, { data });
+    } else {
+      this.inkInstance?.rerender(
+        <Stages
+          hasElapsedTime={this.hasElapsedTime}
+          hasStageTime={this.hasStageTime}
+          timerUnit={this.timerUnit}
+          info={this.formatInfo()}
+          currentStage={this.currentStage}
+          stages={this.stages}
+          title={this.title}
+        />
+      );
+    }
   }
 
   private formatInfo(): FormattedInfo[] {
