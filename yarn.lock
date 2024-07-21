@@ -1307,14 +1307,14 @@
     wordwrap "^1.0.0"
     wrap-ansi "^7.0.0"
 
-"@oclif/plugin-command-snapshot@^5.2.6":
-  version "5.2.6"
-  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-5.2.6.tgz#1f5cd2a9869c85346b12069b5dc82380f2da2c98"
-  integrity sha512-Nu+ykWkQnEatrmaIyjvsZCzT+i++9un8HuVKj2CMgFNEi9Ycu8Xrath+mfFi5qtS5b0taZyhO/aCOKwuD13Hmw==
+"@oclif/plugin-command-snapshot@^5.2.7":
+  version "5.2.7"
+  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-5.2.7.tgz#1013bce097b9023ff84db7dac070c7f78aff9449"
+  integrity sha512-fKFF/AJDIGo9GEe23YxqfOlhtEx7SD9gNJRQNLEB0267UVXukR3jhJbbyjcsG7aw1cAp5glFnzIoWzpBycXQYQ==
   dependencies:
     "@oclif/core" "^4"
     ansis "^3.2.0"
-    globby "^14.0.1"
+    globby "^14.0.2"
     just-diff "^5.2.0"
     lodash.difference "^4.5.0"
     lodash.get "^4.4.2"
@@ -4392,10 +4392,10 @@ globby@^13.1.2:
     merge2 "^1.4.1"
     slash "^4.0.0"
 
-globby@^14.0.1:
-  version "14.0.1"
-  resolved "https://registry.yarnpkg.com/globby/-/globby-14.0.1.tgz#a1b44841aa7f4c6d8af2bc39951109d77301959b"
-  integrity sha512-jOMLD2Z7MAhyG8aJpNOpmziMOP4rPLcc95oQPKXBazW82z+CEgPFBQvEpRUa1KeIMUJo4Wsm+q6uzO/Q/4BksQ==
+globby@^14.0.2:
+  version "14.0.2"
+  resolved "https://registry.yarnpkg.com/globby/-/globby-14.0.2.tgz#06554a54ccfe9264e5a9ff8eded46aa1e306482f"
+  integrity sha512-s3Fq41ZVh7vbbe2PN3nrW7yC7U7MFVc5c98/iTl9c2GawNMKx/J648KQRW6WKkuU8GIbbh2IXfIRQjOZnXcTnw==
   dependencies:
     "@sindresorhus/merge-streams" "^2.1.0"
     fast-glob "^3.3.2"
