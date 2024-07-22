@@ -36,7 +36,7 @@ type Info<T extends Record<string, unknown>> = {
    * @param data The data property on the MultiStageComponent.
    * @returns {string | undefined}
    */
-  get?: (data: T) => string | undefined;
+  get?: (data?: Partial<T>) => string | undefined;
   /**
    * Whether the value should be bold.
    */
@@ -376,6 +376,13 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
     if (this.stages.indexOf(stage) < this.stages.indexOf(this.stageTracker.current ?? this.stages[0])) return;
 
     this.update(stage, data);
+  }
+
+  public updateData(data: Partial<T>): void {
+    if (this.stopped) return;
+    this.data = { ...this.data, ...data } as T;
+
+    this.update(this.stageTracker.current ?? this.stages[0], data);
   }
 
   public stop(error?: Error): void {
