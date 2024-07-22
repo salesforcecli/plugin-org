@@ -36,7 +36,7 @@ type Info<T extends Record<string, unknown>> = {
    * @param data The data property on the MultiStageComponent.
    * @returns {string | undefined}
    */
-  get?: (data?: Partial<T>) => string | undefined;
+  get?: (data?: T) => string | undefined;
   /**
    * Whether the value should be bold.
    */
@@ -73,6 +73,12 @@ type MultiStageComponentOptions<T extends Record<string, unknown>> = {
    */
   readonly info?: Array<Info<T>>;
   /**
+   * Messages to display at the bottom of the stages component.
+   *
+   * This will be rendered between the stages and the info section.
+   */
+  readonly messages?: string[];
+  /**
    * Whether to show the total elapsed time. Defaults to true
    */
   readonly showElapsedTime?: boolean;
@@ -99,6 +105,7 @@ type MultiStageComponentOptions<T extends Record<string, unknown>> = {
 type StagesProps = {
   readonly error?: Error | undefined;
   readonly info?: FormattedInfo[];
+  readonly messages?: string[];
   readonly title: string;
   readonly hasElapsedTime?: boolean;
   readonly hasStageTime?: boolean;
@@ -121,6 +128,7 @@ function Stages({
   hasElapsedTime = true,
   hasStageTime = true,
   info,
+  messages,
   stageTracker,
   timerUnit = 'ms',
   title,
@@ -128,6 +136,14 @@ function Stages({
   return (
     <Box flexDirection="column" paddingTop={1}>
       <Divider title={title} />
+      {messages && messages.length > 0 && (
+        <Box flexDirection="column" paddingTop={1} marginLeft={1}>
+          {messages?.map((message) => (
+            <Text key={message}>{message}</Text>
+          ))}
+        </Box>
+      )}
+
       <Box flexDirection="column" paddingTop={1} marginLeft={1}>
         {[...stageTracker.entries()].map(([stage, status]) => (
           <Box key={stage}>
@@ -163,34 +179,36 @@ function Stages({
         ))}
       </Box>
 
+      {info && (
+        <Box flexDirection="column" paddingTop={1} marginLeft={1}>
+          {info?.map((i) =>
+            i.isStatic ? (
+              <StaticKeyValue key={i.label} {...i} />
+            ) : (
+              <SpinnerOrErrorOrChildren
+                key={i.label}
+                label={`${i.label}: `}
+                labelPosition="left"
+                error={error}
+                type={spinners.info}
+              >
+                {i.value && (
+                  <Text bold={i.isBold} color={i.color}>
+                    {i.value}
+                  </Text>
+                )}
+              </SpinnerOrErrorOrChildren>
+            )
+          )}
+        </Box>
+      )}
+
       {hasElapsedTime && (
         <Box paddingTop={1} marginLeft={1}>
           <Text>Elapsed Time: </Text>
           <Timer unit={timerUnit} />
         </Box>
       )}
-
-      <Box flexDirection="column" paddingTop={1} marginLeft={1}>
-        {info?.map((i) =>
-          i.isStatic ? (
-            <StaticKeyValue key={i.label} {...i} />
-          ) : (
-            <SpinnerOrErrorOrChildren
-              key={i.label}
-              label={`${i.label}: `}
-              labelPosition="left"
-              error={error}
-              type={spinners.info}
-            >
-              {i.value && (
-                <Text bold={i.isBold} color={i.color}>
-                  {i.value}
-                </Text>
-              )}
-            </SpinnerOrErrorOrChildren>
-          )
-        )}
-      </Box>
     </Box>
   );
 }
@@ -277,6 +295,11 @@ class CIMultiStageComponent<T extends Record<string, unknown>> {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  public addMessage(message: string): void {
+    ux.stdout(message);
+  }
+
   public stop(stageTracker: StageTracker): void {
     this.update(stageTracker);
     if (this.startTime) {
@@ -303,6 +326,7 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
   private ciInstance: CIMultiStageComponent<T> | undefined;
   private stageTracker: StageTracker;
   private stopped = false;
+  private messages: string[];
 
   private readonly info?: Array<Info<T>>;
   private readonly stages: readonly string[] | string[];
@@ -312,14 +336,15 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
   private readonly timerUnit?: 'ms' | 's';
 
   public constructor({
+    data,
     info,
-    stages,
-    title,
+    jsonEnabled,
+    messages,
     showElapsedTime,
     showStageTime,
+    stages,
     timerUnit,
-    jsonEnabled,
-    data,
+    title,
   }: MultiStageComponentOptions<T>) {
     this.data = data;
     this.stages = stages;
@@ -329,6 +354,7 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
     this.hasStageTime = showStageTime ?? true;
     this.timerUnit = timerUnit ?? 'ms';
     this.stageTracker = new StageTracker(stages);
+    this.messages = messages ?? [];
 
     if (!jsonEnabled) {
       if (isInCi) {
@@ -348,12 +374,33 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
             hasElapsedTime={this.hasElapsedTime}
             hasStageTime={this.hasStageTime}
             info={this.formatInfo()}
+            messages={this.messages}
             stageTracker={this.stageTracker}
             timerUnit={this.timerUnit}
             title={this.title}
           />
         );
       }
+    }
+  }
+
+  public addMessage(message: string): void {
+    if (this.stopped) return;
+    this.messages.push(message);
+    if (isInCi) {
+      this.ciInstance?.addMessage(message);
+    } else {
+      this.inkInstance?.rerender(
+        <Stages
+          hasElapsedTime={this.hasElapsedTime}
+          hasStageTime={this.hasStageTime}
+          info={this.formatInfo()}
+          messages={this.messages}
+          stageTracker={this.stageTracker}
+          timerUnit={this.timerUnit}
+          title={this.title}
+        />
+      );
     }
   }
 
@@ -403,6 +450,7 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
           hasElapsedTime={this.hasElapsedTime}
           hasStageTime={this.hasStageTime}
           info={this.formatInfo()}
+          messages={this.messages}
           stageTracker={this.stageTracker}
           timerUnit={this.timerUnit}
           title={this.title}
@@ -414,6 +462,7 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
           hasElapsedTime={this.hasElapsedTime}
           hasStageTime={this.hasStageTime}
           info={this.formatInfo()}
+          messages={this.messages}
           stageTracker={this.stageTracker}
           timerUnit={this.timerUnit}
           title={this.title}
@@ -441,6 +490,7 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
           hasElapsedTime={this.hasElapsedTime}
           hasStageTime={this.hasStageTime}
           info={this.formatInfo()}
+          messages={this.messages}
           stageTracker={this.stageTracker}
           timerUnit={this.timerUnit}
           title={this.title}
