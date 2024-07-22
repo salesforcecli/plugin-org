@@ -49,6 +49,10 @@ type Info<T extends Record<string, unknown>> = {
    * Label to display next to the value.
    */
   label: string;
+  /**
+   * Stage to display the value on. If not provided, the value will be displayed at the bottom of the stages component.
+   */
+  stage?: string;
 };
 
 type FormattedInfo = {
@@ -57,6 +61,8 @@ type FormattedInfo = {
   readonly isStatic?: boolean;
   readonly label: string;
   readonly value: string | undefined;
+  // eslint-disable-next-line react/no-unused-prop-types
+  readonly stage?: string;
 };
 
 type MultiStageComponentOptions<T extends Record<string, unknown>> = {
@@ -123,6 +129,34 @@ function StaticKeyValue({ label, value, isBold, color, isStatic }: FormattedInfo
   );
 }
 
+function Infos({ info, error, stage }: { info: FormattedInfo[]; error?: Error; stage?: string }): React.ReactNode {
+  return (
+    info
+      // If stage is provided, only show info for that stage
+      // otherwise, show all infos that don't have a specified stage
+      .filter((i) => (stage ? i.stage === stage : !i.stage))
+      .map((i) =>
+        i.isStatic ? (
+          <StaticKeyValue key={i.label} {...i} />
+        ) : (
+          <SpinnerOrErrorOrChildren
+            key={i.label}
+            label={`${i.label}: `}
+            labelPosition="left"
+            error={error}
+            type={spinners.info}
+          >
+            {i.value && (
+              <Text bold={i.isBold} color={i.color}>
+                {i.value}
+              </Text>
+            )}
+          </SpinnerOrErrorOrChildren>
+        )
+      )
+  );
+}
+
 function Stages({
   error,
   hasElapsedTime = true,
@@ -146,33 +180,41 @@ function Stages({
 
       <Box flexDirection="column" paddingTop={1} marginLeft={1}>
         {[...stageTracker.entries()].map(([stage, status]) => (
-          <Box key={stage}>
-            {(status === 'current' || status === 'failed') && (
-              <SpinnerOrError error={error} type={spinners.stage} label={capitalCase(stage)} />
-            )}
+          <Box key={stage} flexDirection="column">
+            <Box>
+              {(status === 'current' || status === 'failed') && (
+                <SpinnerOrError error={error} type={spinners.stage} label={capitalCase(stage)} />
+              )}
 
-            {status === 'skipped' && (
-              <Text color="dim">
-                {icons.skipped} {capitalCase(stage)} - Skipped
-              </Text>
-            )}
+              {status === 'skipped' && (
+                <Text color="dim">
+                  {icons.skipped} {capitalCase(stage)} - Skipped
+                </Text>
+              )}
 
-            {status === 'completed' && (
-              <Box>
-                <Text color="green">{icons.completed} </Text>
-                <Text>{capitalCase(stage)} </Text>
-              </Box>
-            )}
+              {status === 'completed' && (
+                <Box>
+                  <Text color="green">{icons.completed} </Text>
+                  <Text>{capitalCase(stage)} </Text>
+                </Box>
+              )}
 
-            {status === 'pending' && (
-              <Text color="dim">
-                {icons.pending} {capitalCase(stage)}
-              </Text>
-            )}
-            {status !== 'pending' && status !== 'skipped' && hasStageTime && (
-              <Box>
-                <Text> </Text>
-                <Timer color="dim" isStopped={status === 'completed'} unit={timerUnit} />
+              {status === 'pending' && (
+                <Text color="dim">
+                  {icons.pending} {capitalCase(stage)}
+                </Text>
+              )}
+              {status !== 'pending' && status !== 'skipped' && hasStageTime && (
+                <Box>
+                  <Text> </Text>
+                  <Timer color="dim" isStopped={status === 'completed'} unit={timerUnit} />
+                </Box>
+              )}
+            </Box>
+
+            {info && status !== 'pending' && status !== 'skipped' && (
+              <Box flexDirection="column" marginLeft={5}>
+                <Infos info={info} error={error} stage={stage} />
               </Box>
             )}
           </Box>
@@ -181,25 +223,7 @@ function Stages({
 
       {info && (
         <Box flexDirection="column" paddingTop={1} marginLeft={1}>
-          {info?.map((i) =>
-            i.isStatic ? (
-              <StaticKeyValue key={i.label} {...i} />
-            ) : (
-              <SpinnerOrErrorOrChildren
-                key={i.label}
-                label={`${i.label}: `}
-                labelPosition="left"
-                error={error}
-                type={spinners.info}
-              >
-                {i.value && (
-                  <Text bold={i.isBold} color={i.color}>
-                    {i.value}
-                  </Text>
-                )}
-              </SpinnerOrErrorOrChildren>
-            )
-          )}
+          <Infos info={info} error={error} />
         </Box>
       )}
 
@@ -293,6 +317,8 @@ class CIMultiStageComponent<T extends Record<string, unknown>> {
         // do nothing
       }
     }
+
+    this.printInfo();
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -310,8 +336,13 @@ class CIMultiStageComponent<T extends Record<string, unknown>> {
       ux.stdout(`Elapsed time: ${displayTime}`);
     }
 
+    this.printInfo();
+  }
+
+  private printInfo(): void {
+    if (!this.info) return;
     ux.stdout();
-    for (const info of this.info ?? []) {
+    for (const info of this.info) {
       const formattedData = info.get ? info.get(this.data as T) : undefined;
       if (formattedData) {
         ux.stdout(`${info.label}: ${formattedData}`);
@@ -509,6 +540,7 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
           isBold: info.bold,
           color: info.color,
           isStatic: info.static,
+          stage: info.stage,
         };
       }) ?? []
     );
