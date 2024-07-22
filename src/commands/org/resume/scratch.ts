@@ -64,7 +64,7 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
       stages: scratchOrgLifecycleStages,
       title: 'Resuming Scratch Org',
       jsonEnabled: this.jsonEnabled(),
-      data: { alias: cached.alias },
+      data: { alias: cached?.alias },
       info: [
         {
           label: 'Request Id',
