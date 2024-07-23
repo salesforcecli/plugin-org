@@ -115,18 +115,7 @@ export class OrgOpenCommand extends SfCommand<OrgOpenOutput> {
       await new SfdcUrl(url).checkLightningDomain();
       this.spinner.stop();
     } catch (err) {
-      if (err instanceof Error) {
-        if (err.message.includes('timeout')) {
-          const domain = `https://${/https?:\/\/([^.]*)/.exec(url)?.[1]}.lightning.force.com`;
-          const domainRetryTimeout = env.getNumber('SF_DOMAIN_RETRY') ?? env.getNumber('SFDX_DOMAIN_RETRY', 240);
-          const timeout = new Duration(domainRetryTimeout, Duration.Unit.SECONDS);
-          const logger = await Logger.child(this.constructor.name);
-          logger.debug(`Did not find IP for ${domain} after ${timeout.seconds} seconds`);
-          throw new SfError(messages.getMessage('domainTimeoutError'), 'domainTimeoutError');
-        }
-        throw SfError.wrap(err);
-      }
-      throw err;
+      handleDomainError(err, url, env);
     }
 
     // create a local html file that contains the POST stuff.
@@ -165,7 +154,7 @@ export type OrgOpenOutput = {
   url: string;
   username: string;
   orgId: string;
-}
+};
 
 const fileCleanup = (tempFilePath: string): void =>
   fs.rmSync(tempFilePath, { force: true, maxRetries: 3, recursive: true });
@@ -173,8 +162,10 @@ const fileCleanup = (tempFilePath: string): void =>
 const buildFrontdoorUrl = async (org: Org, conn: Connection): Promise<string> => {
   await org.refreshAuth(); // we need a live accessToken for the frontdoor url
   const accessToken = conn.accessToken;
-  const instanceUrl = org.getField<string>(Org.Fields.INSTANCE_URL);
-  const instanceUrlClean = instanceUrl.replace(/\/$/, '');
+  if (!accessToken) {
+    throw new SfError('NoAccessToken', 'NoAccessToken');
+  }
+  const instanceUrlClean = org.getField<string>(Org.Fields.INSTANCE_URL).replace(/\/$/, '');
   return `${instanceUrlClean}/secur/frontdoor.jsp?sid=${accessToken}`;
 };
 
@@ -241,3 +232,22 @@ const getFileContents = (
     </form>
   </body>
 </html>`;
+
+const handleDomainError = (err: unknown, url: string, env: Env): string => {
+  if (err instanceof Error) {
+    if (err.message.includes('timeout')) {
+      const host = /https?:\/\/([^.]*)/.exec(url)?.[1];
+      if (!host) {
+        throw new SfError('InvalidUrl', 'InvalidUrl');
+      }
+      const domain = `https://${host}.lightning.force.com`;
+      const domainRetryTimeout = env.getNumber('SF_DOMAIN_RETRY') ?? env.getNumber('SFDX_DOMAIN_RETRY', 240);
+      const timeout = new Duration(domainRetryTimeout, Duration.Unit.SECONDS);
+      const logger = Logger.childFromRoot('org:open');
+      logger.debug(`Did not find IP for ${domain} after ${timeout.seconds} seconds`);
+      throw new SfError(messages.getMessage('domainTimeoutError'), 'domainTimeoutError');
+    }
+    throw SfError.wrap(err);
+  }
+  throw err;
+};
