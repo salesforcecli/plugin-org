@@ -1,3 +1,9 @@
+# [4.4.0](https://github.com/salesforcecli/plugin-org/compare/4.3.7...4.4.0) (2024-07-23)
+
+### Features
+
+- list metadata/-types stdout is table ([#1141](https://github.com/salesforcecli/plugin-org/issues/1141)) ([361fb6c](https://github.com/salesforcecli/plugin-org/commit/361fb6c75af2e450bc56f376c00657f32cc8f4bd))
+
 ## [4.3.7](https://github.com/salesforcecli/plugin-org/compare/4.3.6...4.3.7) (2024-07-23)
 
 ### Bug Fixes
