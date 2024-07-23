@@ -62,7 +62,11 @@ export class ListMetadata extends SfCommand<ListMetadataCommandResult> {
       fs.writeFileSync(flags['output-file'], JSON.stringify(listResult, null, 2));
       this.logSuccess(`Wrote result file to ${flags['output-file']}.`);
     } else if (listResult?.length) {
-      this.styledJSON(listResult);
+      this.table(listResult, Object.fromEntries(Object.keys(listResult[0]).map((k) => [k, { header: k }])), {
+        'no-truncate': true,
+        title: flags['metadata-type'],
+        sort: 'fullName',
+      });
     } else {
       this.warn(messages.getMessage('noMatchingMetadata', [flags['metadata-type'], conn.getUsername()]));
     }

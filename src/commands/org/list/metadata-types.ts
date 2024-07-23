@@ -68,7 +68,15 @@ export class ListMetadataTypes extends SfCommand<DescribeMetadataResult> {
       await fs.promises.writeFile(flags['output-file'], JSON.stringify(describeResult, null, 2));
       this.logSuccess(`Wrote result file to ${flags['output-file']}.`);
     } else {
-      this.styledJSON(describeResult);
+      this.table(
+        describeResult.metadataObjects,
+        Object.fromEntries(Object.keys(describeResult.metadataObjects[0]).map((k) => [k, { header: k }])),
+        {
+          'no-truncate': true,
+          title: 'Metadata',
+          sort: 'xmlName',
+        }
+      );
     }
     return describeResult;
   }
