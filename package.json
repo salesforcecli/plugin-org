@@ -1,14 +1,14 @@
 {
   "name": "@salesforce/plugin-org",
   "description": "Commands to interact with Salesforce orgs",
-  "version": "4.3.5",
+  "version": "4.3.6",
   "author": "Salesforce",
   "bugs": "https://github.com/forcedotcom/cli/issues",
   "dependencies": {
     "@oclif/core": "^4.0.12",
     "@salesforce/core": "^8.1.0",
     "@salesforce/kit": "^3.1.6",
-    "@salesforce/sf-plugins-core": "^11.1.2",
+    "@salesforce/sf-plugins-core": "^11.2.1",
     "@salesforce/source-deploy-retrieve": "^12.0.1",
     "ansis": "^3.2.0",
     "change-case": "^5.4.4",
@@ -16,14 +16,14 @@
     "open": "^10.1.0"
   },
   "devDependencies": {
-    "@oclif/plugin-command-snapshot": "^5.2.6",
+    "@oclif/plugin-command-snapshot": "^5.2.7",
     "@salesforce/cli-plugins-testkit": "^5.3.15",
     "@salesforce/dev-scripts": "^10.2.2",
-    "@salesforce/plugin-command-reference": "^3.1.9",
+    "@salesforce/plugin-command-reference": "^3.1.11",
     "@salesforce/ts-sinon": "1.4.22",
     "eslint-plugin-sf-plugin": "^1.18.11",
     "moment": "^2.30.1",
-    "oclif": "^4.13.9",
+    "oclif": "^4.14.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.3"
   },
