@@ -155,7 +155,9 @@ export class OrgListUtil {
             return auth;
           }
           const orgId = auth.getFields().orgId;
-
+          if (!orgId) {
+            throw new SfError('No orgId found in auth file');
+          }
           const orgFileName = `${orgId}.json`;
           // if userId, it could be created from password:generate command.  If <orgId>.json doesn't exist, it's also not a secondary user auth file
           if (orgId && !orgFileNames.includes(orgFileName)) {
@@ -220,7 +222,7 @@ export class OrgListUtil {
     );
 
     return {
-      scratchOrgs: results.filter((result) => 'expirationDate' in result) as ExtendedAuthFieldsScratch[],
+      scratchOrgs: results.filter((result) => 'expirationDate' in result),
       nonScratchOrgs: results.filter((result) => !('expirationDate' in result)),
     };
   }
