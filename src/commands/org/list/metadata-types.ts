@@ -77,6 +77,9 @@ export class ListMetadataTypes extends SfCommand<DescribeMetadataResult> {
           sort: 'xmlName',
         }
       );
+      this.log(`Organizational Namespace: ${describeResult.organizationNamespace}`);
+      this.log(`Partial Save Allowed: ${describeResult.partialSaveAllowed}`);
+      this.log(`Test Required: ${describeResult.testRequired}`);
     }
     return describeResult;
   }
