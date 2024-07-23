@@ -176,29 +176,32 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       title: flags.async ? 'Creating Scratch Org (async)' : 'Creating Scratch Org',
       jsonEnabled: this.jsonEnabled(),
       data: { alias: flags.alias },
-      info: [
+      postInfoBlock: [
         {
           label: 'Request Id',
+          type: 'dynamic-key-value',
           get: (data) =>
             data?.scratchOrgInfo?.Id && terminalLink(data.scratchOrgInfo.Id, `${baseUrl}/${data.scratchOrgInfo.Id}`),
           bold: true,
         },
         {
           label: 'OrgId',
+          type: 'dynamic-key-value',
           get: (data) => data?.scratchOrgInfo?.ScratchOrg,
           bold: true,
           color: 'cyan',
         },
         {
           label: 'Username',
+          type: 'dynamic-key-value',
           get: (data) => data?.scratchOrgInfo?.SignupUsername,
           bold: true,
           color: 'cyan',
         },
         {
           label: 'Alias',
+          type: 'static-key-value',
           get: (data) => data?.alias,
-          static: true,
         },
       ],
     });

@@ -65,29 +65,32 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
       title: 'Resuming Scratch Org',
       jsonEnabled: this.jsonEnabled(),
       data: { alias: cached?.alias },
-      info: [
+      postInfoBlock: [
         {
           label: 'Request Id',
+          type: 'dynamic-key-value',
           get: (data) =>
             data?.scratchOrgInfo?.Id && terminalLink(data.scratchOrgInfo.Id, `${hubBaseUrl}/${data.scratchOrgInfo.Id}`),
           bold: true,
         },
         {
           label: 'OrgId',
+          type: 'dynamic-key-value',
           get: (data) => data?.scratchOrgInfo?.ScratchOrg,
           bold: true,
           color: 'cyan',
         },
         {
           label: 'Username',
+          type: 'dynamic-key-value',
           get: (data) => data?.scratchOrgInfo?.SignupUsername,
           bold: true,
           color: 'cyan',
         },
         {
           label: 'Alias',
+          type: 'static-key-value',
           get: (data) => data?.alias,
-          static: true,
         },
       ],
     });

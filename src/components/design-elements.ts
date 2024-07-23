@@ -12,6 +12,7 @@ export const icons = {
   skipped: figures.circle,
   completed: figures.tick,
   failed: figures.cross,
+  current: figures.play,
 };
 
 export const spinners: Record<string, SpinnerName> = {

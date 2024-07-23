@@ -26,6 +26,12 @@ const isInCi =
 
 type Info<T extends Record<string, unknown>> = {
   /**
+   * key-value: Display a key-value pair with a spinner.
+   * static-key-value: Display a key-value pair without a spinner.
+   * message: Display a message.
+   */
+  type: 'dynamic-key-value' | 'static-key-value' | 'message';
+  /**
    * Color of the value.
    */
   color?: string;
@@ -36,33 +42,40 @@ type Info<T extends Record<string, unknown>> = {
    * @param data The data property on the MultiStageComponent.
    * @returns {string | undefined}
    */
-  get?: (data?: T) => string | undefined;
+  get: (data?: T) => string | undefined;
   /**
    * Whether the value should be bold.
    */
   bold?: boolean;
-  /**
-   * Whether the value should be a static key-value pair (not a spinner component).
-   */
-  static?: boolean;
-  /**
-   * Label to display next to the value.
-   */
-  label: string;
-  /**
-   * Stage to display the value on. If not provided, the value will be displayed at the bottom of the stages component.
-   */
-  stage?: string;
 };
 
-type FormattedInfo = {
+type KeyValuePair<T extends Record<string, unknown>> = Info<T> & {
+  /**
+   * Label of the key-value pair.
+   */
+  label: string;
+  type: 'dynamic-key-value' | 'static-key-value';
+};
+
+type SimpleMessage<T extends Record<string, unknown>> = Info<T> & {
+  type: 'message';
+};
+
+type InfoBlock<T extends Record<string, unknown>> = Array<KeyValuePair<T> | SimpleMessage<T>>;
+type StageInfoBlock<T extends Record<string, unknown>> = Array<
+  (KeyValuePair<T> & { stage: string }) | (SimpleMessage<T> & { stage: string })
+>;
+
+type FormattedKeyValue = {
   readonly color?: string;
   readonly isBold?: boolean;
-  readonly isStatic?: boolean;
-  readonly label: string;
+  // eslint-disable-next-line react/no-unused-prop-types
+  readonly label?: string;
   readonly value: string | undefined;
   // eslint-disable-next-line react/no-unused-prop-types
   readonly stage?: string;
+  // eslint-disable-next-line react/no-unused-prop-types
+  readonly type: 'dynamic-key-value' | 'static-key-value' | 'message';
 };
 
 type MultiStageComponentOptions<T extends Record<string, unknown>> = {
@@ -77,13 +90,11 @@ type MultiStageComponentOptions<T extends Record<string, unknown>> = {
   /**
    * Information to display at the bottom of the stages component.
    */
-  readonly info?: Array<Info<T>>;
+  readonly postInfoBlock?: Array<KeyValuePair<T> | SimpleMessage<T>>;
   /**
-   * Messages to display at the bottom of the stages component.
-   *
-   * This will be rendered between the stages and the info section.
+   * Information to display below the title but above the stages.
    */
-  readonly messages?: string[];
+  readonly preInfoBlock?: Array<KeyValuePair<T> | SimpleMessage<T>>;
   /**
    * Whether to show the total elapsed time. Defaults to true
    */
@@ -92,6 +103,10 @@ type MultiStageComponentOptions<T extends Record<string, unknown>> = {
    * Whether to show the time spent on each stage. Defaults to true
    */
   readonly showStageTime?: boolean;
+  /**
+   * Information to display for a specific stage. Each object must have a stage property set.
+   */
+  readonly stageInfoBlock?: StageInfoBlock<T>;
   /**
    * The unit to use for the timer. Defaults to 'ms'
    */
@@ -110,8 +125,9 @@ type MultiStageComponentOptions<T extends Record<string, unknown>> = {
 
 type StagesProps = {
   readonly error?: Error | undefined;
-  readonly info?: FormattedInfo[];
-  readonly messages?: string[];
+  readonly postInfoBlock?: FormattedKeyValue[];
+  readonly preInfoBlock?: FormattedKeyValue[];
+  readonly stageInfoBlock?: FormattedKeyValue[];
   readonly title: string;
   readonly hasElapsedTime?: boolean;
   readonly hasStageTime?: boolean;
@@ -119,41 +135,67 @@ type StagesProps = {
   readonly stageTracker: StageTracker;
 };
 
-function StaticKeyValue({ label, value, isBold, color, isStatic }: FormattedInfo): React.ReactNode {
-  if (!value || !isStatic) return;
+function StaticKeyValue({ label, value, isBold, color }: FormattedKeyValue): React.ReactNode {
+  if (!value) return;
   return (
-    <Box>
+    <Box key={label}>
       <Text bold={isBold}>{label}: </Text>
       <Text color={color}>{value}</Text>
     </Box>
   );
 }
 
-function Infos({ info, error, stage }: { info: FormattedInfo[]; error?: Error; stage?: string }): React.ReactNode {
+function SimpleMessage({ value, color, isBold }: FormattedKeyValue): React.ReactNode {
+  if (!value) return;
   return (
-    info
+    <Text bold={isBold} color={color}>
+      {value}
+    </Text>
+  );
+}
+
+function Infos({
+  keyValuePairs,
+  error,
+  stage,
+}: {
+  keyValuePairs: FormattedKeyValue[];
+  error?: Error;
+  stage?: string;
+}): React.ReactNode {
+  return (
+    keyValuePairs
       // If stage is provided, only show info for that stage
       // otherwise, show all infos that don't have a specified stage
-      .filter((i) => (stage ? i.stage === stage : !i.stage))
-      .map((i) =>
-        i.isStatic ? (
-          <StaticKeyValue key={i.label} {...i} />
-        ) : (
-          <SpinnerOrErrorOrChildren
-            key={i.label}
-            label={`${i.label}: `}
-            labelPosition="left"
-            error={error}
-            type={spinners.info}
-          >
-            {i.value && (
-              <Text bold={i.isBold} color={i.color}>
-                {i.value}
-              </Text>
-            )}
-          </SpinnerOrErrorOrChildren>
-        )
-      )
+      .filter((kv) => (stage ? kv.stage === stage : !kv.stage))
+      .map((kv) => {
+        const key = `${kv.label}-${kv.value}`;
+        if (kv.type === 'message') {
+          return <SimpleMessage key={key} {...kv} />;
+        }
+
+        if (kv.type === 'dynamic-key-value') {
+          return (
+            <SpinnerOrErrorOrChildren
+              key={key}
+              label={`${kv.label}: `}
+              labelPosition="left"
+              error={error}
+              type={spinners.info}
+            >
+              {kv.value && (
+                <Text bold={kv.isBold} color={kv.color}>
+                  {kv.value}
+                </Text>
+              )}
+            </SpinnerOrErrorOrChildren>
+          );
+        }
+
+        if (kv.type === 'static-key-value') {
+          return <StaticKeyValue key={key} {...kv} />;
+        }
+      })
   );
 }
 
@@ -161,8 +203,9 @@ function Stages({
   error,
   hasElapsedTime = true,
   hasStageTime = true,
-  info,
-  messages,
+  postInfoBlock,
+  preInfoBlock,
+  stageInfoBlock,
   stageTracker,
   timerUnit = 'ms',
   title,
@@ -170,11 +213,10 @@ function Stages({
   return (
     <Box flexDirection="column" paddingTop={1}>
       <Divider title={title} />
-      {messages && messages.length > 0 && (
+
+      {preInfoBlock && (
         <Box flexDirection="column" paddingTop={1} marginLeft={1}>
-          {messages?.map((message) => (
-            <Text key={message}>{message}</Text>
-          ))}
+          <Infos keyValuePairs={preInfoBlock} error={error} />
         </Box>
       )}
 
@@ -212,18 +254,18 @@ function Stages({
               )}
             </Box>
 
-            {info && status !== 'pending' && status !== 'skipped' && (
+            {stageInfoBlock && status !== 'pending' && status !== 'skipped' && (
               <Box flexDirection="column" marginLeft={5}>
-                <Infos info={info} error={error} stage={stage} />
+                <Infos keyValuePairs={stageInfoBlock} error={error} stage={stage} />
               </Box>
             )}
           </Box>
         ))}
       </Box>
 
-      {info && (
+      {postInfoBlock && (
         <Box flexDirection="column" paddingTop={1} marginLeft={1}>
-          <Infos info={info} error={error} />
+          <Infos keyValuePairs={postInfoBlock} error={error} />
         </Box>
       )}
 
@@ -238,35 +280,43 @@ function Stages({
 }
 
 class CIMultiStageComponent<T extends Record<string, unknown>> {
-  private seenStages: Set<string>;
+  private seenStages: Set<string> = new Set();
   private data?: Partial<T>;
   private startTime: number | undefined;
   private startTimes: Map<string, number> = new Map();
+  private lastUpdateTime: number;
 
-  private readonly info?: Array<Info<T>>;
+  private readonly postInfoBlock?: InfoBlock<T>;
+  private readonly preInfoBlock?: InfoBlock<T>;
+  private readonly stageInfoBlock?: StageInfoBlock<T>;
   private readonly stages: readonly string[] | string[];
   private readonly title: string;
   private readonly hasElapsedTime?: boolean;
   private readonly hasStageTime?: boolean;
   private readonly timerUnit?: 'ms' | 's';
+  private readonly messageTimeout = parseInt(env.SF_CI_MESSAGE_TIMEOUT ?? '5000', 10) ?? 5000;
 
   public constructor({
     data,
-    info,
+    postInfoBlock,
+    preInfoBlock,
     showElapsedTime,
     showStageTime,
+    stageInfoBlock,
     stages,
     timerUnit,
     title,
   }: MultiStageComponentOptions<T>) {
     this.title = title;
     this.stages = stages;
-    this.seenStages = new Set();
-    this.info = info;
+    this.postInfoBlock = postInfoBlock;
+    this.preInfoBlock = preInfoBlock;
     this.hasElapsedTime = showElapsedTime ?? true;
     this.hasStageTime = showStageTime ?? true;
+    this.stageInfoBlock = stageInfoBlock;
     this.timerUnit = timerUnit ?? 'ms';
     this.data = data;
+    this.lastUpdateTime = Date.now();
 
     ux.stdout(`───── ${this.title} ─────`);
     ux.stdout('Steps:');
@@ -292,7 +342,16 @@ class CIMultiStageComponent<T extends Record<string, unknown>> {
           // do nothing
           break;
         case 'current':
-          this.startTimes.set(stage, Date.now());
+          if (Date.now() - this.lastUpdateTime < this.messageTimeout) break;
+          this.lastUpdateTime = Date.now();
+          if (!this.startTimes.has(stage)) this.startTimes.set(stage, Date.now());
+          ux.stdout(`${icons.current} ${capitalCase(stage)}...`);
+          this.printInfo(this.preInfoBlock, 3);
+          this.printInfo(
+            this.stageInfoBlock?.filter((info) => info.stage === stage),
+            3
+          );
+          this.printInfo(this.postInfoBlock, 3);
           break;
         case 'failed':
         case 'skipped':
@@ -306,10 +365,22 @@ class CIMultiStageComponent<T extends Record<string, unknown>> {
                 ? msInMostReadableFormat(elapsedTime)
                 : secondsInMostReadableFormat(elapsedTime, 0);
             ux.stdout(`${icons[status]} ${capitalCase(stage)} (${displayTime})`);
+            this.printInfo(this.preInfoBlock, 3);
+            this.printInfo(
+              this.stageInfoBlock?.filter((info) => info.stage === stage),
+              3
+            );
+            this.printInfo(this.postInfoBlock, 3);
           } else if (status === 'skipped') {
             ux.stdout(`${icons[status]} ${capitalCase(stage)} - Skipped`);
           } else {
             ux.stdout(`${icons[status]} ${capitalCase(stage)}`);
+            this.printInfo(this.preInfoBlock, 3);
+            this.printInfo(
+              this.stageInfoBlock?.filter((info) => info.stage === stage),
+              3
+            );
+            this.printInfo(this.postInfoBlock, 3);
           }
 
           break;
@@ -317,13 +388,6 @@ class CIMultiStageComponent<T extends Record<string, unknown>> {
         // do nothing
       }
     }
-
-    this.printInfo();
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  public addMessage(message: string): void {
-    ux.stdout(message);
   }
 
   public stop(stageTracker: StageTracker): void {
@@ -334,18 +398,24 @@ class CIMultiStageComponent<T extends Record<string, unknown>> {
       const displayTime =
         this.timerUnit === 'ms' ? msInMostReadableFormat(elapsedTime) : secondsInMostReadableFormat(elapsedTime, 0);
       ux.stdout(`Elapsed time: ${displayTime}`);
+      ux.stdout();
     }
 
-    this.printInfo();
+    this.printInfo(this.preInfoBlock);
+    this.printInfo(this.postInfoBlock);
   }
 
-  private printInfo(): void {
-    if (!this.info) return;
-    ux.stdout();
-    for (const info of this.info) {
-      const formattedData = info.get ? info.get(this.data as T) : undefined;
-      if (formattedData) {
-        ux.stdout(`${info.label}: ${formattedData}`);
+  private printInfo(infoBlock: InfoBlock<T> | StageInfoBlock<T> | undefined, indent = 0): void {
+    const spaces = ' '.repeat(indent);
+    if (infoBlock?.length) {
+      for (const info of infoBlock) {
+        const formattedData = info.get ? info.get(this.data as T) : undefined;
+        if (!formattedData) continue;
+        if (info.type === 'message') {
+          ux.stdout(`${spaces}${formattedData}`);
+        } else {
+          ux.stdout(`${spaces}${info.label}: ${formattedData}`);
+        }
       }
     }
   }
@@ -357,9 +427,10 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
   private ciInstance: CIMultiStageComponent<T> | undefined;
   private stageTracker: StageTracker;
   private stopped = false;
-  private messages: string[];
 
-  private readonly info?: Array<Info<T>>;
+  private readonly postInfoBlock?: InfoBlock<T>;
+  private readonly preInfoBlock?: InfoBlock<T>;
+  private readonly stageInfoBlock?: StageInfoBlock<T>;
   private readonly stages: readonly string[] | string[];
   private readonly title: string;
   private readonly hasElapsedTime?: boolean;
@@ -368,11 +439,12 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
 
   public constructor({
     data,
-    info,
     jsonEnabled,
-    messages,
+    postInfoBlock,
+    preInfoBlock,
     showElapsedTime,
     showStageTime,
+    stageInfoBlock,
     stages,
     timerUnit,
     title,
@@ -380,53 +452,37 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
     this.data = data;
     this.stages = stages;
     this.title = title;
-    this.info = info;
+    this.postInfoBlock = postInfoBlock;
+    this.preInfoBlock = preInfoBlock;
     this.hasElapsedTime = showElapsedTime ?? true;
     this.hasStageTime = showStageTime ?? true;
     this.timerUnit = timerUnit ?? 'ms';
     this.stageTracker = new StageTracker(stages);
-    this.messages = messages ?? [];
+    this.stageInfoBlock = stageInfoBlock;
 
-    if (!jsonEnabled) {
-      if (isInCi) {
-        this.ciInstance = new CIMultiStageComponent({
-          stages,
-          title,
-          info,
-          showElapsedTime,
-          showStageTime,
-          timerUnit,
-          data,
-          jsonEnabled,
-        });
-      } else {
-        this.inkInstance = render(
-          <Stages
-            hasElapsedTime={this.hasElapsedTime}
-            hasStageTime={this.hasStageTime}
-            info={this.formatInfo()}
-            messages={this.messages}
-            stageTracker={this.stageTracker}
-            timerUnit={this.timerUnit}
-            title={this.title}
-          />
-        );
-      }
-    }
-  }
+    if (jsonEnabled) return;
 
-  public addMessage(message: string): void {
-    if (this.stopped) return;
-    this.messages.push(message);
     if (isInCi) {
-      this.ciInstance?.addMessage(message);
+      this.ciInstance = new CIMultiStageComponent({
+        stages,
+        title,
+        postInfoBlock,
+        preInfoBlock,
+        showElapsedTime,
+        showStageTime,
+        stageInfoBlock,
+        timerUnit,
+        data,
+        jsonEnabled,
+      });
     } else {
-      this.inkInstance?.rerender(
+      this.inkInstance = render(
         <Stages
           hasElapsedTime={this.hasElapsedTime}
           hasStageTime={this.hasStageTime}
-          info={this.formatInfo()}
-          messages={this.messages}
+          postInfoBlock={this.formatKeyValuePairs(this.postInfoBlock)}
+          preInfoBlock={this.formatKeyValuePairs(this.preInfoBlock)}
+          stageInfoBlock={this.formatKeyValuePairs(this.stageInfoBlock)}
           stageTracker={this.stageTracker}
           timerUnit={this.timerUnit}
           title={this.title}
@@ -480,8 +536,9 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
           error={error}
           hasElapsedTime={this.hasElapsedTime}
           hasStageTime={this.hasStageTime}
-          info={this.formatInfo()}
-          messages={this.messages}
+          postInfoBlock={this.formatKeyValuePairs(this.postInfoBlock)}
+          preInfoBlock={this.formatKeyValuePairs(this.preInfoBlock)}
+          stageInfoBlock={this.formatKeyValuePairs(this.stageInfoBlock)}
           stageTracker={this.stageTracker}
           timerUnit={this.timerUnit}
           title={this.title}
@@ -492,8 +549,9 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
         <Stages
           hasElapsedTime={this.hasElapsedTime}
           hasStageTime={this.hasStageTime}
-          info={this.formatInfo()}
-          messages={this.messages}
+          postInfoBlock={this.formatKeyValuePairs(this.postInfoBlock)}
+          preInfoBlock={this.formatKeyValuePairs(this.preInfoBlock)}
+          stageInfoBlock={this.formatKeyValuePairs(this.stageInfoBlock)}
           stageTracker={this.stageTracker}
           timerUnit={this.timerUnit}
           title={this.title}
@@ -520,8 +578,9 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
         <Stages
           hasElapsedTime={this.hasElapsedTime}
           hasStageTime={this.hasStageTime}
-          info={this.formatInfo()}
-          messages={this.messages}
+          postInfoBlock={this.formatKeyValuePairs(this.postInfoBlock)}
+          preInfoBlock={this.formatKeyValuePairs(this.preInfoBlock)}
+          stageInfoBlock={this.formatKeyValuePairs(this.stageInfoBlock)}
           stageTracker={this.stageTracker}
           timerUnit={this.timerUnit}
           title={this.title}
@@ -530,17 +589,17 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
     }
   }
 
-  private formatInfo(): FormattedInfo[] {
+  private formatKeyValuePairs(infoBlock: InfoBlock<T> | StageInfoBlock<T> | undefined): FormattedKeyValue[] {
     return (
-      this.info?.map((info) => {
+      infoBlock?.map((info) => {
         const formattedData = info.get ? info.get(this.data as T) : undefined;
         return {
           value: formattedData,
-          label: info.label,
           isBold: info.bold,
           color: info.color,
-          isStatic: info.static,
-          stage: info.stage,
+          type: info.type,
+          ...(info.type !== 'message' ? { label: info.label } : {}),
+          ...('stage' in info ? { stage: info.stage } : {}),
         };
       }) ?? []
     );
