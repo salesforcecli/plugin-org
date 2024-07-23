@@ -85,7 +85,7 @@ export class ListMetadataTypes extends SfCommand<DescribeMetadataResult> {
         {
           'no-truncate': true,
           title: 'Metadata',
-          sort: 'xmlName',
+          sort: 'Xml Names',
         }
       );
       this.log(`Organizational Namespace: ${describeResult.organizationNamespace}`);

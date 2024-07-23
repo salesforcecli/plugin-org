@@ -79,11 +79,10 @@ export class ListMetadata extends SfCommand<ListMetadataCommandResult> {
           },
           manageableState: { header: 'Manageable State' },
           namespacePrefix: { header: 'Namespace Prefix' },
-          type: { header: 'type' },
         },
         {
           title: flags['metadata-type'],
-          sort: 'fullName',
+          sort: 'Manageable State',
         }
       );
     } else {
