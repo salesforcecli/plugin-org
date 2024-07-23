@@ -250,14 +250,10 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxCommandRes
 
     const data = Object.entries(sandboxInfo).map(([key, value]) => ({ key, value: value ?? 'null' }));
     this.styledHeader('Config Sandbox Refresh');
-    this.table(
-      data,
-      {
-        key: { header: 'Field' },
-        value: { header: 'Value' },
-      },
-      {}
-    );
+    this.table(data, {
+      key: { header: 'Field' },
+      value: { header: 'Value' },
+    });
 
     if (
       !(await this.confirm({

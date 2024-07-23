@@ -216,14 +216,10 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
 
     const data = Object.entries(sandboxReq).map(([key, value]) => ({ key, value }));
     this.styledHeader('Config Sandbox Request');
-    this.table(
-      data,
-      {
-        key: { header: 'Field' },
-        value: { header: 'Value' },
-      },
-      {}
-    );
+    this.table(data, {
+      key: { header: 'Field' },
+      value: { header: 'Value' },
+    });
 
     if (
       !(await this.confirm({
