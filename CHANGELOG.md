@@ -1,3 +1,9 @@
+## [4.3.7](https://github.com/salesforcecli/plugin-org/compare/4.3.6...4.3.7) (2024-07-23)
+
+### Bug Fixes
+
+- nullish-linter ([#1134](https://github.com/salesforcecli/plugin-org/issues/1134)) ([48a7b8c](https://github.com/salesforcecli/plugin-org/commit/48a7b8c4f385967c891f79afb14cb3022418096e))
+
 ## [4.3.6](https://github.com/salesforcecli/plugin-org/compare/4.3.5...4.3.6) (2024-07-21)
 
 ### Bug Fixes
