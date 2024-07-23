@@ -7,7 +7,7 @@
 import fs from 'node:fs';
 
 import { Messages } from '@salesforce/core';
-import type { DescribeMetadataResult } from '@jsforce/jsforce-node/lib/api/metadata.js';
+import type { DescribeMetadataObject, DescribeMetadataResult } from '@jsforce/jsforce-node/lib/api/metadata.js';
 import { RegistryAccess } from '@salesforce/source-deploy-retrieve';
 import { Flags, loglevel, requiredOrgFlagWithDeprecations, SfCommand } from '@salesforce/sf-plugins-core';
 
@@ -68,7 +68,29 @@ export class ListMetadataTypes extends SfCommand<DescribeMetadataResult> {
       await fs.promises.writeFile(flags['output-file'], JSON.stringify(describeResult, null, 2));
       this.logSuccess(`Wrote result file to ${flags['output-file']}.`);
     } else {
-      this.styledJSON(describeResult);
+      this.table(
+        describeResult.metadataObjects,
+        {
+          xmlName: { header: 'Xml Names' },
+          childXmlNames: {
+            header: 'Child Xml Names',
+            get: (row: DescribeMetadataObject) =>
+              row.childXmlNames.length ? `[ ${row.childXmlNames.join('\n')} ]` : '',
+          },
+          directoryName: { header: 'Directory Name' },
+          inFolder: { header: 'In Folder' },
+          metaFile: { header: 'Meta File' },
+          suffix: { header: 'Suffix' },
+        },
+        {
+          'no-truncate': true,
+          title: 'Metadata',
+          sort: 'Xml Names',
+        }
+      );
+      this.log(`Organizational Namespace: ${describeResult.organizationNamespace}`);
+      this.log(`Partial Save Allowed: ${describeResult.partialSaveAllowed}`);
+      this.log(`Test Required: ${describeResult.testRequired}`);
     }
     return describeResult;
   }

@@ -8,7 +8,6 @@
 import { Duration } from '@salesforce/kit';
 import { Flags } from '@salesforce/sf-plugins-core';
 import { Lifecycle, Messages, SandboxEvents, SandboxRequest, SfError } from '@salesforce/core';
-import { Ux } from '@salesforce/sf-plugins-core';
 import { Interfaces } from '@oclif/core';
 import requestFunctions from '../../../shared/sandboxRequest.js';
 import { SandboxCommandBase, SandboxCommandResponse } from '../../../shared/sandboxCommandBase.js';
@@ -215,14 +214,12 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
   private async confirmSandboxReq(sandboxReq: SandboxConfirmData): Promise<void> {
     if (this.flags['no-prompt'] || this.jsonEnabled()) return;
 
-    const columns: Ux.Table.Columns<{ key: string; value: unknown }> = {
-      key: { header: 'Field' },
-      value: { header: 'Value' },
-    };
-
     const data = Object.entries(sandboxReq).map(([key, value]) => ({ key, value }));
     this.styledHeader('Config Sandbox Request');
-    this.table(data, columns, {});
+    this.table(data, {
+      key: { header: 'Field' },
+      value: { header: 'Value' },
+    });
 
     if (
       !(await this.confirm({

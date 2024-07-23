@@ -7,8 +7,7 @@
 
 import { Duration, omit } from '@salesforce/kit';
 import { Flags } from '@salesforce/sf-plugins-core';
-import { Lifecycle, Messages, SandboxInfo, SandboxEvents, SfError } from '@salesforce/core';
-import { Ux } from '@salesforce/sf-plugins-core';
+import { Lifecycle, Messages, SandboxEvents, SandboxInfo, SfError } from '@salesforce/core';
 import { Interfaces } from '@oclif/core';
 import requestFunctions from '../../../shared/sandboxRequest.js';
 import { SandboxCommandBase, SandboxCommandResponse } from '../../../shared/sandboxCommandBase.js';
@@ -249,14 +248,12 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxCommandRes
   private async confirmSandboxRefresh(sandboxInfo: SandboxInfo): Promise<void> {
     if (this.flags['no-prompt'] || this.jsonEnabled()) return;
 
-    const columns: Ux.Table.Columns<{ key: string; value: unknown }> = {
-      key: { header: 'Field' },
-      value: { header: 'Value' },
-    };
-
     const data = Object.entries(sandboxInfo).map(([key, value]) => ({ key, value: value ?? 'null' }));
     this.styledHeader('Config Sandbox Refresh');
-    this.table(data, columns, {});
+    this.table(data, {
+      key: { header: 'Field' },
+      value: { header: 'Value' },
+    });
 
     if (
       !(await this.confirm({
