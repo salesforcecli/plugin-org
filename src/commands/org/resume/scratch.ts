@@ -65,7 +65,7 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
       title: 'Resuming Scratch Org',
       jsonEnabled: this.jsonEnabled(),
       data: { alias: cached?.alias },
-      postInfoBlock: [
+      postStagesBlock: [
         {
           label: 'Request Id',
           type: 'dynamic-key-value',

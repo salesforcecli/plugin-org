@@ -176,7 +176,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       title: flags.async ? 'Creating Scratch Org (async)' : 'Creating Scratch Org',
       jsonEnabled: this.jsonEnabled(),
       data: { alias: flags.alias },
-      postInfoBlock: [
+      postStagesBlock: [
         {
           label: 'Request Id',
           type: 'dynamic-key-value',

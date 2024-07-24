@@ -90,11 +90,11 @@ type MultiStageComponentOptions<T extends Record<string, unknown>> = {
   /**
    * Information to display at the bottom of the stages component.
    */
-  readonly postInfoBlock?: Array<KeyValuePair<T> | SimpleMessage<T>>;
+  readonly postStagesBlock?: Array<KeyValuePair<T> | SimpleMessage<T>>;
   /**
    * Information to display below the title but above the stages.
    */
-  readonly preInfoBlock?: Array<KeyValuePair<T> | SimpleMessage<T>>;
+  readonly preStagesBlock?: Array<KeyValuePair<T> | SimpleMessage<T>>;
   /**
    * Whether to show the total elapsed time. Defaults to true
    */
@@ -106,7 +106,7 @@ type MultiStageComponentOptions<T extends Record<string, unknown>> = {
   /**
    * Information to display for a specific stage. Each object must have a stage property set.
    */
-  readonly stageInfoBlock?: StageInfoBlock<T>;
+  readonly stageSpecificBlock?: StageInfoBlock<T>;
   /**
    * The unit to use for the timer. Defaults to 'ms'
    */
@@ -125,9 +125,9 @@ type MultiStageComponentOptions<T extends Record<string, unknown>> = {
 
 type StagesProps = {
   readonly error?: Error | undefined;
-  readonly postInfoBlock?: FormattedKeyValue[];
-  readonly preInfoBlock?: FormattedKeyValue[];
-  readonly stageInfoBlock?: FormattedKeyValue[];
+  readonly postStagesBlock?: FormattedKeyValue[];
+  readonly preStagesBlock?: FormattedKeyValue[];
+  readonly stageSpecificBlock?: FormattedKeyValue[];
   readonly title: string;
   readonly hasElapsedTime?: boolean;
   readonly hasStageTime?: boolean;
@@ -203,9 +203,9 @@ function Stages({
   error,
   hasElapsedTime = true,
   hasStageTime = true,
-  postInfoBlock,
-  preInfoBlock,
-  stageInfoBlock,
+  postStagesBlock,
+  preStagesBlock,
+  stageSpecificBlock,
   stageTracker,
   timerUnit = 'ms',
   title,
@@ -214,9 +214,9 @@ function Stages({
     <Box flexDirection="column" paddingTop={1}>
       <Divider title={title} />
 
-      {preInfoBlock && (
+      {preStagesBlock && preStagesBlock.length > 0 && (
         <Box flexDirection="column" paddingTop={1} marginLeft={1}>
-          <Infos keyValuePairs={preInfoBlock} error={error} />
+          <Infos keyValuePairs={preStagesBlock} error={error} />
         </Box>
       )}
 
@@ -236,8 +236,8 @@ function Stages({
 
               {status === 'completed' && (
                 <Box>
-                  <Text color="green">{icons.completed} </Text>
-                  <Text>{capitalCase(stage)} </Text>
+                  <Text color="green">{icons.completed}</Text>
+                  <Text>{capitalCase(stage)}</Text>
                 </Box>
               )}
 
@@ -254,18 +254,18 @@ function Stages({
               )}
             </Box>
 
-            {stageInfoBlock && status !== 'pending' && status !== 'skipped' && (
+            {stageSpecificBlock && stageSpecificBlock.length > 0 && status !== 'pending' && status !== 'skipped' && (
               <Box flexDirection="column" marginLeft={5}>
-                <Infos keyValuePairs={stageInfoBlock} error={error} stage={stage} />
+                <Infos keyValuePairs={stageSpecificBlock} error={error} stage={stage} />
               </Box>
             )}
           </Box>
         ))}
       </Box>
 
-      {postInfoBlock && (
+      {postStagesBlock && postStagesBlock.length > 0 && (
         <Box flexDirection="column" paddingTop={1} marginLeft={1}>
-          <Infos keyValuePairs={postInfoBlock} error={error} />
+          <Infos keyValuePairs={postStagesBlock} error={error} />
         </Box>
       )}
 
@@ -286,9 +286,9 @@ class CIMultiStageComponent<T extends Record<string, unknown>> {
   private startTimes: Map<string, number> = new Map();
   private lastUpdateTime: number;
 
-  private readonly postInfoBlock?: InfoBlock<T>;
-  private readonly preInfoBlock?: InfoBlock<T>;
-  private readonly stageInfoBlock?: StageInfoBlock<T>;
+  private readonly postStagesBlock?: InfoBlock<T>;
+  private readonly preStagesBlock?: InfoBlock<T>;
+  private readonly stageSpecificBlock?: StageInfoBlock<T>;
   private readonly stages: readonly string[] | string[];
   private readonly title: string;
   private readonly hasElapsedTime?: boolean;
@@ -298,22 +298,22 @@ class CIMultiStageComponent<T extends Record<string, unknown>> {
 
   public constructor({
     data,
-    postInfoBlock,
-    preInfoBlock,
+    postStagesBlock,
+    preStagesBlock,
     showElapsedTime,
     showStageTime,
-    stageInfoBlock,
+    stageSpecificBlock,
     stages,
     timerUnit,
     title,
   }: MultiStageComponentOptions<T>) {
     this.title = title;
     this.stages = stages;
-    this.postInfoBlock = postInfoBlock;
-    this.preInfoBlock = preInfoBlock;
+    this.postStagesBlock = postStagesBlock;
+    this.preStagesBlock = preStagesBlock;
     this.hasElapsedTime = showElapsedTime ?? true;
     this.hasStageTime = showStageTime ?? true;
-    this.stageInfoBlock = stageInfoBlock;
+    this.stageSpecificBlock = stageSpecificBlock;
     this.timerUnit = timerUnit ?? 'ms';
     this.data = data;
     this.lastUpdateTime = Date.now();
@@ -346,12 +346,12 @@ class CIMultiStageComponent<T extends Record<string, unknown>> {
           this.lastUpdateTime = Date.now();
           if (!this.startTimes.has(stage)) this.startTimes.set(stage, Date.now());
           ux.stdout(`${icons.current} ${capitalCase(stage)}...`);
-          this.printInfo(this.preInfoBlock, 3);
+          this.printInfo(this.preStagesBlock, 3);
           this.printInfo(
-            this.stageInfoBlock?.filter((info) => info.stage === stage),
+            this.stageSpecificBlock?.filter((info) => info.stage === stage),
             3
           );
-          this.printInfo(this.postInfoBlock, 3);
+          this.printInfo(this.postStagesBlock, 3);
           break;
         case 'failed':
         case 'skipped':
@@ -365,22 +365,22 @@ class CIMultiStageComponent<T extends Record<string, unknown>> {
                 ? msInMostReadableFormat(elapsedTime)
                 : secondsInMostReadableFormat(elapsedTime, 0);
             ux.stdout(`${icons[status]} ${capitalCase(stage)} (${displayTime})`);
-            this.printInfo(this.preInfoBlock, 3);
+            this.printInfo(this.preStagesBlock, 3);
             this.printInfo(
-              this.stageInfoBlock?.filter((info) => info.stage === stage),
+              this.stageSpecificBlock?.filter((info) => info.stage === stage),
               3
             );
-            this.printInfo(this.postInfoBlock, 3);
+            this.printInfo(this.postStagesBlock, 3);
           } else if (status === 'skipped') {
             ux.stdout(`${icons[status]} ${capitalCase(stage)} - Skipped`);
           } else {
             ux.stdout(`${icons[status]} ${capitalCase(stage)}`);
-            this.printInfo(this.preInfoBlock, 3);
+            this.printInfo(this.preStagesBlock, 3);
             this.printInfo(
-              this.stageInfoBlock?.filter((info) => info.stage === stage),
+              this.stageSpecificBlock?.filter((info) => info.stage === stage),
               3
             );
-            this.printInfo(this.postInfoBlock, 3);
+            this.printInfo(this.postStagesBlock, 3);
           }
 
           break;
@@ -401,8 +401,8 @@ class CIMultiStageComponent<T extends Record<string, unknown>> {
       ux.stdout();
     }
 
-    this.printInfo(this.preInfoBlock);
-    this.printInfo(this.postInfoBlock);
+    this.printInfo(this.preStagesBlock);
+    this.printInfo(this.postStagesBlock);
   }
 
   private printInfo(infoBlock: InfoBlock<T> | StageInfoBlock<T> | undefined, indent = 0): void {
@@ -428,9 +428,9 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
   private stageTracker: StageTracker;
   private stopped = false;
 
-  private readonly postInfoBlock?: InfoBlock<T>;
-  private readonly preInfoBlock?: InfoBlock<T>;
-  private readonly stageInfoBlock?: StageInfoBlock<T>;
+  private readonly postStagesBlock?: InfoBlock<T>;
+  private readonly preStagesBlock?: InfoBlock<T>;
+  private readonly stageSpecificBlock?: StageInfoBlock<T>;
   private readonly stages: readonly string[] | string[];
   private readonly title: string;
   private readonly hasElapsedTime?: boolean;
@@ -440,11 +440,11 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
   public constructor({
     data,
     jsonEnabled,
-    postInfoBlock,
-    preInfoBlock,
+    postStagesBlock,
+    preStagesBlock,
     showElapsedTime,
     showStageTime,
-    stageInfoBlock,
+    stageSpecificBlock,
     stages,
     timerUnit,
     title,
@@ -452,13 +452,13 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
     this.data = data;
     this.stages = stages;
     this.title = title;
-    this.postInfoBlock = postInfoBlock;
-    this.preInfoBlock = preInfoBlock;
+    this.postStagesBlock = postStagesBlock;
+    this.preStagesBlock = preStagesBlock;
     this.hasElapsedTime = showElapsedTime ?? true;
     this.hasStageTime = showStageTime ?? true;
     this.timerUnit = timerUnit ?? 'ms';
     this.stageTracker = new StageTracker(stages);
-    this.stageInfoBlock = stageInfoBlock;
+    this.stageSpecificBlock = stageSpecificBlock;
 
     if (jsonEnabled) return;
 
@@ -466,11 +466,11 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
       this.ciInstance = new CIMultiStageComponent({
         stages,
         title,
-        postInfoBlock,
-        preInfoBlock,
+        postStagesBlock,
+        preStagesBlock,
         showElapsedTime,
         showStageTime,
-        stageInfoBlock,
+        stageSpecificBlock,
         timerUnit,
         data,
         jsonEnabled,
@@ -480,9 +480,9 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
         <Stages
           hasElapsedTime={this.hasElapsedTime}
           hasStageTime={this.hasStageTime}
-          postInfoBlock={this.formatKeyValuePairs(this.postInfoBlock)}
-          preInfoBlock={this.formatKeyValuePairs(this.preInfoBlock)}
-          stageInfoBlock={this.formatKeyValuePairs(this.stageInfoBlock)}
+          postStagesBlock={this.formatKeyValuePairs(this.postStagesBlock)}
+          preStagesBlock={this.formatKeyValuePairs(this.preStagesBlock)}
+          stageSpecificBlock={this.formatKeyValuePairs(this.stageSpecificBlock)}
           stageTracker={this.stageTracker}
           timerUnit={this.timerUnit}
           title={this.title}
@@ -536,9 +536,9 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
           error={error}
           hasElapsedTime={this.hasElapsedTime}
           hasStageTime={this.hasStageTime}
-          postInfoBlock={this.formatKeyValuePairs(this.postInfoBlock)}
-          preInfoBlock={this.formatKeyValuePairs(this.preInfoBlock)}
-          stageInfoBlock={this.formatKeyValuePairs(this.stageInfoBlock)}
+          postStagesBlock={this.formatKeyValuePairs(this.postStagesBlock)}
+          preStagesBlock={this.formatKeyValuePairs(this.preStagesBlock)}
+          stageSpecificBlock={this.formatKeyValuePairs(this.stageSpecificBlock)}
           stageTracker={this.stageTracker}
           timerUnit={this.timerUnit}
           title={this.title}
@@ -549,9 +549,9 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
         <Stages
           hasElapsedTime={this.hasElapsedTime}
           hasStageTime={this.hasStageTime}
-          postInfoBlock={this.formatKeyValuePairs(this.postInfoBlock)}
-          preInfoBlock={this.formatKeyValuePairs(this.preInfoBlock)}
-          stageInfoBlock={this.formatKeyValuePairs(this.stageInfoBlock)}
+          postStagesBlock={this.formatKeyValuePairs(this.postStagesBlock)}
+          preStagesBlock={this.formatKeyValuePairs(this.preStagesBlock)}
+          stageSpecificBlock={this.formatKeyValuePairs(this.stageSpecificBlock)}
           stageTracker={this.stageTracker}
           timerUnit={this.timerUnit}
           title={this.title}
@@ -578,9 +578,9 @@ export class MultiStageComponent<T extends Record<string, unknown>> implements D
         <Stages
           hasElapsedTime={this.hasElapsedTime}
           hasStageTime={this.hasStageTime}
-          postInfoBlock={this.formatKeyValuePairs(this.postInfoBlock)}
-          preInfoBlock={this.formatKeyValuePairs(this.preInfoBlock)}
-          stageInfoBlock={this.formatKeyValuePairs(this.stageInfoBlock)}
+          postStagesBlock={this.formatKeyValuePairs(this.postStagesBlock)}
+          preStagesBlock={this.formatKeyValuePairs(this.preStagesBlock)}
+          stageSpecificBlock={this.formatKeyValuePairs(this.stageSpecificBlock)}
           stageTracker={this.stageTracker}
           timerUnit={this.timerUnit}
           title={this.title}
