@@ -48,7 +48,12 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
     'no-prompt': Flags.boolean({
       char: 'p',
       summary: messages.getMessage('flags.no-prompt.summary'),
-      dependsOn: ['clean'],
+      relationships: [
+        {
+          type: 'some',
+          flags: [{ name: 'clean', when: async (flags): Promise<boolean> => Promise.resolve(flags['clean'] === true) }],
+        },
+      ],
       aliases: ['noprompt'],
       deprecateAliases: true,
     }),
