@@ -48,7 +48,6 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
     'no-prompt': Flags.boolean({
       char: 'p',
       summary: messages.getMessage('flags.no-prompt.summary'),
-      // a
       relationships: [
         {
           type: 'some',
