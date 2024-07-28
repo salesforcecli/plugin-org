@@ -1,3 +1,9 @@
+## [4.4.1](https://github.com/salesforcecli/plugin-org/compare/4.4.0...4.4.1) (2024-07-28)
+
+### Bug Fixes
+
+- **flags:** no `dependsOn` boolean flags ([#1145](https://github.com/salesforcecli/plugin-org/issues/1145)) ([8c0e74e](https://github.com/salesforcecli/plugin-org/commit/8c0e74e67bf47d6cdaa48330e6f19a2d6a623172))
+
 # [4.4.0](https://github.com/salesforcecli/plugin-org/compare/4.3.7...4.4.0) (2024-07-23)
 
 ### Features
