@@ -1387,19 +1387,19 @@
     semver "^7.6.2"
     ts-retry-promise "^0.8.1"
 
-"@salesforce/dev-config@^4.3.0":
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/@salesforce/dev-config/-/dev-config-4.3.0.tgz#d3e9d626c5a02d0d312cb92e5cf3b1c6bf7f1fb9"
-  integrity sha512-NCiVxmF3ooSnxwPQ6RMemXuSkhSDGhzLYwoMylnsyHCQMWHxxX+aAspPOAmbOyo7Jgwf+01D+dpXcSVriGbSfQ==
+"@salesforce/dev-config@^4.3.1":
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/@salesforce/dev-config/-/dev-config-4.3.1.tgz#4dac8245df79d675258b50e1d24e8c636eaa5e10"
+  integrity sha512-rO6axodoRF2SA1kknGttIWuL7HhIwSmweGlBzM8y2m5TH8DeIv4xsqYc8Cu+SrR3JT1FN4nh6XgrogI83AJfKg==
 
-"@salesforce/dev-scripts@^10.2.5":
-  version "10.2.5"
-  resolved "https://registry.yarnpkg.com/@salesforce/dev-scripts/-/dev-scripts-10.2.5.tgz#f673221268b7038d4ae477d5e217059539e682a8"
-  integrity sha512-QedF//BcK5N/SMdpgYCKbcdV85qXcd8mwrF9mGz5AO3EWpRMyqFNPzruSP4kyOV0wSyG0CmA3QpTne0syzTz+w==
+"@salesforce/dev-scripts@^10.2.6":
+  version "10.2.6"
+  resolved "https://registry.yarnpkg.com/@salesforce/dev-scripts/-/dev-scripts-10.2.6.tgz#f24f4fed7ad166116756b7036f2ebce0144ad510"
+  integrity sha512-GDVe6VvdIA6aSs07+sQ+rifOVonIzVzzB2+t/5Rr2HlVUsSaU/AisRFtb7TeZCyVJD2F1+CPW7zeWr7kkk9vIw==
   dependencies:
     "@commitlint/cli" "^17.1.2"
     "@commitlint/config-conventional" "^17.8.1"
-    "@salesforce/dev-config" "^4.3.0"
+    "@salesforce/dev-config" "^4.3.1"
     "@salesforce/prettier-config" "^0.0.3"
     "@types/chai" "^4.3.14"
     "@types/mocha" "^10.0.7"
