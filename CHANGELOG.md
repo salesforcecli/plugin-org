@@ -1,3 +1,9 @@
+## [4.4.3](https://github.com/salesforcecli/plugin-org/compare/4.4.2...4.4.3) (2024-07-30)
+
+### Bug Fixes
+
+- **deps:** devScripts update ([#1155](https://github.com/salesforcecli/plugin-org/issues/1155)) ([aa294cd](https://github.com/salesforcecli/plugin-org/commit/aa294cd8a4177baf8434555c69a2a957b6893d4c))
+
 ## [4.4.2](https://github.com/salesforcecli/plugin-org/compare/4.4.1...4.4.2) (2024-07-28)
 
 ### Bug Fixes
