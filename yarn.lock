@@ -1332,7 +1332,7 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.8.1"
 
-"@salesforce/core@^8.1.0", "@salesforce/core@^8.2.1", "@salesforce/core@^8.2.3", "@salesforce/core@^8.2.7":
+"@salesforce/core@^8.2.1", "@salesforce/core@^8.2.3", "@salesforce/core@^8.2.7":
   version "8.2.7"
   resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-8.2.7.tgz#ea9f7c5b4255ed71c4ae68dd1eb6e495a8476c5a"
   integrity sha512-vrD2ArIaYS+6XNbW/FekgdwzhD3Pe5IpUwe2vtLKjw2QIWMD/4zkGuPGd8QIgw5VHbEZeXQSKPSVhD41+VJHRg==
@@ -1400,18 +1400,18 @@
   dependencies:
     "@salesforce/ts-types" "^2.0.11"
 
-"@salesforce/plugin-command-reference@^3.1.11":
-  version "3.1.11"
-  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.1.11.tgz#741c3c0159f9251cd913f925c9e5d9902195a654"
-  integrity sha512-h+zmFfUyJnfrqDFA7T15xWRSc9gv9+RnEE4pPgfKM1OM4g3qdJ40Iea0jpxh4TJROib0rJyUoGCCxAmC6WW79Q==
+"@salesforce/plugin-command-reference@^3.1.13":
+  version "3.1.13"
+  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.1.13.tgz#e44c1c0daa4e71a5cc7be9058eb05b39c16c253d"
+  integrity sha512-WWUMHqBPs05+C0wIjQzj9+Zzk2bnT6tPXuG3rubekywxEFTfEraNO3IXU3tz3fup9LO76bbv6QS4hI2ifprOXA==
   dependencies:
     "@oclif/core" "^4"
-    "@salesforce/core" "^8.1.0"
+    "@salesforce/core" "^8.2.3"
     "@salesforce/kit" "^3.1.6"
     "@salesforce/sf-plugins-core" "^11.2.0"
     "@salesforce/ts-types" "^2.0.10"
     chalk "^5.3.0"
-    debug "^4.3.4"
+    debug "^4.3.6"
     handlebars "^4.7.8"
 
 "@salesforce/prettier-config@^0.0.3":
@@ -3281,10 +3281,10 @@ dateformat@^4.6.3:
   resolved "https://registry.yarnpkg.com/dateformat/-/dateformat-4.6.3.tgz#556fa6497e5217fedb78821424f8a1c22fa3f4b5"
   integrity sha512-2P0p0pFGzHS5EMnhdxQi7aJN+iMheud0UhG4dlE1DLAlvL8JHjJJTX/CSm4JXwV0Ka5nGk3zC5mcb5bUQUxxMA==
 
-debug@4, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2, debug@^4.3.4, debug@^4.3.5:
-  version "4.3.5"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.5.tgz#e83444eceb9fedd4a1da56d671ae2446a01a6e1e"
-  integrity sha512-pt0bNEmneDIvdL1Xsd9oDQ/wrQRkXDT4AUWlNZNPKvW5x/jyO9VFXkJUP07vQ2upmw5PlaITaPKc31jK13V+jg==
+debug@4, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2, debug@^4.3.4, debug@^4.3.5, debug@^4.3.6:
+  version "4.3.6"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.6.tgz#2ab2c38fbaffebf8aa95fdfe6d88438c7a13c52b"
+  integrity sha512-O/09Bd4Z1fBrU4VzkhFqVgpPzaGbw6Sm9FEkBT1A/YBXQFGuuSxa1dN2nxgxS34JmKXqYx8CZAwEVoJFImUXIg==
   dependencies:
     ms "2.1.2"
 
