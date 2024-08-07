@@ -18,7 +18,7 @@ import {
 import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
 import { Duration } from '@salesforce/kit';
 import terminalLink from 'terminal-link';
-import { MultiStageComponent } from '../../../components/stages.js';
+import { MultiStageOutput } from '@oclif/multi-stage-output';
 import { buildScratchOrgRequest } from '../../../shared/scratchOrgRequest.js';
 import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
 
@@ -171,7 +171,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       flags['client-id'] ? await this.secretPrompt({ message: messages.getMessage('prompt.secret') }) : undefined
     );
 
-    const ms = new MultiStageComponent<ScratchOrgLifecycleEvent & { alias: string | undefined }>({
+    const ms = new MultiStageOutput<ScratchOrgLifecycleEvent & { alias: string | undefined }>({
       stages: flags.async ? ['prepare request', 'send request', 'done'] : scratchOrgLifecycleStages,
       title: flags.async ? 'Creating Scratch Org (async)' : 'Creating Scratch Org',
       jsonEnabled: this.jsonEnabled(),
