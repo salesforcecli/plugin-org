@@ -7,6 +7,7 @@
 import { EOL } from 'node:os';
 import * as fs from 'node:fs';
 import got, { Headers } from 'got';
+import type { AnyJson } from '@salesforce/ts-types';
 import { ProxyAgent } from 'proxy-agent';
 import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
 import { Messages, Org, SfError } from '@salesforce/core';
@@ -40,7 +41,7 @@ export class Rest extends SfCommand<void> {
       summary: messages.getMessage('flags.method.summary'),
       char: 'X',
       default: 'GET',
-    }),
+    })(),
     header: Flags.string({
       summary: messages.getMessage('flags.header.summary'),
       helpValue: 'key:value',
@@ -137,7 +138,7 @@ export class Rest extends SfCommand<void> {
 
       try {
         // Try to pretty-print JSON response.
-        this.styledJSON(JSON.parse(res.body));
+        this.styledJSON(JSON.parse(res.body) as AnyJson);
       } catch (err) {
         // If response body isn't JSON, just print it to stdout.
         this.log(res.body);
