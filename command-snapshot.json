@@ -33,6 +33,14 @@
     "plugin": "@salesforce/plugin-org"
   },
   {
+    "alias": [],
+    "command": "org:api:rest",
+    "flagAliases": [],
+    "flagChars": ["H", "S", "X", "i", "o"],
+    "flags": ["body", "flags-dir", "header", "include", "method", "stream-to-file", "target-org"],
+    "plugin": "@salesforce/plugin-org"
+  },
+  {
     "alias": ["env:create:sandbox"],
     "command": "org:create:sandbox",
     "flagAliases": [],

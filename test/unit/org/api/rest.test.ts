@@ -4,11 +4,15 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import nock = require('nock');
+import fs from 'node:fs';
+import * as process from 'node:process';
+import path from 'node:path';
 import { SfError } from '@salesforce/core';
 import { expect } from 'chai';
 import stripAnsi from 'strip-ansi';
 import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
+import { sleep } from '@salesforce/kit';
+import nock = require('nock');
 import { Rest } from '../../../../src/commands/org/api/rest.js';
 
 describe('rest', () => {
@@ -25,13 +29,9 @@ describe('rest', () => {
       Remaining: 199,
     },
   };
-  let commandStubs: ReturnType<typeof stubUx>;
-
-  beforeEach(() => {});
 
   beforeEach(async () => {
     await $$.stubAuths(testOrg);
-    commandStubs = stubUx($$.SANDBOX);
 
     stdoutSpy = $$.SANDBOX.stub(process.stdout, 'write');
   });
@@ -48,6 +48,24 @@ describe('rest', () => {
     const output = stripAnsi(stdoutSpy.args.flat().join(''));
 
     expect(JSON.parse(output)).to.deep.equal(orgLimitsResponse);
+  });
+
+  it('should redirect to file', async () => {
+    nock(testOrg.instanceUrl).get('/services/data/v56.0/limits').reply(200, orgLimitsResponse);
+
+    await Rest.run(['services/data/v56.0/limits', '--target-org', 'test@hub.com', '--stream-to-file', 'myOutput.txt']);
+
+    // gives it a second to resolve promises and close streams before we start asserting
+    await sleep(1000);
+    const output = stripAnsi(stdoutSpy.args.flat().join(''));
+
+    expect(output).to.deep.equal('File saved to myOutput.txt' + '\n');
+    expect(JSON.parse(fs.readFileSync('myOutput.txt', 'utf8'))).to.deep.equal(orgLimitsResponse);
+
+    after(() => {
+      // more than a UT
+      fs.rmSync(path.join(process.cwd(), 'myOutput.txt'));
+    });
   });
 
   it('should set "Accept" HTTP header', async () => {

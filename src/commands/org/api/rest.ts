@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { EOL } from 'node:os';
-import * as fs from 'node:fs';
+import { createWriteStream } from 'node:fs';
 import got, { Headers } from 'got';
 import type { AnyJson } from '@salesforce/ts-types';
 import { ProxyAgent } from 'proxy-agent';
@@ -113,7 +113,7 @@ export class Rest extends SfCommand<void> {
 
     if (streamFile) {
       const responseStream = got.stream(url, options);
-      const fileStream = fs.createWriteStream(streamFile);
+      const fileStream = createWriteStream(streamFile);
       responseStream.pipe(fileStream);
 
       fileStream.on('finish', () => this.log(`File saved to ${streamFile}`));
