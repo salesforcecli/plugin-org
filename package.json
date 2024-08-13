@@ -12,7 +12,7 @@
     "@salesforce/source-deploy-retrieve": "^12.1.12",
     "ansis": "^3.2.0",
     "change-case": "^5.4.4",
-    "got": "^14.4.2",
+    "got": "^13.0.0",
     "is-wsl": "^3.1.0",
     "open": "^10.1.0",
     "proxy-agent": "^6.4.0"
