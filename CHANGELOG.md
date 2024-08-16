@@ -1,3 +1,57 @@
+## [4.4.6](https://github.com/salesforcecli/plugin-org/compare/4.4.5...4.4.6) (2024-08-11)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/sf-plugins-core from 11.2.4 to 11.3.0 ([d6871e5](https://github.com/salesforcecli/plugin-org/commit/d6871e5a30d9e6d9aced3b1ba6c1d8fd234d1f6a))
+
+## [4.4.5](https://github.com/salesforcecli/plugin-org/compare/4.4.4...4.4.5) (2024-08-04)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve ([2a86eed](https://github.com/salesforcecli/plugin-org/commit/2a86eed0749b21184a47acca64f09e9b77959e48))
+
+## [4.4.4](https://github.com/salesforcecli/plugin-org/compare/4.4.3...4.4.4) (2024-08-04)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/kit from 3.1.6 to 3.2.0 ([a9cd786](https://github.com/salesforcecli/plugin-org/commit/a9cd78624d2612fa426d10d516ca9b283db8efc6))
+
+## [4.4.3](https://github.com/salesforcecli/plugin-org/compare/4.4.2...4.4.3) (2024-07-30)
+
+### Bug Fixes
+
+- **deps:** devScripts update ([#1155](https://github.com/salesforcecli/plugin-org/issues/1155)) ([aa294cd](https://github.com/salesforcecli/plugin-org/commit/aa294cd8a4177baf8434555c69a2a957b6893d4c))
+
+## [4.4.2](https://github.com/salesforcecli/plugin-org/compare/4.4.1...4.4.2) (2024-07-28)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/core from 4.0.12 to 4.0.16 ([ba59c66](https://github.com/salesforcecli/plugin-org/commit/ba59c66287433b0dfd2c79a29f573fb060e648eb))
+
+## [4.4.1](https://github.com/salesforcecli/plugin-org/compare/4.4.0...4.4.1) (2024-07-28)
+
+### Bug Fixes
+
+- **flags:** no `dependsOn` boolean flags ([#1145](https://github.com/salesforcecli/plugin-org/issues/1145)) ([8c0e74e](https://github.com/salesforcecli/plugin-org/commit/8c0e74e67bf47d6cdaa48330e6f19a2d6a623172))
+
+# [4.4.0](https://github.com/salesforcecli/plugin-org/compare/4.3.7...4.4.0) (2024-07-23)
+
+### Features
+
+- list metadata/-types stdout is table ([#1141](https://github.com/salesforcecli/plugin-org/issues/1141)) ([361fb6c](https://github.com/salesforcecli/plugin-org/commit/361fb6c75af2e450bc56f376c00657f32cc8f4bd))
+
+## [4.3.7](https://github.com/salesforcecli/plugin-org/compare/4.3.6...4.3.7) (2024-07-23)
+
+### Bug Fixes
+
+- nullish-linter ([#1134](https://github.com/salesforcecli/plugin-org/issues/1134)) ([48a7b8c](https://github.com/salesforcecli/plugin-org/commit/48a7b8c4f385967c891f79afb14cb3022418096e))
+
+## [4.3.6](https://github.com/salesforcecli/plugin-org/compare/4.3.5...4.3.6) (2024-07-21)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/sf-plugins-core from 11.2.0 to 11.2.1 ([2c73d48](https://github.com/salesforcecli/plugin-org/commit/2c73d484af266d6676e335f4c531a0bb5d7be0cc))
+
 ## [4.3.5](https://github.com/salesforcecli/plugin-org/compare/4.3.4...4.3.5) (2024-07-14)
 
 ### Bug Fixes

@@ -77,12 +77,12 @@ export class SandboxProgress extends StagedProgress<SandboxStatusData> {
     return [
       withClock && this.statusData
         ? `${getClockForSeconds(this.statusData.sandboxProgress.remainingWaitTime)} until timeout. ${
-            this.statusData.sandboxProgress.percentComplete
+            this.statusData.sandboxProgress.percentComplete ?? 0
           }%`
         : undefined,
       table,
       '---------------------',
-      `Sandbox ${this.action} Stages`,
+      `Sandbox ${this.action ?? ''} Stages`,
       this.formatStages(),
     ]
       .filter(isDefined)
@@ -113,7 +113,7 @@ export const getTableDataFromProcessObj = (
   { key: 'LicenseType', value: sandboxProcessObj.LicenseType },
   { key: 'SandboxInfoId', value: sandboxProcessObj.SandboxInfoId },
   { key: 'Created Date', value: sandboxProcessObj.CreatedDate },
-  { key: 'CopyProgress', value: `${sandboxProcessObj.CopyProgress}%` },
+  { key: 'CopyProgress', value: `${sandboxProcessObj.CopyProgress ?? 0}%` },
   ...(sandboxProcessObj.SourceId ? [{ key: 'SourceId', value: sandboxProcessObj.SourceId }] : []),
   ...(sandboxProcessObj.SandboxOrganization
     ? [{ key: 'SandboxOrg', value: sandboxProcessObj.SandboxOrganization }]

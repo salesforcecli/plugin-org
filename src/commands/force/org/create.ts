@@ -295,8 +295,8 @@ export class Create extends SfCommand<CreateResult> {
 
     await Lifecycle.getInstance().emit('scratchOrgInfo', scratchOrgInfo);
 
-    this.logger.debug(`orgConfig.loginUrl: ${authFields?.loginUrl}`);
-    this.logger.debug(`orgConfig.instanceUrl: ${authFields?.instanceUrl}`);
+    this.logger.debug(`orgConfig.loginUrl: ${authFields?.loginUrl ?? '<not found>'}`);
+    this.logger.debug(`orgConfig.instanceUrl: ${authFields?.instanceUrl ?? '<not found>'}`);
 
     this.log(messages.getMessage('scratchOrgCreateSuccess', [authFields?.orgId, username]));
 

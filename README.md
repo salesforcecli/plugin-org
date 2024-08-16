@@ -99,20 +99,29 @@ the [SandboxNuts](https://github.com/salesforcecli/plugin-org/actions/workflows/
 
 <!-- commands -->
 
-- [`sf org create sandbox`](#sf-org-create-sandbox)
-- [`sf org create scratch`](#sf-org-create-scratch)
-- [`sf org delete sandbox`](#sf-org-delete-sandbox)
-- [`sf org delete scratch`](#sf-org-delete-scratch)
-- [`sf org disable tracking`](#sf-org-disable-tracking)
-- [`sf org display`](#sf-org-display)
-- [`sf org enable tracking`](#sf-org-enable-tracking)
-- [`sf org list`](#sf-org-list)
-- [`sf org list metadata`](#sf-org-list-metadata)
-- [`sf org list metadata-types`](#sf-org-list-metadata-types)
-- [`sf org open`](#sf-org-open)
-- [`sf org refresh sandbox`](#sf-org-refresh-sandbox)
-- [`sf org resume sandbox`](#sf-org-resume-sandbox)
-- [`sf org resume scratch`](#sf-org-resume-scratch)
+- [plugin-org](#plugin-org)
+  - [About Salesforce CLI plugins](#about-salesforce-cli-plugins)
+  - [Install](#install)
+  - [Issues](#issues)
+  - [Contributing](#contributing)
+    - [CLA](#cla)
+    - [Build](#build)
+    - [Sandbox NUTs](#sandbox-nuts)
+  - [Commands](#commands)
+  - [`sf org create sandbox`](#sf-org-create-sandbox)
+  - [`sf org create scratch`](#sf-org-create-scratch)
+  - [`sf org delete sandbox`](#sf-org-delete-sandbox)
+  - [`sf org delete scratch`](#sf-org-delete-scratch)
+  - [`sf org disable tracking`](#sf-org-disable-tracking)
+  - [`sf org display`](#sf-org-display)
+  - [`sf org enable tracking`](#sf-org-enable-tracking)
+  - [`sf org list`](#sf-org-list)
+  - [`sf org list metadata`](#sf-org-list-metadata)
+  - [`sf org list metadata-types`](#sf-org-list-metadata-types)
+  - [`sf org open`](#sf-org-open)
+  - [`sf org refresh sandbox`](#sf-org-refresh-sandbox)
+  - [`sf org resume sandbox`](#sf-org-resume-sandbox)
+  - [`sf org resume scratch`](#sf-org-resume-scratch)
 
 ## `sf org create sandbox`
 
@@ -607,7 +616,7 @@ List all orgs you’ve created or authenticated to.
 
 ```
 USAGE
-  $ sf org list [--json] [--flags-dir <value>] [--verbose] [--all] [-p --clean] [--skip-connection-status]
+  $ sf org list [--json] [--flags-dir <value>] [--verbose] [--all] [--clean] [-p] [--skip-connection-status]
 
 FLAGS
   -p, --no-prompt               Don't prompt for confirmation.

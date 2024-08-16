@@ -15,7 +15,9 @@ export class SandboxReporter {
     const waitTimeMsg = `Sleeping ${interval} seconds. Will wait ${waitTime} more before timing out.`;
     const sandboxIdentifierMsg = `${sandboxProcessObj.SandboxName}(${sandboxProcessObj.Id})`;
     const waitingOnAuthMessage: string = waitingOnAuth ? ', waiting on JWT auth' : '';
-    const completionMessage = `(${sandboxProcessObj.CopyProgress}% completed${waitingOnAuthMessage})`;
+    const completionMessage = sandboxProcessObj.CopyProgress
+      ? `(${sandboxProcessObj.CopyProgress}% completed${waitingOnAuthMessage})`
+      : '';
 
     return `Sandbox request ${sandboxIdentifierMsg} is ${sandboxProcessObj.Status} ${completionMessage}. ${waitTimeMsg}`;
   }
