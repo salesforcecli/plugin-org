@@ -18,7 +18,6 @@ import {
 import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
 import { Duration } from '@salesforce/kit';
 import terminalLink from 'terminal-link';
-import { MultiStageOutput } from '@oclif/multi-stage-output';
 import { buildScratchOrgRequest } from '../../../shared/scratchOrgRequest.js';
 import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
 
@@ -171,10 +170,9 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       flags['client-id'] ? await this.secretPrompt({ message: messages.getMessage('prompt.secret') }) : undefined
     );
 
-    const ms = new MultiStageOutput<ScratchOrgLifecycleEvent & { alias: string | undefined }>({
+    const stager = this.initStager<ScratchOrgLifecycleEvent & { alias: string | undefined }>({
       stages: flags.async ? ['prepare request', 'send request', 'done'] : scratchOrgLifecycleStages,
       title: flags.async ? 'Creating Scratch Org (async)' : 'Creating Scratch Org',
-      jsonEnabled: this.jsonEnabled(),
       data: { alias: flags.alias },
       postStagesBlock: [
         {
@@ -207,9 +205,9 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
     });
 
     lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
-      ms.goto(data.stage, data);
+      stager.goto(data.stage, data);
       if (data.stage === 'done') {
-        ms.stop();
+        stager.stop();
       }
       return Promise.resolve();
     });
@@ -222,8 +220,8 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       }
 
       if (flags.async) {
-        ms.goto('done', { scratchOrgInfo });
-        ms.stop();
+        stager.goto('done', { scratchOrgInfo });
+        stager.stop();
         this.info(messages.getMessage('action.resume', [this.config.bin, scratchOrgInfo.Id]));
       } else {
         this.logSuccess(messages.getMessage('success'));
@@ -231,7 +229,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
 
       return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
     } catch (error) {
-      ms.stop(error as Error);
+      stager.stop(error as Error);
       if (error instanceof SfError && error.name === 'ScratchOrgInfoTimeoutError') {
         const scratchOrgInfoId = (error.data as { scratchOrgInfoId: string }).scratchOrgInfoId;
         const resumeMessage = messages.getMessage('action.resume', [this.config.bin, scratchOrgInfoId]);

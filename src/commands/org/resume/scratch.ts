@@ -19,7 +19,6 @@ import {
   SfError,
 } from '@salesforce/core';
 import terminalLink from 'terminal-link';
-import { MultiStageOutput } from '@oclif/multi-stage-output';
 import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
@@ -60,10 +59,9 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
     const cached = cache.get(jobId);
     const hubBaseUrl = cached?.hubBaseUrl;
 
-    const ms = new MultiStageOutput<ScratchOrgLifecycleEvent & { alias: string | undefined }>({
+    const stager = this.initStager<ScratchOrgLifecycleEvent & { alias: string | undefined }>({
       stages: scratchOrgLifecycleStages,
       title: 'Resuming Scratch Org',
-      jsonEnabled: this.jsonEnabled(),
       data: { alias: cached?.alias },
       postStagesBlock: [
         {
@@ -96,9 +94,9 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
     });
 
     lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
-      ms.goto(data.stage, data);
+      stager.goto(data.stage, data);
       if (data.stage === 'done') {
-        ms.stop();
+        stager.stop();
       }
       return Promise.resolve();
     });
@@ -109,7 +107,7 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
       this.logSuccess(messages.getMessage('success'));
       return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
     } catch (e) {
-      ms.stop(e as Error);
+      stager.stop(e as Error);
 
       if (cache.keys() && e instanceof Error && e.name === 'CacheMissError') {
         // we have something in the cache, but it didn't match what the user passed in
