@@ -5,7 +5,6 @@
     "skipLibCheck": true,
     "strictNullChecks": true,
     "baseUrl": "../",
-    "sourceMap": true,
-    "jsx": "react"
+    "sourceMap": true
   }
 }

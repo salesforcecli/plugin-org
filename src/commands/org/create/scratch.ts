@@ -224,11 +224,8 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       if (flags.async) {
         ms.goto('done', { scratchOrgInfo });
         ms.stop();
-
-        this.log();
         this.info(messages.getMessage('action.resume', [this.config.bin, scratchOrgInfo.Id]));
       } else {
-        this.log();
         this.logSuccess(messages.getMessage('success'));
       }
 
@@ -239,7 +236,6 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
         const scratchOrgInfoId = (error.data as { scratchOrgInfoId: string }).scratchOrgInfoId;
         const resumeMessage = messages.getMessage('action.resume', [this.config.bin, scratchOrgInfoId]);
 
-        this.log();
         this.info(resumeMessage);
         this.error('The scratch org did not complete within your wait time', { code: '69', exit: 69 });
       } else {
