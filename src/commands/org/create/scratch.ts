@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { MultiStageOutput } from '@oclif/multi-stage-output';
 import {
   Lifecycle,
   Messages,
@@ -170,10 +171,11 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       flags['client-id'] ? await this.secretPrompt({ message: messages.getMessage('prompt.secret') }) : undefined
     );
 
-    const stager = this.initStager<ScratchOrgLifecycleEvent & { alias: string | undefined }>({
+    const stager = new MultiStageOutput<ScratchOrgLifecycleEvent & { alias: string | undefined }>({
       stages: flags.async ? ['prepare request', 'send request', 'done'] : scratchOrgLifecycleStages,
       title: flags.async ? 'Creating Scratch Org (async)' : 'Creating Scratch Org',
       data: { alias: flags.alias },
+      jsonEnabled: this.jsonEnabled(),
       postStagesBlock: [
         {
           label: 'Request Id',
