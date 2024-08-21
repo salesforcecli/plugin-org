@@ -1,3 +1,9 @@
+## [4.5.1](https://github.com/salesforcecli/plugin-org/compare/4.5.0...4.5.1) (2024-08-21)
+
+### Bug Fixes
+
+- bump multi-stage-output ([36ed590](https://github.com/salesforcecli/plugin-org/commit/36ed5906f0ea38b10e1839f2004271412e0001f4))
+
 # [4.5.0](https://github.com/salesforcecli/plugin-org/compare/4.4.8...4.5.0) (2024-08-20)
 
 ### Bug Fixes
