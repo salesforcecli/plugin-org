@@ -1482,10 +1482,10 @@
     ink "^5.0.1"
     react "^18.3.1"
 
-"@oclif/plugin-command-snapshot@^5.2.12":
-  version "5.2.12"
-  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-5.2.12.tgz#f22aaac03ad1e4fbb62c9beb5c44c99522d29e8b"
-  integrity sha512-X+UvjS5yNQSrL4f8DDCg93+P0ZyG8pJ6g5R8nA8DjkC22AaKhHMh0BwGdPT6zmTajaIxClrfk1K/sAF4+bwMug==
+"@oclif/plugin-command-snapshot@^5.2.14":
+  version "5.2.14"
+  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-5.2.14.tgz#fac3ff4657c02a4e8eaab9a62fef13f8abad30b5"
+  integrity sha512-fVGeV/dE6OhiRSL2ZN3Gn3eInGdeK4pQoCq0AB0vgvlU3tv7Ur4Vk1+5qpGazv8mAba9KjEtHySMpagDlb8H0Q==
   dependencies:
     "@oclif/core" "^4"
     ansis "^3.3.2"
