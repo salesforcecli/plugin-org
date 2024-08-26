@@ -14,13 +14,11 @@ import {
   ScratchOrgCache,
   ScratchOrgLifecycleEvent,
   scratchOrgLifecycleEventName,
-  scratchOrgLifecycleStages,
   scratchOrgResume,
   SfError,
 } from '@salesforce/core';
-import terminalLink from 'terminal-link';
-import { MultiStageOutput } from '@oclif/multi-stage-output';
 import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
+import { buildStatus } from '../../../shared/scratchOrgOutput.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'resume_scratch');
@@ -57,60 +55,26 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
 
     // oclif doesn't know that the exactlyOne flag will ensure that one of these is set, and there we definitely have a jobID.
     assert(jobId);
-    const cached = cache.get(jobId);
-    const hubBaseUrl = cached?.hubBaseUrl;
-
-    const stager = new MultiStageOutput<ScratchOrgLifecycleEvent & { alias: string | undefined }>({
-      stages: scratchOrgLifecycleStages,
-      title: 'Resuming Scratch Org',
-      data: { alias: cached?.alias },
-      jsonEnabled: this.jsonEnabled(),
-      postStagesBlock: [
-        {
-          label: 'Request Id',
-          type: 'dynamic-key-value',
-          get: (data) =>
-            data?.scratchOrgInfo?.Id && terminalLink(data.scratchOrgInfo.Id, `${hubBaseUrl}/${data.scratchOrgInfo.Id}`),
-          bold: true,
-        },
-        {
-          label: 'OrgId',
-          type: 'dynamic-key-value',
-          get: (data) => data?.scratchOrgInfo?.ScratchOrg,
-          bold: true,
-          color: 'cyan',
-        },
-        {
-          label: 'Username',
-          type: 'dynamic-key-value',
-          get: (data) => data?.scratchOrgInfo?.SignupUsername,
-          bold: true,
-          color: 'cyan',
-        },
-        {
-          label: 'Alias',
-          type: 'static-key-value',
-          get: (data) => data?.alias,
-        },
-      ],
-    });
+    const hubBaseUrl = cache.get(jobId)?.hubBaseUrl;
+    let lastStatus: string | undefined;
 
     lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
-      stager.goto(data.stage, data);
-      if (data.stage === 'done') {
-        stager.stop();
-      }
+      lastStatus = buildStatus(data, hubBaseUrl);
+      this.spinner.status = lastStatus;
       return Promise.resolve();
     });
 
+    this.log();
+    this.spinner.start('Creating Scratch Org');
+
     try {
       const { username, scratchOrgInfo, authFields, warnings } = await scratchOrgResume(jobId);
+      this.spinner.stop(lastStatus);
+
       this.log();
       this.logSuccess(messages.getMessage('success'));
       return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
     } catch (e) {
-      stager.stop(e as Error);
-
       if (cache.keys() && e instanceof Error && e.name === 'CacheMissError') {
         // we have something in the cache, but it didn't match what the user passed in
         throw messages.createError('error.jobIdMismatch', [jobId]);

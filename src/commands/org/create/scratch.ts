@@ -5,7 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { MultiStageOutput } from '@oclif/multi-stage-output';
 import {
   Lifecycle,
   Messages,
@@ -13,20 +12,18 @@ import {
   scratchOrgCreate,
   ScratchOrgLifecycleEvent,
   scratchOrgLifecycleEventName,
-  scratchOrgLifecycleStages,
   SfError,
 } from '@salesforce/core';
 import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
 import { Duration } from '@salesforce/kit';
-import terminalLink from 'terminal-link';
 import { buildScratchOrgRequest } from '../../../shared/scratchOrgRequest.js';
+import { buildStatus } from '../../../shared/scratchOrgOutput.js';
 import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create_scratch');
 
 const definitionFileHelpGroupName = 'Definition File Override';
-
 export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
@@ -170,60 +167,29 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       flags,
       flags['client-id'] ? await this.secretPrompt({ message: messages.getMessage('prompt.secret') }) : undefined
     );
+    let lastStatus: string | undefined;
 
-    const stager = new MultiStageOutput<ScratchOrgLifecycleEvent & { alias: string | undefined }>({
-      stages: flags.async ? ['prepare request', 'send request', 'done'] : scratchOrgLifecycleStages,
-      title: flags.async ? 'Creating Scratch Org (async)' : 'Creating Scratch Org',
-      data: { alias: flags.alias },
-      jsonEnabled: this.jsonEnabled(),
-      postStagesBlock: [
-        {
-          label: 'Request Id',
-          type: 'dynamic-key-value',
-          get: (data) =>
-            data?.scratchOrgInfo?.Id && terminalLink(data.scratchOrgInfo.Id, `${baseUrl}/${data.scratchOrgInfo.Id}`),
-          bold: true,
-        },
-        {
-          label: 'OrgId',
-          type: 'dynamic-key-value',
-          get: (data) => data?.scratchOrgInfo?.ScratchOrg,
-          bold: true,
-          color: 'cyan',
-        },
-        {
-          label: 'Username',
-          type: 'dynamic-key-value',
-          get: (data) => data?.scratchOrgInfo?.SignupUsername,
-          bold: true,
-          color: 'cyan',
-        },
-        {
-          label: 'Alias',
-          type: 'static-key-value',
-          get: (data) => data?.alias,
-        },
-      ],
-    });
-
-    lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
-      stager.goto(data.stage, data);
-      if (data.stage === 'done') {
-        stager.stop();
-      }
-      return Promise.resolve();
-    });
+    if (!flags.async) {
+      lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
+        lastStatus = buildStatus(data, baseUrl);
+        this.spinner.status = lastStatus;
+        return Promise.resolve();
+      });
+    }
+    this.log();
+    this.spinner.start(
+      flags.async ? 'Requesting Scratch Org (will not wait for completion because --async)' : 'Creating Scratch Org'
+    );
 
     try {
       const { username, scratchOrgInfo, authFields, warnings } = await scratchOrgCreate(createCommandOptions);
 
+      this.spinner.stop(lastStatus);
       if (!scratchOrgInfo) {
         throw new SfError('The scratch org did not return with any information');
       }
-
+      this.log();
       if (flags.async) {
-        stager.goto('done', { scratchOrgInfo });
-        stager.stop();
         this.info(messages.getMessage('action.resume', [this.config.bin, scratchOrgInfo.Id]));
       } else {
         this.logSuccess(messages.getMessage('success'));
@@ -231,8 +197,8 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
 
       return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
     } catch (error) {
-      stager.stop(error as Error);
       if (error instanceof SfError && error.name === 'ScratchOrgInfoTimeoutError') {
+        this.spinner.stop(lastStatus);
         const scratchOrgInfoId = (error.data as { scratchOrgInfoId: string }).scratchOrgInfoId;
         const resumeMessage = messages.getMessage('action.resume', [this.config.bin, scratchOrgInfoId]);
 
