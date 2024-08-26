@@ -1,3 +1,9 @@
+## [4.5.4](https://github.com/salesforcecli/plugin-org/compare/4.5.3...4.5.4) (2024-08-26)
+
+### Bug Fixes
+
+- revert MSO changes ([#1192](https://github.com/salesforcecli/plugin-org/issues/1192)) ([6d33c07](https://github.com/salesforcecli/plugin-org/commit/6d33c072c12f4af93ecee60859ce2d7e5533a934)), closes [#1120](https://github.com/salesforcecli/plugin-org/issues/1120)
+
 ## [4.5.3](https://github.com/salesforcecli/plugin-org/compare/4.5.2...4.5.3) (2024-08-26)
 
 ### Bug Fixes
