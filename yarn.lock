@@ -1469,7 +1469,7 @@
     wordwrap "^1.0.0"
     wrap-ansi "^7.0.0"
 
-"@oclif/multi-stage-output@^0.4.0-dev.0":
+"@oclif/multi-stage-output@^0.4.1-dev.0":
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/@oclif/multi-stage-output/-/multi-stage-output-0.4.2.tgz#2a2b9e46b828ed72775cc7616db97e48aacfab7c"
   integrity sha512-wS+58pirRbXc34xTJjXsX/MjQHWa/P2B/tYe/5USfpW8Yj2l07rcFVeJwbh/NnuYb8JkGvqGYi/fP+0I4FKwow==
