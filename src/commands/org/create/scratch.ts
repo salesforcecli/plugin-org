@@ -171,7 +171,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       flags['client-id'] ? await this.secretPrompt({ message: messages.getMessage('prompt.secret') }) : undefined
     );
 
-    const stager = new MultiStageOutput<ScratchOrgLifecycleEvent & { alias: string | undefined }>({
+    const mso = new MultiStageOutput<ScratchOrgLifecycleEvent & { alias: string | undefined }>({
       stages: flags.async ? ['prepare request', 'send request', 'done'] : scratchOrgLifecycleStages,
       title: flags.async ? 'Creating Scratch Org (async)' : 'Creating Scratch Org',
       data: { alias: flags.alias },
@@ -207,9 +207,9 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
     });
 
     lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
-      stager.goto(data.stage, data);
+      mso.skipTo(data.stage, data);
       if (data.stage === 'done') {
-        stager.stop();
+        mso.stop();
       }
       return Promise.resolve();
     });
@@ -222,8 +222,8 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       }
 
       if (flags.async) {
-        stager.goto('done', { scratchOrgInfo });
-        stager.stop();
+        mso.skipTo('done', { scratchOrgInfo });
+        mso.stop();
         this.info(messages.getMessage('action.resume', [this.config.bin, scratchOrgInfo.Id]));
       } else {
         this.logSuccess(messages.getMessage('success'));
@@ -231,7 +231,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
 
       return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
     } catch (error) {
-      stager.stop(error as Error);
+      mso.error();
       if (error instanceof SfError && error.name === 'ScratchOrgInfoTimeoutError') {
         const scratchOrgInfoId = (error.data as { scratchOrgInfoId: string }).scratchOrgInfoId;
         const resumeMessage = messages.getMessage('action.resume', [this.config.bin, scratchOrgInfoId]);

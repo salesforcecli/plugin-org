@@ -60,7 +60,7 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
     const cached = cache.get(jobId);
     const hubBaseUrl = cached?.hubBaseUrl;
 
-    const stager = new MultiStageOutput<ScratchOrgLifecycleEvent & { alias: string | undefined }>({
+    const mso = new MultiStageOutput<ScratchOrgLifecycleEvent & { alias: string | undefined }>({
       stages: scratchOrgLifecycleStages,
       title: 'Resuming Scratch Org',
       data: { alias: cached?.alias },
@@ -96,9 +96,9 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
     });
 
     lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
-      stager.goto(data.stage, data);
+      mso.skipTo(data.stage, data);
       if (data.stage === 'done') {
-        stager.stop();
+        mso.stop();
       }
       return Promise.resolve();
     });
@@ -109,7 +109,7 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
       this.logSuccess(messages.getMessage('success'));
       return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
     } catch (e) {
-      stager.stop(e as Error);
+      mso.error();
 
       if (cache.keys() && e instanceof Error && e.name === 'CacheMissError') {
         // we have something in the cache, but it didn't match what the user passed in
