@@ -123,3 +123,19 @@ The poll interval (%d seconds) can't be larger that wait (%d in seconds)
 # error.noCloneSource
 
 Could not find the clone sandbox name "%s" in the target org.
+
+# error.userGroupQueryFailed
+
+Could not query user group.
+
+# error.bothApexClassIdAndNameProvided
+
+Could not specify both apexClassId and apexClassName.
+
+# error.bothUserGroupIdAndNameProvided
+
+Could not specify both userGroupId and userClassName.
+
+# error.apexClassQueryFailed
+
+Could not query apex class.

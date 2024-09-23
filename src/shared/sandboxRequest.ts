@@ -33,13 +33,28 @@ export async function createSandboxRequest(
   definitionFile: string | undefined,
   logger?: Logger | undefined,
   properties?: Record<string, string | undefined>
-): Promise<{ sandboxReq: SandboxRequest; srcSandboxName: string }>;
+): Promise<{
+  sandboxReq: SandboxRequest & {
+    ApexClassName: string | undefined;
+    ApexClassId: string | undefined;
+    ActivationUserGroupName: string | undefined;
+    ActivationUserGroupId: string | undefined;
+  };
+  srcSandboxName: string;
+}>;
 export async function createSandboxRequest(
   isClone: false,
   definitionFile: string | undefined,
   logger?: Logger | undefined,
   properties?: Record<string, string | undefined>
-): Promise<{ sandboxReq: SandboxRequest }>;
+): Promise<{
+  sandboxReq: SandboxRequest & {
+    ApexClassName: string | undefined;
+    ApexClassId: string | undefined;
+    ActivationUserGroupName: string | undefined;
+    ActivationUserGroupId: string | undefined;
+  };
+}>;
 export async function createSandboxRequest(
   isClone = false,
   definitionFile: string | undefined,
@@ -52,6 +67,7 @@ export async function createSandboxRequest(
   logger.debug('Varargs: %s ', properties);
 
   const sandboxDefFileContents = definitionFile ? readSandboxDefFile(definitionFile) : {};
+
   const capitalizedVarArgs = properties ? lowerToUpper(properties) : {};
 
   // varargs override file input
