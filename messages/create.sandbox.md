@@ -126,16 +126,16 @@ Could not find the clone sandbox name "%s" in the target org.
 
 # error.userGroupQueryFailed
 
-Could not query user group.
+Unable to find the ID of the activation user group "%s" that's defined in the definition file.
 
 # error.bothApexClassIdAndNameProvided
 
-Could not specify both apexClassId and apexClassName.
+You can't specify both `apexClassId` and `apexClassName` in the definition file at the same time.
 
 # error.bothUserGroupIdAndNameProvided
 
-Could not specify both userGroupId and userClassName.
+You can't specify both `ActivationUserGroupId` and `ActivationUserGroupName` in the definition file at the same time.
 
 # error.apexClassQueryFailed
 
-Could not query apex class.
+Unable to find the ID of the Apex class "%s" that's defined in the definition file.

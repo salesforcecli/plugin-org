@@ -36,9 +36,7 @@ export async function createSandboxRequest(
 ): Promise<{
   sandboxReq: SandboxRequest & {
     ApexClassName: string | undefined;
-    ApexClassId: string | undefined;
     ActivationUserGroupName: string | undefined;
-    ActivationUserGroupId: string | undefined;
   };
   srcSandboxName: string;
 }>;
@@ -50,9 +48,7 @@ export async function createSandboxRequest(
 ): Promise<{
   sandboxReq: SandboxRequest & {
     ApexClassName: string | undefined;
-    ApexClassId: string | undefined;
     ActivationUserGroupName: string | undefined;
-    ActivationUserGroupId: string | undefined;
   };
 }>;
 export async function createSandboxRequest(

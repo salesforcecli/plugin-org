@@ -155,7 +155,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
     }
 
     if (sandboxReq.ActivationUserGroupName) {
-      groupId = await this.getUserGroupId(sandboxReq.ActivationUserGroupName);
+      groupId = await this.getUserGroupIdByName(sandboxReq.ActivationUserGroupName);
       delete sandboxReq.ActivationUserGroupName;
     }
 
@@ -289,20 +289,20 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       ).Id;
       return result;
     } catch (err) {
-      throw messages.createError('error.apexClassQueryFailed');
+      throw messages.createError('error.apexClassQueryFailed', [className], [], err as Error);
     }
   }
 
-  private async getUserGroupId(groupName: string): Promise<string | undefined> {
+  private async getUserGroupIdByName(groupName: string): Promise<string | undefined> {
     try {
       const result = (
         await this.flags['target-org']
           .getConnection()
-          .singleRecordQuery(`SELECT id FROM Group WHERE NAME = '${groupName}' AND Type = 'Regular'`)
+          .singleRecordQuery(`SELECT id FROM Group WHERE NAME = '${groupName}'`)
       ).Id;
       return result;
     } catch (err) {
-      throw messages.createError('error.userGroupQueryFailed');
+      throw messages.createError('error.userGroupQueryFailed', [groupName], [], err as Error);
     }
   }
 }
