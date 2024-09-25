@@ -6,7 +6,7 @@
  */
 import fs from 'node:fs';
 
-import { Logger, SandboxInfo, SandboxRequest, Messages, SfError, Lifecycle } from '@salesforce/core';
+import { Logger, SandboxInfo, SandboxRequest, Messages, SfError, Lifecycle, Connection } from '@salesforce/core';
 import { lowerToUpper } from './utils.js';
 import { SandboxLicenseType } from './orgTypes.js';
 
@@ -22,10 +22,21 @@ export const generateSboxName = async (): Promise<string> => {
 };
 
 // Reads the sandbox definition file and converts properties to CapCase.
-export function readSandboxDefFile(defFile: string): Partial<SandboxInfo> {
+export function readSandboxDefFile(
+  defFile: string
+): Partial<SandboxInfo & { ApexClassName?: string; ActivationUserGroupName?: string }> {
   const fileContent = fs.readFileSync(defFile, 'utf-8');
-  const parsedContent = JSON.parse(fileContent) as Record<string, unknown>;
-  return lowerToUpper(parsedContent) as Partial<SandboxInfo>;
+  const parsedContent = lowerToUpper(JSON.parse(fileContent) as Record<string, unknown>);
+
+  // validate input
+  if (parsedContent.ApexClassName && parsedContent.ApexClassId) {
+    throw cloneMessages.createError('error.bothApexClassIdAndNameProvided');
+  }
+
+  if (parsedContent.ActivationUserGroupId && parsedContent.ActivationUserGroupName) {
+    throw cloneMessages.createError('error.bothUserGroupIdAndNameProvided');
+  }
+  return parsedContent as Partial<SandboxInfo>;
 }
 
 export async function createSandboxRequest(
@@ -33,13 +44,24 @@ export async function createSandboxRequest(
   definitionFile: string | undefined,
   logger?: Logger | undefined,
   properties?: Record<string, string | undefined>
-): Promise<{ sandboxReq: SandboxRequest; srcSandboxName: string }>;
+): Promise<{
+  sandboxReq: SandboxRequest & {
+    ApexClassName: string | undefined;
+    ActivationUserGroupName: string | undefined;
+  };
+  srcSandboxName: string;
+}>;
 export async function createSandboxRequest(
   isClone: false,
   definitionFile: string | undefined,
   logger?: Logger | undefined,
   properties?: Record<string, string | undefined>
-): Promise<{ sandboxReq: SandboxRequest }>;
+): Promise<{
+  sandboxReq: SandboxRequest & {
+    ApexClassName: string | undefined;
+    ActivationUserGroupName: string | undefined;
+  };
+}>;
 export async function createSandboxRequest(
   isClone = false,
   definitionFile: string | undefined,
@@ -52,6 +74,7 @@ export async function createSandboxRequest(
   logger.debug('Varargs: %s ', properties);
 
   const sandboxDefFileContents = definitionFile ? readSandboxDefFile(definitionFile) : {};
+
   const capitalizedVarArgs = properties ? lowerToUpper(properties) : {};
 
   // varargs override file input
@@ -83,9 +106,26 @@ export async function createSandboxRequest(
     return { sandboxReq };
   }
 }
-
+export async function getApexClassIdByName(conn: Connection, className: string): Promise<string | undefined> {
+  try {
+    const result = (await conn.singleRecordQuery(`SELECT Id FROM ApexClass WHERE Name = '${className}'`)).Id;
+    return result;
+  } catch (err) {
+    throw cloneMessages.createError('error.apexClassQueryFailed', [className], [], err as Error);
+  }
+}
+export async function getUserGroupIdByName(conn: Connection, groupName: string): Promise<string | undefined> {
+  try {
+    const result = (await conn.singleRecordQuery(`SELECT id FROM Group WHERE NAME = '${groupName}'`)).Id;
+    return result;
+  } catch (err) {
+    throw cloneMessages.createError('error.userGroupQueryFailed', [groupName], [], err as Error);
+  }
+}
 export default {
   createSandboxRequest,
   generateSboxName,
   readSandboxDefFile,
+  getApexClassIdByName,
+  getUserGroupIdByName,
 };
