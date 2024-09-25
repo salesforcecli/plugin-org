@@ -1,3 +1,9 @@
+# [4.6.0](https://github.com/salesforcecli/plugin-org/compare/4.5.10...4.6.0) (2024-09-25)
+
+### Features
+
+- **sbx:** support new `Name` fields in def. file ([#1221](https://github.com/salesforcecli/plugin-org/issues/1221)) ([7a64c03](https://github.com/salesforcecli/plugin-org/commit/7a64c03ec2e9e17e212f7c3643fa264e5f1d05e0))
+
 ## [4.5.10](https://github.com/salesforcecli/plugin-org/compare/4.5.9...4.5.10) (2024-09-22)
 
 ### Bug Fixes
