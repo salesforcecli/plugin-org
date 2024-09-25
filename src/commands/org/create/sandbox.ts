@@ -136,29 +136,25 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       ? await requestFunctions.createSandboxRequest(false, this.flags['definition-file'], undefined, requestOptions)
       : await requestFunctions.createSandboxRequest(true, this.flags['definition-file'], undefined, requestOptions);
 
-    // validate input
-    if (sandboxReq.ApexClassName && sandboxReq.ApexClassId) {
-      throw messages.createError('error.bothApexClassIdAndNameProvided');
-    }
-
-    if (sandboxReq.ActivationUserGroupId && sandboxReq.ActivationUserGroupName) {
-      throw messages.createError('error.bothUserGroupIdAndNameProvided');
-    }
-
     let apexId: string | undefined;
     let groupId: string | undefined;
 
     // Determine which value to use
     if (sandboxReq.ApexClassName) {
-      apexId = await this.getApexClassIdByName(sandboxReq.ApexClassName); // convert  name to ID
+      apexId = await requestFunctions.getApexClassIdByName(
+        this.flags['target-org'].getConnection(),
+        sandboxReq.ApexClassName
+      ); // convert  name to ID
       delete sandboxReq.ApexClassName;
     }
 
     if (sandboxReq.ActivationUserGroupName) {
-      groupId = await this.getUserGroupIdByName(sandboxReq.ActivationUserGroupName);
+      groupId = await requestFunctions.getUserGroupIdByName(
+        this.flags['target-org'].getConnection(),
+        sandboxReq.ActivationUserGroupName
+      );
       delete sandboxReq.ActivationUserGroupName;
     }
-
     return {
       ...sandboxReq,
       ...(this.flags.clone ? { SourceId: await this.getSourceId() } : {}),
@@ -277,32 +273,6 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       return sourceOrg.SandboxInfoId;
     } catch (err) {
       throw messages.createError('error.noCloneSource', [this.flags.clone], [], err as Error);
-    }
-  }
-
-  private async getApexClassIdByName(className: string): Promise<string | undefined> {
-    try {
-      const result = (
-        await this.flags['target-org']
-          .getConnection()
-          .singleRecordQuery(`SELECT Id FROM ApexClass WHERE Name = '${className}'`)
-      ).Id;
-      return result;
-    } catch (err) {
-      throw messages.createError('error.apexClassQueryFailed', [className], [], err as Error);
-    }
-  }
-
-  private async getUserGroupIdByName(groupName: string): Promise<string | undefined> {
-    try {
-      const result = (
-        await this.flags['target-org']
-          .getConnection()
-          .singleRecordQuery(`SELECT id FROM Group WHERE NAME = '${groupName}'`)
-      ).Id;
-      return result;
-    } catch (err) {
-      throw messages.createError('error.userGroupQueryFailed', [groupName], [], err as Error);
     }
   }
 }

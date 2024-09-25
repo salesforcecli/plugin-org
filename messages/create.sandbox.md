@@ -123,19 +123,3 @@ The poll interval (%d seconds) can't be larger that wait (%d in seconds)
 # error.noCloneSource
 
 Could not find the clone sandbox name "%s" in the target org.
-
-# error.userGroupQueryFailed
-
-Unable to find the ID of the activation user group "%s" that's defined in the definition file.
-
-# error.bothApexClassIdAndNameProvided
-
-You can't specify both `apexClassId` and `apexClassName` in the definition file at the same time.
-
-# error.bothUserGroupIdAndNameProvided
-
-You can't specify both `ActivationUserGroupId` and `ActivationUserGroupName` in the definition file at the same time.
-
-# error.apexClassQueryFailed
-
-Unable to find the ID of the Apex class "%s" that's defined in the definition file.
