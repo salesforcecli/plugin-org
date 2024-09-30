@@ -186,11 +186,28 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxCommandRes
       throw messages.createError('error.NoSandboxName');
     }
 
+    let apexId: string | undefined;
+    let groupId: string | undefined;
+
+    if (defFileContent.ApexClassName) {
+      apexId = await requestFunctions.getApexClassIdByName(
+        this.flags['target-org'].getConnection(),
+        defFileContent.ApexClassName
+      ); // convert  name to ID
+      delete defFileContent.ApexClassName;
+    }
+
+    if (defFileContent.ActivationUserGroupName) {
+      groupId = await requestFunctions.getUserGroupIdByName(
+        this.flags['target-org'].getConnection(),
+        defFileContent.ActivationUserGroupName
+      );
+      delete defFileContent.ActivationUserGroupName;
+    }
     // Warn if sandbox name is in `--name` and `--definition-file` flags and they differ.
     if (defFileContent?.SandboxName && sbxName && sbxName !== defFileContent?.SandboxName) {
       this.warn(messages.createWarning('warning.ConflictingSandboxNames', [sbxName, defFileContent?.SandboxName]));
     }
-
     sbxName ??= defFileContent.SandboxName as string; // The code above ensures a value for sbxName
 
     const prodOrg = this.flags['target-org'];
@@ -213,6 +230,8 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxCommandRes
     sandboxInfo = Object.assign(sandboxInfo, defFileContent, {
       SandboxName: sbxName,
       AutoActivate: !this.flags['no-auto-activate'],
+      ...(apexId ? { ApexClassId: apexId } : {}),
+      ...(groupId ? { ActivationUserGroupId: groupId } : {}),
     });
 
     return sandboxInfo;

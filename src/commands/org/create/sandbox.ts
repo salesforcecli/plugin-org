@@ -135,9 +135,31 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
     const { sandboxReq } = !this.flags.clone
       ? await requestFunctions.createSandboxRequest(false, this.flags['definition-file'], undefined, requestOptions)
       : await requestFunctions.createSandboxRequest(true, this.flags['definition-file'], undefined, requestOptions);
+
+    let apexId: string | undefined;
+    let groupId: string | undefined;
+
+    // Determine which value to use
+    if (sandboxReq.ApexClassName) {
+      apexId = await requestFunctions.getApexClassIdByName(
+        this.flags['target-org'].getConnection(),
+        sandboxReq.ApexClassName
+      ); // convert  name to ID
+      delete sandboxReq.ApexClassName;
+    }
+
+    if (sandboxReq.ActivationUserGroupName) {
+      groupId = await requestFunctions.getUserGroupIdByName(
+        this.flags['target-org'].getConnection(),
+        sandboxReq.ActivationUserGroupName
+      );
+      delete sandboxReq.ActivationUserGroupName;
+    }
     return {
       ...sandboxReq,
       ...(this.flags.clone ? { SourceId: await this.getSourceId() } : {}),
+      ...(apexId ? { ApexClassId: apexId } : {}),
+      ...(groupId ? { ActivationUserGroupId: groupId } : {}),
     };
   }
 
