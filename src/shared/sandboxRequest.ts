@@ -50,6 +50,7 @@ export async function createSandboxRequest(
     ActivationUserGroupName: string | undefined;
   };
   srcSandboxName: string;
+  srcSandboxId: string;
 }>;
 export async function createSandboxRequest(
   isClone: false,
@@ -67,7 +68,7 @@ export async function createSandboxRequest(
   definitionFile: string | undefined,
   logger?: Logger | undefined,
   properties?: Record<string, string | undefined>
-): Promise<{ sandboxReq: SandboxRequest; srcSandboxName?: string }> {
+): Promise<{ sandboxReq: SandboxRequest; srcSandboxName?: string; srcSandboxId?: string }> {
   if (!logger) {
     logger = await Logger.child('createSandboxRequest');
   }
@@ -78,7 +79,7 @@ export async function createSandboxRequest(
   const capitalizedVarArgs = properties ? lowerToUpper(properties) : {};
 
   // varargs override file input
-  const sandboxReqWithName: SandboxRequest & { SourceSandboxName?: string } = {
+  const sandboxReqWithName: SandboxRequest & { SourceSandboxName?: string; SourceSandboxId?: string } = {
     ...(sandboxDefFileContents as Record<string, unknown>),
     ...capitalizedVarArgs,
     SandboxName:
@@ -87,18 +88,24 @@ export async function createSandboxRequest(
       (await generateSboxName()),
   };
 
-  const { SourceSandboxName, ...sandboxReq } = sandboxReqWithName;
+  const { SourceSandboxName, SourceSandboxId, ...sandboxReq } = sandboxReqWithName; 
   logger.debug('SandboxRequest after merging DefFile and Varargs: %s ', sandboxReq);
 
   if (isClone) {
-    if (!SourceSandboxName) {
+    if (SourceSandboxName && SourceSandboxId) {
+      throw new SfError(
+        cloneMessages.getMessage('missingSourceSandboxName', ['SourceSandboxName']),
+        cloneMessages.getMessage('missingSourceSandboxNameAction', ['SourceSandboxName'])
+      );
+    }
+    if (!SourceSandboxName && !SourceSandboxId) {
       // error - we need SourceSandboxName to know which sandbox to clone from
       throw new SfError(
         cloneMessages.getMessage('missingSourceSandboxName', ['SourceSandboxName']),
         cloneMessages.getMessage('missingSourceSandboxNameAction', ['SourceSandboxName'])
       );
     }
-    return { sandboxReq, srcSandboxName: SourceSandboxName };
+    return { sandboxReq, srcSandboxName: SourceSandboxName, srcSandboxId: SourceSandboxId };
   } else {
     if (!sandboxReq.LicenseType) {
       return { sandboxReq: { ...sandboxReq, LicenseType: SandboxLicenseType.developer } };
@@ -122,10 +129,19 @@ export async function getUserGroupIdByName(conn: Connection, groupName: string):
     throw cloneMessages.createError('error.userGroupQueryFailed', [groupName], [], err as Error);
   }
 }
+export async function getSrcIdByName(conn: Connection, sandboxName: string): Promise<string | undefined> {
+  try {
+    const result = (await conn.singleRecordQuery(`SELECT id FROM SandboxInfo WHERE SandboxName = '${sandboxName}'`)).Id;
+    return result;
+  } catch (err) {
+    throw cloneMessages.createError('error.userGroupQueryFailed', [sandboxName], [], err as Error);
+  }
+}
 export default {
   createSandboxRequest,
   generateSboxName,
   readSandboxDefFile,
   getApexClassIdByName,
   getUserGroupIdByName,
+  getSrcIdByName,
 };

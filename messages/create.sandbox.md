@@ -66,6 +66,22 @@ Name of the sandbox org to clone.
 
 The value of --clone must be an existing sandbox. The existing sandbox, and the new sandbox specified with the --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
 
+# flags.source-sandbox-name.summary
+
+Name of the sandbox org to clone.
+
+# flags.source-sandbox-name.description
+
+The value of --source-sandbox-name must be an existing sandbox. The existing sandbox, and the new sandbox specified with the --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
+
+# flags.source-id.summary
+
+ID of the sandbox org to clone.
+
+# flags.source-id.description
+
+The value of --source-id must be an existing sandbox. The existing sandbox, and the new sandbox specified with the --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
+
 # flags.licenseType.summary
 
 Type of sandbox license.
@@ -123,3 +139,7 @@ The poll interval (%d seconds) can't be larger that wait (%d in seconds)
 # error.noCloneSource
 
 Could not find the clone sandbox name "%s" in the target org.
+
+# error.SourceSandboxNameAndSourceIdConflict
+
+You can not use both 'source-sandbox-id' and 'source-id' at the same time.

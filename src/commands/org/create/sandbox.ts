@@ -20,6 +20,7 @@ const getLicenseTypes = (): string[] => Object.values(SandboxLicenseType);
 
 type SandboxConfirmData = SandboxRequest & { CloneSource?: string };
 
+// eslint-disable-next-line sf-plugin/only-extend-SfCommand
 export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResponse> {
   public static summary = messages.getMessage('summary');
   public static description = messages.getMessage('description');
@@ -27,6 +28,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
   public static readonly aliases = ['env:create:sandbox'];
   public static readonly deprecateAliases = true;
 
+  // eslint-disable-next-line sf-plugin/spread-base-flags
   public static flags = {
     // needs to change when new flags are available
     'definition-file': Flags.file({
@@ -79,10 +81,18 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
         return Promise.resolve(name);
       },
     }),
-    clone: Flags.string({
+    'source-sandbox-name': Flags.string({
       char: 'c',
-      summary: messages.getMessage('flags.clone.summary'),
-      description: messages.getMessage('flags.clone.description'),
+      summary: messages.getMessage('flags.source-sandbox-name.summary'),
+      description: messages.getMessage('flags.source-sandbox-name.description'),
+      exclusive: ['license-type', 'source-id'],
+      deprecateAliases: true,
+      aliases: ['clone'], // Keep 'clone' as a deprecated alias
+    }),
+    'source-id': Flags.string({
+      char: 's',
+      summary: messages.getMessage('flags.source-id.summary'),
+      description: messages.getMessage('flags.source-id.description'),
       exclusive: ['license-type'],
     }),
     'license-type': Flags.custom<SandboxLicenseType>({
@@ -90,7 +100,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
     })({
       char: 'l',
       summary: messages.getMessage('flags.licenseType.summary'),
-      exclusive: ['clone'],
+      exclusive: ['source-sandbox-name', 'source-id'],
     }),
     'target-org': Flags.requiredOrg({
       char: 'o',
@@ -112,6 +122,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
   public async run(): Promise<SandboxCommandResponse> {
     this.sandboxRequestConfig = await this.getSandboxRequestConfig();
     this.flags = (await this.parse(CreateSandbox)).flags;
+
     this.debug('Create started with args %s ', this.flags);
     this.validateFlags();
     return this.createSandbox();
@@ -129,16 +140,16 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
     // reuse the existing sandbox request generator, with this command's flags as the varargs
     const requestOptions = {
       ...(this.flags.name ? { SandboxName: this.flags.name } : {}),
-      ...(this.flags.clone ? { SourceSandboxName: this.flags.clone } : {}),
-      ...(!this.flags.clone && this.flags['license-type'] ? { LicenseType: this.flags['license-type'] } : {}),
+      ...(this.flags['source-sandbox-name'] ? { SourceSandboxName: this.flags['source-sandbox-name'] } : (this.flags['source-id'] ? { SourceSandboxId: this.flags['source-id'] } : {})),
+      ...(!this.flags['source-sandbox-name'] && !this.flags['source-id'] && this.flags['license-type'] ? { LicenseType: this.flags['license-type'] } : {}),
     };
-    const { sandboxReq } = !this.flags.clone
+    console.log(requestOptions);
+    const { sandboxReq } = !this.flags['source-id'] && !this.flags['source-sandbox-name'] // if no sourceID or sourceSandboxName, sf will create e a new sandbox
       ? await requestFunctions.createSandboxRequest(false, this.flags['definition-file'], undefined, requestOptions)
       : await requestFunctions.createSandboxRequest(true, this.flags['definition-file'], undefined, requestOptions);
 
     let apexId: string | undefined;
     let groupId: string | undefined;
-
     // Determine which value to use
     if (sandboxReq.ApexClassName) {
       apexId = await requestFunctions.getApexClassIdByName(
@@ -147,7 +158,6 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       ); // convert  name to ID
       delete sandboxReq.ApexClassName;
     }
-
     if (sandboxReq.ActivationUserGroupName) {
       groupId = await requestFunctions.getUserGroupIdByName(
         this.flags['target-org'].getConnection(),
@@ -155,11 +165,14 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       );
       delete sandboxReq.ActivationUserGroupName;
     }
+    let srcId: string | undefined;
     return {
       ...sandboxReq,
-      ...(this.flags.clone ? { SourceId: await this.getSourceId() } : {}),
+      ...(this.flags['source-sandbox-name'] ? { SourceId: await this.getSourceIdByName() } : {}),
+      ...(this.flags['source-id'] ? { SourceId: await this.getSourceId() } : {}),
       ...(apexId ? { ApexClassId: apexId } : {}),
       ...(groupId ? { ActivationUserGroupId: groupId } : {}),
+      ...(srcId ? { SourceId: srcId } : {}),
     };
   }
 
@@ -176,7 +189,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       tracksSource: this.flags['no-track-source'] === true ? false : undefined,
     });
     const sandboxReq = await this.createSandboxRequest();
-    await this.confirmSandboxReq({ ...sandboxReq, ...(this.flags.clone ? { CloneSource: this.flags.clone } : {}) });
+    await this.confirmSandboxReq({ ...sandboxReq, ...(this.flags['source-sandbox-name'] ? { CloneSource: this.flags['source-sandbox-name'] } : (this.flags['source-id'] ? { CloneSource: this.flags['source-id'] } : {})) });
     this.initSandboxProcessData(sandboxReq);
 
     if (!this.flags.async) {
@@ -264,15 +277,27 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
     }
   }
 
-  private async getSourceId(): Promise<string | undefined> {
-    if (!this.flags.clone) {
+  private async getSourceIdByName(): Promise<string | undefined> {
+    if (!this.flags['source-sandbox-name']) {
       return undefined;
     }
     try {
-      const sourceOrg = await this.flags['target-org'].querySandboxProcessBySandboxName(this.flags.clone);
+      const sourceOrg = await this.flags['target-org'].querySandboxProcessBySandboxName(this.flags['source-sandbox-name']);
       return sourceOrg.SandboxInfoId;
     } catch (err) {
-      throw messages.createError('error.noCloneSource', [this.flags.clone], [], err as Error);
+      throw messages.createError('error.noCloneSource', [this.flags['source-sandbox-name']], [], err as Error);
+    }
+  }
+
+  private async getSourceId(): Promise<string | undefined>{
+    if (!this.flags['source-id']) {
+      return undefined;
+    }
+    try {
+      const sourceOrg = await this.flags['target-org'].querySandboxProcessBySandboxInfoId(this.flags['source-id']);
+      return sourceOrg.SandboxInfoId;
+    } catch (err) {
+      throw messages.createError('error.noCloneSource', [this.flags['source-id']], [], err as Error);
     }
   }
 }
