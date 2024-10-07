@@ -34,7 +34,7 @@ describe('org:resume:scratch', () => {
     });
 
     try {
-      await OrgResumeScratch.run(['--job-id', '2SRFOOFOOFOOFOOFOO']);
+      await OrgResumeScratch.run(['--job-id', '2SRFOOFOOFOOFOOFOO', '--json']);
       expect(false, 'ResumeSandbox should have thrown sandboxCreateNotComplete');
     } catch (err: unknown) {
       const error = err as SfError;
@@ -50,7 +50,7 @@ describe('org:resume:scratch', () => {
     });
 
     try {
-      await OrgResumeScratch.run(['--job-id', '2SRFOOFOOFOOFOOFOO']);
+      await OrgResumeScratch.run(['--job-id', '2SRFOOFOOFOOFOOFOO', '--json']);
       expect(false, 'ResumeSandbox should have thrown sandboxCreateNotComplete');
     } catch (err: unknown) {
       const error = err as SfError;
