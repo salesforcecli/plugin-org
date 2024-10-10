@@ -176,6 +176,8 @@ const generateFileUrl = async (file: string, conn: Connection): Promise<string> 
     const typeName = components[0]?.type?.name;
 
     switch (typeName) {
+      case 'Bot':
+        return `AiCopilot/copilotStudio.app#/copilot/builder?copilotId=${await botFileNameToId(conn, file)}`;
       case 'ApexPage':
         return `/apex/${path.basename(file).replace('.page-meta.xml', '').replace('.page', '')}`;
       case 'Flow':
@@ -192,6 +194,13 @@ const generateFileUrl = async (file: string, conn: Connection): Promise<string> 
     return 'lightning/setup/FlexiPageList/home';
   }
 };
+
+const botFileNameToId = async (conn: Connection, filePath: string): Promise<string> =>
+  (
+    await conn.singleRecordQuery<{ Id: string }>(
+      `SELECT id FROM BotDefinition WHERE DeveloperName='${path.basename(filePath, '.bot-meta.xml')}'`
+    )
+  ).Id;
 
 /** query flexipage via toolingPAI to get its ID (starts with 0M0) */
 const flexiPageFilenameToId = async (conn: Connection, filePath: string): Promise<string> =>
@@ -228,7 +237,7 @@ const getFileContents = (
   <body onload="document.body.firstElementChild.submit()">
     <form method="POST" action="${instanceUrl}/secur/frontdoor.jsp">
       <input type="hidden" name="sid" value="${authToken}" />
-      <input type="hidden" name="retURL" value="${retUrl}" /> 
+      <input type="hidden" name="retURL" value="${retUrl}" />
     </form>
   </body>
 </html>`;
