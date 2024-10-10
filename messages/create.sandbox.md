@@ -58,14 +58,6 @@ Name of the sandbox org.
 
 The name must be a unique alphanumeric string (10 or fewer characters) to identify the sandbox. You can’t reuse a name while a sandbox is in the process of being deleted.
 
-# flags.clone.summary
-
-Name of the sandbox org to clone.
-
-# flags.clone.description
-
-The value of --clone must be an existing sandbox. The existing sandbox, and the new sandbox specified with the --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
-
 # flags.source-sandbox-name.summary
 
 Name of the sandbox org to clone.
@@ -74,6 +66,8 @@ Name of the sandbox org to clone.
 
 The value of --source-sandbox-name must be an existing sandbox. The existing sandbox, and the new sandbox specified with the --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
 
+You can specify either --source-sandbox-name or --source-id for clone an existing sandbox but not both.
+
 # flags.source-id.summary
 
 ID of the sandbox org to clone.
@@ -81,6 +75,8 @@ ID of the sandbox org to clone.
 # flags.source-id.description
 
 The value of --source-id must be an existing sandbox. The existing sandbox, and the new sandbox specified with the --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
+
+You can specify either --source-sandbox-name or --source-id for clone an existing sandbox but not both.
 
 # flags.licenseType.summary
 
@@ -136,10 +132,14 @@ The sandbox request configuration isn't acceptable.
 
 The poll interval (%d seconds) can't be larger that wait (%d in seconds)
 
-# error.noCloneSource
+# error.noCloneSourceName
 
 Could not find the clone sandbox name "%s" in the target org.
 
-# error.SourceSandboxNameAndSourceIdConflict
+# error.noCloneSourceId
 
-You can not use both 'source-sandbox-id' and 'source-id' at the same time.
+Could not find the clone sandbox id "%s" in the target org.
+
+# error.cloneFlagsConflict
+
+You can not use clone Name or Id flags and clone Name or Id fields in the definition file at the same time.

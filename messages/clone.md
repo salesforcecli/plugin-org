@@ -21,3 +21,11 @@ Unable to find the ID of the activation user group "%s" that's defined in the de
 # error.apexClassQueryFailed
 
 Unable to find the ID of the Apex class "%s" that's defined in the definition file.
+
+# error.bothSourceIdAndNameProvided
+
+You can't specify both `SourceId` and `SourceSandboxName` in the definition file at the same time.
+
+# error.sandboxNameQueryFailed
+
+Unable to find the ID of the sandboxName "%s" that's defined in the definition file.
