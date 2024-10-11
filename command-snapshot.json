@@ -35,12 +35,11 @@
   {
     "alias": ["env:create:sandbox"],
     "command": "org:create:sandbox",
-    "flagAliases": [],
+    "flagAliases": ["clone"],
     "flagChars": ["a", "c", "f", "i", "l", "n", "o", "s", "w"],
     "flags": [
       "alias",
       "async",
-      "clone",
       "definition-file",
       "flags-dir",
       "json",
@@ -50,6 +49,8 @@
       "no-track-source",
       "poll-interval",
       "set-default",
+      "source-id",
+      "source-sandbox-name",
       "target-org",
       "wait"
     ],

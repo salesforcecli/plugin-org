@@ -90,7 +90,6 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       aliases: ['clone'],
     }),
     'source-id': Flags.string({
-      char: 's',
       summary: messages.getMessage('flags.source-id.summary'),
       description: messages.getMessage('flags.source-id.description'),
       exclusive: ['license-type'],

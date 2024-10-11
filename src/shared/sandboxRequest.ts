@@ -95,8 +95,8 @@ export async function createSandboxRequest(
   logger.debug('SandboxRequest after merging DefFile and Varargs: %s ', sandboxReq);
 
   if (isClone) {
-    if (!isClone) {
-      // error - we need SourceSandboxName to know which sandbox to clone from
+    if (!sandboxDefFileContents.SourceSandboxName && !sandboxDefFileContents.SourceId) {
+      // error - we need SourceSandboxName or SourceId to know which sandbox to clone from
       throw new SfError(
         cloneMessages.getMessage('missingSourceSandboxName', ['SourceSandboxName']),
         cloneMessages.getMessage('missingSourceSandboxNameAction', ['SourceSandboxName'])

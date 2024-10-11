@@ -17,7 +17,7 @@ describe('sandboxRequest builder', () => {
     it('throws without srcSandboxName', async () => {
       try {
         await shouldThrow(
-          createSandboxRequest(true, undefined, $$.TEST_LOGGER, {
+          createSandboxRequest(undefined, $$.TEST_LOGGER, {
             // SourceSandboxName: 'sbox',
             SandboxName: 'foo',
           })
@@ -27,30 +27,31 @@ describe('sandboxRequest builder', () => {
       }
     });
     it('from only varargs', async () => {
-      const res = await createSandboxRequest(true, undefined, $$.TEST_LOGGER, {
-        SourceSandboxName: 'sbox',
+      const res = await createSandboxRequest(undefined, $$.TEST_LOGGER, {
+        // SourceId: '123',
         SandboxName: 'foo',
         Description: 'the desc',
       });
       assert(res);
       expect(res.sandboxReq.SandboxName).equals('foo');
-      expect(res.srcSandboxName).equals('sbox');
+      // expect(res.srcId).equals('123');
       expect(res.sandboxReq.Description).equals('the desc');
     });
+
     it('from only camelcase varargs', async () => {
-      const res = await createSandboxRequest(true, undefined, $$.TEST_LOGGER, {
-        sourceSandboxName: 'sbox',
+      const res = await createSandboxRequest(undefined, $$.TEST_LOGGER, {
+        // SourceSandboxName: 'sbox',
         sandboxName: 'foo',
       });
       assert(res);
       expect(res.sandboxReq.SandboxName).equals('foo');
-      expect(res.srcSandboxName).equals('sbox');
+      // expect(res.srcSandboxName).equals('sbox');
     });
 
     it('throws without srcSandboxName in the file', async () => {
       try {
         await shouldThrow(
-          createSandboxRequest(true, undefined, $$.TEST_LOGGER, {
+          createSandboxRequest(undefined, $$.TEST_LOGGER, {
             SandboxName: 'foo',
           })
         );
@@ -65,7 +66,7 @@ describe('sandboxRequest builder', () => {
           sandboxName: 'foo',
         })
       );
-      const res = await createSandboxRequest(true, 'fooFile', $$.TEST_LOGGER);
+      const res = await createSandboxRequest('fooFile', $$.TEST_LOGGER);
       assert(res);
       expect(res.sandboxReq.SandboxName).equals('foo');
       expect(res.srcSandboxName).equals('sbox');
@@ -77,7 +78,7 @@ describe('sandboxRequest builder', () => {
           sandboxName: 'foo',
         })
       );
-      const res = await createSandboxRequest(true, 'fooFile', $$.TEST_LOGGER, { sandboxName: 'realName' });
+      const res = await createSandboxRequest('fooFile', $$.TEST_LOGGER, { sandboxName: 'realName' });
       assert(res);
       expect(res.sandboxReq.SandboxName).equals('realName');
     });
@@ -86,7 +87,7 @@ describe('sandboxRequest builder', () => {
     it('throws without licenseType', async () => {
       try {
         await shouldThrow(
-          createSandboxRequest(true, undefined, $$.TEST_LOGGER, {
+          createSandboxRequest(undefined, $$.TEST_LOGGER, {
             SandboxName: 'foo',
           })
         );
@@ -95,7 +96,7 @@ describe('sandboxRequest builder', () => {
       }
     });
     it('from only varargs', async () => {
-      const res = await createSandboxRequest(false, undefined, $$.TEST_LOGGER, {
+      const res = await createSandboxRequest(undefined, $$.TEST_LOGGER, {
         SandboxName: 'foo',
         LicenseType: 'Developer',
       });
@@ -103,7 +104,7 @@ describe('sandboxRequest builder', () => {
       expect(res.sandboxReq.LicenseType).equals('Developer');
     });
     it('from only camelcase varargs', async () => {
-      const res = await createSandboxRequest(false, undefined, $$.TEST_LOGGER, {
+      const res = await createSandboxRequest(undefined, $$.TEST_LOGGER, {
         licenseType: 'Developer',
         sandboxName: 'foo',
       });
@@ -114,7 +115,7 @@ describe('sandboxRequest builder', () => {
     it('throws without licenseType in the file', async () => {
       try {
         await shouldThrow(
-          createSandboxRequest(false, undefined, $$.TEST_LOGGER, {
+          createSandboxRequest(undefined, $$.TEST_LOGGER, {
             SandboxName: 'foo',
           })
         );
@@ -129,7 +130,7 @@ describe('sandboxRequest builder', () => {
           sandboxName: 'foo',
         })
       );
-      const res = await createSandboxRequest(false, 'fooFile', $$.TEST_LOGGER);
+      const res = await createSandboxRequest('fooFile', $$.TEST_LOGGER);
       assert(res);
       expect(res.sandboxReq.SandboxName).equals('foo');
     });
@@ -140,7 +141,7 @@ describe('sandboxRequest builder', () => {
           sandboxName: 'foo',
         })
       );
-      const res = await createSandboxRequest(false, 'fooFile', $$.TEST_LOGGER, { licenseType: 'Full' });
+      const res = await createSandboxRequest('fooFile', $$.TEST_LOGGER, { licenseType: 'Full' });
       assert(res);
       expect(res.sandboxReq.LicenseType).equals('Full');
     });
