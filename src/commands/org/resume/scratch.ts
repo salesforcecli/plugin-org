@@ -20,6 +20,7 @@ import {
 } from '@salesforce/core';
 import terminalLink from 'terminal-link';
 import { MultiStageOutput } from '@oclif/multi-stage-output';
+import { capitalCase } from 'change-case';
 import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
@@ -61,7 +62,7 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
     const hubBaseUrl = cached?.hubBaseUrl;
 
     const mso = new MultiStageOutput<ScratchOrgLifecycleEvent & { alias: string | undefined }>({
-      stages: scratchOrgLifecycleStages,
+      stages: scratchOrgLifecycleStages.map((stage) => capitalCase(stage)),
       title: 'Resuming Scratch Org',
       data: { alias: cached?.alias },
       jsonEnabled: this.jsonEnabled(),
@@ -96,7 +97,7 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
     });
 
     lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
-      mso.skipTo(data.stage, data);
+      mso.skipTo(capitalCase(data.stage), data);
       if (data.stage === 'done') {
         mso.stop();
       }

@@ -19,6 +19,7 @@ import {
 import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
 import { Duration } from '@salesforce/kit';
 import terminalLink from 'terminal-link';
+import { capitalCase } from 'change-case';
 import { buildScratchOrgRequest } from '../../../shared/scratchOrgRequest.js';
 import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
 
@@ -172,7 +173,9 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
     );
 
     const mso = new MultiStageOutput<ScratchOrgLifecycleEvent & { alias: string | undefined }>({
-      stages: flags.async ? ['prepare request', 'send request', 'done'] : scratchOrgLifecycleStages,
+      stages: (flags.async ? ['prepare request', 'send request', 'done'] : scratchOrgLifecycleStages).map((stage) =>
+        capitalCase(stage)
+      ),
       title: flags.async ? 'Creating Scratch Org (async)' : 'Creating Scratch Org',
       data: { alias: flags.alias },
       jsonEnabled: this.jsonEnabled(),
@@ -207,7 +210,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
     });
 
     lifecycle.on<ScratchOrgLifecycleEvent>(scratchOrgLifecycleEventName, async (data): Promise<void> => {
-      mso.skipTo(data.stage, data);
+      mso.skipTo(capitalCase(data.stage), data);
       if (data.stage === 'done') {
         mso.stop();
       }
@@ -222,7 +225,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       }
 
       if (flags.async) {
-        mso.skipTo('done', { scratchOrgInfo });
+        mso.skipTo('Done', { scratchOrgInfo });
         mso.stop();
         this.info(messages.getMessage('action.resume', [this.config.bin, scratchOrgInfo.Id]));
       } else {
