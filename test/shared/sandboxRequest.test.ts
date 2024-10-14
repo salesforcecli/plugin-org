@@ -28,24 +28,24 @@ describe('sandboxRequest builder', () => {
     });
     it('from only varargs', async () => {
       const res = await createSandboxRequest(undefined, $$.TEST_LOGGER, {
-        // SourceId: '123',
+        SourceSandboxName: 'sbox',
         SandboxName: 'foo',
         Description: 'the desc',
       });
       assert(res);
       expect(res.sandboxReq.SandboxName).equals('foo');
-      // expect(res.srcId).equals('123');
+      expect(res.srcSandboxName).equals('sbox');
       expect(res.sandboxReq.Description).equals('the desc');
     });
 
     it('from only camelcase varargs', async () => {
       const res = await createSandboxRequest(undefined, $$.TEST_LOGGER, {
-        // SourceSandboxName: 'sbox',
+        SourceSandboxName: 'sbox',
         sandboxName: 'foo',
       });
       assert(res);
       expect(res.sandboxReq.SandboxName).equals('foo');
-      // expect(res.srcSandboxName).equals('sbox');
+      expect(res.srcSandboxName).equals('sbox');
     });
 
     it('throws without srcSandboxName in the file', async () => {
