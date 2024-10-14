@@ -79,8 +79,6 @@ export async function createSandboxRequest(
   const sandboxDefFileContents = definitionFile ? readSandboxDefFile(definitionFile) : {};
 
   const capitalizedVarArgs = properties ? lowerToUpper(properties) : {};
-  const isClone = sandboxDefFileContents.SourceSandboxName ?? sandboxDefFileContents.SourceId;
-
   // varargs override file input
   const sandboxReqWithName: SandboxRequest & { SourceSandboxName?: string; SourceId?: string } = {
     ...(sandboxDefFileContents as Record<string, unknown>),
@@ -90,12 +88,12 @@ export async function createSandboxRequest(
       (sandboxDefFileContents.SandboxName as string) ??
       (await generateSboxName()),
   };
-
+  const isClone = sandboxReqWithName.SourceSandboxName ?? sandboxReqWithName.SourceId;
   const { SourceSandboxName, SourceId, ...sandboxReq } = sandboxReqWithName;
   logger.debug('SandboxRequest after merging DefFile and Varargs: %s ', sandboxReq);
 
   if (isClone) {
-    if (!sandboxDefFileContents.SourceSandboxName && !sandboxDefFileContents.SourceId) {
+    if (!sandboxReqWithName.SourceSandboxName && !sandboxReqWithName.SourceId) {
       // error - we need SourceSandboxName or SourceId to know which sandbox to clone from
       throw new SfError(
         cloneMessages.getMessage('missingSourceSandboxName', ['SourceSandboxName']),
