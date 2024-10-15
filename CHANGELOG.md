@@ -1,3 +1,33 @@
+## [4.6.2](https://github.com/salesforcecli/plugin-org/compare/4.6.1...4.6.2) (2024-10-13)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/sf-plugins-core from 11.3.10 to 11.3.12 ([4e1927a](https://github.com/salesforcecli/plugin-org/commit/4e1927aea883bb5435015a4bfcb85cc43b39e9eb))
+
+## [4.6.1](https://github.com/salesforcecli/plugin-org/compare/4.6.0...4.6.1) (2024-10-13)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/core from 4.0.27 to 4.0.28 ([916e8e2](https://github.com/salesforcecli/plugin-org/commit/916e8e22f1ff3c7f5ab76de85e20f60c19aef610))
+
+# [4.6.0](https://github.com/salesforcecli/plugin-org/compare/4.5.10...4.6.0) (2024-09-25)
+
+### Features
+
+- **sbx:** support new `Name` fields in def. file ([#1221](https://github.com/salesforcecli/plugin-org/issues/1221)) ([7a64c03](https://github.com/salesforcecli/plugin-org/commit/7a64c03ec2e9e17e212f7c3643fa264e5f1d05e0))
+
+## [4.5.10](https://github.com/salesforcecli/plugin-org/compare/4.5.9...4.5.10) (2024-09-22)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve from 12.6.2 to 12.7.1 ([598fbf2](https://github.com/salesforcecli/plugin-org/commit/598fbf2dd80629dd82b95e32b033a87b64ca2079))
+
+## [4.5.9](https://github.com/salesforcecli/plugin-org/compare/4.5.8...4.5.9) (2024-09-15)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/kit from 3.2.2 to 3.2.3 ([3efd1b8](https://github.com/salesforcecli/plugin-org/commit/3efd1b883be15327c8041f0e4befa1bdd0a3f02b))
+
 ## [4.5.8](https://github.com/salesforcecli/plugin-org/compare/4.5.7...4.5.8) (2024-09-08)
 
 ### Bug Fixes

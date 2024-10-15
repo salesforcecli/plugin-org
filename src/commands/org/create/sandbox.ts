@@ -165,6 +165,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       ); // convert  name to ID
       delete sandboxReq.ApexClassName;
     }
+
     if (sandboxReq.ActivationUserGroupName) {
       groupId = await requestFunctions.getUserGroupIdByName(
         this.flags['target-org'].getConnection(),
