@@ -6,7 +6,7 @@ Open your default scratch org, or another specified org, in a browser.
 
 To open a specific page, specify the portion of the URL after "https://mydomain.my.salesforce.com" as the value for the --path flag. For example, specify "--path lightning" to open Lightning Experience, or specify "--path /apex/YourPage" to open a Visualforce page.
 
-Use the --source-file flag to open an ApexPage, FlexiPage, Flow, or Bot from your local project in the associated Builder within the Org.
+Use the --source-file flag to open ApexPage, FlexiPage, Flow, or Agent metadata from your local project in the associated Builder within the Org.
 
 To generate a URL but not launch it in your browser, specify --url-only.
 
@@ -38,7 +38,7 @@ To open in a specific browser, use the --browser flag. Supported browsers are "c
 
   $ <%= config.bin %> <%= command.id %> --source-file force-app/main/default/flows/Hello.flow-meta.xml
 
-- Open a local Bot in Bot Builder:
+- Open local Agent metadata (Bot) in Agent Builder:
 
   $ <%= config.bin %> <%= command.id %> --source-file force-app/main/default/bots/Coral_Cloud_Agent/Coral_Cloud_Agent.bot-meta.xml
 
@@ -52,7 +52,7 @@ Browser where the org opens.
 
 # flags.source-file.summary
 
-Path to an ApexPage, FlexiPage, Flow, or Bot to open in the associated Builder.
+Path to ApexPage, FlexiPage, Flow, or Agent metadata to open in the associated Builder.
 
 # flags.path.summary
 
