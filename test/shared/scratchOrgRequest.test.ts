@@ -8,9 +8,9 @@ import { Config, Interfaces } from '@oclif/core';
 import { expect } from 'chai';
 import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import { buildScratchOrgRequest } from '../../src/shared/scratchOrgRequest.js';
-import EnvCreateScratch from '../../src/commands/org/create/scratch.js';
+import OrgCreateScratch from '../../src/commands/org/create/scratch.js';
 
-class Wrapper extends EnvCreateScratch {
+class Wrapper extends OrgCreateScratch {
   // simple method to return the parsed flags so they can be used in the tests
   public async getFlags(): Promise<Interfaces.InferredFlags<typeof Wrapper.flags>> {
     return (await this.parse(Wrapper)).flags;
@@ -18,7 +18,7 @@ class Wrapper extends EnvCreateScratch {
 }
 
 /** pass in the params in array form, get back the parsed flags */
-const paramsToFlags = async (params: string[]): Promise<Interfaces.InferredFlags<typeof EnvCreateScratch.flags>> =>
+const paramsToFlags = async (params: string[]): Promise<Interfaces.InferredFlags<typeof OrgCreateScratch.flags>> =>
   new Wrapper(params, { runHook: () => ({ successes: [], failures: [] }) } as unknown as Config).getFlags();
 
 describe('buildScratchOrgRequest function', () => {
