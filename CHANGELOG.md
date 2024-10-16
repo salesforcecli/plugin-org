@@ -1,3 +1,14 @@
+# [4.7.0](https://github.com/salesforcecli/plugin-org/compare/4.6.3...4.7.0) (2024-10-16)
+
+### Bug Fixes
+
+- change Bot to Agent ([c8fe7e0](https://github.com/salesforcecli/plugin-org/commit/c8fe7e05c1f002de38ff97cd9345e4219fc83ed1))
+- update command help ([27c2f5b](https://github.com/salesforcecli/plugin-org/commit/27c2f5bcb49ea4244ed7fa053b2aa87193da9b4a))
+
+### Features
+
+- open bot via source file ([208bc39](https://github.com/salesforcecli/plugin-org/commit/208bc394d0f36ea89f26f8afb8fce18b7c74871c))
+
 ## [4.6.3](https://github.com/salesforcecli/plugin-org/compare/4.6.3-beta.3...4.6.3) (2024-10-15)
 
 ## [4.6.3-beta.3](https://github.com/salesforcecli/plugin-org/compare/4.6.3-dev.2...4.6.3-beta.3) (2024-10-15)
