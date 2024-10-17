@@ -27,7 +27,6 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
   public static readonly aliases = ['env:create:sandbox'];
   public static readonly deprecateAliases = true;
 
-  // eslint-disable-next-line sf-plugin/spread-base-flags
   public static flags = {
     // needs to change when new flags are available
     'definition-file': Flags.file({
@@ -294,11 +293,11 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
     }
 
     const defFileContent = this.flags['definition-file'] ? readSandboxDefFile(this.flags['definition-file']) : {};
-    if (!!this.flags['source-id'] && !!defFileContent.SourceId) {
-      throw messages.createError('error.Both--source-idAndSourceIdInDef-fileAreProvided');
-    }
-    if (!!this.flags['source-sandbox-name'] && !!defFileContent.SourceSandboxName) {
-      throw messages.createError('error.Both--source-sandbox-nameAndSourceSandboxNameInDef-fileAreProvided');
+    if (
+      (!!this.flags['source-id'] || !!this.flags['source-sandbox-name']) &&
+      (!!defFileContent.SourceId || !!defFileContent.SourceSandboxName)
+    ) {
+      throw messages.createError('error.bothCloneSourceAreProvided');
     }
   }
 }
