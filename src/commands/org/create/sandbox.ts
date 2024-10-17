@@ -287,8 +287,21 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
         this.flags.wait.seconds,
       ]);
     }
-    if (!!this.flags['definition-file'] && !!readSandboxDefFile) {
-      throw messages.createError('error.bothCloneSourceAreProvided');
+    if (!this.flags['definition-file']) {
+      return undefined;
+    }
+    const parsedDef = readSandboxDefFile(this.flags['definition-file']);
+    if (this.flags['source-id'] && parsedDef.SourceId) {
+      throw messages.createError('error.bothIdFlagAndDefFilePropertyAreProvided');
+    }
+    if (this.flags['source-sandbox-name'] && parsedDef.SourceSandboxName) {
+      throw messages.createError('error.bothNameFlagAndDefFilePropertyAreProvided');
+    }
+    if (this.flags['source-id'] && parsedDef.SourceSandboxName) {
+      throw messages.createError('error.bothIdFlagAndNameDefFileAreNotAllowed');
+    }
+    if (this.flags['source-sandbox-name'] && parsedDef.SourceId) {
+      throw messages.createError('error.bothIdFlagAndNameDefFileAreNotAllowed');
     }
   }
 }

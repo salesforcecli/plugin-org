@@ -132,6 +132,14 @@ The sandbox request configuration isn't acceptable.
 
 The poll interval (%d seconds) can't be larger that wait (%d in seconds)
 
-# error.bothCloneSourceAreProvided
+# error.bothIdFlagAndDefFilePropertyAreProvided
 
-You can't specify both the --source-sandbox-name and --definition-file flags, and also include the "SourceSandboxName" option in the definition file. Same with the --source-id flag and "SourceId" option. Pick one method of cloning a sandbox and try again.
+You can't specify both the --source-id and --definition-file flags, and also include the "SourceId" option in the definition file. Pick one method of cloning a sandbox and try again.
+
+# error.bothNameFlagAndDefFilePropertyAreProvided
+
+You can't specify both the --source-sandbox-name and --definition-file flags, and also include the "SourceSandboxName" option in the definition file. Pick one method of cloning a sandbox and try again.
+
+# error.bothIdFlagAndNameDefFileAreNotAllowed
+
+You can't specify both the --source-sandbox-name and --definition-file flags, and also include the "SourceId" option in the definition file. Same with the --source-id flag and "SourceSandboxName" option. Pick one method of cloning a sandbox and try again.
