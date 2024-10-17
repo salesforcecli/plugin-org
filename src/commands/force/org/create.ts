@@ -211,7 +211,6 @@ export class Create extends SfCommand<CreateResult> {
     });
 
     const { sandboxReq } = await requestFunctions.createSandboxRequest(
-      // false,
       this.flags.definitionfile,
       this.logger,
       this.varArgs

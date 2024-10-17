@@ -26,6 +26,20 @@ describe('sandboxRequest builder', () => {
         expect(e).to.be.instanceOf(SfError);
       }
     });
+
+    it('throws with srcSandboxName and sourceId', async () => {
+      try {
+        await shouldThrow(
+          createSandboxRequest(undefined, $$.TEST_LOGGER, {
+            SourceSandboxName: 'sbox',
+            SourceId: '123',
+          })
+        );
+      } catch (e) {
+        expect(e).to.be.instanceOf(SfError);
+      }
+    });
+
     it('from only varargs', async () => {
       const res = await createSandboxRequest(undefined, $$.TEST_LOGGER, {
         SourceSandboxName: 'sbox',

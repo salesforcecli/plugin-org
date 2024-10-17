@@ -96,8 +96,8 @@ export async function createSandboxRequest(
     if (!sandboxReqWithName.SourceSandboxName && !sandboxReqWithName.SourceId) {
       // error - we need SourceSandboxName or SourceId to know which sandbox to clone from
       throw new SfError(
-        cloneMessages.getMessage('missingSourceSandboxName', ['SourceSandboxName']),
-        cloneMessages.getMessage('missingSourceSandboxNameAction', ['SourceSandboxName'])
+        cloneMessages.getMessage('missingSourceSandboxNameORSourceId', ['SourceSandboxName', 'SourceId']),
+        cloneMessages.getMessage('missingSourceSandboxNameORSourceIdAction', ['SourceSandboxName', 'SourceId'])
       );
     }
     return { sandboxReq, srcSandboxName: SourceSandboxName, srcId: SourceId };

@@ -20,7 +20,6 @@ const getLicenseTypes = (): string[] => Object.values(SandboxLicenseType);
 
 type SandboxConfirmData = SandboxRequest & { CloneSource?: string };
 
-// eslint-disable-next-line sf-plugin/only-extend-SfCommand
 export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResponse> {
   public static summary = messages.getMessage('summary');
   public static description = messages.getMessage('description');
@@ -87,12 +86,14 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       description: messages.getMessage('flags.source-sandbox-name.description'),
       exclusive: ['license-type', 'source-id'],
       deprecateAliases: true,
-      aliases: ['clone'],
+      aliases: ['clone', 'c'],
     }),
-    'source-id': Flags.string({
+    'source-id': Flags.salesforceId({
       summary: messages.getMessage('flags.source-id.summary'),
       description: messages.getMessage('flags.source-id.description'),
       exclusive: ['license-type'],
+      length: 'both',
+      char: undefined,
     }),
     'license-type': Flags.custom<SandboxLicenseType>({
       options: getLicenseTypes(),
@@ -176,12 +177,10 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
 
     return {
       ...sandboxReq,
-      ...(this.flags['source-sandbox-name'] ? { SourceId: await this.getSourceIdByName() } : {}),
-      ...(srcSandboxName
+      ...(srcSandboxName ?? this.flags['source-sandbox-name']
         ? { SourceId: await requestFunctions.getSrcIdByName(this.flags['target-org'].getConnection(), srcSandboxName) }
         : {}),
-      ...(srcId ? { SourceId: srcId } : {}),
-      ...(this.flags['source-id'] ? { SourceId: await this.getSourceId() } : {}),
+      ...(srcId ?? this.flags['source-id'] ? { SourceId: srcId } : {}),
       ...(apexId ? { ApexClassId: apexId } : {}),
       ...(groupId ? { ActivationUserGroupId: groupId } : {}),
     };
@@ -204,8 +203,8 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       ...sandboxReq,
       ...(this.flags['source-sandbox-name']
         ? { CloneSource: this.flags['source-sandbox-name'] }
-        : this.flags['source-id']
-        ? { CloneSource: this.flags['source-id'] }
+        : sandboxReq.SourceId
+        ? { CloneSource: sandboxReq.SourceId }
         : {}),
     });
     this.initSandboxProcessData(sandboxReq);
@@ -294,41 +293,12 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       ]);
     }
 
-    const sourceIdFlag = !!this.flags['source-id'];
-    const sourceSandboxNameFlag = !!this.flags['source-sandbox-name'];
-
     const defFileContent = this.flags['definition-file'] ? readSandboxDefFile(this.flags['definition-file']) : {};
-    const sourceIdInDefFile = !!defFileContent.SourceId;
-    const sourceSandboxNameInDefFile = !!defFileContent.SourceSandboxName;
-
-    if ((sourceIdFlag || sourceSandboxNameFlag) && (sourceIdInDefFile || sourceSandboxNameInDefFile)) {
-      throw messages.createError('error.cloneFlagsConflict');
+    if (!!this.flags['source-id'] && !!defFileContent.SourceId) {
+      throw messages.createError('error.Both--source-idAndSourceIdInDef-fileAreProvided');
     }
-  }
-
-  private async getSourceIdByName(): Promise<string | undefined> {
-    if (!this.flags['source-sandbox-name']) {
-      return undefined;
-    }
-    try {
-      const sourceOrg = await this.flags['target-org'].querySandboxProcessBySandboxName(
-        this.flags['source-sandbox-name']
-      );
-      return sourceOrg.SandboxInfoId;
-    } catch (err) {
-      throw messages.createError('error.noCloneSourceName', [this.flags['source-sandbox-name']], [], err as Error);
-    }
-  }
-
-  private async getSourceId(): Promise<string | undefined> {
-    if (!this.flags['source-id']) {
-      return undefined;
-    }
-    try {
-      const sourceOrg = await this.flags['target-org'].querySandboxProcessBySandboxInfoId(this.flags['source-id']);
-      return sourceOrg.SandboxInfoId;
-    } catch (err) {
-      throw messages.createError('error.noCloneSourceId', [this.flags['source-id']], [], err as Error);
+    if (!!this.flags['source-sandbox-name'] && !!defFileContent.SourceSandboxName) {
+      throw messages.createError('error.Both--source-sandbox-nameAndSourceSandboxNameInDef-fileAreProvided');
     }
   }
 }

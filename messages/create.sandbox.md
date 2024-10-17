@@ -66,7 +66,7 @@ Name of the sandbox org to clone.
 
 The value of --source-sandbox-name must be an existing sandbox. The existing sandbox, and the new sandbox specified with the --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
 
-You can specify either --source-sandbox-name or --source-id for clone an existing sandbox but not both.
+You can specify either --source-sandbox-name or --source-id when cloning an existing sandbox, but not both.
 
 # flags.source-id.summary
 
@@ -76,7 +76,7 @@ ID of the sandbox org to clone.
 
 The value of --source-id must be an existing sandbox. The existing sandbox, and the new sandbox specified with the --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
 
-You can specify either --source-sandbox-name or --source-id for clone an existing sandbox but not both.
+You can specify either --source-sandbox-name or --source-id when cloning an existing sandbox, but not both.
 
 # flags.licenseType.summary
 
@@ -132,14 +132,10 @@ The sandbox request configuration isn't acceptable.
 
 The poll interval (%d seconds) can't be larger that wait (%d in seconds)
 
-# error.noCloneSourceName
+# error.Both--source-idAndSourceIdInDef-fileAreProvided
 
-Could not find the clone sandbox name "%s" in the target org.
+You can't specify both the --source-id and --definition-file flags, and also include the "SourceId" option in the definition file. Pick one method of cloning a sandbox and try again.
 
-# error.noCloneSourceId
+# error.Both--source-sandbox-nameAndSourceSandboxNameInDef-fileAreProvided
 
-Could not find the clone sandbox id "%s" in the target org.
-
-# error.cloneFlagsConflict
-
-You can not use clone Name or Id flags and clone Name or Id fields in the definition file at the same time.
+You can't specify both the --source-sandbox-name and --definition-file flags, and also include the "SourceSandboxName" option in the definition file. Pick one method of cloning a sandbox and try again.
