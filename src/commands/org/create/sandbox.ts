@@ -27,6 +27,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
   public static readonly aliases = ['env:create:sandbox'];
   public static readonly deprecateAliases = true;
 
+  // eslint-disable-next-line sf-plugin/spread-base-flags
   public static flags = {
     // needs to change when new flags are available
     'definition-file': Flags.file({
@@ -80,7 +81,6 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       },
     }),
     'source-sandbox-name': Flags.string({
-      char: 'c',
       summary: messages.getMessage('flags.source-sandbox-name.summary'),
       description: messages.getMessage('flags.source-sandbox-name.description'),
       exclusive: ['license-type', 'source-id'],
@@ -176,10 +176,10 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
 
     return {
       ...sandboxReq,
-      ...(srcSandboxName ?? this.flags['source-sandbox-name']
+      ...(srcSandboxName
         ? { SourceId: await requestFunctions.getSrcIdByName(this.flags['target-org'].getConnection(), srcSandboxName) }
         : {}),
-      ...(srcId ?? this.flags['source-id'] ? { SourceId: srcId } : {}),
+      ...(srcId ? { SourceId: srcId } : {}),
       ...(apexId ? { ApexClassId: apexId } : {}),
       ...(groupId ? { ActivationUserGroupId: groupId } : {}),
     };
@@ -200,11 +200,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
     const sandboxReq = await this.createSandboxRequest();
     await this.confirmSandboxReq({
       ...sandboxReq,
-      ...(this.flags['source-sandbox-name']
-        ? { CloneSource: this.flags['source-sandbox-name'] }
-        : sandboxReq.SourceId
-        ? { CloneSource: sandboxReq.SourceId }
-        : {}),
+      ...(sandboxReq.SourceId ? { CloneSource: sandboxReq.SourceId } : {}),
     });
     this.initSandboxProcessData(sandboxReq);
 
@@ -291,12 +287,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
         this.flags.wait.seconds,
       ]);
     }
-
-    const defFileContent = this.flags['definition-file'] ? readSandboxDefFile(this.flags['definition-file']) : {};
-    if (
-      (!!this.flags['source-id'] || !!this.flags['source-sandbox-name']) &&
-      (!!defFileContent.SourceId || !!defFileContent.SourceSandboxName)
-    ) {
+    if (!!this.flags['definition-file'] && !!readSandboxDefFile) {
       throw messages.createError('error.bothCloneSourceAreProvided');
     }
   }

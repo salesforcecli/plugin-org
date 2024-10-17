@@ -1,10 +1,18 @@
-# missingSourceSandboxNameORSourceId
+# missingSourceSandboxName
 
-Specify a value for name %s or ID %s in a definition file or on the command line.
+Specify a value for %s in a definition file or on the command line.
 
-# missingSourceSandboxNameORSourceIdAction
+# missingSourceSandboxNameAction
 
-To indicate which sandbox org you want to clone, specify name %s or ID %s in a definition file or as a command line argument.
+To indicate which sandbox org you want to clone, specify name %s in a definition file or as a command line argument.
+
+# missingSourceId
+
+Specify a value for %s in a definition file or on the command line.
+
+# missingSourceIdAction
+
+To indicate which sandbox org you want to clone, specify ID %s in a definition file or as a command line argument.
 
 # error.bothApexClassIdAndNameProvided
 
@@ -28,4 +36,4 @@ You can't specify both `SourceId` and `SourceSandboxName` in the definition file
 
 # error.sandboxNameQueryFailed
 
-Unable to find the ID of the sandbox "%s" that's defined in the definition file.
+Unable to find the ID of the sandbox "%s" that's defined in the definition file or as a command line argument.

@@ -93,11 +93,17 @@ export async function createSandboxRequest(
   logger.debug('SandboxRequest after merging DefFile and Varargs: %s ', sandboxReq);
 
   if (isClone) {
-    if (!sandboxReqWithName.SourceSandboxName && !sandboxReqWithName.SourceId) {
-      // error - we need SourceSandboxName or SourceId to know which sandbox to clone from
+    // error - we need SourceSandboxName or SourceID to know which sandbox to clone from
+    if (!sandboxReqWithName.SourceSandboxName) {
       throw new SfError(
-        cloneMessages.getMessage('missingSourceSandboxNameORSourceId', ['SourceSandboxName', 'SourceId']),
-        cloneMessages.getMessage('missingSourceSandboxNameORSourceIdAction', ['SourceSandboxName', 'SourceId'])
+        cloneMessages.getMessage('missingSourceId', ['SourceId']),
+        cloneMessages.getMessage('missingSourceIdAction', ['SourceId'])
+      );
+    }
+    if (!sandboxReqWithName.SourceId) {
+      throw new SfError(
+        cloneMessages.getMessage('missingSourceSandboxName', ['SourceSandboxName']),
+        cloneMessages.getMessage('missingSourceSandboxNameAction', ['SourceSandboxName'])
       );
     }
     return { sandboxReq, srcSandboxName: SourceSandboxName, srcId: SourceId };
