@@ -35,8 +35,8 @@
   {
     "alias": ["env:create:sandbox"],
     "command": "org:create:sandbox",
-    "flagAliases": ["clone"],
-    "flagChars": ["a", "c", "f", "i", "l", "n", "o", "s", "w"],
+    "flagAliases": ["c", "clone"],
+    "flagChars": ["a", "f", "i", "l", "n", "o", "s", "w"],
     "flags": [
       "alias",
       "async",
