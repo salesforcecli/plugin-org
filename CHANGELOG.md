@@ -1,3 +1,9 @@
+## [4.7.1](https://github.com/salesforcecli/plugin-org/compare/4.7.0...4.7.1) (2024-10-20)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve from 12.7.1 to 12.8.1 ([17a2a04](https://github.com/salesforcecli/plugin-org/commit/17a2a043ae48b2d2b5c5b0684dd36bee0ab9d86f))
+
 # [4.7.0](https://github.com/salesforcecli/plugin-org/compare/4.6.3...4.7.0) (2024-10-16)
 
 ### Bug Fixes
