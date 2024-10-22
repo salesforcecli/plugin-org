@@ -95,10 +95,13 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
         value: typeof value === 'string' ? getStyledValue(key, value) : value,
       }));
 
-    this.styledHeader('Org Description');
-    this.table(tableRows, {
-      key: { header: 'KEY' },
-      value: { header: 'VALUE' },
+    this.table({
+      data: tableRows,
+      columns: [
+        { key: 'key', name: 'KEY' },
+        { key: 'value', name: 'VALUE' },
+      ],
+      title: 'Org Description',
     });
   }
 

@@ -189,32 +189,25 @@ Legend:  ${defaultHubEmoji}=Default DevHub, ${defaultOrgEmoji}=Default Org ${
         .map((row) => getStyledObject(row))
         .map(statusToEmoji),
     ];
-
-    this.table(allOrgs, {
-      defaultMarker: {
-        header: '',
-      },
-      type: {
-        header: 'Type',
-      },
-      alias: {
-        header: 'Alias',
-      },
-      username: { header: 'Username' },
-      orgId: { header: 'Org ID' },
-      ...(!skipconnectionstatus ? { connectedStatus: { header: 'Status' } } : {}),
-      ...(this.flags.verbose
-        ? {
-            instanceUrl: { header: 'Instance URL' },
-            namespacePrefix: { header: 'Namespace' },
-            devHubOrgId: { header: 'Dev Hub ID' },
-            createdDate: {
-              header: 'Created',
-              get: (data): string => ('createdDate' in data ? data.createdDate?.split('T')?.[0] ?? '' : ''),
-            },
-          }
-        : {}),
-      expirationDate: { header: 'Expires' },
+    this.table({
+      data: allOrgs.map((row) => ({
+        ' ': row.defaultMarker,
+        ...('type' in row ? { Type: row.type } : {}),
+        Alias: row.alias,
+        Username: row.username,
+        'Org ID': row.orgId,
+        ...(skipconnectionstatus ? {} : { Status: row.connectedStatus }),
+        ...(this.flags.verbose
+          ? {
+              'Instance URL': row.instanceUrl,
+              Namespace: row.namespacePrefix,
+              ...('devHubOrgId' in row ? { 'Dev Hub ID': row.devHubOrgId } : {}),
+              ...('createdDate' in row ? { Created: row.createdDate } : {}),
+            }
+          : {}),
+        ...('expirationDate' in row ? { Expires: row.expirationDate } : {}),
+      })),
+      ...(this.flags.verbose ? { overflow: 'wrap' } : {}),
     });
   }
 }

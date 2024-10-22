@@ -77,8 +77,8 @@ describe('sandbox progress', () => {
   describe('getSandboxTableAsText', () => {
     it('getSandboxTableAsText should work', () => {
       const tableData = getSandboxTableAsText('admin@prod.org.sandbox', sandboxProcessObj);
-      expect(tableData.find((r) => r.includes('Authorized Sandbox Username') && r.includes('admin@prod.org.sandbox')))
-        .to.be.ok;
+      expect(tableData).to.include('Authorized Sandbox Username');
+      expect(tableData).to.include('admin@prod.org.sandbox');
     });
   });
 });
