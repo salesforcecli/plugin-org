@@ -190,11 +190,12 @@ export class Create extends SfCommand<CreateResult> {
     lifecycle.on(SandboxEvents.EVENT_RESULT, async (results: ResultEvent) => {
       const { sandboxReadyForUse, data } = SandboxReporter.logSandboxProcessResult(results);
       this.log(sandboxReadyForUse);
-      this.styledHeader('Sandbox Org Creation Status');
-      this.table(data, {
-        key: { header: 'Name' },
-        value: { header: 'Value' },
+      this.table({
+        data,
+        columns: [{ key: 'key', name: 'Name' }, 'value'],
+        title: 'Sandbox Org Creation Status',
       });
+
       if (results.sandboxRes?.authUserName) {
         if (this.flags.setalias) {
           const stateAggregator = await StateAggregator.getInstance();

@@ -5,18 +5,11 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import os from 'node:os';
+import { colorize } from '@oclif/core/ux';
 import { StatusEvent, ResultEvent, SandboxProcessObject } from '@salesforce/core';
-import { Ux } from '@salesforce/sf-plugins-core';
 import { getClockForSeconds } from '../shared/timeUtils.js';
 import { StagedProgress } from './stagedProgress.js';
 import { isDefined } from './utils.js';
-
-const columns: Ux.Table.Columns<{ key: string; value: string }> = {
-  key: { header: 'Field' },
-  value: { header: 'Value' },
-};
-
-const ux = new Ux();
 
 export type SandboxProgressData = {
   id: string;
@@ -73,7 +66,7 @@ export class SandboxProgress extends StagedProgress<SandboxStatusData> {
   }
 
   public formatProgressStatus(withClock = true): string {
-    const table = getSandboxTableAsText(undefined, this.statusData?.sandboxProcessObj).join(os.EOL);
+    const table = getSandboxTableAsText(undefined, this.statusData?.sandboxProcessObj);
     return [
       withClock && this.statusData
         ? `${getClockForSeconds(this.statusData.sandboxProgress.remainingWaitTime)} until timeout. ${
@@ -123,15 +116,20 @@ export const getTableDataFromProcessObj = (
   ...(authUserName ? [{ key: 'Authorized Sandbox Username', value: authUserName }] : []),
 ];
 
-export const getSandboxTableAsText = (sandboxUsername?: string, sandboxProgress?: SandboxProcessObject): string[] => {
+export const getSandboxTableAsText = (sandboxUsername?: string, sandboxProgress?: SandboxProcessObject): string => {
   if (!sandboxProgress) {
-    return [];
+    return '';
   }
-  const tableRows: string[] = [];
-  ux.table(getTableDataFromProcessObj(sandboxProgress, sandboxUsername), columns, {
-    printLine: (s: string): void => {
-      tableRows.push(s);
-    },
-  });
-  return tableRows;
+
+  const data = getTableDataFromProcessObj(sandboxProgress, sandboxUsername);
+  const longestKey = data.reduce((acc, row) => (row.key.length > acc ? row.key.length : acc), 0);
+  const longestValue = data.reduce(
+    (acc, row) => (row.value.toString().length > acc ? row.value.toString().length : acc),
+    0
+  );
+  return [
+    colorize('bold', `${'Field'.padEnd(longestKey)}  Value`),
+    `${'-'.repeat(longestKey)}  ${'-'.repeat(longestValue)}`,
+    ...data.map((row) => `${row.key.padEnd(longestKey)}  ${row.value}`),
+  ].join(os.EOL);
 };

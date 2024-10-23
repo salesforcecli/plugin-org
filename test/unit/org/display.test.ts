@@ -48,7 +48,7 @@ describe('org:display', () => {
       $$.SANDBOX.stub(OrgListUtil, 'determineConnectedStatusForNonScratchOrg').resolves('Connected');
 
       await OrgDisplayCommand.run(['--targetusername', testOrg.username, '--verbose']);
-      const data = sfCommandUxStubs.table.firstCall.args[0];
+      const data = sfCommandUxStubs.table.firstCall.args[0].data;
       expect(data).to.deep.include({
         key: 'Client Id',
         value: testOrg.clientId,
@@ -65,7 +65,7 @@ describe('org:display', () => {
 
       await OrgDisplayCommand.run(['--targetusername', testOrg.username]);
 
-      const columns = sfCommandUxStubs.table.firstCall.args[0].flatMap((row) => row.key);
+      const columns = sfCommandUxStubs.table.firstCall.args[0].data.map((row) => row.key);
 
       expect(columns).to.include('Connected Status');
       expect(columns).to.include('Access Token');

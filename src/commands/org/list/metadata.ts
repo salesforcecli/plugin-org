@@ -62,29 +62,22 @@ export class ListMetadata extends SfCommand<ListMetadataCommandResult> {
       fs.writeFileSync(flags['output-file'], JSON.stringify(listResult, null, 2));
       this.logSuccess(`Wrote result file to ${flags['output-file']}.`);
     } else if (listResult?.length) {
-      this.table(
-        listResult,
-        {
-          createdByName: { header: 'Created By' },
-          createdDate: {
-            header: 'Created Date',
-            get: (row: FileProperties) => row.createdDate.split('T')[0],
-          },
-          fullName: { header: 'Full Name' },
-          id: { header: 'Id' },
-          lastModifiedByName: { header: 'Last Modified By' },
-          lastModifiedDate: {
-            header: 'Last Modified',
-            get: (row: FileProperties) => row.createdDate.split('T')[0],
-          },
-          manageableState: { header: 'Manageable State' },
-          namespacePrefix: { header: 'Namespace Prefix' },
+      this.table({
+        data: listResult.map((md) => ({
+          'Created By': md.createdByName,
+          'Created Date': md.createdDate.split('T')[0],
+          'Full Name': md.fullName,
+          Id: md.id,
+          'Last Modified By': md.lastModifiedByName,
+          'Last Modified': md.lastModifiedDate.split('T')[0],
+          'Manageable State': md.manageableState,
+          'Namespace Prefix': md.namespacePrefix,
+        })),
+        title: flags['metadata-type'],
+        sort: {
+          'Manageable State': 'asc',
         },
-        {
-          title: flags['metadata-type'],
-          sort: 'Manageable State',
-        }
-      );
+      });
     } else {
       this.warn(messages.getMessage('noMatchingMetadata', [flags['metadata-type'], conn.getUsername()]));
     }
