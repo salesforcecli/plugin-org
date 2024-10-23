@@ -1,3 +1,9 @@
+# [4.8.0](https://github.com/salesforcecli/plugin-org/compare/4.7.2...4.8.0) (2024-10-23)
+
+### Features
+
+- use new table ([d554647](https://github.com/salesforcecli/plugin-org/commit/d5546477341c438eaf36f222ac1c59d9745b0b3f))
+
 ## [4.7.2](https://github.com/salesforcecli/plugin-org/compare/4.7.1...4.7.2) (2024-10-21)
 
 ### Bug Fixes
