@@ -76,7 +76,7 @@ To use your plugin, run using the local `./bin/dev` or `./bin/dev.cmd` file.
 
 ```bash
 # Run using local run file.
-./bin/dev force:org:list
+./bin/dev.js org list
 ```
 
 There should be no differences when running via the Salesforce CLI or using the local run file. However, it can be
@@ -394,8 +394,8 @@ USAGE
   $ sf org delete sandbox -o <value> [--json] [--flags-dir <value>] [-p]
 
 FLAGS
-  -o, --target-org=<value>  (required) Username or alias of the target org. Not required if the `target-org`
-                            configuration variable is already set.
+  -o, --target-org=<value>  (required) [default: epic.0aabec388ece@orgfarm.com] Username or alias of the target org. Not
+                            required if the `target-org` configuration variable is already set.
   -p, --no-prompt           Don't prompt the user to confirm the deletion.
 
 GLOBAL FLAGS
@@ -440,8 +440,8 @@ USAGE
   $ sf org delete scratch -o <value> [--json] [--flags-dir <value>] [-p]
 
 FLAGS
-  -o, --target-org=<value>  (required) Username or alias of the target org. Not required if the `target-org`
-                            configuration variable is already set.
+  -o, --target-org=<value>  (required) [default: epic.0aabec388ece@orgfarm.com] Username or alias of the target org. Not
+                            required if the `target-org` configuration variable is already set.
   -p, --no-prompt           Don't prompt the user to confirm the deletion.
 
 GLOBAL FLAGS
@@ -889,7 +889,9 @@ EXAMPLES
     $ sf org refresh sandbox --definition-file devSbx3-config.json --target-org prodOrg
 
 FLAG DESCRIPTIONS
-  -f, --definition-file=<value>  Path to a sandbox definition file for overriding its configuration when you refresh it.
+  -f, --definition-file=<value>
+
+    Path to a sandbox definition file for overriding its configuration when you refresh it.
 
     The sandbox definition file is a blueprint for the sandbox; use the file to change the sandbox configuration during
     a refresh. If you don't want to change the sandbox configuration when you refresh it, then simply use the --name

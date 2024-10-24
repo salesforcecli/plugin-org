@@ -80,14 +80,6 @@
           }
         },
         "external": true
-      },
-      "force": {
-        "external": true,
-        "subtopics": {
-          "org": {
-            "description": "Manage your sandbox and scratch orgs."
-          }
-        }
       }
     },
     "flexibleTaxonomy": true,
