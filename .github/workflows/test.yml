@@ -21,7 +21,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        command: ['yarn test:nuts', 'yarn test:nuts:legacy']
+        command: ['yarn test:nuts']
       fail-fast: false
     with:
       os: ${{ matrix.os }}
