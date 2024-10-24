@@ -1,3 +1,9 @@
+## [4.8.1](https://github.com/salesforcecli/plugin-org/compare/4.8.0...4.8.1) (2024-10-24)
+
+### Bug Fixes
+
+- bump core ([e50f1de](https://github.com/salesforcecli/plugin-org/commit/e50f1deae5161f786cc42f51467637c25c3477a9))
+
 # [4.8.0](https://github.com/salesforcecli/plugin-org/compare/4.7.2...4.8.0) (2024-10-23)
 
 ### Features
