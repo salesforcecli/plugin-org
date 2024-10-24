@@ -50,3 +50,7 @@ The org with username: %s is not known by the CLI to be a sandbox
 
 Re-authenticate the sandbox with the CLI and try again.
 Ensure the CLI has authenticated with the sandbox's production org.
+
+# error.missingUsername
+
+Unable to determine the username of the org to delete. Specify the username with the --target-org | -o flag.

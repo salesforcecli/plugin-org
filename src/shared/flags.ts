@@ -9,7 +9,7 @@ import { Flags } from '@oclif/core';
 import { ConfigAggregator, StateAggregator, Messages, SfError } from '@salesforce/core';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
-const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete');
+const messages = Messages.loadMessages('@salesforce/plugin-org', 'delete_scratch');
 
 const resolveUsername = async (usernameOrAlias?: string): Promise<string> => {
   const stateAggregator = await StateAggregator.getInstance();
@@ -19,7 +19,7 @@ const resolveUsername = async (usernameOrAlias?: string): Promise<string> => {
   const configAggregator = await ConfigAggregator.create();
   const defaultUsernameOrAlias = configAggregator.getPropertyValue('target-org') as string | undefined;
   if (defaultUsernameOrAlias) return stateAggregator.aliases.resolveUsername(defaultUsernameOrAlias);
-  throw new SfError(messages.getMessage('missingUsername'), 'MissingUsernameError');
+  throw new SfError(messages.getMessage('error.missingUsername'), 'MissingUsernameError');
 };
 
 /**

@@ -19,7 +19,6 @@ config.truncateThreshold = 0;
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const sbxOrgMessages = Messages.loadMessages('@salesforce/plugin-org', 'delete_sandbox');
 const scratchOrgMessages = Messages.loadMessages('@salesforce/plugin-org', 'delete_scratch');
-const deleteMessages = Messages.loadMessages('@salesforce/plugin-org', 'delete');
 
 describe('org delete', () => {
   const $$ = new TestContext();
@@ -47,7 +46,7 @@ describe('org delete', () => {
       } catch (e) {
         const err = e as SfError;
         expect(err.name).to.equal('MissingUsernameError');
-        expect(err.message).to.equal(deleteMessages.getMessage('missingUsername'));
+        expect(err.message).to.equal(sbxOrgMessages.getMessage('error.missingUsername'));
       }
     });
 
@@ -140,7 +139,7 @@ describe('org delete', () => {
       } catch (e) {
         const err = e as SfError;
         expect(err.name).to.equal('MissingUsernameError');
-        expect(err.message).to.equal(deleteMessages.getMessage('missingUsername'));
+        expect(err.message).to.equal(scratchOrgMessages.getMessage('error.missingUsername'));
       }
     });
 
