@@ -40,3 +40,7 @@ Successfully marked scratch org %s for deletion.
 # success.Idempotent
 
 Successfully deleted scratch org %s.
+
+# error.missingUsername
+
+Unable to determine the username of the org to delete. Specify the username with the --target-org | -o flag.
