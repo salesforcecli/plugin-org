@@ -1,38 +1,245 @@
+## [4.8.2](https://github.com/salesforcecli/plugin-org/compare/4.8.1...4.8.2) (2024-10-25)
+
+### Bug Fixes
+
+- bump sf-plugins-core ([25f6cfd](https://github.com/salesforcecli/plugin-org/commit/25f6cfd5eced34004a9067ed172d940f30d82785))
+
+## [4.8.1](https://github.com/salesforcecli/plugin-org/compare/4.8.0...4.8.1) (2024-10-24)
+
+### Bug Fixes
+
+- bump core ([e50f1de](https://github.com/salesforcecli/plugin-org/commit/e50f1deae5161f786cc42f51467637c25c3477a9))
+
+# [4.8.0](https://github.com/salesforcecli/plugin-org/compare/4.7.2...4.8.0) (2024-10-23)
+
+### Features
+
+- use new table ([d554647](https://github.com/salesforcecli/plugin-org/commit/d5546477341c438eaf36f222ac1c59d9745b0b3f))
+
+## [4.7.2](https://github.com/salesforcecli/plugin-org/compare/4.7.1...4.7.2) (2024-10-21)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/core from 4.0.28 to 4.0.29 ([b90e2c2](https://github.com/salesforcecli/plugin-org/commit/b90e2c2295220b47303686cf27eb9abe919b3488))
+
+## [4.7.1](https://github.com/salesforcecli/plugin-org/compare/4.7.0...4.7.1) (2024-10-20)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve from 12.7.1 to 12.8.1 ([17a2a04](https://github.com/salesforcecli/plugin-org/commit/17a2a043ae48b2d2b5c5b0684dd36bee0ab9d86f))
+
+# [4.7.0](https://github.com/salesforcecli/plugin-org/compare/4.6.3...4.7.0) (2024-10-16)
+
+### Bug Fixes
+
+- change Bot to Agent ([c8fe7e0](https://github.com/salesforcecli/plugin-org/commit/c8fe7e05c1f002de38ff97cd9345e4219fc83ed1))
+- update command help ([27c2f5b](https://github.com/salesforcecli/plugin-org/commit/27c2f5bcb49ea4244ed7fa053b2aa87193da9b4a))
+
+### Features
+
+- open bot via source file ([208bc39](https://github.com/salesforcecli/plugin-org/commit/208bc394d0f36ea89f26f8afb8fce18b7c74871c))
+
+## [4.6.3](https://github.com/salesforcecli/plugin-org/compare/4.6.3-beta.3...4.6.3) (2024-10-15)
+
+## [4.6.3-beta.3](https://github.com/salesforcecli/plugin-org/compare/4.6.3-dev.2...4.6.3-beta.3) (2024-10-15)
+
+### Bug Fixes
+
+- change prerelease tag ([e9699b2](https://github.com/salesforcecli/plugin-org/commit/e9699b2f9a2a14c45d556d82d671852a9c5c95ec))
+
+## [4.6.3-dev.2](https://github.com/salesforcecli/plugin-org/compare/4.6.3-dev.1...4.6.3-dev.2) (2024-10-14)
+
+### Bug Fixes
+
+- bump @oclif/multi-stage-output ([699aea8](https://github.com/salesforcecli/plugin-org/commit/699aea8f3f3eac7723c5f5974a60fd9a7e0ab49c))
+
+## [4.6.3-dev.1](https://github.com/salesforcecli/plugin-org/compare/4.6.3-dev.0...4.6.3-dev.1) (2024-10-14)
+
+### Bug Fixes
+
+- ensure stages are capital case ([311b19c](https://github.com/salesforcecli/plugin-org/commit/311b19cc1cfd8ee3d204f391513f7c00efc7a3eb))
+
+## [4.6.3-dev.0](https://github.com/salesforcecli/plugin-org/compare/4.6.2...4.6.3-dev.0) (2024-10-14)
+
+## [4.6.1-dev.1](https://github.com/salesforcecli/plugin-org/compare/4.6.1-dev.0...4.6.1-dev.1) (2024-10-07)
+
+### Bug Fixes
+
+- upgrade mso ([17051a7](https://github.com/salesforcecli/plugin-org/commit/17051a7399594fe816eb800615d583745a5ceee0))
+
+## [4.6.1-dev.0](https://github.com/salesforcecli/plugin-org/compare/4.6.0...4.6.1-dev.0) (2024-09-30)
+
+## [4.5.11-dev.0](https://github.com/salesforcecli/plugin-org/compare/4.5.10...4.5.11-dev.0) (2024-09-25)
+
+## [4.5.10-dev.0](https://github.com/salesforcecli/plugin-org/compare/4.5.9...4.5.10-dev.0) (2024-09-18)
+
+## [4.5.8-beta.3](https://github.com/salesforcecli/plugin-org/compare/4.5.8...4.5.8-beta.3) (2024-09-11)
+
+### Bug Fixes
+
+- bump mso ([c647850](https://github.com/salesforcecli/plugin-org/commit/c6478506d578fd60dcc85a2730d79296ac1e4224))
+
+## [4.5.8-beta.2](https://github.com/salesforcecli/plugin-org/compare/4.5.8-beta.1...4.5.8-beta.2) (2024-09-06)
+
+### Bug Fixes
+
+- bump mso ([921bcf2](https://github.com/salesforcecli/plugin-org/commit/921bcf2fc458aae03de31e54412cbdf543860333))
+
+## [4.5.8-beta.1](https://github.com/salesforcecli/plugin-org/compare/4.5.8-beta.0...4.5.8-beta.1) (2024-09-04)
+
+### Bug Fixes
+
+- bump mso ([fec8e7d](https://github.com/salesforcecli/plugin-org/commit/fec8e7d292822c2857b841cb1afc01866feaee6e))
+
+## [4.5.8-beta.0](https://github.com/salesforcecli/plugin-org/compare/4.5.7...4.5.8-beta.0) (2024-09-04)
+
 ## [4.6.2](https://github.com/salesforcecli/plugin-org/compare/4.6.1...4.6.2) (2024-10-13)
 
 ### Bug Fixes
 
 - **deps:** bump @salesforce/sf-plugins-core from 11.3.10 to 11.3.12 ([4e1927a](https://github.com/salesforcecli/plugin-org/commit/4e1927aea883bb5435015a4bfcb85cc43b39e9eb))
 
-## [4.6.1](https://github.com/salesforcecli/plugin-org/compare/4.6.0...4.6.1) (2024-10-13)
+## [4.6.1](https://github.com/salesforcecli/plugin-org/compare/4.6.1-dev.1...4.6.1) (2024-10-13)
 
 ### Bug Fixes
 
 - **deps:** bump @oclif/core from 4.0.27 to 4.0.28 ([916e8e2](https://github.com/salesforcecli/plugin-org/commit/916e8e22f1ff3c7f5ab76de85e20f60c19aef610))
 
-# [4.6.0](https://github.com/salesforcecli/plugin-org/compare/4.5.10...4.6.0) (2024-09-25)
+## [4.6.1-dev.1](https://github.com/salesforcecli/plugin-org/compare/4.6.1-dev.0...4.6.1-dev.1) (2024-10-07)
+
+### Bug Fixes
+
+- upgrade mso ([17051a7](https://github.com/salesforcecli/plugin-org/commit/17051a7399594fe816eb800615d583745a5ceee0))
+
+## [4.6.1-dev.0](https://github.com/salesforcecli/plugin-org/compare/4.6.0...4.6.1-dev.0) (2024-09-30)
+
+## [4.5.11-dev.0](https://github.com/salesforcecli/plugin-org/compare/4.5.10...4.5.11-dev.0) (2024-09-25)
+
+## [4.5.10-dev.0](https://github.com/salesforcecli/plugin-org/compare/4.5.9...4.5.10-dev.0) (2024-09-18)
+
+## [4.5.8-beta.3](https://github.com/salesforcecli/plugin-org/compare/4.5.8...4.5.8-beta.3) (2024-09-11)
+
+### Bug Fixes
+
+- bump mso ([c647850](https://github.com/salesforcecli/plugin-org/commit/c6478506d578fd60dcc85a2730d79296ac1e4224))
+
+## [4.5.8-beta.2](https://github.com/salesforcecli/plugin-org/compare/4.5.8-beta.1...4.5.8-beta.2) (2024-09-06)
+
+### Bug Fixes
+
+- bump mso ([921bcf2](https://github.com/salesforcecli/plugin-org/commit/921bcf2fc458aae03de31e54412cbdf543860333))
+
+## [4.5.8-beta.1](https://github.com/salesforcecli/plugin-org/compare/4.5.8-beta.0...4.5.8-beta.1) (2024-09-04)
+
+### Bug Fixes
+
+- bump mso ([fec8e7d](https://github.com/salesforcecli/plugin-org/commit/fec8e7d292822c2857b841cb1afc01866feaee6e))
+
+## [4.5.8-beta.0](https://github.com/salesforcecli/plugin-org/compare/4.5.7...4.5.8-beta.0) (2024-09-04)
+
+# [4.6.0](https://github.com/salesforcecli/plugin-org/compare/4.5.11-dev.0...4.6.0) (2024-09-25)
 
 ### Features
 
 - **sbx:** support new `Name` fields in def. file ([#1221](https://github.com/salesforcecli/plugin-org/issues/1221)) ([7a64c03](https://github.com/salesforcecli/plugin-org/commit/7a64c03ec2e9e17e212f7c3643fa264e5f1d05e0))
 
-## [4.5.10](https://github.com/salesforcecli/plugin-org/compare/4.5.9...4.5.10) (2024-09-22)
+## [4.5.11-dev.0](https://github.com/salesforcecli/plugin-org/compare/4.5.10...4.5.11-dev.0) (2024-09-25)
+
+## [4.5.10-dev.0](https://github.com/salesforcecli/plugin-org/compare/4.5.9...4.5.10-dev.0) (2024-09-18)
+
+## [4.5.8-beta.3](https://github.com/salesforcecli/plugin-org/compare/4.5.8...4.5.8-beta.3) (2024-09-11)
+
+### Bug Fixes
+
+- bump mso ([c647850](https://github.com/salesforcecli/plugin-org/commit/c6478506d578fd60dcc85a2730d79296ac1e4224))
+
+## [4.5.8-beta.2](https://github.com/salesforcecli/plugin-org/compare/4.5.8-beta.1...4.5.8-beta.2) (2024-09-06)
+
+### Bug Fixes
+
+- bump mso ([921bcf2](https://github.com/salesforcecli/plugin-org/commit/921bcf2fc458aae03de31e54412cbdf543860333))
+
+## [4.5.8-beta.1](https://github.com/salesforcecli/plugin-org/compare/4.5.8-beta.0...4.5.8-beta.1) (2024-09-04)
+
+### Bug Fixes
+
+- bump mso ([fec8e7d](https://github.com/salesforcecli/plugin-org/commit/fec8e7d292822c2857b841cb1afc01866feaee6e))
+
+## [4.5.8-beta.0](https://github.com/salesforcecli/plugin-org/compare/4.5.7...4.5.8-beta.0) (2024-09-04)
+
+## [4.5.10](https://github.com/salesforcecli/plugin-org/compare/4.5.10-dev.0...4.5.10) (2024-09-22)
 
 ### Bug Fixes
 
 - **deps:** bump @salesforce/source-deploy-retrieve from 12.6.2 to 12.7.1 ([598fbf2](https://github.com/salesforcecli/plugin-org/commit/598fbf2dd80629dd82b95e32b033a87b64ca2079))
 
-## [4.5.9](https://github.com/salesforcecli/plugin-org/compare/4.5.8...4.5.9) (2024-09-15)
+## [4.5.10-dev.0](https://github.com/salesforcecli/plugin-org/compare/4.5.9...4.5.10-dev.0) (2024-09-18)
+
+## [4.5.8-beta.3](https://github.com/salesforcecli/plugin-org/compare/4.5.8...4.5.8-beta.3) (2024-09-11)
+
+### Bug Fixes
+
+- bump mso ([c647850](https://github.com/salesforcecli/plugin-org/commit/c6478506d578fd60dcc85a2730d79296ac1e4224))
+
+## [4.5.8-beta.2](https://github.com/salesforcecli/plugin-org/compare/4.5.8-beta.1...4.5.8-beta.2) (2024-09-06)
+
+### Bug Fixes
+
+- bump mso ([921bcf2](https://github.com/salesforcecli/plugin-org/commit/921bcf2fc458aae03de31e54412cbdf543860333))
+
+## [4.5.8-beta.1](https://github.com/salesforcecli/plugin-org/compare/4.5.8-beta.0...4.5.8-beta.1) (2024-09-04)
+
+### Bug Fixes
+
+- bump mso ([fec8e7d](https://github.com/salesforcecli/plugin-org/commit/fec8e7d292822c2857b841cb1afc01866feaee6e))
+
+## [4.5.8-beta.0](https://github.com/salesforcecli/plugin-org/compare/4.5.7...4.5.8-beta.0) (2024-09-04)
+
+## [4.5.9](https://github.com/salesforcecli/plugin-org/compare/4.5.8-beta.3...4.5.9) (2024-09-15)
 
 ### Bug Fixes
 
 - **deps:** bump @salesforce/kit from 3.2.2 to 3.2.3 ([3efd1b8](https://github.com/salesforcecli/plugin-org/commit/3efd1b883be15327c8041f0e4befa1bdd0a3f02b))
 
-## [4.5.8](https://github.com/salesforcecli/plugin-org/compare/4.5.7...4.5.8) (2024-09-08)
+## [4.5.8-beta.3](https://github.com/salesforcecli/plugin-org/compare/4.5.8...4.5.8-beta.3) (2024-09-11)
+
+### Bug Fixes
+
+- bump mso ([c647850](https://github.com/salesforcecli/plugin-org/commit/c6478506d578fd60dcc85a2730d79296ac1e4224))
+
+## [4.5.8-beta.2](https://github.com/salesforcecli/plugin-org/compare/4.5.8-beta.1...4.5.8-beta.2) (2024-09-06)
+
+### Bug Fixes
+
+- bump mso ([921bcf2](https://github.com/salesforcecli/plugin-org/commit/921bcf2fc458aae03de31e54412cbdf543860333))
+
+## [4.5.8-beta.1](https://github.com/salesforcecli/plugin-org/compare/4.5.8-beta.0...4.5.8-beta.1) (2024-09-04)
+
+### Bug Fixes
+
+- bump mso ([fec8e7d](https://github.com/salesforcecli/plugin-org/commit/fec8e7d292822c2857b841cb1afc01866feaee6e))
+
+## [4.5.8-beta.0](https://github.com/salesforcecli/plugin-org/compare/4.5.7...4.5.8-beta.0) (2024-09-04)
+
+## [4.5.8](https://github.com/salesforcecli/plugin-org/compare/4.5.8-beta.2...4.5.8) (2024-09-08)
 
 ### Bug Fixes
 
 - **deps:** bump @salesforce/core from 8.5.2 to 8.5.5 ([b48db2f](https://github.com/salesforcecli/plugin-org/commit/b48db2f1a607690b6443d2e6d60541da38ebe0f2))
+
+## [4.5.8-beta.2](https://github.com/salesforcecli/plugin-org/compare/4.5.8-beta.1...4.5.8-beta.2) (2024-09-06)
+
+### Bug Fixes
+
+- bump mso ([921bcf2](https://github.com/salesforcecli/plugin-org/commit/921bcf2fc458aae03de31e54412cbdf543860333))
+
+## [4.5.8-beta.1](https://github.com/salesforcecli/plugin-org/compare/4.5.8-beta.0...4.5.8-beta.1) (2024-09-04)
+
+### Bug Fixes
+
+- bump mso ([fec8e7d](https://github.com/salesforcecli/plugin-org/commit/fec8e7d292822c2857b841cb1afc01866feaee6e))
+
+## [4.5.8-beta.0](https://github.com/salesforcecli/plugin-org/compare/4.5.7...4.5.8-beta.0) (2024-09-04)
 
 ## [4.5.7](https://github.com/salesforcecli/plugin-org/compare/4.5.6...4.5.7) (2024-09-01)
 

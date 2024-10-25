@@ -268,12 +268,14 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxCommandRes
     if (this.flags['no-prompt'] || this.jsonEnabled()) return;
 
     const data = Object.entries(sandboxInfo).map(([key, value]) => ({ key, value: value ?? 'null' }));
-    this.styledHeader('Config Sandbox Refresh');
-    this.table(data, {
-      key: { header: 'Field' },
-      value: { header: 'Value' },
+    this.table({
+      data,
+      columns: [
+        { key: 'key', name: 'Field' },
+        { key: 'value', name: 'Value' },
+      ],
+      title: 'Config Sandbox Refresh',
     });
-
     if (
       !(await this.confirm({
         message: messages.getMessage('isConfigurationOk'),

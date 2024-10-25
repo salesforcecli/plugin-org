@@ -262,10 +262,13 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
     if (this.flags['no-prompt'] || this.jsonEnabled()) return;
 
     const data = Object.entries(sandboxReq).map(([key, value]) => ({ key, value }));
-    this.styledHeader('Config Sandbox Request');
-    this.table(data, {
-      key: { header: 'Field' },
-      value: { header: 'Value' },
+    this.table({
+      data,
+      columns: [
+        { key: 'key', name: 'Field' },
+        { key: 'value', name: 'Value' },
+      ],
+      title: 'Config Sandbox Request',
     });
 
     if (

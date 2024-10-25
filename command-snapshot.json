@@ -1,38 +1,5 @@
 [
   {
-    "alias": [],
-    "command": "force:org:create",
-    "flagAliases": ["apiversion", "targetdevhubusername", "targetusername", "u"],
-    "flagChars": ["a", "c", "d", "f", "i", "n", "o", "s", "t", "v", "w"],
-    "flags": [
-      "api-version",
-      "clientid",
-      "definitionfile",
-      "durationdays",
-      "flags-dir",
-      "json",
-      "loglevel",
-      "noancestors",
-      "nonamespace",
-      "retry",
-      "setalias",
-      "setdefaultusername",
-      "target-dev-hub",
-      "target-org",
-      "type",
-      "wait"
-    ],
-    "plugin": "@salesforce/plugin-org"
-  },
-  {
-    "alias": [],
-    "command": "force:org:delete",
-    "flagAliases": ["apiversion", "noprompt", "targetusername", "u"],
-    "flagChars": ["o", "p", "v"],
-    "flags": ["api-version", "flags-dir", "json", "loglevel", "no-prompt", "target-org", "targetdevhubusername"],
-    "plugin": "@salesforce/plugin-org"
-  },
-  {
     "alias": ["env:create:sandbox"],
     "command": "org:create:sandbox",
     "flagAliases": ["c", "clone"],

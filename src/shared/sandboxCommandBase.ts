@@ -21,7 +21,7 @@ import {
   SandboxUserAuthResponse,
   StatusEvent,
 } from '@salesforce/core';
-import { SandboxProgress, SandboxStatusData } from './sandboxProgress.js';
+import { SandboxProgress } from './sandboxProgress.js';
 import { State } from './stagedProgress.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
@@ -206,12 +206,11 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
   ): void {
     const sandboxProgress = this.sandboxProgress.getSandboxProgress(event);
     this.sandboxUsername = (event as ResultEvent).sandboxRes?.authUserName;
-    const sandboxData = {
+    this.sandboxProgress.statusData = {
       sandboxUsername: this.sandboxUsername,
       sandboxProgress,
       sandboxProcessObj: event.sandboxProcessObj,
-    } as SandboxStatusData;
-    this.sandboxProgress.statusData = sandboxData;
+    };
     if (!isAsync) {
       this.spinner.status = this.sandboxProgress.formatProgressStatus();
     }
