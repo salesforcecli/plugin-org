@@ -1,3 +1,9 @@
+## [4.8.2](https://github.com/salesforcecli/plugin-org/compare/4.8.1...4.8.2) (2024-10-25)
+
+### Bug Fixes
+
+- bump sf-plugins-core ([25f6cfd](https://github.com/salesforcecli/plugin-org/commit/25f6cfd5eced34004a9067ed172d940f30d82785))
+
 ## [4.8.1](https://github.com/salesforcecli/plugin-org/compare/4.8.0...4.8.1) (2024-10-24)
 
 ### Bug Fixes
