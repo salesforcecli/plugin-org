@@ -200,7 +200,6 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
     const sandboxReq = await this.createSandboxRequest();
     await this.confirmSandboxReq({
       ...sandboxReq,
-      ...(sandboxReq.SourceId ? { CloneSource: sandboxReq.SourceId } : {}),
     });
     this.initSandboxProcessData(sandboxReq);
 

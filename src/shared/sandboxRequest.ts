@@ -41,6 +41,14 @@ export function readSandboxDefFile(
     throw cloneMessages.createError('error.bothSourceIdAndNameProvided');
   }
 
+  if (parsedContent.SourceId && parsedContent.LicenseType) {
+    throw cloneMessages.createError('error.bothSourceIdAndLicenseTypeProvided');
+  }
+
+  if (parsedContent.LicenseType && parsedContent.SourceSandboxName) {
+    throw cloneMessages.createError('error.bothSourceSandboxNameAndLicenseTypeProvided');
+  }
+
   return parsedContent as Partial<SandboxInfo>;
 }
 

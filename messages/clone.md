@@ -29,3 +29,11 @@ You can't specify both `SourceId` and `SourceSandboxName` in the definition file
 # error.sandboxNameQueryFailed
 
 Unable to find the ID of the sandbox "%s" that's defined in the definition file or as a command line argument.
+
+# error.bothSourceIdAndLicenseTypeProvided
+
+You can't specify both `SourceId` and `LicenseType` in the definition file at the same time.
+
+# error.bothSourceSandboxNameAndLicenseTypeProvided
+
+You can't specify both `SourceSandboxName` and `LicenseType` in the definition file at the same time.
