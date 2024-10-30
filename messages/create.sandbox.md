@@ -6,7 +6,7 @@ Create a sandbox org.
 
 There are two ways to create a sandbox org: specify a definition file that contains the sandbox options or use the --name and --license-type flags to specify the two required options. If you want to set an option other than name or license type, such as apexClassId, you must use a definition file.
 
-You can also use this command to clone an existing sandbox. Use the --clone flag to specify the existing sandbox name and the --name flag to the name of the new sandbox.
+You can also use this command to clone an existing sandbox. Use the --source-sandbox-name flag to specify the existing sandbox name and the --name flag to the name of the new sandbox.
 
 # examples
 
@@ -20,7 +20,7 @@ You can also use this command to clone an existing sandbox. Use the --clone flag
 
 - Clone the existing sandbox with name "ExistingSandbox" and name the new sandbox "NewClonedSandbox". Set the new sandbox as your default org. Wait for 30 minutes for the sandbox creation to complete.
 
-  <%= config.bin %> <%= command.id %> --clone ExistingSandbox --name NewClonedSandbox --target-org prodOrg --alias MyDevSandbox --set-default --wait 30
+  <%= config.bin %> <%= command.id %> --source-sandbox-name ExistingSandbox --name NewClonedSandbox --target-org prodOrg --alias MyDevSandbox --set-default --wait 30
 
 # flags.setDefault.summary
 
@@ -58,13 +58,25 @@ Name of the sandbox org.
 
 The name must be a unique alphanumeric string (10 or fewer characters) to identify the sandbox. You can’t reuse a name while a sandbox is in the process of being deleted.
 
-# flags.clone.summary
+# flags.source-sandbox-name.summary
 
 Name of the sandbox org to clone.
 
-# flags.clone.description
+# flags.source-sandbox-name.description
 
-The value of --clone must be an existing sandbox. The existing sandbox, and the new sandbox specified with the --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
+The value of --source-sandbox-name must be an existing sandbox. The existing sandbox, and the new sandbox specified with the --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
+
+You can specify either --source-sandbox-name or --source-id when cloning an existing sandbox, but not both.
+
+# flags.source-id.summary
+
+ID of the sandbox org to clone.
+
+# flags.source-id.description
+
+The value of --source-id must be an existing sandbox. The existing sandbox, and the new sandbox specified with the --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
+
+You can specify either --source-sandbox-name or --source-id when cloning an existing sandbox, but not both.
 
 # flags.licenseType.summary
 
@@ -120,6 +132,14 @@ The sandbox request configuration isn't acceptable.
 
 The poll interval (%d seconds) can't be larger that wait (%d in seconds)
 
-# error.noCloneSource
+# error.bothIdFlagAndDefFilePropertyAreProvided
 
-Could not find the clone sandbox name "%s" in the target org.
+You can't specify both the --source-id and --definition-file flags, and also include the "SourceId" option in the definition file. Pick one method of cloning a sandbox and try again.
+
+# error.bothNameFlagAndDefFilePropertyAreProvided
+
+You can't specify both the --source-sandbox-name and --definition-file flags, and also include the "SourceSandboxName" option in the definition file. Pick one method of cloning a sandbox and try again.
+
+# error.bothIdFlagAndNameDefFileAreNotAllowed
+
+You can't specify both the --source-sandbox-name and --definition-file flags, and also include the "SourceId" option in the definition file. Same with the --source-id flag and "SourceSandboxName" option. Pick one method of cloning a sandbox and try again.

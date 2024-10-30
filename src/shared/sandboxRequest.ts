@@ -24,7 +24,7 @@ export const generateSboxName = async (): Promise<string> => {
 // Reads the sandbox definition file and converts properties to CapCase.
 export function readSandboxDefFile(
   defFile: string
-): Partial<SandboxInfo & { ApexClassName?: string; ActivationUserGroupName?: string }> {
+): Partial<SandboxInfo & { ApexClassName?: string; ActivationUserGroupName?: string; SourceSandboxName?: string }> {
   const fileContent = fs.readFileSync(defFile, 'utf-8');
   const parsedContent = lowerToUpper(JSON.parse(fileContent) as Record<string, unknown>);
 
@@ -36,11 +36,23 @@ export function readSandboxDefFile(
   if (parsedContent.ActivationUserGroupId && parsedContent.ActivationUserGroupName) {
     throw cloneMessages.createError('error.bothUserGroupIdAndNameProvided');
   }
+
+  if (parsedContent.SourceId && parsedContent.SourceSandboxName) {
+    throw cloneMessages.createError('error.bothSourceIdAndNameProvided');
+  }
+
+  if (parsedContent.SourceId && parsedContent.LicenseType) {
+    throw cloneMessages.createError('error.bothSourceIdAndLicenseTypeProvided');
+  }
+
+  if (parsedContent.LicenseType && parsedContent.SourceSandboxName) {
+    throw cloneMessages.createError('error.bothSourceSandboxNameAndLicenseTypeProvided');
+  }
+
   return parsedContent as Partial<SandboxInfo>;
 }
 
 export async function createSandboxRequest(
-  isClone: true,
   definitionFile: string | undefined,
   logger?: Logger | undefined,
   properties?: Record<string, string | undefined>
@@ -50,9 +62,9 @@ export async function createSandboxRequest(
     ActivationUserGroupName: string | undefined;
   };
   srcSandboxName: string;
+  srcId: string;
 }>;
 export async function createSandboxRequest(
-  isClone: false,
   definitionFile: string | undefined,
   logger?: Logger | undefined,
   properties?: Record<string, string | undefined>
@@ -63,11 +75,10 @@ export async function createSandboxRequest(
   };
 }>;
 export async function createSandboxRequest(
-  isClone = false,
   definitionFile: string | undefined,
   logger?: Logger | undefined,
   properties?: Record<string, string | undefined>
-): Promise<{ sandboxReq: SandboxRequest; srcSandboxName?: string }> {
+): Promise<{ sandboxReq: SandboxRequest; srcSandboxName?: string; srcId?: string }> {
   if (!logger) {
     logger = await Logger.child('createSandboxRequest');
   }
@@ -76,9 +87,8 @@ export async function createSandboxRequest(
   const sandboxDefFileContents = definitionFile ? readSandboxDefFile(definitionFile) : {};
 
   const capitalizedVarArgs = properties ? lowerToUpper(properties) : {};
-
   // varargs override file input
-  const sandboxReqWithName: SandboxRequest & { SourceSandboxName?: string } = {
+  const sandboxReqWithName: SandboxRequest & { SourceSandboxName?: string; SourceId?: string } = {
     ...(sandboxDefFileContents as Record<string, unknown>),
     ...capitalizedVarArgs,
     SandboxName:
@@ -86,19 +96,19 @@ export async function createSandboxRequest(
       (sandboxDefFileContents.SandboxName as string) ??
       (await generateSboxName()),
   };
-
-  const { SourceSandboxName, ...sandboxReq } = sandboxReqWithName;
+  const isClone = sandboxReqWithName.SourceSandboxName ?? sandboxReqWithName.SourceId;
+  const { SourceSandboxName, SourceId, ...sandboxReq } = sandboxReqWithName;
   logger.debug('SandboxRequest after merging DefFile and Varargs: %s ', sandboxReq);
 
   if (isClone) {
-    if (!SourceSandboxName) {
-      // error - we need SourceSandboxName to know which sandbox to clone from
+    if (!sandboxReqWithName.SourceSandboxName && !sandboxReqWithName.SourceId) {
+      // error - we need SourceSandboxName or SourceID to know which sandbox to clone from
       throw new SfError(
-        cloneMessages.getMessage('missingSourceSandboxName', ['SourceSandboxName']),
-        cloneMessages.getMessage('missingSourceSandboxNameAction', ['SourceSandboxName'])
+        cloneMessages.getMessage('missingSourceSandboxNameORSourceId'),
+        cloneMessages.getMessage('missingSourceSandboxNameORSourceIdAction')
       );
     }
-    return { sandboxReq, srcSandboxName: SourceSandboxName };
+    return { sandboxReq, srcSandboxName: SourceSandboxName, srcId: SourceId };
   } else {
     if (!sandboxReq.LicenseType) {
       return { sandboxReq: { ...sandboxReq, LicenseType: SandboxLicenseType.developer } };
@@ -122,10 +132,22 @@ export async function getUserGroupIdByName(conn: Connection, groupName: string):
     throw cloneMessages.createError('error.userGroupQueryFailed', [groupName], [], err as Error);
   }
 }
+export async function getSrcIdByName(conn: Connection, sandboxName: string): Promise<string | undefined> {
+  try {
+    const result = (
+      await conn.singleRecordQuery(`SELECT id FROM SandboxInfo WHERE SandboxName = '${sandboxName}'`, { tooling: true })
+    ).Id;
+    return result;
+  } catch (err) {
+    throw cloneMessages.createError('error.sandboxNameQueryFailed', [sandboxName], [], err as Error);
+  }
+}
+
 export default {
   createSandboxRequest,
   generateSboxName,
   readSandboxDefFile,
   getApexClassIdByName,
   getUserGroupIdByName,
+  getSrcIdByName,
 };
