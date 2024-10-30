@@ -121,23 +121,25 @@ Create a sandbox org.
 ```
 USAGE
   $ sf org create sandbox -o <value> [--json] [--flags-dir <value>] [-f <value>] [-s] [-a <value>] [-w <minutes> |
-    --async] [-i <seconds> | ] [-n <value>] [-c <value> | -l Developer|Developer_Pro|Partial|Full] [--no-prompt]
-    [--no-track-source]
+    --async] [-i <seconds> | ] [-n <value>] [--source-sandbox-name <value> | -l Developer|Developer_Pro|Partial|Full |
+    --source-id <value>] [--no-prompt] [--no-track-source]
 
 FLAGS
-  -a, --alias=<value>            Alias for the sandbox org.
-  -c, --clone=<value>            Name of the sandbox org to clone.
-  -f, --definition-file=<value>  Path to a sandbox definition file.
-  -i, --poll-interval=<seconds>  Number of seconds to wait between retries.
-  -l, --license-type=<option>    Type of sandbox license.
-                                 <options: Developer|Developer_Pro|Partial|Full>
-  -n, --name=<value>             Name of the sandbox org.
-  -o, --target-org=<value>       (required) Username or alias of the production org that contains the sandbox license.
-  -s, --set-default              Set the sandbox org as your default org.
-  -w, --wait=<minutes>           Number of minutes to wait for the sandbox org to be ready.
-      --async                    Request the sandbox creation, but don't wait for it to complete.
-      --no-prompt                Don't prompt for confirmation about the sandbox configuration.
-      --no-track-source          Do not use source tracking for this sandbox.
+  -a, --alias=<value>                Alias for the sandbox org.
+  -f, --definition-file=<value>      Path to a sandbox definition file.
+  -i, --poll-interval=<seconds>      Number of seconds to wait between retries.
+  -l, --license-type=<option>        Type of sandbox license.
+                                     <options: Developer|Developer_Pro|Partial|Full>
+  -n, --name=<value>                 Name of the sandbox org.
+  -o, --target-org=<value>           (required) Username or alias of the production org that contains the sandbox
+                                     license.
+  -s, --set-default                  Set the sandbox org as your default org.
+  -w, --wait=<minutes>               Number of minutes to wait for the sandbox org to be ready.
+      --async                        Request the sandbox creation, but don't wait for it to complete.
+      --no-prompt                    Don't prompt for confirmation about the sandbox configuration.
+      --no-track-source              Do not use source tracking for this sandbox.
+      --source-id=<value>            ID of the sandbox org to clone.
+      --source-sandbox-name=<value>  Name of the sandbox org to clone.
 
 GLOBAL FLAGS
   --flags-dir=<value>  Import flag values from a directory.
@@ -150,8 +152,8 @@ DESCRIPTION
   --name and --license-type flags to specify the two required options. If you want to set an option other than name or
   license type, such as apexClassId, you must use a definition file.
 
-  You can also use this command to clone an existing sandbox. Use the --clone flag to specify the existing sandbox name
-  and the --name flag to the name of the new sandbox.
+  You can also use this command to clone an existing sandbox. Use the --source-sandbox-name flag to specify the existing
+  sandbox name and the --name flag to the name of the new sandbox.
 
 ALIASES
   $ sf env create sandbox
@@ -171,8 +173,8 @@ EXAMPLES
   Clone the existing sandbox with name "ExistingSandbox" and name the new sandbox "NewClonedSandbox". Set the new
   sandbox as your default org. Wait for 30 minutes for the sandbox creation to complete.
 
-    $ sf org create sandbox --clone ExistingSandbox --name NewClonedSandbox --target-org prodOrg --alias \
-      MyDevSandbox --set-default --wait 30
+    $ sf org create sandbox --source-sandbox-name ExistingSandbox --name NewClonedSandbox --target-org prodOrg \
+      --alias MyDevSandbox --set-default --wait 30
 
 FLAG DESCRIPTIONS
   -a, --alias=<value>  Alias for the sandbox org.
@@ -182,11 +184,6 @@ FLAG DESCRIPTIONS
     "user@example.com" in the production org results in the username "user@example.com.mysandbox" in a sandbox named
     "mysandbox". When you set an alias for a sandbox org, it's assigned to the resulting username of the user running
     this command.
-
-  -c, --clone=<value>  Name of the sandbox org to clone.
-
-    The value of --clone must be an existing sandbox. The existing sandbox, and the new sandbox specified with the
-    --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
 
   -f, --definition-file=<value>  Path to a sandbox definition file.
 
@@ -227,9 +224,24 @@ FLAG DESCRIPTIONS
     CI/CD jobs, you probably don't want to incur the costs of source tracking (checking for conflicts, polling the
     SourceMember object, various file system operations.) This is a good use case for disabling source tracking in the
     sandbox.
+
+  --source-id=<value>  ID of the sandbox org to clone.
+
+    The value of --source-id must be an existing sandbox. The existing sandbox, and the new sandbox specified with the
+    --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
+
+    You can specify either --source-sandbox-name or --source-id when cloning an existing sandbox, but not both.
+
+  --source-sandbox-name=<value>  Name of the sandbox org to clone.
+
+    The value of --source-sandbox-name must be an existing sandbox. The existing sandbox, and the new sandbox specified
+    with the --name flag, must both be associated with the production org (--target-org) that contains the sandbox
+    licenses.
+
+    You can specify either --source-sandbox-name or --source-id when cloning an existing sandbox, but not both.
 ```
 
-_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.0.2/src/commands/org/create/sandbox.ts)_
+_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.1.0/src/commands/org/create/sandbox.ts)_
 
 ## `sf org create scratch`
 
@@ -383,7 +395,7 @@ FLAG DESCRIPTIONS
     Omit this flag to have Salesforce generate a unique username for your org.
 ```
 
-_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.0.2/src/commands/org/create/scratch.ts)_
+_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.1.0/src/commands/org/create/scratch.ts)_
 
 ## `sf org delete sandbox`
 
@@ -429,7 +441,7 @@ EXAMPLES
     $ sf org delete sandbox --target-org my-sandbox --no-prompt
 ```
 
-_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.0.2/src/commands/org/delete/sandbox.ts)_
+_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.1.0/src/commands/org/delete/sandbox.ts)_
 
 ## `sf org delete scratch`
 
@@ -473,7 +485,7 @@ EXAMPLES
     $ sf org delete scratch --target-org my-scratch-org --no-prompt
 ```
 
-_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.0.2/src/commands/org/delete/scratch.ts)_
+_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.1.0/src/commands/org/delete/scratch.ts)_
 
 ## `sf org disable tracking`
 
@@ -512,7 +524,7 @@ EXAMPLES
     $ sf org disable tracking
 ```
 
-_See code: [src/commands/org/disable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.0.2/src/commands/org/disable/tracking.ts)_
+_See code: [src/commands/org/disable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.1.0/src/commands/org/disable/tracking.ts)_
 
 ## `sf org display`
 
@@ -557,7 +569,7 @@ EXAMPLES
     $ sf org display --target-org TestOrg1 --verbose
 ```
 
-_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/5.0.2/src/commands/org/display.ts)_
+_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/5.1.0/src/commands/org/display.ts)_
 
 ## `sf org enable tracking`
 
@@ -599,7 +611,7 @@ EXAMPLES
     $ sf org enable tracking
 ```
 
-_See code: [src/commands/org/enable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.0.2/src/commands/org/enable/tracking.ts)_
+_See code: [src/commands/org/enable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.1.0/src/commands/org/enable/tracking.ts)_
 
 ## `sf org list`
 
@@ -638,7 +650,7 @@ EXAMPLES
     $ sf org list --clean
 ```
 
-_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/5.0.2/src/commands/org/list.ts)_
+_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/5.1.0/src/commands/org/list.ts)_
 
 ## `sf org list metadata`
 
@@ -705,7 +717,7 @@ FLAG DESCRIPTIONS
     Examples of metadata types that use folders are Dashboard, Document, EmailTemplate, and Report.
 ```
 
-_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/5.0.2/src/commands/org/list/metadata.ts)_
+_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/5.1.0/src/commands/org/list/metadata.ts)_
 
 ## `sf org list metadata-types`
 
@@ -760,7 +772,7 @@ FLAG DESCRIPTIONS
     Override the api version used for api requests made by this command
 ```
 
-_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/5.0.2/src/commands/org/list/metadata-types.ts)_
+_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/5.1.0/src/commands/org/list/metadata-types.ts)_
 
 ## `sf org open`
 
@@ -836,7 +848,7 @@ EXAMPLES
     $ sf org open --source-file force-app/main/default/bots/Coral_Cloud_Agent/Coral_Cloud_Agent.bot-meta.xml
 ```
 
-_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/5.0.2/src/commands/org/open.ts)_
+_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/5.1.0/src/commands/org/open.ts)_
 
 ## `sf org refresh sandbox`
 
@@ -913,7 +925,7 @@ FLAG DESCRIPTIONS
     By default, a sandbox auto-activates after a refresh. Use this flag to control sandbox activation manually.
 ```
 
-_See code: [src/commands/org/refresh/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.0.2/src/commands/org/refresh/sandbox.ts)_
+_See code: [src/commands/org/refresh/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.1.0/src/commands/org/refresh/sandbox.ts)_
 
 ## `sf org resume sandbox`
 
@@ -976,7 +988,7 @@ FLAG DESCRIPTIONS
     returns the job ID. To resume checking the sandbox creation, rerun this command.
 ```
 
-_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.0.2/src/commands/org/resume/sandbox.ts)_
+_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.1.0/src/commands/org/resume/sandbox.ts)_
 
 ## `sf org resume scratch`
 
@@ -1023,6 +1035,6 @@ FLAG DESCRIPTIONS
     The job ID is valid for 24 hours after you start the scratch org creation.
 ```
 
-_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.0.2/src/commands/org/resume/scratch.ts)_
+_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.1.0/src/commands/org/resume/scratch.ts)_
 
 <!-- commandsstop -->

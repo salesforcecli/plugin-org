@@ -1,3 +1,9 @@
+# [5.1.0](https://github.com/salesforcecli/plugin-org/compare/5.0.2...5.1.0) (2024-10-30)
+
+### Features
+
+- add source flags for sbx create ([#1237](https://github.com/salesforcecli/plugin-org/issues/1237)) ([a23ce06](https://github.com/salesforcecli/plugin-org/commit/a23ce063f4a4af71e35753518d274d8d8908901b))
+
 ## [5.0.2](https://github.com/salesforcecli/plugin-org/compare/5.0.1...5.0.2) (2024-10-27)
 
 ### Bug Fixes
