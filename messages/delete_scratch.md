@@ -44,3 +44,7 @@ Successfully deleted scratch org %s.
 # error.missingUsername
 
 Unable to determine the username of the org to delete. Specify the username with the --target-org | -o flag.
+
+# error.unknownScratch
+
+The org with username: %s is not known by the CLI to be a scratch

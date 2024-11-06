@@ -38,6 +38,10 @@ export default class DeleteScratch extends SfCommand<ScratchDeleteResponse> {
     const flags = (await this.parse(DeleteScratch)).flags;
     const resolvedUsername = flags['target-org'];
     const orgId = (await AuthInfo.create({ username: resolvedUsername })).getFields().orgId as string;
+    const typeScratch = (await AuthInfo.create({ username: resolvedUsername })).getFields().isScratch;
+    if (!typeScratch) {
+      throw messages.createError('error.unknownScratch', [resolvedUsername]);
+    }
 
     if (
       flags['no-prompt'] ||
@@ -45,9 +49,7 @@ export default class DeleteScratch extends SfCommand<ScratchDeleteResponse> {
     ) {
       try {
         const org = await Org.create({ aliasOrUsername: resolvedUsername });
-
         await org.delete();
-        this.logSuccess(messages.getMessage('success', [org.getUsername()]));
         return { username: org.getUsername() as string, orgId: org.getOrgId() };
       } catch (e) {
         if (e instanceof Error && e.name === 'DomainNotFoundError') {
