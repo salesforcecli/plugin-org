@@ -47,4 +47,4 @@ Unable to determine the username of the org to delete. Specify the username with
 
 # error.unknownScratch
 
-The org with username: %s is not known by the CLI to be a scratch
+The org with username %s isn't a scratch org.
