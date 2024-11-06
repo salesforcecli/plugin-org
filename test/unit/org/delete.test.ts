@@ -147,9 +147,6 @@ describe('org delete', () => {
       $$.SANDBOX.stub(AuthInfo.prototype, 'getFields').returns({
         orgId: testOrg.orgId,
         isScratch: true,
-        instanceUrl: testOrg.instanceUrl,
-        loginUrl: testOrg.loginUrl,
-        username: testOrg.username,
       });
       await $$.stubConfig({ 'target-org': testOrg.username });
       const res = await DeleteScratch.run([]);
@@ -160,14 +157,26 @@ describe('org delete', () => {
       expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
     });
 
+    it.only('will throw an error when the org is not identified as a scratch', async () => {
+      $$.SANDBOX.stub(AuthInfo.prototype, 'getFields').returns({
+        orgId: testOrg.orgId,
+        isScratch: false,
+      });
+      await $$.stubConfig({ 'target-org': testOrg.username });
+      try {
+        await DeleteScratch.run(['--target-org', testOrg.username]);
+        expect.fail('should have thrown UnknownScratchError');
+      } catch (e) {
+        const err = e as SfError;
+        expect(err.name).to.equal('UnknownScratchError');
+      }
+    });
+
     it('will prompt before attempting to delete by alias', async () => {
-      const authInfoStub = {
-        getFields: () => ({
-          orgId: testOrg.orgId,
-          isScratch: true,
-        }),
-      };
-      $$.SANDBOX.stub(AuthInfo, 'create').resolves(authInfoStub as unknown as AuthInfo);
+      $$.SANDBOX.stub(AuthInfo.prototype, 'getFields').returns({
+        orgId: testOrg.orgId,
+        isScratch: true,
+      });
 
       await $$.stubConfig({ 'target-org': 'myAlias' });
       $$.stubAliases({ myAlias: testOrg.username });
