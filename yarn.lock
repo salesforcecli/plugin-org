@@ -1654,13 +1654,13 @@
     lodash "^4.17.21"
     registry-auth-token "^5.0.2"
 
-"@oclif/table@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@oclif/table/-/table-0.2.2.tgz#057f1f86c51a5a4239dbd0a71d3fe4056d8d95f5"
-  integrity sha512-wKWkPcZ00k3v1ZgaX0MB1LR1HR227ZtFv/zgElGwVSTvvRLe1r5VHple7nmZA+7zJkRO7ko09IPUlxezDu2D3A==
+"@oclif/table@^0.3.2":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@oclif/table/-/table-0.3.3.tgz#5dc1c98cfa5415b131d77c85048df187fc241d12"
+  integrity sha512-sz6gGT1JAPP743vxl1491hxboIu0ZFHaP3gyvhz5Prgsuljp2NGyyu7JPEMeVImCnZ9N3K9cy3VXxRFEwRH/ig==
   dependencies:
     "@oclif/core" "^4"
-    "@types/react" "^18.3.11"
+    "@types/react" "^18.3.12"
     change-case "^5.4.4"
     cli-truncate "^4.0.0"
     ink "^5.0.1"
@@ -1822,23 +1822,20 @@
     string-width "^7.2.0"
     terminal-link "^3.0.0"
 
-"@salesforce/sf-plugins-core@^12.0.9":
-  version "12.0.9"
-  resolved "https://registry.yarnpkg.com/@salesforce/sf-plugins-core/-/sf-plugins-core-12.0.9.tgz#8a48828924d7e7fd2b402188077e87f4fa424156"
-  integrity sha512-CklAvBje/t+a85Djp961Ly84Yeh3+jF5n9G7Uy3NniUqJ6WwQc2M4jy+nTbqsRxomEuEb60AP3/rPQH9eBO7KA==
+"@salesforce/sf-plugins-core@^12.0.11":
+  version "12.0.11"
+  resolved "https://registry.yarnpkg.com/@salesforce/sf-plugins-core/-/sf-plugins-core-12.0.11.tgz#5837bc385cb8f057c4bc86b71ead71464ba5063b"
+  integrity sha512-DYb54IeszQxcyl0N3e5qxSx3Vc571f36alZNE54qPqBTi9RAGEHQN4XR03dKLic0aNS/j4Z09RGH6YoH2zSL6A==
   dependencies:
     "@inquirer/confirm" "^3.1.22"
     "@inquirer/password" "^2.2.0"
     "@oclif/core" "^4.0.27"
-    "@oclif/table" "^0.2.2"
+    "@oclif/table" "^0.3.2"
     "@salesforce/core" "^8.5.1"
     "@salesforce/kit" "^3.2.3"
     "@salesforce/ts-types" "^2.0.12"
     ansis "^3.3.2"
     cli-progress "^3.12.0"
-    natural-orderby "^3.0.2"
-    slice-ansi "^7.1.0"
-    string-width "^7.2.0"
     terminal-link "^3.0.0"
 
 "@salesforce/source-deploy-retrieve@^12.10.0":
@@ -2614,6 +2611,14 @@
   version "18.3.11"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-18.3.11.tgz#9d530601ff843ee0d7030d4227ea4360236bd537"
   integrity sha512-r6QZ069rFTjrEYgFdOck1gK7FLVsgJE7tTz0pQBczlBNUhBNk0MQH4UbnFSwjpQLMkLzgqvBBa+qGpLje16eTQ==
+  dependencies:
+    "@types/prop-types" "*"
+    csstype "^3.0.2"
+
+"@types/react@^18.3.12":
+  version "18.3.12"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.3.12.tgz#99419f182ccd69151813b7ee24b792fe08774f60"
+  integrity sha512-D2wOSq/d6Agt28q7rSI3jhU7G6aiuzljDGZ2hTZHIkrTLUI+AF3WMeKkEZ9nN2fkBAlcktT6vcZjDFiIhMYEQw==
   dependencies:
     "@types/prop-types" "*"
     csstype "^3.0.2"
