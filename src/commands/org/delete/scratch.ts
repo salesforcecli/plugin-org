@@ -38,8 +38,6 @@ export default class DeleteScratch extends SfCommand<ScratchDeleteResponse> {
   public async run(): Promise<ScratchDeleteResponse> {
     const flags = (await this.parse(DeleteScratch)).flags;
     const resolvedUsername = flags['target-org'];
-    // const orgId = (await AuthInfo.create({ username: resolvedUsername })).getFields().orgId as string;
-    // const typeScratch = (await AuthInfo.create({ username: resolvedUsername })).getFields().isScratch;
     const { orgId, isScratch } = (await AuthInfo.create({ username: resolvedUsername })).getFields();
     if (!isScratch) {
       throw messages.createError('error.unknownScratch', [resolvedUsername]);
