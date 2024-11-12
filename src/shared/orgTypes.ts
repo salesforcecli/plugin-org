@@ -23,6 +23,12 @@ export type OrgDisplayReturn = Partial<ScratchOrgFields> & {
   sfdxAuthUrl?: string;
 };
 
+export type OrgOpenOutput = {
+  url: string;
+  username: string;
+  orgId: string;
+};
+
 /** Convenience type for the fields that are in the auth file
  *
  * core's AuthFields has everything as optional.
