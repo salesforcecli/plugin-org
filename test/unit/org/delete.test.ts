@@ -157,7 +157,7 @@ describe('org delete', () => {
       expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
     });
 
-    it.only('will throw an error when the org is not identified as a scratch', async () => {
+    it('will throw an error when the org is not identified as a scratch', async () => {
       $$.SANDBOX.stub(AuthInfo.prototype, 'getFields').returns({
         orgId: testOrg.orgId,
         isScratch: false,
