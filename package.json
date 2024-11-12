@@ -1,13 +1,13 @@
 {
   "name": "@salesforce/plugin-org",
   "description": "Commands to interact with Salesforce orgs",
-  "version": "5.1.0",
+  "version": "5.1.4",
   "author": "Salesforce",
   "bugs": "https://github.com/forcedotcom/cli/issues",
   "dependencies": {
     "@oclif/core": "^4.0.30",
     "@oclif/multi-stage-output": "^0.7.8",
-    "@salesforce/core": "^8.6.3",
+    "@salesforce/core": "^8.6.4",
     "@salesforce/kit": "^3.2.3",
     "@salesforce/sf-plugins-core": "^12.0.9",
     "@salesforce/source-deploy-retrieve": "^12.8.1",
@@ -20,13 +20,13 @@
   },
   "devDependencies": {
     "@oclif/plugin-command-snapshot": "^5.2.18",
-    "@salesforce/cli-plugins-testkit": "^5.3.35",
+    "@salesforce/cli-plugins-testkit": "^5.3.36",
     "@salesforce/dev-scripts": "^10.2.10",
-    "@salesforce/plugin-command-reference": "^3.1.29",
-    "@salesforce/ts-sinon": "^1.4.28",
+    "@salesforce/plugin-command-reference": "^3.1.31",
+    "@salesforce/ts-sinon": "^1.4.29",
     "eslint-plugin-sf-plugin": "^1.20.8",
     "moment": "^2.30.1",
-    "oclif": "^4.15.12",
+    "oclif": "^4.15.22",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
   },
