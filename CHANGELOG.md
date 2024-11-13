@@ -1,3 +1,9 @@
+## [5.1.5](https://github.com/salesforcecli/plugin-org/compare/5.1.4...5.1.5) (2024-11-13)
+
+### Bug Fixes
+
+- **delete-scratch:** validate org is scratch ([#1257](https://github.com/salesforcecli/plugin-org/issues/1257)) ([0b33f16](https://github.com/salesforcecli/plugin-org/commit/0b33f166e1ecc6fcea5013a51651bd8e8fd3e055))
+
 ## [5.1.4](https://github.com/salesforcecli/plugin-org/compare/5.1.3...5.1.4) (2024-11-10)
 
 ### Bug Fixes

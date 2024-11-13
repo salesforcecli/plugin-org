@@ -29,6 +29,7 @@ export class OrgOpenCommand extends OrgOpenCommandBase<OrgOpenOutput> {
   public static deprecateAliases = true;
 
   public static readonly flags = {
+    ...OrgOpenCommandBase.flags,
     'target-org': requiredOrgFlagWithDeprecations,
     'api-version': orgApiVersionFlagWithDeprecations,
     private: Flags.boolean({

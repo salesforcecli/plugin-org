@@ -28,6 +28,8 @@ type OrgOpenFlags = {
 };
 
 export abstract class OrgOpenCommandBase<T> extends SfCommand<T> {
+  public static enableJsonFlag = true;
+
   // Set by concrete classes in `run()`
   protected org!: Org;
   protected connection!: Connection;
