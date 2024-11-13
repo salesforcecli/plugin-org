@@ -1,3 +1,33 @@
+## [5.1.5](https://github.com/salesforcecli/plugin-org/compare/5.1.4...5.1.5) (2024-11-13)
+
+### Bug Fixes
+
+- **delete-scratch:** validate org is scratch ([#1257](https://github.com/salesforcecli/plugin-org/issues/1257)) ([0b33f16](https://github.com/salesforcecli/plugin-org/commit/0b33f166e1ecc6fcea5013a51651bd8e8fd3e055))
+
+## [5.1.4](https://github.com/salesforcecli/plugin-org/compare/5.1.3...5.1.4) (2024-11-10)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve ([4ffc31e](https://github.com/salesforcecli/plugin-org/commit/4ffc31edb50ddd778089bdfba017f17e5fb5dd44))
+
+## [5.1.3](https://github.com/salesforcecli/plugin-org/compare/5.1.2...5.1.3) (2024-11-10)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/sf-plugins-core from 12.0.9 to 12.0.11 ([8eee152](https://github.com/salesforcecli/plugin-org/commit/8eee152e796144653a6c3152653ccac52dd33531))
+
+## [5.1.2](https://github.com/salesforcecli/plugin-org/compare/5.1.1...5.1.2) (2024-11-03)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve ([a81d795](https://github.com/salesforcecli/plugin-org/commit/a81d7953e712a0c901ae6b5b8d6224ba495435de))
+
+## [5.1.1](https://github.com/salesforcecli/plugin-org/compare/5.1.0...5.1.1) (2024-11-03)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 8.6.3 to 8.6.4 ([e4775b9](https://github.com/salesforcecli/plugin-org/commit/e4775b9aed2edfb42aed8bd72c988694b3f5c38f))
+
 # [5.1.0](https://github.com/salesforcecli/plugin-org/compare/5.0.2...5.1.0) (2024-10-30)
 
 ### Features
