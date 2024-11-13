@@ -144,6 +144,10 @@ describe('org delete', () => {
     });
 
     it('will prompt before attempting to delete by username', async () => {
+      $$.SANDBOX.stub(AuthInfo.prototype, 'getFields').returns({
+        orgId: testOrg.orgId,
+        isScratch: true,
+      });
       await $$.stubConfig({ 'target-org': testOrg.username });
       const res = await DeleteScratch.run([]);
       expect(prompterStubs.confirm.callCount).to.equal(1);
@@ -153,7 +157,27 @@ describe('org delete', () => {
       expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
     });
 
+    it('will throw an error when the org is not identified as a scratch', async () => {
+      $$.SANDBOX.stub(AuthInfo.prototype, 'getFields').returns({
+        orgId: testOrg.orgId,
+        isScratch: false,
+      });
+      await $$.stubConfig({ 'target-org': testOrg.username });
+      try {
+        await DeleteScratch.run(['--target-org', testOrg.username]);
+        expect.fail('should have thrown UnknownScratchError');
+      } catch (e) {
+        const err = e as SfError;
+        expect(err.name).to.equal('UnknownScratchError');
+      }
+    });
+
     it('will prompt before attempting to delete by alias', async () => {
+      $$.SANDBOX.stub(AuthInfo.prototype, 'getFields').returns({
+        orgId: testOrg.orgId,
+        isScratch: true,
+      });
+
       await $$.stubConfig({ 'target-org': 'myAlias' });
       $$.stubAliases({ myAlias: testOrg.username });
       const res = await DeleteScratch.run(['--target-org', 'myAlias']);
@@ -166,6 +190,12 @@ describe('org delete', () => {
 
     it('will NOT prompt before deleting scratch org when flag is provided', async () => {
       await $$.stubConfig({ 'target-org': testOrg.username });
+      $$.SANDBOX.stub(AuthInfo.prototype, 'getFields').returns({
+        orgId: testOrg.orgId,
+        isScratch: true,
+      });
+      orgDeleteStub.restore();
+      $$.SANDBOX.stub(Org.prototype, 'delete').throws(new SfError('bah!', 'DomainNotFoundError'));
       const res = await DeleteScratch.run(['--no-prompt', '--target-org', testOrg.username]);
       expect(prompterStubs.confirm.calledOnce).to.equal(false);
       expect(sfCommandUxStubs.logSuccess.callCount).to.equal(1);
@@ -176,6 +206,10 @@ describe('org delete', () => {
     });
 
     it('will catch the ScratchOrgNotFound and wrap correctly', async () => {
+      $$.SANDBOX.stub(AuthInfo.prototype, 'getFields').returns({
+        orgId: testOrg.orgId,
+        isScratch: true,
+      });
       orgDeleteStub.restore();
       $$.SANDBOX.stub(Org.prototype, 'delete').throws(new SfError('bah!', 'ScratchOrgNotFound'));
       const res = await DeleteScratch.run(['--no-prompt', '--target-org', testOrg.username]);

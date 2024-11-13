@@ -7,6 +7,7 @@
 
 import { AuthInfo, AuthRemover, Messages, Org } from '@salesforce/core';
 import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
+import { ensureString } from '@salesforce/ts-types';
 import { orgThatMightBeDeleted } from '../../../shared/flags.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
@@ -37,7 +38,10 @@ export default class DeleteScratch extends SfCommand<ScratchDeleteResponse> {
   public async run(): Promise<ScratchDeleteResponse> {
     const flags = (await this.parse(DeleteScratch)).flags;
     const resolvedUsername = flags['target-org'];
-    const orgId = (await AuthInfo.create({ username: resolvedUsername })).getFields().orgId as string;
+    const { orgId, isScratch } = (await AuthInfo.create({ username: resolvedUsername })).getFields();
+    if (!isScratch) {
+      throw messages.createError('error.unknownScratch', [resolvedUsername]);
+    }
 
     if (
       flags['no-prompt'] ||
@@ -45,9 +49,7 @@ export default class DeleteScratch extends SfCommand<ScratchDeleteResponse> {
     ) {
       try {
         const org = await Org.create({ aliasOrUsername: resolvedUsername });
-
         await org.delete();
-        this.logSuccess(messages.getMessage('success', [org.getUsername()]));
         return { username: org.getUsername() as string, orgId: org.getOrgId() };
       } catch (e) {
         if (e instanceof Error && e.name === 'DomainNotFoundError') {
@@ -63,6 +65,9 @@ export default class DeleteScratch extends SfCommand<ScratchDeleteResponse> {
         }
       }
     }
-    return { username: resolvedUsername, orgId };
+    return {
+      username: resolvedUsername,
+      orgId: ensureString(orgId),
+    };
   }
 }
