@@ -20,7 +20,7 @@ export type SandboxProgressData = {
 };
 
 export type SandboxStatusData = {
-  sandboxUsername: string;
+  sandboxUsername: string | undefined;
   sandboxProgress: SandboxProgressData;
   sandboxProcessObj?: SandboxProcessObject | undefined;
 };
