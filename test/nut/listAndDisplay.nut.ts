@@ -11,8 +11,7 @@ import { expect, config, assert } from 'chai';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { execCmd } from '@salesforce/cli-plugins-testkit';
 import { OrgListResult, defaultHubEmoji, defaultOrgEmoji } from '../../src/commands/org/list.js';
-import { OrgOpenOutput } from '../../src/commands/org/open.js';
-import { OrgDisplayReturn } from '../../src/shared/orgTypes.js';
+import { OrgDisplayReturn, OrgOpenOutput } from '../../src/shared/orgTypes.js';
 
 let hubOrgUsername: string;
 config.truncateThreshold = 0;

@@ -12,8 +12,9 @@ import { SfdcUrl, Messages, Connection, SfError } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { MockTestOrgData, shouldThrow, TestContext } from '@salesforce/core/testSetup';
 import { stubSfCommandUx, stubSpinner, stubUx } from '@salesforce/sf-plugins-core';
-import { OrgOpenCommand, OrgOpenOutput } from '../../../src/commands/org/open.js';
-import utils from '../../../src/shared/utils.js';
+import { OrgOpenCommand } from '../../../src/commands/org/open.js';
+import { OrgOpenOutput } from '../../../src/shared/orgTypes.js';
+import utils from '../../../src/shared/orgOpenUtils.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');

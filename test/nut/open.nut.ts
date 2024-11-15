@@ -11,7 +11,7 @@ import { TestSession, execCmd } from '@salesforce/cli-plugins-testkit';
 import { expect, config, assert } from 'chai';
 import { AuthFields } from '@salesforce/core';
 import { ComponentSetBuilder } from '@salesforce/source-deploy-retrieve';
-import { OrgOpenOutput } from '../../src/commands/org/open.js';
+import { OrgOpenOutput } from '../../src/shared/orgTypes.js';
 
 let session: TestSession;
 let defaultUsername: string;

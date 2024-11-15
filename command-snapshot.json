@@ -138,6 +138,14 @@
   },
   {
     "alias": [],
+    "command": "org:open:agent",
+    "flagAliases": ["urlonly"],
+    "flagChars": ["b", "n", "o", "r"],
+    "flags": ["api-version", "browser", "flags-dir", "json", "name", "private", "target-org", "url-only"],
+    "plugin": "@salesforce/plugin-org"
+  },
+  {
+    "alias": [],
     "command": "org:refresh:sandbox",
     "flagAliases": [],
     "flagChars": ["f", "i", "n", "o", "w"],
