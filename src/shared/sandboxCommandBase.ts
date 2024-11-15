@@ -77,7 +77,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
       const sourceTrackingSettings = await this.prodOrg
         .getConnection()
         .singleRecordQuery('SELECT IsSourceTrackingSandboxesEnabled FROM SourceTrackingSettings', { tooling: true });
-      if (sourceTrackingSettings && sourceTrackingSettings.IsSourceTrackingSandboxesEnabled !== true) {
+      if (sourceTrackingSettings.IsSourceTrackingSandboxesEnabled !== true) {
         return false;
       }
     }
