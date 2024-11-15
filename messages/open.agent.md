@@ -4,7 +4,7 @@ Open an agent in your org's Agent Builder UI in a browser.
 
 # description
 
-Use the --name flag to open an agent using its API name in the Agent Builder UI of your org. To find the agent's API name, go to Setup in your org and navigate to the agent's details page; the API name is shown in the top-right.
+Use the --name flag to open an agent using its API name in the Agent Builder UI of your org. To find the agent's API name, go to Setup in your org and navigate to the agent's details page.
 
 To generate the URL but not launch it in your browser, specify --url-only.
 
