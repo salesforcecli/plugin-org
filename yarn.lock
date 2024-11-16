@@ -1621,10 +1621,10 @@
     string-width "^7.2.0"
     terminal-link "^3.0.0"
 
-"@salesforce/source-deploy-retrieve@^12.8.1":
-  version "12.8.1"
-  resolved "https://registry.yarnpkg.com/@salesforce/source-deploy-retrieve/-/source-deploy-retrieve-12.8.1.tgz#cd00f4165c93c3d09881cb108cb0ba0c47b7a510"
-  integrity sha512-1wTP6Qa9aWuToY5VMMO0Xg8ea5Vtnaf79ZYJry4BTK9y2XyzhrmwSHTvvO7UuhDb//zx2REfKT53JltCysEADA==
+"@salesforce/source-deploy-retrieve@^12.10.1":
+  version "12.10.1"
+  resolved "https://registry.yarnpkg.com/@salesforce/source-deploy-retrieve/-/source-deploy-retrieve-12.10.1.tgz#bf20f2e92935ddc886b980c1b0d57e84ebe0f3ba"
+  integrity sha512-X4iwRnC9rkbZnK6brbY3lydgbJK44x4e7Bl4EEPNi6SOPdzkKBqTh7TiR7I2ftY0iiBrH0zWHrWMiNeCtQMWbA==
   dependencies:
     "@salesforce/core" "^8.6.2"
     "@salesforce/kit" "^3.2.2"
