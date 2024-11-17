@@ -1,3 +1,9 @@
+# [5.2.0](https://github.com/salesforcecli/plugin-org/compare/5.1.5...5.2.0) (2024-11-17)
+
+### Features
+
+- add org open agent ([#1264](https://github.com/salesforcecli/plugin-org/issues/1264)) ([5a07969](https://github.com/salesforcecli/plugin-org/commit/5a07969bd30bb1da6bc079d0f7fb7b2739888f99)), closes [#1265](https://github.com/salesforcecli/plugin-org/issues/1265)
+
 ## [5.1.5](https://github.com/salesforcecli/plugin-org/compare/5.1.4...5.1.5) (2024-11-13)
 
 ### Bug Fixes
