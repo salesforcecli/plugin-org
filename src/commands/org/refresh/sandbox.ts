@@ -34,7 +34,6 @@ const fields = [
   'SourceId', // (string) SandboxInfoId as the source org used for a clone
   // 'ActivationUserGroupId', // Currently not supported but might be added in API v61.0
   // 'CopyArchivedActivities', -- only for full sandboxes; depends if a license was purchased
-  'IsSourceTrackingSandboxesEnabled',
   ...uneditableFields,
 ];
 
