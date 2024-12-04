@@ -1,3 +1,13 @@
+## [5.2.8](https://github.com/salesforcecli/plugin-org/compare/5.2.7...5.2.8) (2024-12-04)
+
+### Bug Fixes
+
+- add sourcetracking field ([7336002](https://github.com/salesforcecli/plugin-org/commit/733600270f12e687179fd9f6875799696082165a))
+- remove redundancy ([5df9bbb](https://github.com/salesforcecli/plugin-org/commit/5df9bbbe252ed7d8da7a017335758b6235b28e4b))
+- remove the field ([66e57cd](https://github.com/salesforcecli/plugin-org/commit/66e57cd12c835d6fff240519dc71ba06e6811e3d))
+- source tracking error ([2d94089](https://github.com/salesforcecli/plugin-org/commit/2d94089e5a51856dc565fc457890fa32e59ca73f))
+- validation source tracking ([d3ea0ea](https://github.com/salesforcecli/plugin-org/commit/d3ea0ea0b151867f9281d42bf938cd27cb224a1e))
+
 ## [5.2.7](https://github.com/salesforcecli/plugin-org/compare/5.2.6...5.2.7) (2024-12-02)
 
 ### Bug Fixes
