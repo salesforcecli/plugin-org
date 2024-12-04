@@ -76,8 +76,8 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
       // if user hasn't opted out of tracking, and sandbox type supports it, verify that prod org supports tracking-enabled sandboxes
       const sourceTrackingSettings = await this.prodOrg
         .getConnection()
-        .metadata.read('SourceTrackingSettings', 'SourceTrackingSettings');
-      if (sourceTrackingSettings.enableSourceTrackingSandboxes !== true) {
+        .singleRecordQuery('SELECT IsSourceTrackingSandboxesEnabled FROM SourceTrackingSettings', { tooling: true });
+      if (sourceTrackingSettings?.IsSourceTrackingSandboxesEnabled !== true) {
         return false;
       }
     }
