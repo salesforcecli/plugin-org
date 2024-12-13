@@ -243,7 +243,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
         interval: this.flags['poll-interval'],
         async: this.flags.async,
       });
-      console.log('Sandbox Process Object', sandboxProcessObject);
+      // console.log('Sandbox Process Object', sandboxProcessObject);
 
       mso.updateData({status: sandboxProcessObject.Status, id: sandboxProcessObject.Id});
 
