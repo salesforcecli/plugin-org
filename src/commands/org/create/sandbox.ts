@@ -8,12 +8,11 @@
 import { Duration } from '@salesforce/kit';
 import { MultiStageOutput } from '@oclif/multi-stage-output';
 import { Flags } from '@salesforce/sf-plugins-core';
-import { Lifecycle, Messages, SandboxEvents, SandboxProcessObject, SandboxRequest, SfError } from '@salesforce/core';
+import { Lifecycle, Messages, SandboxEvents, SandboxRequest, SfError } from '@salesforce/core';
 import { Interfaces } from '@oclif/core';
 import requestFunctions, { readSandboxDefFile } from '../../../shared/sandboxRequest.js';
 import { SandboxCommandBase, SandboxCommandResponse } from '../../../shared/sandboxCommandBase.js';
 import { SandboxLicenseType } from '../../../shared/orgTypes.js';
-import sandboxRequest from '../../../shared/sandboxRequest.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create.sandbox');
@@ -126,7 +125,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
 
     this.debug('Create started with args %s ', this.flags);
     this.validateFlags();
-    
+
     return this.createSandbox();
   }
 
@@ -206,38 +205,38 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
     });
     this.initSandboxProcessData(sandboxReq);
 
-    const mso = new MultiStageOutput<{status: string; id: string}>({
-      stages: this.flags.async 
-      ? ['Prepare request', 'Send request', 'Done'] 
-      : ['Prepare request', 'Send request', 'Waiting for org to respond', 'Done'],
-      title: this.flags.async ? 'Create Sandbox (async)': 'Create Sandbox',
+    const mso = new MultiStageOutput<{ status: string; id: string }>({
+      stages: this.flags.async
+        ? ['Prepare request', 'Send request', 'Done']
+        : ['Prepare request', 'Send request', 'Waiting for org to respond', 'Done'],
+      title: this.flags.async ? 'Create Sandbox (async)' : 'Create Sandbox',
       jsonEnabled: false,
       postStagesBlock: [
         {
           label: 'SandboxId',
           get: (data) => data?.id,
           type: 'dynamic-key-value',
-          bold: true
+          bold: true,
         },
         {
           label: 'Status',
           get: (data) => data?.status,
           type: 'dynamic-key-value',
-          bold: true
+          bold: true,
         },
-      ]
+      ],
     });
 
-    mso.goto('Prepare request', {status: 'Pending'});
+    mso.goto('Prepare request', { status: 'Pending' });
 
     if (!this.flags.async) {
-      mso.skipTo('Send request');
+      mso.skipTo('Sandbox Create', { status: 'Pending' });
     }
 
     this.debug('Calling create with SandboxRequest: %s ', sandboxReq);
 
     try {
-      mso.goto('Send request', {status: 'In Progress'});
+      mso.goto('Send request', { status: 'In Progress' });
       const sandboxProcessObject = await this.prodOrg.createSandbox(sandboxReq, {
         wait: this.flags.wait,
         interval: this.flags['poll-interval'],
@@ -245,27 +244,26 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       });
       // console.log('Sandbox Process Object', sandboxProcessObject);
 
-      mso.updateData({status: sandboxProcessObject.Status, id: sandboxProcessObject.Id});
+      mso.updateData({ status: sandboxProcessObject.Status, id: sandboxProcessObject.Id });
 
       if (sandboxProcessObject.Status === 'In Progress') {
-        mso.goto('Waiting for org to respond', { status: 'In Progress', id: sandboxProcessObject.Id});
+        mso.goto('Waiting for org to respond', { status: 'In Progress', id: sandboxProcessObject.Id });
       }
-  
+
       this.latestSandboxProgressObj = sandboxProcessObject;
       this.saveSandboxProgressConfig();
 
-      mso.goto('Done', {status: sandboxProcessObject.Status, id: sandboxProcessObject.Id});
+      mso.goto('Done', { status: sandboxProcessObject.Status, id: sandboxProcessObject.Id });
       if (this.flags.async) {
-        mso.goto('Waiting for org to respond', { status: 'Pending', id: sandboxProcessObject.Id});
-        
-        mso.skipTo('Done', {status: sandboxProcessObject.Status, id: sandboxProcessObject.Id});
+        mso.goto('Waiting for org to respond', { status: 'Pending', id: sandboxProcessObject.Id });
+
+        mso.skipTo('Done', { status: sandboxProcessObject.Status, id: sandboxProcessObject.Id });
         mso.stop();
         process.exitCode = 68;
       }
       return this.getSandboxCommandResponse();
     } catch (err) {
-      mso.error()
-      mso.stop();
+      mso.error();
       if (this.pollingTimeOut && this.latestSandboxProgressObj) {
         void lifecycle.emit(SandboxEvents.EVENT_ASYNC_RESULT, undefined);
         process.exitCode = 68;

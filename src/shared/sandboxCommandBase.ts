@@ -91,6 +91,14 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
   ): void {
     lifecycle.on('POLLING_TIME_OUT', async () => {
       this.pollingTimeOut = true;
+      this.warn('Sandbox creation process time out.');
+
+      if (this.latestSandboxProgressObj) {
+        const sandboxId = this.latestSandboxProgressObj.Id;
+        if (sandboxId) {
+          this.info(`Sandbox ID: ${sandboxId}`);
+        }
+      }
       return Promise.resolve(this.updateSandboxRequestData());
     });
 
@@ -131,6 +139,12 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
 
     lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) => {
       this.latestSandboxProgressObj = results.sandboxProcessObj;
+      const sandboxId = this.latestSandboxProgressObj?.Id;
+
+      if (sandboxId) {
+        this.info(`Sandbox ID: ${sandboxId}`);
+      }
+
       this.updateSandboxRequestData();
       const progress = this.sandboxProgress.getSandboxProgress(results);
       const currentStage = progress.status;
@@ -144,7 +158,12 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     });
 
     lifecycle.on(SandboxEvents.EVENT_RESULT, async (results: ResultEvent) => {
-      this.latestSandboxProgressObj = results.sandboxProcessObj;
+      // this.latestSandboxProgressObj = results.sandboxProcessObj;
+      const sandboxId = results.sandboxProcessObj?.Id;
+
+      if (sandboxId) {
+        this.info(`Sandbox created with ID: ${sandboxId}`);
+      }
       this.updateSandboxRequestData();
       this.sandboxProgress.markPreviousStagesAsCompleted();
       this.updateProgress(results, options.isAsync);
