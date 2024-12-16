@@ -213,7 +213,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       jsonEnabled: false,
       postStagesBlock: [
         {
-          label: 'SandboxId',
+          label: 'Sandbox ID',
           get: (data) => data?.id,
           type: 'dynamic-key-value',
           bold: true,
@@ -246,18 +246,13 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
 
       mso.updateData({ status: sandboxProcessObject.Status, id: sandboxProcessObject.Id });
 
-      if (sandboxProcessObject.Status === 'In Progress') {
-        mso.goto('Waiting for org to respond', { status: 'In Progress', id: sandboxProcessObject.Id });
-      }
-
       this.latestSandboxProgressObj = sandboxProcessObject;
       this.saveSandboxProgressConfig();
 
       mso.goto('Done', { status: sandboxProcessObject.Status, id: sandboxProcessObject.Id });
       if (this.flags.async) {
         mso.goto('Waiting for org to respond', { status: 'Pending', id: sandboxProcessObject.Id });
-
-        mso.skipTo('Done', { status: sandboxProcessObject.Status, id: sandboxProcessObject.Id });
+        mso.skipTo('Done');
         mso.stop();
         process.exitCode = 68;
       }
