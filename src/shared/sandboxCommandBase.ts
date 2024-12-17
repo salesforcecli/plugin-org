@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import os from 'node:os';
-
+import { MultiStageOutput } from '@oclif/multi-stage-output';
 import { SfCommand } from '@salesforce/sf-plugins-core';
 import { Config } from '@oclif/core';
 import {
@@ -22,7 +22,13 @@ import {
   StatusEvent,
 } from '@salesforce/core';
 import { SandboxProgress } from './sandboxProgress.js';
-import { State } from './stagedProgress.js';
+// import { State } from './stagedProgress.js';
+
+type SandboxData = {
+  sandboxStatus: StatusEvent;
+  status: string;
+  id: string;
+};
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'sandboxbase');
@@ -50,6 +56,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
         : this.constructor.name === 'CreateSandbox'
         ? 'Create'
         : 'Create/Refresh';
+
     this.sandboxProgress = new SandboxProgress({ action: this.action });
   }
   protected async getSandboxRequestConfig(): Promise<SandboxRequestCache> {
@@ -89,6 +96,34 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     lifecycle: Lifecycle,
     options: { isAsync: boolean; alias?: string; setDefault?: boolean; prodOrg?: Org; tracksSource?: boolean }
   ): void {
+    const mso = new MultiStageOutput<SandboxData>({
+      stages: ['Creating new sandbox', 'Authenticating'],
+      title: 'Create Sandbox',
+      jsonEnabled: false,
+      postStagesBlock: [
+        {
+          label: 'Sandbox ID',
+          get: (data): string | undefined => data?.id,
+          type: 'dynamic-key-value',
+          bold: true,
+        },
+        {
+          label: 'Status',
+          get: (data): string | undefined => data?.status,
+          type: 'dynamic-key-value',
+          bold: true,
+        },
+        {
+          label: 'Copy Progress',
+          get: (data): string | undefined => {
+            if (data?.sandboxStatus.sandboxProcessObj.CopyProgress)
+              return `${data?.sandboxStatus.sandboxProcessObj.CopyProgress}`;
+          },
+          type: 'dynamic-key-value',
+          bold: true,
+        },
+      ],
+    });
     lifecycle.on('POLLING_TIME_OUT', async () => {
       this.pollingTimeOut = true;
       this.warn('Sandbox creation process time out.');
@@ -97,6 +132,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
         const sandboxId = this.latestSandboxProgressObj.Id;
         if (sandboxId) {
           this.info(`Sandbox ID: ${sandboxId}`);
+          mso.updateData({ status: this.latestSandboxProgressObj.Status });
         }
       }
       return Promise.resolve(this.updateSandboxRequestData());
@@ -114,7 +150,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
       this.latestSandboxProgressObj = results ?? this.latestSandboxProgressObj;
       this.updateSandboxRequestData();
       if (!options.isAsync) {
-        this.spinner.stop();
+        // this.spinner.stop();
       }
       // things that require data on latestSandboxProgressObj
       if (this.latestSandboxProgressObj) {
@@ -124,7 +160,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
         });
         const currentStage = progress.status;
         this.sandboxProgress.markPreviousStagesAsCompleted(currentStage);
-        this.updateStage(currentStage, 'inProgress');
+        // this.updateStage(currentStage, 'inProgress');
         this.updateProgress(
           { sandboxProcessObj: this.latestSandboxProgressObj, sandboxRes: undefined },
           options.isAsync
@@ -140,15 +176,15 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) => {
       this.latestSandboxProgressObj = results.sandboxProcessObj;
       const sandboxId = this.latestSandboxProgressObj?.Id;
-
+      // results.sandboxProcessObj.Status;
       if (sandboxId) {
         this.info(`Sandbox ID: ${sandboxId}`);
       }
 
       this.updateSandboxRequestData();
-      const progress = this.sandboxProgress.getSandboxProgress(results);
-      const currentStage = progress.status;
-      this.updateStage(currentStage, 'inProgress');
+      // const progress = this.sandboxProgress.getSandboxProgress(results);
+      // const currentStage = progress.status;
+      // this.updateStage(currentStage, 'inProgress');
       return Promise.resolve(this.updateProgress(results, options.isAsync));
     });
 
@@ -231,15 +267,24 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
       sandboxProcessObj: event.sandboxProcessObj,
     };
     if (!isAsync) {
-      this.spinner.status = this.sandboxProgress.formatProgressStatus();
+      // this.spinner.status = this.sandboxProgress.formatProgressStatus();
     }
+
+    // Dynamically update MultiStageOutput status
+    // const currentStage = this.sandboxProgress.getSandboxProgress(event)?.status;
+    // this.mso.updateStage(currentStage, 'inProgress');
+
+    // if (event.sandboxProcessObj) {
+    //   this.mso.updateProgress(event.sandboxProcessObj, true);
+    // }
   }
 
-  protected updateStage(stage: string | undefined, state: State): void {
-    if (stage) {
-      this.sandboxProgress.transitionStages(stage, state);
-    }
-  }
+  // protected updateStage(stage: string | undefined, state: State): void {
+  //   if (stage) {
+  //     this.sandboxProgress.transitionStages(stage, state);
+  //     this.mso.updateData(stage, state);
+  //   }
+  // }
 
   protected updateSandboxRequestData(): void {
     if (this.sandboxRequestData && this.latestSandboxProgressObj) {
