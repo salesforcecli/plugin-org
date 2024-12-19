@@ -66,17 +66,10 @@ export class SandboxProgress extends StagedProgress<SandboxStatusData> {
   }
 
   public formatProgressStatus(withClock = true): string {
-    // const table = getSandboxTableAsText(undefined, this.statusData?.sandboxProcessObj);
     return [
       withClock && this.statusData
-        ? `${getClockForSeconds(this.statusData.sandboxProgress.remainingWaitTime)} until timeout. ${
-            this.statusData.sandboxProgress.percentComplete ?? 0
-          }%`
+        ? `${getClockForSeconds(this.statusData.sandboxProgress.remainingWaitTime)} until timeout.`
         : undefined,
-      // table,
-      // '---------------------',
-      // `Sandbox ${this.action ?? ''} Stages`,
-      // this.formatStages(),
     ]
       .filter(isDefined)
       .join(os.EOL);

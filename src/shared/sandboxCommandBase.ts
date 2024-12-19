@@ -28,6 +28,7 @@ type SandboxData = {
   sandboxStatus: StatusEvent;
   status: string;
   id: string;
+  copyProgress: number;
 };
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
@@ -98,27 +99,30 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
   ): void {
     const mso = new MultiStageOutput<SandboxData>({
       stages: ['Creating new sandbox', 'Authenticating', 'Done'],
-      title: 'Create Sandbox',
+      title: 'Sandbox Process',
       jsonEnabled: false,
       postStagesBlock: [
         {
-          label: 'Sandbox ID',
-          get: (data): string | undefined => data?.id,
+          label: 'Status',
+          get: (data) => data?.status,
           type: 'dynamic-key-value',
           bold: true,
         },
         {
-          label: 'Status',
-          get: (data): string | undefined => data?.status,
+          label: 'Sandbox ID',
+          get: (data) => data?.id,
+          type: 'static-key-value',
+        },
+        {
+          label: 'Copy Progress',
+          get: (data) => `${data?.copyProgress ?? 0}%`,
           type: 'dynamic-key-value',
-          bold: true,
         },
       ],
     });
     lifecycle.on('POLLING_TIME_OUT', async () => {
       this.pollingTimeOut = true;
-      mso.goto('Done');
-      mso.updateData({ status: 'Polling timeout', id: 'N/A' });
+      mso.updateData({ status: 'Polling Timeout' });
       return Promise.resolve(this.updateSandboxRequestData());
     });
 
@@ -127,8 +131,25 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
       this.sandboxProgress.markPreviousStagesAsCompleted(
         results.Status !== 'Completed' ? results.Status : 'Authenticating'
       );
-      mso.goto('Authenticating');
-      mso.updateData({ status: 'Resuming process', id: results.Id });
+      mso.goto('Creating new sandbox');
+      mso.updateData({ status: results.Status, id: results.Id, copyProgress: results.CopyProgress });
+      if (results.Status === 'Activating') {
+        mso.goto('Authenticating');
+        mso.updateData({ status: results.Status, id: results.Id, copyProgress: results.CopyProgress });
+      } else if (results.Status === 'Completed') {
+        mso.goto('Done');
+        mso.updateData({ status: results.Status, id: results.Id, copyProgress: results.CopyProgress });
+        mso.stop();
+      }
+
+      if (results.Status !== 'Completed' && !this.pollingTimeOut) {
+        setTimeout(() => {
+          this.pollingTimeOut = true;
+          mso.updateData({ status: 'Polling Timeout' });
+          mso.stop();
+        }, 15 * 60 * 1000);
+        return Promise.resolve(this.updateSandboxRequestData());
+      }
 
       return Promise.resolve(this.updateSandboxRequestData());
     });
@@ -137,8 +158,40 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
       this.latestSandboxProgressObj = results ?? this.latestSandboxProgressObj;
       this.updateSandboxRequestData();
       if (!options.isAsync) {
-        mso.stop();
+        mso.goto('Authenticating');
+        mso.updateData({
+          status: results?.Status,
+          id: results?.Id,
+          copyProgress: results?.CopyProgress,
+        });
+        if (results?.Status !== 'Completed' && !this.pollingTimeOut) {
+          setTimeout(() => {
+            this.pollingTimeOut = true;
+            mso.updateData({ status: 'Polling Timeout' });
+            mso.stop();
+          }, 15 * 60 * 1000);
+        }
+        // mso.stop();
       }
+      // if (!options.isAsync) {
+      //   if (results?.Status === 'Activating') {
+      //     mso.goto('Authenticating');
+      //     mso.updateData({
+      //       status: results.Status,
+      //       id: results.Id,
+      //       copyProgress: results.CopyProgress
+      //     });
+      //   } else if (results?.Status === 'Completed') {
+      //     mso.goto('Done');
+      //     mso.updateData({
+      //       status: 'Completed',
+      //       id: results.Id,
+      //       copyProgress: results.CopyProgress
+      //     });
+      //     mso.stop();
+      //   }
+      //   mso.stop();
+      // }
       // things that require data on latestSandboxProgressObj
       if (this.latestSandboxProgressObj) {
         const progress = this.sandboxProgress.getSandboxProgress({
@@ -149,9 +202,14 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
         this.sandboxProgress.markPreviousStagesAsCompleted(currentStage);
         this.updateStage(currentStage, 'inProgress');
         mso.goto('Creating new sandbox');
-        mso.updateData({ status: currentStage, id: this.latestSandboxProgressObj?.Id });
+        mso.updateData({
+          status: currentStage,
+          id: this.latestSandboxProgressObj?.Id,
+          copyProgress: this.latestSandboxProgressObj?.CopyProgress,
+        });
         mso.goto(progress.status);
       }
+
       if (this.pollingTimeOut) {
         this.warn(messages.getMessage('warning.ClientTimeoutWaitingForSandboxProcess', [this.action.toLowerCase()]));
       }
@@ -165,9 +223,13 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
       const progress = this.sandboxProgress.getSandboxProgress(results);
       const currentStage = progress.status;
       this.updateStage(currentStage, 'inProgress');
-      mso.goto('Authenticating');
-      mso.updateData({ status: currentStage, id: results.sandboxProcessObj.Id });
 
+      mso.goto('Authenticating');
+      mso.updateData({
+        status: currentStage,
+        id: results.sandboxProcessObj.Id,
+        copyProgress: results.sandboxProcessObj.CopyProgress,
+      });
       return Promise.resolve(this.updateProgress(results, options.isAsync));
     });
 
@@ -183,9 +245,48 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
       this.updateProgress(results, options.isAsync);
 
       if (!options.isAsync) {
-        mso.stop();
-      }
+        mso.goto('Authenticating');
+        mso.updateData({
+          status: results.sandboxProcessObj.Status,
+          id: results.sandboxProcessObj.Id,
+          copyProgress: results.sandboxProcessObj.CopyProgress,
+        });
 
+        if (results.sandboxProcessObj.Status !== 'Completed' && !this.pollingTimeOut) {
+          setTimeout(() => {
+            this.pollingTimeOut = true;
+            mso.updateData({ status: 'Polling Timeout' });
+            mso.stop();
+          }, 15 * 60 * 1000);
+        }
+        // mso.stop();
+      }
+      // if (!options.isAsync) {
+      //   if (results.sandboxProcessObj.Status === 'Activating') {
+      //     mso.goto('Authenticating');
+      //     mso.updateData({
+      //       status: results.sandboxProcessObj.Status,
+      //       id: results.sandboxProcessObj.Id,
+      //       copyProgress: results.sandboxProcessObj.CopyProgress
+      //     });
+      //   } else if (results.sandboxProcessObj.Status === 'Completed') {
+      //     mso.goto('Done');
+      //     mso.updateData({
+      //       status: 'Completed',
+      //       id: results.sandboxProcessObj.Id,
+      //       copyProgress: results.sandboxProcessObj.CopyProgress
+      //     });
+      //     mso.stop();
+      //   }
+      //   mso.stop();
+      // }
+      mso.goto('Done');
+      mso.updateData({
+        status: 'Completed',
+        id: results.sandboxProcessObj.Id,
+        copyProgress: results.sandboxProcessObj.CopyProgress,
+      });
+      mso.stop();
       if (results.sandboxRes?.authUserName) {
         const authInfo = await AuthInfo.create({ username: results.sandboxRes?.authUserName });
         await authInfo.handleAliasAndDefaultSettings({
@@ -198,9 +299,6 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
       this.removeSandboxProgressConfig();
       this.updateProgress(results, options.isAsync);
       this.reportResults(results);
-
-      mso.goto('Done');
-      mso.updateData({ status: 'Completed', id: results.sandboxProcessObj.Id });
     });
 
     lifecycle.on(SandboxEvents.EVENT_MULTIPLE_SBX_PROCESSES, async (results: SandboxProcessObject[]) => {
