@@ -139,10 +139,6 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxCommandResp
 
     const sandboxReq = this.createResumeSandboxRequest();
 
-    if (this.flags.wait?.seconds && this.flags.wait.seconds > 0) {
-      this.spinner.start(`Resume ${this.sandboxRequestData.action ?? 'Create/Refresh'}`);
-    }
-
     this.debug('Calling resume with ResumeSandboxRequest: %s ', sandboxReq);
 
     try {

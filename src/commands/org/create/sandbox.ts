@@ -204,9 +204,6 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       tracksSource: this.flags['no-track-source'] === true ? false : undefined,
     });
 
-    if (!this.flags.async) {
-      this.spinner.start('Sandbox Create');
-    }
     this.debug('Calling create with SandboxRequest: %s ', sandboxReq);
 
     try {
