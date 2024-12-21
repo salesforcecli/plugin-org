@@ -1385,10 +1385,10 @@
     wordwrap "^1.0.0"
     wrap-ansi "^7.0.0"
 
-"@oclif/multi-stage-output@^0.7.17":
-  version "0.7.17"
-  resolved "https://registry.yarnpkg.com/@oclif/multi-stage-output/-/multi-stage-output-0.7.17.tgz#d09a81f00cf88411749ceaf822f47d4102be54a0"
-  integrity sha512-+esBsrnEyQRmRWLSbbKP+TjM4tIjFJbuCGnEerOpFxHA4QBVh/tIg59EQz6s1NOSR9W4DYc/PbnZIYToIzkTqg==
+"@oclif/multi-stage-output@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@oclif/multi-stage-output/-/multi-stage-output-0.8.0.tgz#868fcce009981afbb614b71246b80cd02c483782"
+  integrity sha512-B858dgCQPZWHRnzcU42t/cHq3u858UWMQk635qjn/lNlUpFDZKpoVgjVqLlGkQ9iEnqpwTXtyOXSYrLnPjVUeg==
   dependencies:
     "@oclif/core" "^4"
     "@types/react" "^18.3.12"
@@ -3510,7 +3510,7 @@ dateformat@^4.6.3:
   resolved "https://registry.npmjs.org/dateformat/-/dateformat-4.6.3.tgz"
   integrity sha512-2P0p0pFGzHS5EMnhdxQi7aJN+iMheud0UhG4dlE1DLAlvL8JHjJJTX/CSm4JXwV0Ka5nGk3zC5mcb5bUQUxxMA==
 
-debug@4, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2, debug@^4.3.4, debug@^4.3.5, debug@^4.3.7, debug@^4.4.0:
+debug@4, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2, debug@^4.3.4, debug@^4.3.5, debug@^4.4.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.4.0.tgz#2b3f2aea2ffeb776477460267377dc8710faba8a"
   integrity sha512-6WTZ/IxCY/T6BALoZHaE4ctp9xm+Z5kY/pzYaCHRFeyVhojxlrm+46y68HA6hr0TcwEssoxNiDEUJQjfPZ/RYA==
