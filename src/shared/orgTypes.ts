@@ -68,6 +68,7 @@ export type ScratchOrgInfoSObject = {
   Namespace?: string;
   OrgName: string;
   SignupUsername: string;
+  LoginUrl: string;
 };
 
 /** fields in the  */

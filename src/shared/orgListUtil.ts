@@ -240,6 +240,7 @@ export class OrgListUtil {
       'OrgName',
       'CreatedBy.Username',
       'SignupUsername',
+      'LoginUrl',
     ];
 
     try {
