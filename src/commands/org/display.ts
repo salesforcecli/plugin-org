@@ -108,13 +108,12 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
     const hubOrg = await this.org.getDevHubOrg();
     // we know this is a scratch org so it must have a hubOrg and that'll have a username
     const hubUsername = hubOrg?.getUsername() as string;
-    // Prefer the scratch org admin username if it's on the auth fields
-    const username = fields.scratchAdminUsername ?? fields.username;
+
     // This query can return multiple records that match the 15 char ID because `ScratchOrgInfo.ScratchOrg` isn't a case-sensitive field
     // so we look for the record that matches the scratch org username in the auth file.
     // If that doesn't match (e.g., when calling `org display` with a username that is not the scratch org admin), use the instance URL
     const result = (await OrgListUtil.retrieveScratchOrgInfoFromDevHub(hubUsername, [trimTo15(fields.orgId)])).find(
-      (rec) => rec.SignupUsername === username || rec.LoginUrl === fields.instanceUrl
+      (rec) => rec.SignupUsername === fields.username || rec.LoginUrl === fields.instanceUrl
     );
 
     if (result) {
