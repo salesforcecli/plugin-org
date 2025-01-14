@@ -1,3 +1,9 @@
+## [5.2.18](https://github.com/salesforcecli/plugin-org/compare/5.2.17...5.2.18) (2025-01-14)
+
+### Bug Fixes
+
+- match on loginUrl/instanceUrl of ScratchOrgInfo if username does not match ([#1311](https://github.com/salesforcecli/plugin-org/issues/1311)) ([0a9c0f2](https://github.com/salesforcecli/plugin-org/commit/0a9c0f200517b73a998c2602bd401e2ab62acf86))
+
 ## [5.2.17](https://github.com/salesforcecli/plugin-org/compare/5.2.16...5.2.17) (2025-01-12)
 
 ### Bug Fixes
