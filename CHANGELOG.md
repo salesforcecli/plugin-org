@@ -1,3 +1,9 @@
+## [5.2.19](https://github.com/salesforcecli/plugin-org/compare/5.2.18...5.2.19) (2025-01-17)
+
+### Bug Fixes
+
+- add jobId in json output ([#1317](https://github.com/salesforcecli/plugin-org/issues/1317)) ([f3a2dff](https://github.com/salesforcecli/plugin-org/commit/f3a2dff394898a2191f1a2eabb48243f267f2331))
+
 ## [5.2.18](https://github.com/salesforcecli/plugin-org/compare/5.2.17...5.2.18) (2025-01-14)
 
 ### Bug Fixes
