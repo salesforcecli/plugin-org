@@ -1,3 +1,9 @@
+## [5.2.22](https://github.com/salesforcecli/plugin-org/compare/5.2.21...5.2.22) (2025-01-20)
+
+### Bug Fixes
+
+- **deps:** bump ansis from 3.8.1 to 3.9.0 ([d25bc60](https://github.com/salesforcecli/plugin-org/commit/d25bc60e64c2898a62905b714723c1c9402b3c3e))
+
 ## [5.2.21](https://github.com/salesforcecli/plugin-org/compare/5.2.20...5.2.21) (2025-01-19)
 
 ### Bug Fixes
