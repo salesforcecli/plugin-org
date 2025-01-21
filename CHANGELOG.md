@@ -1,3 +1,9 @@
+## [5.2.23](https://github.com/salesforcecli/plugin-org/compare/5.2.22...5.2.23) (2025-01-21)
+
+### Bug Fixes
+
+- disable ctc temporarily ([3a594b2](https://github.com/salesforcecli/plugin-org/commit/3a594b26c5af00af91a0702491d98e4575c52f09))
+
 ## [5.2.22](https://github.com/salesforcecli/plugin-org/compare/5.2.21...5.2.22) (2025-01-20)
 
 ### Bug Fixes
