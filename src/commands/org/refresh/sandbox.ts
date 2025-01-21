@@ -134,10 +134,6 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxCommandRes
     this.initSandboxProcessData(this.sbxConfig);
 
     try {
-      if (!this.flags.async) {
-        this.spinner.start('Sandbox Refresh');
-      }
-
       const sandboxProcessObject = await this.prodOrg.refreshSandbox(updateableSandboxInfo, {
         wait: this.flags['wait'],
         interval: this.flags['poll-interval'],
