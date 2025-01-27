@@ -1,3 +1,9 @@
+## [5.2.25](https://github.com/salesforcecli/plugin-org/compare/5.2.24...5.2.25) (2025-01-27)
+
+### Bug Fixes
+
+- bump sdr to pick up esr preset changes ([#1331](https://github.com/salesforcecli/plugin-org/issues/1331)) ([85f859c](https://github.com/salesforcecli/plugin-org/commit/85f859c7f4a9fd2d6282fe887c2c775de45b1c04))
+
 ## [5.2.24](https://github.com/salesforcecli/plugin-org/compare/5.2.23...5.2.24) (2025-01-26)
 
 ### Bug Fixes
