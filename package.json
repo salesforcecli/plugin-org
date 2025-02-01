@@ -5,7 +5,7 @@
   "author": "Salesforce",
   "bugs": "https://github.com/forcedotcom/cli/issues",
   "dependencies": {
-    "@oclif/core": "^4.2.3",
+    "@oclif/core": "^4.2.5",
     "@oclif/multi-stage-output": "^0.8.5",
     "@salesforce/core": "^8.8.2",
     "@salesforce/kit": "^3.2.3",
