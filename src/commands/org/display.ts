@@ -56,8 +56,7 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
     const fields = authInfo.getFields(true) as AuthFieldsFromFS;
 
     const isScratchOrg = Boolean(fields.devHubUsername);
-    const scratchOrgInfo =
-      isScratchOrg && fields.orgId ? await this.getScratchOrgInformation(fields.orgId, fields.username) : {};
+    const scratchOrgInfo = isScratchOrg && fields.orgId ? await this.getScratchOrgInformation(fields) : {};
 
     const returnValue: OrgDisplayReturn = {
       // renamed properties
@@ -105,14 +104,16 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
     });
   }
 
-  private async getScratchOrgInformation(orgId: string, username: string): Promise<ScratchOrgFields> {
+  private async getScratchOrgInformation(fields: AuthFieldsFromFS): Promise<ScratchOrgFields> {
     const hubOrg = await this.org.getDevHubOrg();
     // we know this is a scratch org so it must have a hubOrg and that'll have a username
     const hubUsername = hubOrg?.getUsername() as string;
-    // this query can return multiple records that match the 15 char ID because `ScratchOrgInfo.ScratchOrg` isn't a case-sensitive field
+
+    // This query can return multiple records that match the 15 char ID because `ScratchOrgInfo.ScratchOrg` isn't a case-sensitive field
     // so we look for the record that matches the scratch org username in the auth file.
-    const result = (await OrgListUtil.retrieveScratchOrgInfoFromDevHub(hubUsername, [trimTo15(orgId)])).find(
-      (rec) => rec.SignupUsername === username
+    // If that doesn't match (e.g., when calling `org display` with a username that is not the scratch org admin), use the instance URL
+    const result = (await OrgListUtil.retrieveScratchOrgInfoFromDevHub(hubUsername, [trimTo15(fields.orgId)])).find(
+      (rec) => rec.SignupUsername === fields.username || rec.LoginUrl === fields.instanceUrl
     );
 
     if (result) {
@@ -128,8 +129,10 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
         signupUsername: result.SignupUsername,
       };
     }
-    throw new SfError(messages.getMessage('noScratchOrgInfoError', [trimTo15(orgId), hubUsername]), 'NoScratchInfo', [
-      messages.getMessage('noScratchOrgInfoAction'),
-    ]);
+    throw new SfError(
+      messages.getMessage('noScratchOrgInfoError', [trimTo15(fields.orgId), hubUsername]),
+      'NoScratchInfo',
+      [messages.getMessage('noScratchOrgInfoAction')]
+    );
   }
 }

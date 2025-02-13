@@ -238,9 +238,9 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       if (error instanceof SfError && error.name === 'ScratchOrgInfoTimeoutError') {
         const scratchOrgInfoId = (error.data as { scratchOrgInfoId: string }).scratchOrgInfoId;
         const resumeMessage = messages.getMessage('action.resume', [this.config.bin, scratchOrgInfoId]);
+        const timeOutMessage = 'The scratch org did not complete within your wait time.';
 
-        this.info(resumeMessage);
-        this.error('The scratch org did not complete within your wait time', { code: '69', exit: 69 });
+        this.error(`${timeOutMessage} ${resumeMessage}`, { code: '69', exit: 69 });
       } else {
         throw error;
       }

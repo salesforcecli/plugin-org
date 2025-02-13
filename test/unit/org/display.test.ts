@@ -110,6 +110,7 @@ describe('org:display', () => {
         Username: 'johndoe@hi.com',
         SignupUsername: 'johndoe@hi.com',
         devHubOrgId: testHub.orgId,
+        LoginUrl: testHub.instanceUrl,
       },
       {
         CreatedDate: '2024-06-16T05:52:42.000+0000',
@@ -124,12 +125,47 @@ describe('org:display', () => {
         Username: testOrg.username,
         SignupUsername: testOrg.username,
         devHubOrgId: testHub.orgId,
+        LoginUrl: testHub.instanceUrl,
       },
     ]);
     const result = await OrgDisplayCommand.run(['--targetusername', testOrg.username]);
     expect(commonAssert(result));
     // check specifically `orgName` because it's one of the fields that comes from the payload instead of the auth file
     expect(result.orgName).to.equal('Dreamhouse');
+  });
+
+  it('gets the correct org when username is not the scratch org username and instanceUrl matches', async () => {
+    const testHub = new MockTestOrgData();
+    const scratchOrgAdminUser = 'scratchOrgAdmin@test.org';
+    testOrg.devHubUsername = testHub.username;
+    testOrg.isScratchOrg = true;
+
+    await $$.stubAuths(testOrg, testHub);
+
+    $$.SANDBOX.stub(OrgListUtil, 'retrieveScratchOrgInfoFromDevHub').resolves([
+      {
+        CreatedDate: '2024-06-15T05:52:42.000+0000',
+        Edition: 'Developer',
+        Status: 'Active',
+        ExpirationDate: '2024-06-16',
+        Namespace: 'null',
+        OrgName: 'ACME',
+        CreatedBy: {
+          Username: 'admin@integrationtesthubna40.org',
+        },
+        Username: scratchOrgAdminUser,
+        SignupUsername: scratchOrgAdminUser, // This won't match but the LoginUrl/instanceUrl will
+        devHubOrgId: testHub.orgId,
+        LoginUrl: testOrg.instanceUrl,
+      },
+    ]);
+    const result = await OrgDisplayCommand.run(['--targetusername', testOrg.username]);
+    expect(commonAssert(result));
+    // check specifically `orgName` because it's one of the fields that comes from the payload instead of the auth file
+    expect(result.orgName).to.equal('ACME');
+    expect(result.username).to.equal(testOrg.username);
+    expect(result.signupUsername).to.equal(scratchOrgAdminUser);
+    expect(result.instanceUrl).to.equal(testOrg.instanceUrl);
   });
 
   it('gets an org from local auth files by alias', async () => {
@@ -201,6 +237,7 @@ describe('org:display', () => {
             OrgName: 'MyOrg',
             CreatedDate: '2020-12-24T15:18:55.000+0000',
             SignupUsername: testOrg.username,
+            LoginUrl: testOrg.instanceUrl,
           },
         ]),
     });
@@ -210,9 +247,9 @@ describe('org:display', () => {
     expect(result.status).to.equal('Active');
   });
 
-  // it('gets non-scratch org connectedStatus');
-  // it('handles properly when username is an accessToken?');
-  // it('displays good error when org is not connectable due to DNS');
-  // it('displays scratch-org-only properties for scratch orgs');
-  // it('displays no scratch-org-only properties for non-scratch orgs');
+  it('gets non-scratch org connectedStatus');
+  it('handles properly when username is an accessToken?');
+  it('displays good error when org is not connectable due to DNS');
+  it('displays scratch-org-only properties for scratch orgs');
+  it('displays no scratch-org-only properties for non-scratch orgs');
 });

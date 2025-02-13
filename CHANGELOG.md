@@ -1,3 +1,175 @@
+## [5.2.32](https://github.com/salesforcecli/plugin-org/compare/5.2.31...5.2.32) (2025-02-10)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve ([dd33182](https://github.com/salesforcecli/plugin-org/commit/dd33182583208129217a5b9f303f495cfcf59b30))
+
+## [5.2.31](https://github.com/salesforcecli/plugin-org/compare/5.2.30...5.2.31) (2025-02-09)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/sf-plugins-core from 12.1.3 to 12.1.4 ([6670775](https://github.com/salesforcecli/plugin-org/commit/6670775556cd8af5b5059a714e51ceb7f41203ea))
+
+## [5.2.30](https://github.com/salesforcecli/plugin-org/compare/5.2.29...5.2.30) (2025-02-09)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/multi-stage-output from 0.8.5 to 0.8.7 ([5040902](https://github.com/salesforcecli/plugin-org/commit/50409028239622eaaf66c620e4c3f7d1ba885da1))
+
+## [5.2.29](https://github.com/salesforcecli/plugin-org/compare/5.2.28...5.2.29) (2025-02-03)
+
+### Bug Fixes
+
+- **deps:** bump ansis from 3.9.0 to 3.10.0 ([bc2ed27](https://github.com/salesforcecli/plugin-org/commit/bc2ed27894c59ccdcb33f1b9daf2e95b500bbc03))
+
+## [5.2.28](https://github.com/salesforcecli/plugin-org/compare/5.2.27...5.2.28) (2025-02-02)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve ([c1f4b19](https://github.com/salesforcecli/plugin-org/commit/c1f4b19a94bb73ffe90f9ec73757b5a95175982a))
+
+## [5.2.27](https://github.com/salesforcecli/plugin-org/compare/5.2.26...5.2.27) (2025-02-02)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/sf-plugins-core from 12.1.2 to 12.1.3 ([a24fd6c](https://github.com/salesforcecli/plugin-org/commit/a24fd6cd72749662e6c00549ba3b134af0d71845))
+
+## [5.2.26](https://github.com/salesforcecli/plugin-org/compare/5.2.25...5.2.26) (2025-02-02)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/core from 4.2.3 to 4.2.5 ([9c5b6a2](https://github.com/salesforcecli/plugin-org/commit/9c5b6a2b28f9808645a98c101646c08b3eb7db28))
+
+## [5.2.25](https://github.com/salesforcecli/plugin-org/compare/5.2.24...5.2.25) (2025-01-27)
+
+### Bug Fixes
+
+- bump sdr to pick up esr preset changes ([#1331](https://github.com/salesforcecli/plugin-org/issues/1331)) ([85f859c](https://github.com/salesforcecli/plugin-org/commit/85f859c7f4a9fd2d6282fe887c2c775de45b1c04))
+
+## [5.2.24](https://github.com/salesforcecli/plugin-org/compare/5.2.23...5.2.24) (2025-01-26)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/multi-stage-output from 0.8.1 to 0.8.5 ([2f95ce6](https://github.com/salesforcecli/plugin-org/commit/2f95ce60d84c0160a472c7c48b2d4793acc24ea2))
+
+## [5.2.23](https://github.com/salesforcecli/plugin-org/compare/5.2.22...5.2.23) (2025-01-21)
+
+### Bug Fixes
+
+- disable ctc temporarily ([3a594b2](https://github.com/salesforcecli/plugin-org/commit/3a594b26c5af00af91a0702491d98e4575c52f09))
+
+## [5.2.22](https://github.com/salesforcecli/plugin-org/compare/5.2.21...5.2.22) (2025-01-20)
+
+### Bug Fixes
+
+- **deps:** bump ansis from 3.8.1 to 3.9.0 ([d25bc60](https://github.com/salesforcecli/plugin-org/commit/d25bc60e64c2898a62905b714723c1c9402b3c3e))
+
+## [5.2.21](https://github.com/salesforcecli/plugin-org/compare/5.2.20...5.2.21) (2025-01-19)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/sf-plugins-core from 12.1.1 to 12.1.2 ([e4d5c60](https://github.com/salesforcecli/plugin-org/commit/e4d5c60412f3f8cc59285dc16be04b56e6beb5a3))
+
+## [5.2.20](https://github.com/salesforcecli/plugin-org/compare/5.2.19...5.2.20) (2025-01-19)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/core from 4.2.2 to 4.2.3 ([027932e](https://github.com/salesforcecli/plugin-org/commit/027932ed199dbec332c45167c0ab667ba6ec362f))
+
+## [5.2.19](https://github.com/salesforcecli/plugin-org/compare/5.2.18...5.2.19) (2025-01-17)
+
+### Bug Fixes
+
+- add jobId in json output ([#1317](https://github.com/salesforcecli/plugin-org/issues/1317)) ([f3a2dff](https://github.com/salesforcecli/plugin-org/commit/f3a2dff394898a2191f1a2eabb48243f267f2331))
+
+## [5.2.18](https://github.com/salesforcecli/plugin-org/compare/5.2.17...5.2.18) (2025-01-14)
+
+### Bug Fixes
+
+- match on loginUrl/instanceUrl of ScratchOrgInfo if username does not match ([#1311](https://github.com/salesforcecli/plugin-org/issues/1311)) ([0a9c0f2](https://github.com/salesforcecli/plugin-org/commit/0a9c0f200517b73a998c2602bd401e2ab62acf86))
+
+## [5.2.17](https://github.com/salesforcecli/plugin-org/compare/5.2.16...5.2.17) (2025-01-12)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/core from 4.2.0 to 4.2.2 ([1b2959f](https://github.com/salesforcecli/plugin-org/commit/1b2959fd0c3b47d83bc9f1852917b20e3b2b1237))
+
+## [5.2.16](https://github.com/salesforcecli/plugin-org/compare/5.2.15...5.2.16) (2025-01-05)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/core from 4.0.37 to 4.2.0 ([d9b45cb](https://github.com/salesforcecli/plugin-org/commit/d9b45cb4aec77344bbd1f1fe7c20596cc2085e35))
+
+## [5.2.15](https://github.com/salesforcecli/plugin-org/compare/5.2.14...5.2.15) (2025-01-05)
+
+### Bug Fixes
+
+- **deps:** bump ansis from 3.4.0 to 3.5.2 ([0d3c727](https://github.com/salesforcecli/plugin-org/commit/0d3c727709512d2bbb42b5ee5c9d9a12997043c4))
+
+## [5.2.14](https://github.com/salesforcecli/plugin-org/compare/5.2.13...5.2.14) (2024-12-29)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/sf-plugins-core from 12.1.0 to 12.1.1 ([374a1fd](https://github.com/salesforcecli/plugin-org/commit/374a1fdfbed732485119112d71766736b2a9a329))
+
+## [5.2.13](https://github.com/salesforcecli/plugin-org/compare/5.2.12...5.2.13) (2024-12-29)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/multi-stage-output from 0.7.17 to 0.8.1 ([2dfdbe5](https://github.com/salesforcecli/plugin-org/commit/2dfdbe52e17835ded321646cddfc9c69267063f1))
+
+## [5.2.12](https://github.com/salesforcecli/plugin-org/compare/5.2.11...5.2.12) (2024-12-22)
+
+### Bug Fixes
+
+- **deps:** bump ansis from 3.3.2 to 3.4.0 ([5b51d6b](https://github.com/salesforcecli/plugin-org/commit/5b51d6b43f1a0a75af91292967b5c670af770602))
+
+## [5.2.11](https://github.com/salesforcecli/plugin-org/compare/5.2.10...5.2.11) (2024-12-15)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve ([9069988](https://github.com/salesforcecli/plugin-org/commit/9069988789e0f31b9ae2f967581959e5cc9280d4))
+
+## [5.2.10](https://github.com/salesforcecli/plugin-org/compare/5.2.9...5.2.10) (2024-12-15)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/multi-stage-output from 0.7.15 to 0.7.17 ([f40ff94](https://github.com/salesforcecli/plugin-org/commit/f40ff943c19eb1412e1992175e11721e567d96ee))
+
+## [5.2.9](https://github.com/salesforcecli/plugin-org/compare/5.2.8...5.2.9) (2024-12-08)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/core from 4.0.33 to 4.0.34 ([ce0bb9b](https://github.com/salesforcecli/plugin-org/commit/ce0bb9bf15e7abc81b65aea75268e0649ba6c4c5))
+
+## [5.2.8](https://github.com/salesforcecli/plugin-org/compare/5.2.7...5.2.8) (2024-12-04)
+
+### Bug Fixes
+
+- add sourcetracking field ([7336002](https://github.com/salesforcecli/plugin-org/commit/733600270f12e687179fd9f6875799696082165a))
+- remove redundancy ([5df9bbb](https://github.com/salesforcecli/plugin-org/commit/5df9bbbe252ed7d8da7a017335758b6235b28e4b))
+- remove the field ([66e57cd](https://github.com/salesforcecli/plugin-org/commit/66e57cd12c835d6fff240519dc71ba06e6811e3d))
+- source tracking error ([2d94089](https://github.com/salesforcecli/plugin-org/commit/2d94089e5a51856dc565fc457890fa32e59ca73f))
+- validation source tracking ([d3ea0ea](https://github.com/salesforcecli/plugin-org/commit/d3ea0ea0b151867f9281d42bf938cd27cb224a1e))
+
+## [5.2.7](https://github.com/salesforcecli/plugin-org/compare/5.2.6...5.2.7) (2024-12-02)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/sf-plugins-core from 12.0.13 to 12.1.0 ([78897da](https://github.com/salesforcecli/plugin-org/commit/78897da56944573ec3c5bab24b01cf9eaea33447))
+
+## [5.2.6](https://github.com/salesforcecli/plugin-org/compare/5.2.5...5.2.6) (2024-12-01)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/multi-stage-output from 0.7.14 to 0.7.15 ([48612ca](https://github.com/salesforcecli/plugin-org/commit/48612ca6ac1777e5f8f3077a6167a0249c7071ee))
+
+## [5.2.5](https://github.com/salesforcecli/plugin-org/compare/5.2.4...5.2.5) (2024-11-24)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/sf-plugins-core from 12.0.11 to 12.0.13 ([46ff8dc](https://github.com/salesforcecli/plugin-org/commit/46ff8dc9c5b75f80af90bb70321b9579603f3964))
+
 ## [5.2.4](https://github.com/salesforcecli/plugin-org/compare/5.2.3...5.2.4) (2024-11-18)
 
 ### Bug Fixes
