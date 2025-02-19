@@ -196,7 +196,10 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
     });
     this.initSandboxProcessData(sandboxReq);
 
-    this.registerLifecycleListeners(lifecycle, {
+    this.registerLifecycleListenersAndMSO(lifecycle, {
+      mso: {
+        title: 'Sandbox Create',
+      },
       isAsync: this.flags.async,
       setDefault: this.flags['set-default'],
       alias: this.flags.alias,

@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { EOL } from 'node:os';
 import { Flags } from '@salesforce/sf-plugins-core';
 import {
   StateAggregator,
@@ -117,7 +118,11 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxCommandResp
     this.flags['target-org'] = this.prodOrg;
     const lifecycle = Lifecycle.getInstance();
 
-    this.registerLifecycleListeners(lifecycle, {
+    this.registerLifecycleListenersAndMSO(lifecycle, {
+      mso: {
+        title: 'Resume Sandbox',
+        refresh: this.sandboxRequestData.action === 'Refresh',
+      },
       isAsync: false,
       alias: this.sandboxRequestData.alias,
       setDefault: this.sandboxRequestData.setDefault,
@@ -148,7 +153,6 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxCommandResp
       });
       return this.getSandboxCommandResponse();
     } catch (err) {
-      this.spinner.stop();
       if (this.latestSandboxProgressObj && this.pollingTimeOut) {
         void lifecycle.emit(SandboxEvents.EVENT_ASYNC_RESULT, undefined);
         process.exitCode = 68;
@@ -181,12 +185,16 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxCommandResp
       const entries = this.sandboxRequestConfig.entries() as Array<[string, SandboxRequestCacheEntry]>;
       const sce = entries.find(([, e]) => e?.sandboxProcessObject?.Id === this.flags['job-id'])?.[1];
       sandboxRequestCacheEntry = sce;
+      if (sandboxRequestCacheEntry === undefined) {
+        this.warn(
+          `Could not find a cache entry for ${this.flags['job-id']}.${EOL}If you are resuming a sandbox operation from a different machine note that we cannot set the alias/set-default flag values as those are saved locally.`
+        );
+      }
     }
 
     // If the action is in the cache entry, use it.
     if (sandboxRequestCacheEntry?.action) {
       this.action = sandboxRequestCacheEntry?.action;
-      this.sandboxProgress.action = sandboxRequestCacheEntry?.action;
     }
 
     return {

@@ -126,7 +126,14 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxCommandRes
     await this.confirmSandboxRefresh(this.sbxConfig);
 
     const lifecycle = Lifecycle.getInstance();
-    this.registerLifecycleListeners(lifecycle, { isAsync: this.flags['async'], prodOrg: this.prodOrg });
+    this.registerLifecycleListenersAndMSO(lifecycle, {
+      mso: {
+        refresh: true,
+        title: 'Sandbox Refresh',
+      },
+      isAsync: this.flags['async'],
+      prodOrg: this.prodOrg,
+    });
 
     // remove uneditable fields before refresh
     const updateableSandboxInfo = omit(this.sbxConfig, uneditableFields);
@@ -154,7 +161,6 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxCommandRes
       }
       return this.getSandboxCommandResponse();
     } catch (err) {
-      this.spinner.stop();
       if (this.pollingTimeOut && this.latestSandboxProgressObj) {
         void lifecycle.emit(SandboxEvents.EVENT_ASYNC_RESULT, undefined);
         process.exitCode = 68;
