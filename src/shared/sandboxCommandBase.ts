@@ -144,6 +144,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     });
 
     lifecycle.on(SandboxEvents.EVENT_AUTH, async (results: SandboxUserAuthResponse) => {
+      this.sandboxUsername = results.authUserName;
       this.stages.auth();
       this.sandboxAuth = results;
       return Promise.resolve();
@@ -151,6 +152,7 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
 
     lifecycle.on(SandboxEvents.EVENT_RESULT, async (results: ResultEvent) => {
       this.latestSandboxProgressObj = results.sandboxProcessObj;
+      this.sandboxUsername = results.sandboxRes.authUserName;
       this.updateSandboxRequestData();
 
       this.stages.update(results.sandboxProcessObj);
