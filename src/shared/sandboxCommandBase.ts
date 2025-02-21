@@ -5,7 +5,6 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import os from 'node:os';
-
 import { SfCommand } from '@salesforce/sf-plugins-core';
 import { Config } from '@oclif/core';
 import {
@@ -21,8 +20,7 @@ import {
   SandboxUserAuthResponse,
   StatusEvent,
 } from '@salesforce/core';
-import { SandboxProgress } from './sandboxProgress.js';
-import { State } from './stagedProgress.js';
+import { SandboxStages } from './sandboxStages.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'sandboxbase');
@@ -32,7 +30,7 @@ export type SandboxCommandResponse = SandboxProcessObject & {
 };
 
 export abstract class SandboxCommandBase<T> extends SfCommand<T> {
-  protected sandboxProgress: SandboxProgress;
+  protected stages!: SandboxStages;
   protected latestSandboxProgressObj?: SandboxProcessObject;
   protected sandboxAuth?: SandboxUserAuthResponse;
   protected prodOrg?: Org;
@@ -47,10 +45,9 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     this.action =
       this.constructor.name === 'RefreshSandbox'
         ? 'Refresh'
-        : this.constructor.name === 'CreateSandbox'
+        : ['CreateSandbox', 'ResumeSandbox'].includes(this.constructor.name)
         ? 'Create'
         : 'Create/Refresh';
-    this.sandboxProgress = new SandboxProgress({ action: this.action });
   }
   protected async getSandboxRequestConfig(): Promise<SandboxRequestCache> {
     if (!this.sandboxRequestConfig) {
@@ -85,72 +82,81 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     return true;
   }
 
-  protected registerLifecycleListeners(
+  protected registerLifecycleListenersAndMSO(
     lifecycle: Lifecycle,
-    options: { isAsync: boolean; alias?: string; setDefault?: boolean; prodOrg?: Org; tracksSource?: boolean }
+    options: {
+      mso: { title: string; refresh?: boolean };
+      isAsync: boolean;
+      alias?: string;
+      setDefault?: boolean;
+      prodOrg?: Org;
+      tracksSource?: boolean;
+    }
   ): void {
+    this.stages = new SandboxStages({
+      refresh: options.mso.refresh ?? false,
+      jsonEnabled: this.jsonEnabled(),
+      title: options.isAsync ? `${options.mso.title} (async)` : options.mso.title,
+    });
+
+    this.stages.start();
+
     lifecycle.on('POLLING_TIME_OUT', async () => {
       this.pollingTimeOut = true;
+      this.stages.stop();
       return Promise.resolve(this.updateSandboxRequestData());
     });
 
     lifecycle.on(SandboxEvents.EVENT_RESUME, async (results: SandboxProcessObject) => {
+      this.stages.start();
       this.latestSandboxProgressObj = results;
-      this.sandboxProgress.markPreviousStagesAsCompleted(
-        results.Status !== 'Completed' ? results.Status : 'Authenticating'
-      );
+      this.stages.update(this.latestSandboxProgressObj);
+
       return Promise.resolve(this.updateSandboxRequestData());
     });
 
-    lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results?: SandboxProcessObject) => {
-      this.latestSandboxProgressObj = results ?? this.latestSandboxProgressObj;
-      this.updateSandboxRequestData();
-      if (!options.isAsync) {
-        this.spinner.stop();
+    lifecycle.on(SandboxEvents.EVENT_ASYNC_RESULT, async (results: SandboxProcessObject | undefined) => {
+      // this event is fired by commands on poll timeout without any payload,
+      // we want to make sure to only update state if there's payload (event from sfdx-core).
+      if (results) {
+        this.latestSandboxProgressObj = results;
+        this.stages.update(this.latestSandboxProgressObj);
+        this.updateSandboxRequestData();
       }
-      // things that require data on latestSandboxProgressObj
-      if (this.latestSandboxProgressObj) {
-        const progress = this.sandboxProgress.getSandboxProgress({
-          sandboxProcessObj: this.latestSandboxProgressObj,
-          sandboxRes: undefined,
-        });
-        const currentStage = progress.status;
-        this.sandboxProgress.markPreviousStagesAsCompleted(currentStage);
-        this.updateStage(currentStage, 'inProgress');
-        this.updateProgress(
-          { sandboxProcessObj: this.latestSandboxProgressObj, sandboxRes: undefined },
-          options.isAsync
-        );
-      }
+
+      this.stages.stop('async');
       if (this.pollingTimeOut) {
         this.warn(messages.getMessage('warning.ClientTimeoutWaitingForSandboxProcess', [this.action.toLowerCase()]));
       }
-      this.log(this.sandboxProgress.formatProgressStatus(false));
       return Promise.resolve(this.info(messages.getMessage('checkSandboxStatus', this.getCheckSandboxStatusParams())));
     });
 
     lifecycle.on(SandboxEvents.EVENT_STATUS, async (results: StatusEvent) => {
+      // this starts MSO for:
+      // * org create/create sandbox
+      this.stages.start();
       this.latestSandboxProgressObj = results.sandboxProcessObj;
       this.updateSandboxRequestData();
-      const progress = this.sandboxProgress.getSandboxProgress(results);
-      const currentStage = progress.status;
-      this.updateStage(currentStage, 'inProgress');
-      return Promise.resolve(this.updateProgress(results, options.isAsync));
+
+      this.stages.update(this.latestSandboxProgressObj);
+
+      return Promise.resolve();
     });
 
     lifecycle.on(SandboxEvents.EVENT_AUTH, async (results: SandboxUserAuthResponse) => {
+      this.sandboxUsername = results.authUserName;
+      this.stages.auth();
       this.sandboxAuth = results;
       return Promise.resolve();
     });
 
     lifecycle.on(SandboxEvents.EVENT_RESULT, async (results: ResultEvent) => {
       this.latestSandboxProgressObj = results.sandboxProcessObj;
+      this.sandboxUsername = results.sandboxRes.authUserName;
       this.updateSandboxRequestData();
-      this.sandboxProgress.markPreviousStagesAsCompleted();
-      this.updateProgress(results, options.isAsync);
-      if (!options.isAsync) {
-        this.progress.stop();
-      }
+
+      this.stages.update(results.sandboxProcessObj);
+
       if (results.sandboxRes?.authUserName) {
         const authInfo = await AuthInfo.create({ username: results.sandboxRes?.authUserName });
         await authInfo.handleAliasAndDefaultSettings({
@@ -160,8 +166,9 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
           setTracksSource: await this.calculateTrackingSetting(options.tracksSource),
         });
       }
+      this.stages.stop();
+
       this.removeSandboxProgressConfig();
-      this.updateProgress(results, options.isAsync);
       this.reportResults(results);
     });
 
@@ -185,41 +192,12 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
   }
 
   protected reportResults(results: ResultEvent): void {
-    this.log();
-    this.styledHeader(`Sandbox Org ${this.action} Status`);
-    this.log(this.sandboxProgress.formatProgressStatus(false));
     this.logSuccess(
       [
-        messages.getMessage('sandboxSuccess', [this.action.toLowerCase()]),
-        messages.getMessages('sandboxSuccess.actions', [
-          results.sandboxRes?.authUserName,
-          this.config.bin,
-          results.sandboxRes?.authUserName,
-        ]),
+        messages.getMessage('sandboxSuccess'),
+        messages.getMessages('sandboxSuccess.actions', [this.config.bin, results.sandboxRes?.authUserName]),
       ].join(os.EOL)
     );
-  }
-
-  protected updateProgress(
-    event: StatusEvent | (Omit<ResultEvent, 'sandboxRes'> & { sandboxRes?: ResultEvent['sandboxRes'] }),
-    isAsync: boolean
-  ): void {
-    const sandboxProgress = this.sandboxProgress.getSandboxProgress(event);
-    this.sandboxUsername = (event as ResultEvent).sandboxRes?.authUserName;
-    this.sandboxProgress.statusData = {
-      sandboxUsername: this.sandboxUsername,
-      sandboxProgress,
-      sandboxProcessObj: event.sandboxProcessObj,
-    };
-    if (!isAsync) {
-      this.spinner.status = this.sandboxProgress.formatProgressStatus();
-    }
-  }
-
-  protected updateStage(stage: string | undefined, state: State): void {
-    if (stage) {
-      this.sandboxProgress.transitionStages(stage, state);
-    }
   }
 
   protected updateSandboxRequestData(): void {
@@ -262,6 +240,13 @@ export abstract class SandboxCommandBase<T> extends SfCommand<T> {
     return { ...(this.latestSandboxProgressObj as SandboxProcessObject), SandboxUsername: sbxUsername };
   }
 
+  protected catch(error: Error): Promise<never> {
+    if (this.stages) {
+      this.stages.stop('failed');
+    }
+
+    return super.catch(error);
+  }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected async finally(_: Error | undefined): Promise<any> {
     const lifecycle = Lifecycle.getInstance();

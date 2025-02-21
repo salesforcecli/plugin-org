@@ -124,6 +124,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
 
     this.debug('Create started with args %s ', this.flags);
     this.validateFlags();
+
     return this.createSandbox();
   }
 
@@ -187,25 +188,24 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
 
   private async createSandbox(): Promise<SandboxCommandResponse> {
     const lifecycle = Lifecycle.getInstance();
-
     this.prodOrg = this.flags['target-org'];
 
-    this.registerLifecycleListeners(lifecycle, {
-      isAsync: this.flags.async,
-      setDefault: this.flags['set-default'],
-      alias: this.flags.alias,
-      prodOrg: this.prodOrg,
-      tracksSource: this.flags['no-track-source'] === true ? false : undefined,
-    });
     const sandboxReq = await this.createSandboxRequest();
     await this.confirmSandboxReq({
       ...sandboxReq,
     });
     this.initSandboxProcessData(sandboxReq);
 
-    if (!this.flags.async) {
-      this.spinner.start('Sandbox Create');
-    }
+    this.registerLifecycleListenersAndMSO(lifecycle, {
+      mso: {
+        title: 'Sandbox Create',
+      },
+      isAsync: this.flags.async,
+      setDefault: this.flags['set-default'],
+      alias: this.flags.alias,
+      prodOrg: this.prodOrg,
+      tracksSource: this.flags['no-track-source'] === true ? false : undefined,
+    });
 
     this.debug('Calling create with SandboxRequest: %s ', sandboxReq);
 
@@ -217,12 +217,12 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       });
       this.latestSandboxProgressObj = sandboxProcessObject;
       this.saveSandboxProgressConfig();
+
       if (this.flags.async) {
         process.exitCode = 68;
       }
       return this.getSandboxCommandResponse();
     } catch (err) {
-      this.spinner.stop();
       if (this.pollingTimeOut && this.latestSandboxProgressObj) {
         void lifecycle.emit(SandboxEvents.EVENT_ASYNC_RESULT, undefined);
         process.exitCode = 68;
