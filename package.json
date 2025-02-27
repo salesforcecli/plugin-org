@@ -21,7 +21,7 @@
   "devDependencies": {
     "@oclif/plugin-command-snapshot": "^5.2.35",
     "@salesforce/cli-plugins-testkit": "^5.3.39",
-    "@salesforce/dev-scripts": "^10.2.11",
+    "@salesforce/dev-scripts": "^10.2.12",
     "@salesforce/plugin-command-reference": "^3.1.42",
     "@salesforce/ts-sinon": "^1.4.30",
     "eslint-plugin-sf-plugin": "^1.20.15",
@@ -215,7 +215,7 @@
       "output": []
     },
     "link-check": {
-      "command": "node -e \"process.exit(process.env.CI ? 0 : 1)\" || linkinator \"**/*.md\" --skip \"CHANGELOG.md|node_modules|test/|confluence.internal.salesforce.com|my.salesforce.com|%s\" --markdown --retry --directory-listing --verbosity error",
+      "command": "node -e \"process.exit(process.env.CI ? 0 : 1)\" || linkinator \"**/*.md\" --skip \"CHANGELOG.md|node_modules|test/|confluence.internal.salesforce.com|my.salesforce.com|localhost|%s\" --markdown --retry --directory-listing --verbosity error",
       "files": [
         "./*.md",
         "./!(CHANGELOG).md",
