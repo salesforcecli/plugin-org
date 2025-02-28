@@ -48,7 +48,9 @@ describe('Sandbox Orgs', () => {
       result = rawResult.jsonOutput?.result as SandboxProcessObject;
       expect(result).to.be.ok;
     } catch (e) {
-      expect(false).to.be.true(JSON.stringify(e));
+      // eslint-disable-next-line no-console
+      console.error(e);
+      expect(false, 'catch verification').to.be.true(JSON.stringify(e));
     }
 
     assert(result);
