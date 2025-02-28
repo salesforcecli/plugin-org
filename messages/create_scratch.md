@@ -4,7 +4,7 @@ Create a scratch org.
 
 # description
 
-There are two ways to create a scratch org: either specify a definition file that contains the options or use the --edition flag to specify the one required option.
+There are two ways to create a scratch org: either specify a definition file that contains the options or use the --edition/--snapshot flag to specify the one required option.
 
 For either method, you can also use these flags; if you use them with --definition-file, they override their equivalent option in the scratch org definition file:
 
@@ -12,7 +12,7 @@ For either method, you can also use these flags; if you use them with --definiti
     * --name  (equivalent to the "orgName" option)
     * --username
     * --release
-    * --edition
+    * --edition or --snapshot
     * --admin-email (equivalent to the "adminEmail" option)
     * --source-org (equivalent to the "sourceOrg" option)
 
@@ -61,6 +61,14 @@ Don't include second-generation managed package (2GP) ancestors in the scratch o
 # flags.edition.summary
 
 Salesforce edition of the scratch org. Overrides the value of the "edition" option in the definition file, if set.
+
+# flags.snapshot.summary
+
+Name of the Snapshot to use for creating the scratch org.
+
+# flags.snapshot.description
+
+Provide the Snapshot Name to create a scratch org based on a snapshot.
 
 # flags.async.summary
 
