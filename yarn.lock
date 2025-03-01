@@ -1796,10 +1796,10 @@
     string-width "^7.2.0"
     terminal-link "^3.0.0"
 
-"@salesforce/sf-plugins-core@^12.1.4":
-  version "12.1.4"
-  resolved "https://registry.yarnpkg.com/@salesforce/sf-plugins-core/-/sf-plugins-core-12.1.4.tgz#c73829c7f12bdc96a2e2746ce7f574a604e8efb4"
-  integrity sha512-inSWsy9omNc4dIULVpoOJPX6DdEaqkA4CxmzTVrylc7P08jCbsv6LpS79wUaYC7Ah3krBQvbopP4wR9f3XvLeQ==
+"@salesforce/sf-plugins-core@^12.2.0":
+  version "12.2.0"
+  resolved "https://registry.yarnpkg.com/@salesforce/sf-plugins-core/-/sf-plugins-core-12.2.0.tgz#c53f5342841cc490752b78f2707e84d8946dd740"
+  integrity sha512-aGNk74rMt8I+HTP7hRsX6kxiGTuun9ONrWkX7JvWDdtIoO9TsEbNVZENH8GFxHFalWPFCj31IMUQD/bGbxMFbg==
   dependencies:
     "@inquirer/confirm" "^3.1.22"
     "@inquirer/password" "^2.2.0"
