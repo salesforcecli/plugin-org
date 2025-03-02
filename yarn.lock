@@ -1812,14 +1812,15 @@
     cli-progress "^3.12.0"
     terminal-link "^3.0.0"
 
-"@salesforce/source-deploy-retrieve@^12.15.0":
-  version "12.15.0"
-  resolved "https://registry.yarnpkg.com/@salesforce/source-deploy-retrieve/-/source-deploy-retrieve-12.15.0.tgz#b93c3c245953b7b0f34cf1022c36b6d0d4aae755"
-  integrity sha512-UbJ68pzAmGsdeHhBB4ml1tzTFbD8SjmGj1bhl3AbgeqxYncT1SpIMj0OHCXaUZFZB4vsGe5J8ft394PajlCeWw==
+"@salesforce/source-deploy-retrieve@^12.16.1":
+  version "12.16.1"
+  resolved "https://registry.yarnpkg.com/@salesforce/source-deploy-retrieve/-/source-deploy-retrieve-12.16.1.tgz#d809a15b5e7f28a95e972096e022638c1531a02d"
+  integrity sha512-3GZmPwHHKJinR1GKvCmPwQJuAbYsPuC0M+TliopW71wTPDui/ZC4RNScd2/A7SJuSIwBypN8kOip7fWCOZK9CQ==
   dependencies:
-    "@salesforce/core" "^8.8.2"
+    "@salesforce/core" "^8.8.3"
     "@salesforce/kit" "^3.2.3"
     "@salesforce/ts-types" "^2.0.12"
+    "@salesforce/types" "^1.3.0"
     fast-levenshtein "^3.0.0"
     fast-xml-parser "^4.5.1"
     got "^11.8.6"
@@ -1845,6 +1846,11 @@
   version "2.0.12"
   resolved "https://registry.npmjs.org/@salesforce/ts-types/-/ts-types-2.0.12.tgz"
   integrity sha512-BIJyduJC18Kc8z+arUm5AZ9VkPRyw1KKAm+Tk+9LT99eOzhNilyfKzhZ4t+tG2lIGgnJpmytZfVDZ0e2kFul8g==
+
+"@salesforce/types@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@salesforce/types/-/types-1.3.0.tgz#c8b686cd5d7351aa3b9857ed03561d6a7439e5a8"
+  integrity sha512-tcjBZrzCukOVIVm7mLHefsfDMyd+MTWWFWXk5wbdIQa+hiehUSA2SG0B0cpDMuOaIa9UiBm/SQCI+zznlt6W6g==
 
 "@shikijs/core@1.11.1":
   version "1.11.1"
