@@ -27,7 +27,7 @@
     "alias": ["env:create:scratch"],
     "command": "org:create:scratch",
     "flagAliases": [],
-    "flagChars": ["a", "c", "d", "e", "f", "i", "m", "t", "v", "w", "y"],
+    "flagChars": ["a", "c", "d", "e", "f", "i", "m", "s", "t", "v", "w", "y"],
     "flags": [
       "admin-email",
       "alias",
@@ -45,6 +45,7 @@
       "no-namespace",
       "release",
       "set-default",
+      "snapshot",
       "source-org",
       "target-dev-hub",
       "track-source",
