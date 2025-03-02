@@ -1585,13 +1585,13 @@
     react "^18.3.1"
     wrap-ansi "^9.0.0"
 
-"@oclif/plugin-command-snapshot@^5.2.35":
-  version "5.2.35"
-  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-5.2.35.tgz#19eacd8180772d9f172606edf3d6c99522fecbb3"
-  integrity sha512-8A7iJ7tg2ZvyMG63sBOvdPIPq7RmggIdeACA0p6NfwzDI9mRL94v78m/6whqJKTUuzcERIIO+L2hwxPbBKwdGw==
+"@oclif/plugin-command-snapshot@^5.2.36":
+  version "5.2.36"
+  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-5.2.36.tgz#83b4ff3fcb0be14416a486405a15d29867a081d1"
+  integrity sha512-NM8up8CGfybXPVESMaeubBqY5jMtIzZYGVrzhMI92Du46O46Ld1IX4jSdnNMjwnTRzTYdz3Br57d5IpnfpEcKw==
   dependencies:
     "@oclif/core" "^4"
-    ansis "^3.14.0"
+    ansis "^3.16.0"
     globby "^14.1.0"
     just-diff "^5.2.0"
     lodash.difference "^4.5.0"
@@ -3006,7 +3006,7 @@ ansi-styles@^6.0.0, ansi-styles@^6.1.0, ansi-styles@^6.2.1:
   resolved "https://registry.npmjs.org/ansi-styles/-/ansi-styles-6.2.1.tgz"
   integrity sha512-bN798gFfQX+viw3R7yrGWRqnrN2oRkEkUjjl4JNn4E8GxxbjtG3FbrEIIY3l8/hrwUwIeCZvi4QuOTP4MErVug==
 
-ansis@^3.14.0, ansis@^3.16.0, ansis@^3.3.2, ansis@^3.5.2:
+ansis@^3.16.0, ansis@^3.3.2, ansis@^3.5.2:
   version "3.16.0"
   resolved "https://registry.yarnpkg.com/ansis/-/ansis-3.16.0.tgz#5e365fd173133756a01199c77fc9146bb22fb5eb"
   integrity sha512-sU7d/tfZiYrsIAXbdL/CNZld5bCkruzwT5KmqmadCJYxuLxHAOBjidxD5+iLmN/6xEfjcQq1l7OpsiCBlc4LzA==
