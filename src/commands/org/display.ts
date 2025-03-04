@@ -95,6 +95,7 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
       }));
 
     this.table({
+      overflow: 'wrap',
       data: tableRows,
       columns: [
         { key: 'key', name: 'KEY' },
