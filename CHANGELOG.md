@@ -1,3 +1,9 @@
+## [5.2.41](https://github.com/salesforcecli/plugin-org/compare/5.2.40...5.2.41) (2025-03-04)
+
+### Bug Fixes
+
+- **org display:** dont truncate table cells ([#1365](https://github.com/salesforcecli/plugin-org/issues/1365)) ([4484061](https://github.com/salesforcecli/plugin-org/commit/448406155603d2c48fc34faed49a348b536a841b))
+
 ## [5.2.40](https://github.com/salesforcecli/plugin-org/compare/5.2.39...5.2.40) (2025-03-02)
 
 ### Bug Fixes
