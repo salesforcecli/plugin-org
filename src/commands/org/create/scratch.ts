@@ -96,6 +96,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       summary: messages.getMessage('flags.snapshot.summary'),
       description: messages.getMessage('flags.snapshot.description'),
       exclusive: ['edition'],
+      helpGroup: definitionFileHelpGroupName,
     }),
     'no-namespace': Flags.boolean({
       char: 'm',
@@ -157,6 +158,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
     }),
     'source-org': Flags.salesforceId({
       summary: messages.getMessage('flags.source-org.summary'),
+      description: messages.getMessage('flags.source-org.description'),
       startsWith: '00D',
       length: 15,
       helpGroup: definitionFileHelpGroupName,
