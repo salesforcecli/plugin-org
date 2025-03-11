@@ -4,15 +4,16 @@ Create a scratch org.
 
 # description
 
-There are two ways to create a scratch org: either specify a definition file that contains the options or use the --edition/--snapshot flag to specify the one required option.
+There are three ways to create a scratch org: either specify a definition file that contains the options, use the --edition flag to specify the one required option, or use the --snapshot flag to create a replica scratch org from a snapshot. Snapshots are a point-in-time copy of a scratch org that you create with the "sf org create snapshot" command.
 
-For either method, you can also use these flags; if you use them with --definition-file, they override their equivalent option in the scratch org definition file:
+For any of the methods, you can also use these flags; if you use them with --definition-file, they override their equivalent option in the scratch org definition file:
 
     * --description
     * --name  (equivalent to the "orgName" option)
     * --username
     * --release
-    * --edition or --snapshot
+    * --edition (if you specify this flag, you can't also specify --snapshot)
+    * --snapshot  (if you specify this flag, you can't also specify --edition)
     * --admin-email (equivalent to the "adminEmail" option)
     * --source-org (equivalent to the "sourceOrg" option)
 
@@ -33,6 +34,10 @@ You must specify a Dev Hub to create a scratch org, either with the --target-dev
 - Create a preview Enterprise edition scratch org; for use only during Salesforce release transition periods:
 
   <%= config.bin %> <%= command.id %> --edition enterprise --alias my-scratch-org --target-dev-hub MyHub --release preview
+
+- Create a scratch org from a snapshot called "NightlyBranch"; be sure you specify the same Dev Hub org associated with the snapshot. We recommend you increase the --wait time because creating a scratch org from a snapshot can take a while:
+
+  <%= config.bin %> <%= command.id %> --alias my-scratch-org --target-dev-hub MyHub --snapshot NightlyBranch --wait 10
 
 # flags.target-dev-hub.summary
 
@@ -64,11 +69,11 @@ Salesforce edition of the scratch org. Overrides the value of the "edition" opti
 
 # flags.snapshot.summary
 
-Name of the Snapshot to use for creating the scratch org.
+Name of the snapshot to use when creating this scratch org. Overrides the value of the "snapshot" option in the defintion file, if set.
 
 # flags.snapshot.description
 
-Provide the Snapshot Name to create a scratch org based on a snapshot.
+To view the names of the available snapshots for a given Dev Hub org, run the "sf org list snapshot" command.
 
 # flags.async.summary
 
