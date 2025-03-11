@@ -4,7 +4,14 @@ Create a scratch org.
 
 # description
 
-There are three ways to create a scratch org: either specify a definition file that contains the options, use the --edition flag to specify the one required option, or use the --snapshot flag to create a replica scratch org from a snapshot. Snapshots are a point-in-time copy of a scratch org that you create with the "sf org create snapshot" command.
+There are four ways to create a scratch org:
+
+    * Specify a definition file that contains the scratch org options.
+    * Use the --edition flag to specify the one required option; this method doesn't require a defintion file.
+    * Use the --snapshot flag to create a scratch org from a snapshot. Snapshots are a point-in-time copy of a scratch org that you create with the "sf org create snapshot" command.
+    * Use the --source-org flag to create a scratch org from an org shape. Org shapes mimic the baseline setup of a source org without the extraneous data and metadata; you create an org shape with the "sf org create shape" command.
+
+The --edition, --snapshot, and --source-org flags are mutually exclusive, which means if you specify one, you can't also specify the others.
 
 For any of the methods, you can also use these flags; if you use them with --definition-file, they override their equivalent option in the scratch org definition file:
 
@@ -12,12 +19,9 @@ For any of the methods, you can also use these flags; if you use them with --def
     * --name  (equivalent to the "orgName" option)
     * --username
     * --release
-    * --edition (if you specify this flag, you can't also specify --snapshot)
-    * --snapshot  (if you specify this flag, you can't also specify --edition)
     * --admin-email (equivalent to the "adminEmail" option)
-    * --source-org (equivalent to the "sourceOrg" option)
 
-If you want to set options other than the preceding ones, such as org features or settings, you must use a definition file.
+If you want to set options such as org features or settings, you must use a definition file.
 
 You must specify a Dev Hub to create a scratch org, either with the --target-dev-hub flag or by setting your default Dev Hub with the target-dev-hub configuration variable.
 
@@ -105,7 +109,11 @@ Email address that will be applied to the org's admin user. Overrides the value 
 
 # flags.source-org.summary
 
-15-character ID of the org whose shape the new scratch org will be based on. Overrides the value of the "sourceOrg" option in the definition file, if set.
+15-character ID of the org shape that the new scratch org will be based on. Overrides the value of the "sourceOrg" option in the definition file, if set.
+
+# flags.source-org.description
+
+To view the names of the available org shapes for a given Dev Hub org, run the "sf org list shape" command.
 
 # flags.wait.summary
 
