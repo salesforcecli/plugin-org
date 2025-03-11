@@ -8,7 +8,7 @@ There are four ways to create a scratch org:
 
     * Specify a definition file that contains the scratch org options.
     * Use the --edition flag to specify the one required option; this method doesn't require a defintion file.
-    * Use the --snapshot flag to create a scratch org from a snapshot. Snapshots are a point-in-time copy of a scratch org that you create with the "sf org create snapshot" command.
+    * Use the --snapshot flag to create a scratch org from a snapshot. Snapshots are a point-in-time copy of a scratch org; you create a snapshot with the "sf org create snapshot" command.
     * Use the --source-org flag to create a scratch org from an org shape. Org shapes mimic the baseline setup of a source org without the extraneous data and metadata; you create an org shape with the "sf org create shape" command.
 
 The --edition, --snapshot, and --source-org flags are mutually exclusive, which means if you specify one, you can't also specify the others.
