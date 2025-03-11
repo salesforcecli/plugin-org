@@ -95,7 +95,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
       char: 's',
       summary: messages.getMessage('flags.snapshot.summary'),
       description: messages.getMessage('flags.snapshot.description'),
-      exclusive: ['edition'],
+      exclusive: ['edition', 'source-org'],
       helpGroup: definitionFileHelpGroupName,
     }),
     'no-namespace': Flags.boolean({

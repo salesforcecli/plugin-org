@@ -24,7 +24,7 @@ export const buildScratchOrgRequest = async (
     ...(flags['definition-file']
       ? (JSON.parse(await fs.promises.readFile(flags['definition-file'], 'utf-8')) as Record<string, unknown>)
       : {}),
-    ...(flags.edition && !flags.snapshot ? { edition: flags.edition } : {}),
+    ...(flags.edition ? { edition: flags.edition } : {}),
     ...(flags.snapshot ? { snapshot: flags.snapshot } : {}),
     ...(flags.username ? { username: flags.username } : {}),
     ...(flags.description ? { description: flags.description } : {}),
