@@ -9,6 +9,8 @@ import { StateAggregator } from '@salesforce/core';
 
 export const getAliasByUsername = async (username: string): Promise<string | undefined> => {
   const stateAggregator = await StateAggregator.getInstance();
+  // eslint-disable-next-line no-console
+  console.log(stateAggregator);
   const keys = stateAggregator.aliases.getAll(username);
   // use the most recently added alias for that username
   return keys?.length ? keys[keys.length - 1] : undefined;
