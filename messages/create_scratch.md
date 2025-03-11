@@ -109,7 +109,7 @@ Email address that will be applied to the org's admin user. Overrides the value 
 
 # flags.source-org.summary
 
-15-character ID of the org shape that the new scratch org will be based on. Overrides the value of the "sourceOrg" option in the definition file, if set.
+15-character ID of the org shape that the new scratch org is based on. Overrides the value of the "sourceOrg" option in the definition file, if set.
 
 # flags.source-org.description
 
