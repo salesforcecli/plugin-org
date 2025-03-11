@@ -242,7 +242,7 @@ FLAG DESCRIPTIONS
     You can specify either --source-sandbox-name or --source-id when cloning an existing sandbox, but not both.
 ```
 
-_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.2.42/src/commands/org/create/sandbox.ts)_
+_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.3.0/src/commands/org/create/sandbox.ts)_
 
 ## `sf org create scratch`
 
@@ -251,9 +251,9 @@ Create a scratch org.
 ```
 USAGE
   $ sf org create scratch -v <value> [--json] [--flags-dir <value>] [-a <value>] [--async] [-d] [-f <value>] [-c] [-e
-    developer|enterprise|group|professional|partner-developer|partner-enterprise|partner-group|partner-professional]
-    [-m] [-y <days>] [-w <minutes>] [--api-version <value>] [-i <value>] [-t] [--username <value>] [--description
-    <value>] [--name <value>] [--release preview|previous] [--admin-email <value>] [--source-org <value>]
+    developer|enterprise|group|professional|partner-developer|partner-enterprise|partner-group|partner-professional | -s
+    <value> | --source-org <value>] [-m] [-y <days>] [-w <minutes>] [--api-version <value>] [-i <value>] [-t]
+    [--username <value>] [--description <value>] [--name <value>] [--release preview|previous] [--admin-email <value>]
 
 FLAGS
   -a, --alias=<value>            Alias for the scratch org.
@@ -277,6 +277,8 @@ DEFINITION FILE OVERRIDE FLAGS
                              definition file, if set.
                              <options: developer|enterprise|group|professional|partner-developer|partner-enterprise|part
                              ner-group|partner-professional>
+  -s, --snapshot=<value>     Name of the snapshot to use when creating this scratch org. Overrides the value of the
+                             "snapshot" option in the defintion file, if set.
       --admin-email=<value>  Email address that will be applied to the org's admin user. Overrides the value of the
                              "adminEmail" option in the definition file, if set.
       --description=<value>  Description of the scratch org in the Dev Hub. Overrides the value of the "description"
@@ -285,8 +287,8 @@ DEFINITION FILE OVERRIDE FLAGS
                              definition file, if set.
       --release=<option>     Release of the scratch org as compared to the Dev Hub release.
                              <options: preview|previous>
-      --source-org=<value>   15-character ID of the org whose shape the new scratch org will be based on. Overrides the
-                             value of the "sourceOrg" option in the definition file, if set.
+      --source-org=<value>   15-character ID of the org shape that the new scratch org is based on. Overrides the value
+                             of the "sourceOrg" option in the definition file, if set.
       --username=<value>     Username of the scratch org admin user. Overrides the value of the "username" option in the
                              definition file, if set.
 
@@ -297,22 +299,28 @@ GLOBAL FLAGS
 DESCRIPTION
   Create a scratch org.
 
-  There are two ways to create a scratch org: either specify a definition file that contains the options or use the
-  --edition flag to specify the one required option.
+  There are four ways to create a scratch org:
 
-  For either method, you can also use these flags; if you use them with --definition-file, they override their
+  * Specify a definition file that contains the scratch org options.
+  * Use the --edition flag to specify the one required option; this method doesn't require a defintion file.
+  * Use the --snapshot flag to create a scratch org from a snapshot. Snapshots are a point-in-time copy of a scratch
+  org; you create a snapshot with the "sf org create snapshot" command.
+  * Use the --source-org flag to create a scratch org from an org shape. Org shapes mimic the baseline setup of a source
+  org without the extraneous data and metadata; you create an org shape with the "sf org create shape" command.
+
+  The --edition, --snapshot, and --source-org flags are mutually exclusive, which means if you specify one, you can't
+  also specify the others.
+
+  For any of the methods, you can also use these flags; if you use them with --definition-file, they override their
   equivalent option in the scratch org definition file:
 
   * --description
   * --name  (equivalent to the "orgName" option)
   * --username
   * --release
-  * --edition
   * --admin-email (equivalent to the "adminEmail" option)
-  * --source-org (equivalent to the "sourceOrg" option)
 
-  If you want to set options other than the preceding ones, such as org features or settings, you must use a definition
-  file.
+  If you want to set options such as org features or settings, you must use a definition file.
 
   You must specify a Dev Hub to create a scratch org, either with the --target-dev-hub flag or by setting your default
   Dev Hub with the target-dev-hub configuration variable.
@@ -335,6 +343,12 @@ EXAMPLES
 
     $ sf org create scratch --edition enterprise --alias my-scratch-org --target-dev-hub MyHub --release preview
 
+  Create a scratch org from a snapshot called "NightlyBranch"; be sure you specify the same Dev Hub org associated
+  with the snapshot. We recommend you increase the --wait time because creating a scratch org from a snapshot can take
+  a while:
+
+    $ sf org create scratch --alias my-scratch-org --target-dev-hub MyHub --snapshot NightlyBranch --wait 10
+
 FLAG DESCRIPTIONS
   -a, --alias=<value>  Alias for the scratch org.
 
@@ -354,6 +368,13 @@ FLAG DESCRIPTIONS
     the development life cycle, such as acceptance testing, packaging, or production. See
     <https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_scratch_orgs_def_file.htm> for
     all the option you can specify in the definition file.
+
+  -s, --snapshot=<value>
+
+    Name of the snapshot to use when creating this scratch org. Overrides the value of the "snapshot" option in the
+    defintion file, if set.
+
+    To view the names of the available snapshots for a given Dev Hub org, run the "sf org list snapshot" command.
 
   -t, --[no-]track-source  Use source tracking for this scratch org. Set --no-track-source to disable source tracking.
 
@@ -386,6 +407,13 @@ FLAG DESCRIPTIONS
     By default, scratch orgs are on the same release as the Dev Hub. During Salesforce release transition periods, you
     can override this default behavior and opt in or out of the new release.
 
+  --source-org=<value>
+
+    15-character ID of the org shape that the new scratch org is based on. Overrides the value of the "sourceOrg" option
+    in the definition file, if set.
+
+    To view the names of the available org shapes for a given Dev Hub org, run the "sf org list shape" command.
+
   --username=<value>
 
     Username of the scratch org admin user. Overrides the value of the "username" option in the definition file, if set.
@@ -396,7 +424,7 @@ FLAG DESCRIPTIONS
     Omit this flag to have Salesforce generate a unique username for your org.
 ```
 
-_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.2.42/src/commands/org/create/scratch.ts)_
+_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.3.0/src/commands/org/create/scratch.ts)_
 
 ## `sf org delete sandbox`
 
@@ -442,7 +470,7 @@ EXAMPLES
     $ sf org delete sandbox --target-org my-sandbox --no-prompt
 ```
 
-_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.2.42/src/commands/org/delete/sandbox.ts)_
+_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.3.0/src/commands/org/delete/sandbox.ts)_
 
 ## `sf org delete scratch`
 
@@ -486,7 +514,7 @@ EXAMPLES
     $ sf org delete scratch --target-org my-scratch-org --no-prompt
 ```
 
-_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.2.42/src/commands/org/delete/scratch.ts)_
+_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.3.0/src/commands/org/delete/scratch.ts)_
 
 ## `sf org disable tracking`
 
@@ -525,7 +553,7 @@ EXAMPLES
     $ sf org disable tracking
 ```
 
-_See code: [src/commands/org/disable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.2.42/src/commands/org/disable/tracking.ts)_
+_See code: [src/commands/org/disable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.3.0/src/commands/org/disable/tracking.ts)_
 
 ## `sf org display`
 
@@ -570,7 +598,7 @@ EXAMPLES
     $ sf org display --target-org TestOrg1 --verbose
 ```
 
-_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/5.2.42/src/commands/org/display.ts)_
+_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/5.3.0/src/commands/org/display.ts)_
 
 ## `sf org enable tracking`
 
@@ -612,7 +640,7 @@ EXAMPLES
     $ sf org enable tracking
 ```
 
-_See code: [src/commands/org/enable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.2.42/src/commands/org/enable/tracking.ts)_
+_See code: [src/commands/org/enable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.3.0/src/commands/org/enable/tracking.ts)_
 
 ## `sf org list`
 
@@ -651,7 +679,7 @@ EXAMPLES
     $ sf org list --clean
 ```
 
-_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/5.2.42/src/commands/org/list.ts)_
+_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/5.3.0/src/commands/org/list.ts)_
 
 ## `sf org list metadata`
 
@@ -718,7 +746,7 @@ FLAG DESCRIPTIONS
     Examples of metadata types that use folders are Dashboard, Document, EmailTemplate, and Report.
 ```
 
-_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/5.2.42/src/commands/org/list/metadata.ts)_
+_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/5.3.0/src/commands/org/list/metadata.ts)_
 
 ## `sf org list metadata-types`
 
@@ -773,7 +801,7 @@ FLAG DESCRIPTIONS
     Override the api version used for api requests made by this command
 ```
 
-_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/5.2.42/src/commands/org/list/metadata-types.ts)_
+_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/5.3.0/src/commands/org/list/metadata-types.ts)_
 
 ## `sf org open`
 
@@ -849,7 +877,7 @@ EXAMPLES
     $ sf org open --source-file force-app/main/default/bots/Coral_Cloud_Agent/Coral_Cloud_Agent.bot-meta.xml
 ```
 
-_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/5.2.42/src/commands/org/open.ts)_
+_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/5.3.0/src/commands/org/open.ts)_
 
 ## `sf org open agent`
 
@@ -900,7 +928,7 @@ EXAMPLES
     $ sf org open agent --target-org MyTestOrg1 --browser firefox --name Coral_Cloud_Agent
 ```
 
-_See code: [src/commands/org/open/agent.ts](https://github.com/salesforcecli/plugin-org/blob/5.2.42/src/commands/org/open/agent.ts)_
+_See code: [src/commands/org/open/agent.ts](https://github.com/salesforcecli/plugin-org/blob/5.3.0/src/commands/org/open/agent.ts)_
 
 ## `sf org refresh sandbox`
 
@@ -977,7 +1005,7 @@ FLAG DESCRIPTIONS
     By default, a sandbox auto-activates after a refresh. Use this flag to control sandbox activation manually.
 ```
 
-_See code: [src/commands/org/refresh/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.2.42/src/commands/org/refresh/sandbox.ts)_
+_See code: [src/commands/org/refresh/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.3.0/src/commands/org/refresh/sandbox.ts)_
 
 ## `sf org resume sandbox`
 
@@ -1040,7 +1068,7 @@ FLAG DESCRIPTIONS
     returns the job ID. To resume checking the sandbox creation, rerun this command.
 ```
 
-_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.2.42/src/commands/org/resume/sandbox.ts)_
+_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.3.0/src/commands/org/resume/sandbox.ts)_
 
 ## `sf org resume scratch`
 
@@ -1087,6 +1115,6 @@ FLAG DESCRIPTIONS
     The job ID is valid for 24 hours after you start the scratch org creation.
 ```
 
-_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.2.42/src/commands/org/resume/scratch.ts)_
+_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.3.0/src/commands/org/resume/scratch.ts)_
 
 <!-- commandsstop -->

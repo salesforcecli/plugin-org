@@ -1,3 +1,17 @@
+# [5.3.0](https://github.com/salesforcecli/plugin-org/compare/5.2.42...5.3.0) (2025-03-11)
+
+### Bug Fixes
+
+- add the exclusive flag to edition and source-org ([7f58889](https://github.com/salesforcecli/plugin-org/commit/7f58889e11f09fe4d35e5a8a5919d18dc62cdd9e))
+- more help updates ([cd921c6](https://github.com/salesforcecli/plugin-org/commit/cd921c6b9af16b3a4b2d312ceb9e6e9ebdb29b66))
+- update help with info about new --snapshot flag ([b01a47a](https://github.com/salesforcecli/plugin-org/commit/b01a47a242922b8ed22651e8dd7c7d7f246d10ea))
+- update the changes ([4678a9a](https://github.com/salesforcecli/plugin-org/commit/4678a9abfa496c5fab254c6e3663c2806010ffe5))
+
+### Features
+
+- add a --snapshot flag for creating scratch org ([4566d6d](https://github.com/salesforcecli/plugin-org/commit/4566d6d9ddfa7fc0fec81b801e424c207ff187fd))
+- add test for snapshot ([e8baad1](https://github.com/salesforcecli/plugin-org/commit/e8baad127e92be1a0b59fba6c840617bb48d4829))
+
 ## [5.2.42](https://github.com/salesforcecli/plugin-org/compare/5.2.41...5.2.42) (2025-03-09)
 
 ### Bug Fixes
