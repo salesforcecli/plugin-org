@@ -26,7 +26,8 @@ describe('org:open', () => {
 
   const testBrowser = 'firefox';
   const testPath = '/lightning/whatever';
-  const expectedDefaultUrl = `${testOrg.instanceUrl}/secur/frontdoor.jsp?sid=${testOrg.accessToken}`;
+  const singleUseToken = (Math.random() + 1).toString(36).substring(2); // random string to simulate a single-use token
+  const expectedDefaultUrl = `${testOrg.instanceUrl}/secur/frontdoor.jsp?otp=${singleUseToken}`;
   const expectedUrl = `${expectedDefaultUrl}&retURL=${encodeURIComponent(testPath)}`;
 
   let sfCommandUxStubs: ReturnType<typeof stubSfCommandUx>;
@@ -45,6 +46,8 @@ describe('org:open', () => {
     stubSpinner($$.SANDBOX);
     await $$.stubAuths(testOrg);
     spies.set('open', stubMethod($$.SANDBOX, utils, 'openUrl').resolves(new EventEmitter()));
+    // eslint-disable-next-line camelcase
+    $$.SANDBOX.stub(Connection.prototype, 'requestGet').resolves({ frontdoor_uri: expectedDefaultUrl });
   });
 
   afterEach(() => {
@@ -156,6 +159,18 @@ describe('org:open', () => {
       testJsonStructure(response);
       expect(response.url).to.equal(expectedUrl);
       delete process.env.FORCE_OPEN_URL;
+    });
+    it.only('handles api error', async () => {
+      $$.SANDBOX.restore();
+      const mockError = new Error('Invalid_Scope');
+      $$.SANDBOX.stub(Connection.prototype, 'requestGet').throws(mockError);
+      try {
+        await OrgOpenCommand.run(['--json', '--targetusername', testOrg.username, '--urlonly']);
+        expect.fail('should have thrown Invalid_Scope');
+      } catch (e) {
+        const err = e as SfError;
+        expect(err.message).to.equal('Invalid_Scope');
+      }
     });
   });
 
