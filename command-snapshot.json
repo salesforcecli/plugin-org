@@ -175,8 +175,8 @@
     "alias": ["env:resume:scratch"],
     "command": "org:resume:scratch",
     "flagAliases": [],
-    "flagChars": ["i", "r"],
-    "flags": ["flags-dir", "job-id", "json", "use-most-recent"],
+    "flagChars": ["i", "r", "w"],
+    "flags": ["flags-dir", "job-id", "json", "use-most-recent", "wait"],
     "plugin": "@salesforce/plugin-org"
   }
 ]
