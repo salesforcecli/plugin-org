@@ -71,7 +71,7 @@ export class OrgOpenCommand extends OrgOpenCommandBase<OrgOpenOutput> {
     this.connection = this.org.getConnection(flags['api-version']);
 
     const [frontDoorUrl, retUrl] = await Promise.all([
-      buildFrontdoorUrl(this.org, this.connection),
+      buildFrontdoorUrl(this.org, this.connection, !(flags['url-only'] || this.jsonEnabled())),
       flags['source-file'] ? generateFileUrl(flags['source-file'], this.connection) : flags.path,
     ]);
 

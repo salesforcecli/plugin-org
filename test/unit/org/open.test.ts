@@ -26,9 +26,10 @@ describe('org:open', () => {
 
   const testBrowser = 'firefox';
   const testPath = '/lightning/whatever';
-  const singleUseToken = (Math.random() + 1).toString(36).substring(2); // random string to simulate a single-use token
-  const expectedDefaultUrl = `${testOrg.instanceUrl}/secur/frontdoor.jsp?otp=${singleUseToken}`;
+  const expectedDefaultUrl = `${testOrg.instanceUrl}/secur/frontdoor.jsp?sid=${testOrg.accessToken}`;
   const expectedUrl = `${expectedDefaultUrl}&retURL=${encodeURIComponent(testPath)}`;
+  const singleUseToken = (Math.random() + 1).toString(36).substring(2); // random string to simulate a single-use token
+  const expectedDefaultSingleUseUrl = `${testOrg.instanceUrl}/secur/frontdoor.jsp?otp=${singleUseToken}`;
 
   let sfCommandUxStubs: ReturnType<typeof stubSfCommandUx>;
 
@@ -46,8 +47,13 @@ describe('org:open', () => {
     stubSpinner($$.SANDBOX);
     await $$.stubAuths(testOrg);
     spies.set('open', stubMethod($$.SANDBOX, utils, 'openUrl').resolves(new EventEmitter()));
-    // eslint-disable-next-line camelcase
-    $$.SANDBOX.stub(Connection.prototype, 'requestGet').resolves({ frontdoor_uri: expectedDefaultUrl });
+    spies.set(
+      'requestGet',
+      stubMethod($$.SANDBOX, Connection.prototype, 'requestGet').resolves({
+        // eslint-disable-next-line camelcase
+        frontdoor_uri: expectedDefaultSingleUseUrl,
+      })
+    );
   });
 
   afterEach(() => {
@@ -160,16 +166,27 @@ describe('org:open', () => {
       expect(response.url).to.equal(expectedUrl);
       delete process.env.FORCE_OPEN_URL;
     });
-    it.only('handles api error', async () => {
+
+    it('generates a single-use frontdoor url when neither --url-only nor --json flag are passed in', async () => {
+      spies.set('resolver', stubMethod($$.SANDBOX, SfdcUrl.prototype, 'checkLightningDomain').resolves('1.1.1.1'));
+      const response = await OrgOpenCommand.run(['--targetusername', testOrg.username]);
+      expect(response.url).to.equal(expectedDefaultSingleUseUrl);
+      // verify we called to the correct endpoint to generate the single-use AT
+      expect(spies.get('requestGet').callCount).to.equal(1);
+      expect(spies.get('requestGet').args[0][0]).to.deep.equal('/services/oauth2/singleaccess');
+    });
+
+    it('handles api error', async () => {
       $$.SANDBOX.restore();
       const mockError = new Error('Invalid_Scope');
       $$.SANDBOX.stub(Connection.prototype, 'requestGet').throws(mockError);
       try {
-        await OrgOpenCommand.run(['--json', '--targetusername', testOrg.username, '--urlonly']);
+        await OrgOpenCommand.run(['--targetusername', testOrg.username]);
         expect.fail('should have thrown Invalid_Scope');
       } catch (e) {
-        const err = e as SfError;
-        expect(err.message).to.equal('Invalid_Scope');
+        assert(e instanceof SfError, 'should be an SfError');
+        expect(e.name).to.equal('Invalid_Scope');
+        expect(e.message).to.equal('Failed to generate a single-use frontdoor url');
       }
     });
   });

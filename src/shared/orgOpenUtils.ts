@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { rmSync } from 'node:fs';
 import { ChildProcess } from 'node:child_process';
 import open, { Options } from 'open';
 import { Connection, Logger, Messages, Org, SfError } from '@salesforce/core';
@@ -16,19 +17,35 @@ const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
 
 export const openUrl = async (url: string, options: Options): Promise<ChildProcess> => open(url, options);
 
+export const fileCleanup = (tempFilePath: string): void =>
+  rmSync(tempFilePath, { force: true, maxRetries: 3, recursive: true });
+
 /**
- * This method generates and returns a single-use frontdoor url for the given org.
+ * This method generates and returns a frontdoor url for the given org.
  *
  * @param org org for which we generate the frontdoor url.
  * @param conn the Connection for the given Org.
+ * @param singleUseUrl if true returns a single-use url frontdoor url.
  */
-export const buildFrontdoorUrl = async (org: Org, conn: Connection): Promise<string> => {
+export const buildFrontdoorUrl = async (org: Org, conn: Connection, singleUseUrl: boolean): Promise<string> => {
   await org.refreshAuth(); // we need a live accessToken for the frontdoor url
-  if (!conn.accessToken) {
+  const accessToken = conn.accessToken;
+  if (!accessToken) {
     throw new SfError('NoAccessToken', 'NoAccessToken');
   }
-  const response: JsonMap = await conn.requestGet('/services/oauth2/singleaccess');
-  return response.frontdoor_uri as string;
+  if (singleUseUrl) {
+    try {
+      const response: JsonMap = await conn.requestGet('/services/oauth2/singleaccess');
+      return response.frontdoor_uri as string;
+    } catch (e) {
+      const err = e as Error;
+      throw new SfError('Failed to generate a single-use frontdoor url', err.message);
+    }
+  } else {
+    // TODO: remove this code path once the org open behavior changes on August 2025 (see W-17661469)
+    const instanceUrlClean = org.getField<string>(Org.Fields.INSTANCE_URL).replace(/\/$/, '');
+    return `${instanceUrlClean}/secur/frontdoor.jsp?sid=${accessToken}`;
+  }
 };
 
 export const handleDomainError = (err: unknown, url: string, env: Env): string => {
@@ -50,8 +67,26 @@ export const handleDomainError = (err: unknown, url: string, env: Env): string =
   throw err;
 };
 
+/** builds the html file that does an automatic post to the frontdoor url */
+export const getFileContents = (
+  authToken: string,
+  instanceUrl: string,
+  // we have to defalt this to get to Setup only on the POST version.  GET goes to Setup automatically
+  retUrl = '/lightning/setup/SetupOneHome/home'
+): string => `
+<html>
+  <body onload="document.body.firstElementChild.submit()">
+    <form method="POST" action="${instanceUrl}/secur/frontdoor.jsp">
+      <input type="hidden" name="sid" value="${authToken}" />
+      <input type="hidden" name="retURL" value="${retUrl}" />
+    </form>
+  </body>
+</html>`;
+
 export default {
   openUrl,
+  fileCleanup,
   buildFrontdoorUrl,
   handleDomainError,
+  getFileContents,
 };
