@@ -295,6 +295,7 @@ describe('org:open', () => {
         )
       );
       expect(sfCommandUxStubs.warn.calledOnceWith(sharedMessages.getMessage('SecurityWarning')));
+      expect(sfCommandUxStubs.warn.calledOnceWith(sharedMessages.getMessage('BehaviorChangeWarning')));
 
       expect(spies.get('resolver').callCount).to.equal(1);
       expect(spies.get('open').callCount).to.equal(1);
@@ -307,6 +308,7 @@ describe('org:open', () => {
       await OrgOpenCommand.run(['--targetusername', testOrg.username, '--path', testPath, '-b', testBrowser]);
 
       expect(sfCommandUxStubs.warn(sharedMessages.getMessage('SecurityWarning')));
+      expect(sfCommandUxStubs.warn.calledOnceWith(sharedMessages.getMessage('BehaviorChangeWarning')));
       expect(
         sfCommandUxStubs.logSuccess.calledOnceWith(
           messages.getMessage('humanSuccessNoUrl', [testOrg.orgId, testOrg.username])
