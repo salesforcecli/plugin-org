@@ -1,3 +1,9 @@
+# [5.4.0](https://github.com/salesforcecli/plugin-org/compare/5.3.0...5.4.0) (2025-03-12)
+
+### Features
+
+- use MSO in sandbox commands ([#1297](https://github.com/salesforcecli/plugin-org/issues/1297)) ([c1e706b](https://github.com/salesforcecli/plugin-org/commit/c1e706b6060b76d5a6c273fd38c022d90449d1fd))
+
 # [5.3.0](https://github.com/salesforcecli/plugin-org/compare/5.2.42...5.3.0) (2025-03-11)
 
 ### Bug Fixes
