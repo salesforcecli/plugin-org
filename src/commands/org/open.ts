@@ -20,6 +20,7 @@ import { type OrgOpenOutput } from '../../shared/orgTypes.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
+const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
 
 export class OrgOpenCommand extends OrgOpenCommandBase<OrgOpenOutput> {
   public static readonly summary = messages.getMessage('summary');
@@ -66,12 +67,13 @@ export class OrgOpenCommand extends OrgOpenCommandBase<OrgOpenOutput> {
   };
 
   public async run(): Promise<OrgOpenOutput> {
+    this.warn(sharedMessages.getMessage('BehaviorChangeWarning'));
     const { flags } = await this.parse(OrgOpenCommand);
     this.org = flags['target-org'];
     this.connection = this.org.getConnection(flags['api-version']);
 
     const [frontDoorUrl, retUrl] = await Promise.all([
-      buildFrontdoorUrl(this.org, this.connection),
+      buildFrontdoorUrl(this.org, this.connection, !(flags['url-only'] || this.jsonEnabled())),
       flags['source-file'] ? generateFileUrl(flags['source-file'], this.connection) : flags.path,
     ]);
 
