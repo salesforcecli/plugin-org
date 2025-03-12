@@ -28,6 +28,14 @@ The job ID is the same as the record ID of the incomplete scratch org in the Scr
 
 The job ID is valid for 24 hours after you start the scratch org creation.
 
+# flags.wait.summary
+
+Number of minutes to wait for the scratch org to be ready.
+
+# flags.wait.description
+
+If the command continues to run after the wait period, the CLI returns control of the terminal window to you and returns the job ID. To resume checking the scratch creation, rerun this command.
+
 # flags.use-most-recent.summary
 
 Use the job ID of the most recent incomplete scratch org.
