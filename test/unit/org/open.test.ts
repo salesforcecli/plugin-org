@@ -186,7 +186,22 @@ describe('org:open', () => {
       } catch (e) {
         assert(e instanceof SfError, 'should be an SfError');
         expect(e.name).to.equal('Invalid_Scope');
-        expect(e.message).to.equal('Failed to generate a single-use frontdoor url');
+        expect(e.message).to.equal(sharedMessages.getMessage('SingleAccessFrontdoorError'));
+      }
+    });
+
+    it('handles invalid responde from api', async () => {
+      $$.SANDBOX.restore();
+      $$.SANDBOX.stub(Connection.prototype, 'requestGet').resolves({
+        invalid: 'some invalid response',
+      });
+      try {
+        await OrgOpenCommand.run(['--targetusername', testOrg.username]);
+        expect.fail('should have thrown Invalid_Scope');
+      } catch (e) {
+        assert(e instanceof SfError, 'should be an SfError');
+        expect(e.message).to.equal(sharedMessages.getMessage('SingleAccessFrontdoorError'));
+        expect(e.data).to.contain({ invalid: 'some invalid response' });
       }
     });
   });
