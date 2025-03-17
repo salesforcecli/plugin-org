@@ -6,8 +6,8 @@ For additional information, please review the authorization section of the https
 
 # BehaviorChangeWarning
 
-Starting August 2025, this command will generate one-time use URLs when you specify either the --json or --url-only (-r) flag. These URLs can be used only one time; subsequent use won't allow you to log in to the org.
+August 2025, this command will generate single-use URLs when you specify either the --json or --url-only (-r) flag. These URLs can be used only one time; subsequent use won't allow you to log in to the org.
 
 # SingleAccessFrontdoorError
 
-Failed to generate a single-use frontdoor url
+Failed to generate a single-use frontdoor URL.
