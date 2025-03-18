@@ -28,6 +28,8 @@ describe('org:open', () => {
   const testPath = '/lightning/whatever';
   const expectedDefaultUrl = `${testOrg.instanceUrl}/secur/frontdoor.jsp?sid=${testOrg.accessToken}`;
   const expectedUrl = `${expectedDefaultUrl}&retURL=${encodeURIComponent(testPath)}`;
+  const singleUseToken = (Math.random() + 1).toString(36).substring(2); // random string to simulate a single-use token
+  const expectedDefaultSingleUseUrl = `${testOrg.instanceUrl}/secur/frontdoor.jsp?otp=${singleUseToken}`;
 
   let sfCommandUxStubs: ReturnType<typeof stubSfCommandUx>;
 
@@ -45,6 +47,13 @@ describe('org:open', () => {
     stubSpinner($$.SANDBOX);
     await $$.stubAuths(testOrg);
     spies.set('open', stubMethod($$.SANDBOX, utils, 'openUrl').resolves(new EventEmitter()));
+    spies.set(
+      'requestGet',
+      stubMethod($$.SANDBOX, Connection.prototype, 'requestGet').resolves({
+        // eslint-disable-next-line camelcase
+        frontdoor_uri: expectedDefaultSingleUseUrl,
+      })
+    );
   });
 
   afterEach(() => {
@@ -157,6 +166,55 @@ describe('org:open', () => {
       expect(response.url).to.equal(expectedUrl);
       delete process.env.FORCE_OPEN_URL;
     });
+
+    it('generates a single-use frontdoor url when neither --url-only nor --json flag are passed in', async () => {
+      spies.set('resolver', stubMethod($$.SANDBOX, SfdcUrl.prototype, 'checkLightningDomain').resolves('1.1.1.1'));
+      const response = await OrgOpenCommand.run(['--targetusername', testOrg.username]);
+      expect(response.url).to.equal(expectedDefaultSingleUseUrl);
+      // verify we called to the correct endpoint to generate the single-use AT
+      expect(spies.get('requestGet').callCount).to.equal(1);
+      expect(spies.get('requestGet').args[0][0]).to.deep.equal('/services/oauth2/singleaccess');
+    });
+
+    it('honors SF_SINGLE_USE_ORG_OPEN_URL env var and generates a single-use frontdoor url even if --url-only or --json flag are passed in', async () => {
+      process.env.SF_SINGLE_USE_ORG_OPEN_URL = 'true';
+      spies.set('resolver', stubMethod($$.SANDBOX, SfdcUrl.prototype, 'checkLightningDomain').resolves('1.1.1.1'));
+      const response = await OrgOpenCommand.run(['--targetusername', testOrg.username, '--json', '--url-only']);
+      expect(response.url).to.equal(expectedDefaultSingleUseUrl);
+      // verify we called to the correct endpoint to generate the single-use AT
+      expect(spies.get('requestGet').callCount).to.equal(1);
+      expect(spies.get('requestGet').args[0][0]).to.deep.equal('/services/oauth2/singleaccess');
+      delete process.env.SF_SINGLE_USE_ORG_OPEN_URL;
+    });
+
+    it('handles api error', async () => {
+      $$.SANDBOX.restore();
+      const mockError = new Error('Invalid_Scope');
+      $$.SANDBOX.stub(Connection.prototype, 'requestGet').throws(mockError);
+      try {
+        await OrgOpenCommand.run(['--targetusername', testOrg.username]);
+        expect.fail('should have thrown Invalid_Scope');
+      } catch (e) {
+        assert(e instanceof SfError, 'should be an SfError');
+        expect(e.name).to.equal('Invalid_Scope');
+        expect(e.message).to.equal(sharedMessages.getMessage('SingleAccessFrontdoorError'));
+      }
+    });
+
+    it('handles invalid responde from api', async () => {
+      $$.SANDBOX.restore();
+      $$.SANDBOX.stub(Connection.prototype, 'requestGet').resolves({
+        invalid: 'some invalid response',
+      });
+      try {
+        await OrgOpenCommand.run(['--targetusername', testOrg.username]);
+        expect.fail('should have thrown Invalid_Scope');
+      } catch (e) {
+        assert(e instanceof SfError, 'should be an SfError');
+        expect(e.message).to.equal(sharedMessages.getMessage('SingleAccessFrontdoorError'));
+        expect(e.data).to.contain({ invalid: 'some invalid response' });
+      }
+    });
   });
 
   describe('domain resolution, with callout', () => {
@@ -263,6 +321,7 @@ describe('org:open', () => {
         )
       );
       expect(sfCommandUxStubs.warn.calledOnceWith(sharedMessages.getMessage('SecurityWarning')));
+      expect(sfCommandUxStubs.warn.calledOnceWith(sharedMessages.getMessage('BehaviorChangeWarning')));
 
       expect(spies.get('resolver').callCount).to.equal(1);
       expect(spies.get('open').callCount).to.equal(1);
@@ -275,6 +334,7 @@ describe('org:open', () => {
       await OrgOpenCommand.run(['--targetusername', testOrg.username, '--path', testPath, '-b', testBrowser]);
 
       expect(sfCommandUxStubs.warn(sharedMessages.getMessage('SecurityWarning')));
+      expect(sfCommandUxStubs.warn.calledOnceWith(sharedMessages.getMessage('BehaviorChangeWarning')));
       expect(
         sfCommandUxStubs.logSuccess.calledOnceWith(
           messages.getMessage('humanSuccessNoUrl', [testOrg.orgId, testOrg.username])

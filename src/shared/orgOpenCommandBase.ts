@@ -74,33 +74,46 @@ export abstract class OrgOpenCommandBase<T> extends SfCommand<T> {
       handleDomainError(err, url, env);
     }
 
-    // create a local html file that contains the POST stuff.
-    const tempFilePath = path.join(tmpdir(), `org-open-${new Date().valueOf()}.html`);
-    await fs.promises.writeFile(
-      tempFilePath,
-      getFileContents(
-        this.connection.accessToken as string,
-        this.connection.instanceUrl,
-        // the path flag is URI-encoded in its `parse` func.
-        // For the form redirect to work we need it decoded.
-        flags.path ? decodeURIComponent(flags.path) : retUrl
-      )
-    );
-    const filePathUrl = isWsl
-      ? 'file:///' + execSync(`wslpath -m ${tempFilePath}`).toString().trim()
-      : `file:///${tempFilePath}`;
-    const cp = await utils.openUrl(filePathUrl, {
-      ...(flags.browser ? { app: { name: apps[flags.browser] } } : {}),
-      ...(flags.private ? { newInstance: platform() === 'darwin', app: { name: apps.browserPrivate } } : {}),
-    });
-    cp.on('error', (err) => {
+    if (this.jsonEnabled()) {
+      // TODO: remove this code path once the org open behavior changes on August 2025 (see W-17661469)
+      // create a local html file that contains the POST stuff.
+      const tempFilePath = path.join(tmpdir(), `org-open-${new Date().valueOf()}.html`);
+      await fs.promises.writeFile(
+        tempFilePath,
+        getFileContents(
+          this.connection.accessToken as string,
+          this.connection.instanceUrl,
+          // the path flag is URI-encoded in its `parse` func.
+          // For the form redirect to work we need it decoded.
+          flags.path ? decodeURIComponent(flags.path) : retUrl
+        )
+      );
+      const filePathUrl = isWsl
+        ? 'file:///' + execSync(`wslpath -m ${tempFilePath}`).toString().trim()
+        : `file:///${tempFilePath}`;
+      const cp = await utils.openUrl(filePathUrl, {
+        ...(flags.browser ? { app: { name: apps[flags.browser] } } : {}),
+        ...(flags.private ? { newInstance: platform() === 'darwin', app: { name: apps.browserPrivate } } : {}),
+      });
+      cp.on('error', (err) => {
+        fileCleanup(tempFilePath);
+        throw SfError.wrap(err);
+      });
+      // so we don't delete the file while the browser is still using it
+      // open returns when the CP is spawned, but there's not way to know if the browser is still using the file
+      await sleep(platform() === 'win32' || isWsl ? 7000 : 5000);
       fileCleanup(tempFilePath);
-      throw SfError.wrap(err);
-    });
-    // so we don't delete the file while the browser is still using it
-    // open returns when the CP is spawned, but there's not way to know if the browser is still using the file
-    await sleep(platform() === 'win32' || isWsl ? 7000 : 5000);
-    fileCleanup(tempFilePath);
+    } else {
+      // it means we generated a one-time use frontdoor url
+      // so the workaround to create a local html file is not needed
+      const cp = await utils.openUrl(url, {
+        ...(flags.browser ? { app: { name: apps[flags.browser] } } : {}),
+        ...(flags.private ? { newInstance: platform() === 'darwin', app: { name: apps.browserPrivate } } : {}),
+      });
+      cp.on('error', (err) => {
+        throw SfError.wrap(err);
+      });
+    }
 
     return output;
   }
