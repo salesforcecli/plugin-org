@@ -1,3 +1,9 @@
+# [5.5.0](https://github.com/salesforcecli/plugin-org/compare/5.4.1...5.5.0) (2025-03-18)
+
+### Features
+
+- use UI Bridge API to generate a single-use frontdoor ([#1375](https://github.com/salesforcecli/plugin-org/issues/1375)) ([a9bf347](https://github.com/salesforcecli/plugin-org/commit/a9bf347706e3aecfc72385b1b5730471e63f5b13))
+
 ## [5.4.1](https://github.com/salesforcecli/plugin-org/compare/5.4.0...5.4.1) (2025-03-16)
 
 ### Bug Fixes
