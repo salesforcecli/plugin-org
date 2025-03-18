@@ -14,6 +14,7 @@ import {
 } from '@salesforce/sf-plugins-core';
 import { Connection, Messages } from '@salesforce/core';
 import { MetadataResolver } from '@salesforce/source-deploy-retrieve';
+import { env } from '@salesforce/kit';
 import { buildFrontdoorUrl } from '../../shared/orgOpenUtils.js';
 import { OrgOpenCommandBase } from '../../shared/orgOpenCommandBase.js';
 import { type OrgOpenOutput } from '../../shared/orgTypes.js';
@@ -72,8 +73,10 @@ export class OrgOpenCommand extends OrgOpenCommandBase<OrgOpenOutput> {
     this.org = flags['target-org'];
     this.connection = this.org.getConnection(flags['api-version']);
 
+    const singleUseEnvVar: boolean = env.getBoolean('SF_SINGLE_USE_ORG_OPEN_URL');
+    const singleUseMode = singleUseEnvVar ? singleUseEnvVar : !(flags['url-only'] || this.jsonEnabled());
     const [frontDoorUrl, retUrl] = await Promise.all([
-      buildFrontdoorUrl(this.org, this.connection, !(flags['url-only'] || this.jsonEnabled())),
+      buildFrontdoorUrl(this.org, this.connection, singleUseMode),
       flags['source-file'] ? generateFileUrl(flags['source-file'], this.connection) : flags.path,
     ]);
 

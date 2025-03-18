@@ -176,6 +176,17 @@ describe('org:open', () => {
       expect(spies.get('requestGet').args[0][0]).to.deep.equal('/services/oauth2/singleaccess');
     });
 
+    it('honors SF_SINGLE_USE_ORG_OPEN_URL env var and generates a single-use frontdoor url even if --url-only or --json flag are passed in', async () => {
+      process.env.SF_SINGLE_USE_ORG_OPEN_URL = 'true';
+      spies.set('resolver', stubMethod($$.SANDBOX, SfdcUrl.prototype, 'checkLightningDomain').resolves('1.1.1.1'));
+      const response = await OrgOpenCommand.run(['--targetusername', testOrg.username, '--json', '--url-only']);
+      expect(response.url).to.equal(expectedDefaultSingleUseUrl);
+      // verify we called to the correct endpoint to generate the single-use AT
+      expect(spies.get('requestGet').callCount).to.equal(1);
+      expect(spies.get('requestGet').args[0][0]).to.deep.equal('/services/oauth2/singleaccess');
+      delete process.env.SF_SINGLE_USE_ORG_OPEN_URL;
+    });
+
     it('handles api error', async () => {
       $$.SANDBOX.restore();
       const mockError = new Error('Invalid_Scope');
