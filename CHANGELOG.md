@@ -1,3 +1,9 @@
+## [5.5.1](https://github.com/salesforcecli/plugin-org/compare/5.5.0...5.5.1) (2025-03-19)
+
+### Bug Fixes
+
+- update warning msg ([#1381](https://github.com/salesforcecli/plugin-org/issues/1381)) ([0766ad8](https://github.com/salesforcecli/plugin-org/commit/0766ad859e30ed0b36cc4bf1b8218dbc1e4893a3))
+
 # [5.5.0](https://github.com/salesforcecli/plugin-org/compare/5.4.1...5.5.0) (2025-03-18)
 
 ### Features
