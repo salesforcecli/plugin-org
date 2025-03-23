@@ -1552,7 +1552,7 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@oclif/core@^4", "@oclif/core@^4.0.27", "@oclif/core@^4.2.10", "@oclif/core@^4.2.4", "@oclif/core@^4.2.8":
+"@oclif/core@^4", "@oclif/core@^4.0.27", "@oclif/core@^4.2.10", "@oclif/core@^4.2.8":
   version "4.2.10"
   resolved "https://registry.yarnpkg.com/@oclif/core/-/core-4.2.10.tgz#31dfb7481c79887c3e672e10c981fcc01fcbaeb3"
   integrity sha512-fAqcXgqkUm4v5FYy7qWP4w1HaOlVSVJveah+yVTo5Nm5kTiXhmD5mQQ7+knGeBaStyrtQy6WardoC2xSic9rlQ==
@@ -1800,16 +1800,16 @@
     string-width "^7.2.0"
     terminal-link "^3.0.0"
 
-"@salesforce/sf-plugins-core@^12.2.0":
-  version "12.2.0"
-  resolved "https://registry.yarnpkg.com/@salesforce/sf-plugins-core/-/sf-plugins-core-12.2.0.tgz#c53f5342841cc490752b78f2707e84d8946dd740"
-  integrity sha512-aGNk74rMt8I+HTP7hRsX6kxiGTuun9ONrWkX7JvWDdtIoO9TsEbNVZENH8GFxHFalWPFCj31IMUQD/bGbxMFbg==
+"@salesforce/sf-plugins-core@^12.2.1":
+  version "12.2.1"
+  resolved "https://registry.yarnpkg.com/@salesforce/sf-plugins-core/-/sf-plugins-core-12.2.1.tgz#1048a5d1245f07f0e864f0f76e8818fd21a84fe6"
+  integrity sha512-b3eRSzGO0weBLL1clHaJNgNP1aKkD1Qy2DQEc0ieteEm+fh1FfPA0QpJ9rh/hdmkJRip2x2R2zz9tflJ0wflbg==
   dependencies:
     "@inquirer/confirm" "^3.1.22"
     "@inquirer/password" "^2.2.0"
-    "@oclif/core" "^4.2.4"
+    "@oclif/core" "^4.2.10"
     "@oclif/table" "^0.4.6"
-    "@salesforce/core" "^8.5.1"
+    "@salesforce/core" "^8.8.5"
     "@salesforce/kit" "^3.2.3"
     "@salesforce/ts-types" "^2.0.12"
     ansis "^3.3.2"
