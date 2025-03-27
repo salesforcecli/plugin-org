@@ -7,8 +7,9 @@
 import { EventEmitter } from 'node:events';
 import fs from 'node:fs';
 import { join } from 'node:path';
+import * as process from 'node:process';
 import { assert, expect } from 'chai';
-import { SfdcUrl, Messages, Connection, SfError } from '@salesforce/core';
+import { Connection, Messages, SfdcUrl, SfError } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { MockTestOrgData, shouldThrow, TestContext } from '@salesforce/core/testSetup';
 import { stubSfCommandUx, stubSpinner, stubUx } from '@salesforce/sf-plugins-core';
