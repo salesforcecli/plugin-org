@@ -1,3 +1,9 @@
+## [5.5.6](https://github.com/salesforcecli/plugin-org/compare/5.5.5...5.5.6) (2025-03-27)
+
+### Bug Fixes
+
+- correct retURL to startURL for OTP URLs W-18077630 ([#1387](https://github.com/salesforcecli/plugin-org/issues/1387)) ([57376f4](https://github.com/salesforcecli/plugin-org/commit/57376f40c28654fd0290a31117b2f61ab29bdbbf))
+
 ## [5.5.5](https://github.com/salesforcecli/plugin-org/compare/5.5.4...5.5.5) (2025-03-24)
 
 ### Bug Fixes
