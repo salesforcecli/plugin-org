@@ -57,7 +57,7 @@ export class OrgOpenAgent extends OrgOpenCommandBase<OrgOpenOutput> {
       buildRetUrl(this.connection, flags.name),
     ]);
 
-    return this.openOrgUI(flags, frontDoorUrl, retUrl);
+    return this.openOrgUI(flags, frontDoorUrl, encodeURIComponent(retUrl));
   }
 }
 

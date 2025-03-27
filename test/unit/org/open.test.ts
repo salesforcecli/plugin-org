@@ -121,24 +121,6 @@ describe('org:open', () => {
         expect(response.url).to.include('visualEditor/appBuilder.app?pageId=123');
       });
 
-      it('properly encodes OTP startURL', async () => {
-        process.env.SF_SINGLE_USE_ORG_OPEN_URL = 'true';
-
-        $$.SANDBOX.stub(Connection.prototype, 'singleRecordQuery').resolves({ Id: '123' });
-
-        const response = await OrgOpenCommand.run([
-          '--json',
-          '--targetusername',
-          testOrg.username,
-          '--urlonly',
-          '--source-file',
-          flexipagePath,
-        ]);
-        expect(response.url).to.include('%2FvisualEditor%2FappBuilder.app%3FpageId%3D123');
-        expect(response.url).to.include('&startURL=');
-        delete process.env.SF_SINGLE_USE_ORG_OPEN_URL;
-      });
-
       it('--source-file to an ApexPage', async () => {
         const response = await OrgOpenCommand.run([
           '--json',
