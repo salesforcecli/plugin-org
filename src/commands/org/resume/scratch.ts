@@ -115,6 +115,11 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
 
     try {
       const { username, scratchOrgInfo, authFields, warnings } = await scratchOrgResume(jobId);
+
+      if (flags.wait.seconds > 0) {
+        await new Promise((resolve) => setTimeout(resolve, flags.wait.seconds));
+      }
+
       this.log();
       this.logSuccess(messages.getMessage('success'));
       return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
