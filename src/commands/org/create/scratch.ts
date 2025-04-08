@@ -80,6 +80,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
         'partner-group',
         'partner-professional',
       ],
+      exclusive: ['snapshot', 'source-org'],
       // eslint-disable-next-line @typescript-eslint/require-await
       parse: async (value: string) => {
         // the API expects partner editions in `partner <EDITION>` format.
@@ -89,6 +90,13 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
         }
         return value;
       },
+      helpGroup: definitionFileHelpGroupName,
+    }),
+    snapshot: Flags.string({
+      char: 's',
+      summary: messages.getMessage('flags.snapshot.summary'),
+      description: messages.getMessage('flags.snapshot.description'),
+      exclusive: ['edition', 'source-org'],
       helpGroup: definitionFileHelpGroupName,
     }),
     'no-namespace': Flags.boolean({
@@ -151,6 +159,8 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
     }),
     'source-org': Flags.salesforceId({
       summary: messages.getMessage('flags.source-org.summary'),
+      description: messages.getMessage('flags.source-org.description'),
+      exclusive: ['edition', 'snapshot'],
       startsWith: '00D',
       length: 15,
       helpGroup: definitionFileHelpGroupName,

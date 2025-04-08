@@ -41,6 +41,13 @@ describe('buildScratchOrgRequest function', () => {
     expect(result.orgConfig).to.deep.equal({ edition: 'developer' });
   });
 
+  it('snapshot as only flag', async () => {
+    const flags = await paramsToFlags(['--snapshot', 'my-snapshot-name']);
+    const result = await buildScratchOrgRequest(flags);
+    expect(result.durationDays).to.equal(7);
+    expect(result.orgConfig).to.deep.equal({ snapshot: 'my-snapshot-name' });
+  });
+
   describe('source-org', () => {
     it('valid source-org as only flag', async () => {
       const flags = await paramsToFlags(['--source-org', '00D123456789012']);

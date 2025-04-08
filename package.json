@@ -1,16 +1,16 @@
 {
   "name": "@salesforce/plugin-org",
   "description": "Commands to interact with Salesforce orgs",
-  "version": "5.2.42",
+  "version": "5.5.8",
   "author": "Salesforce",
   "bugs": "https://github.com/forcedotcom/cli/issues",
   "dependencies": {
-    "@oclif/core": "^4.2.6",
-    "@oclif/multi-stage-output": "^0.8.9",
+    "@oclif/core": "^4.2.10",
+    "@oclif/multi-stage-output": "^0.8.12",
     "@salesforce/core": "^8.9.0",
     "@salesforce/kit": "^3.2.3",
-    "@salesforce/sf-plugins-core": "^12.2.0",
-    "@salesforce/source-deploy-retrieve": "^12.16.4",
+    "@salesforce/sf-plugins-core": "^12.2.1",
+    "@salesforce/source-deploy-retrieve": "^12.18.2",
     "@salesforce/ts-types": "^2.0.12",
     "ansis": "^3.16.0",
     "change-case": "^5.4.4",
@@ -19,16 +19,16 @@
     "terminal-link": "^3.0.0"
   },
   "devDependencies": {
-    "@oclif/plugin-command-snapshot": "^5.2.36",
+    "@oclif/plugin-command-snapshot": "^5.2.38",
     "@salesforce/cli-plugins-testkit": "^5.3.39",
     "@salesforce/dev-scripts": "^10.2.12",
-    "@salesforce/plugin-command-reference": "^3.1.44",
+    "@salesforce/plugin-command-reference": "^3.1.49",
     "@salesforce/ts-sinon": "^1.4.30",
-    "eslint-plugin-sf-plugin": "^1.20.16",
+    "eslint-plugin-sf-plugin": "^1.20.18",
     "moment": "^2.30.1",
-    "oclif": "^4.17.33",
+    "oclif": "^4.17.42",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.3"
   },
   "engines": {
     "node": ">=18.0.0"

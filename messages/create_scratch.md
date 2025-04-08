@@ -4,19 +4,24 @@ Create a scratch org.
 
 # description
 
-There are two ways to create a scratch org: either specify a definition file that contains the options or use the --edition flag to specify the one required option.
+There are four ways to create a scratch org:
 
-For either method, you can also use these flags; if you use them with --definition-file, they override their equivalent option in the scratch org definition file:
+    * Specify a definition file that contains the scratch org options.
+    * Use the --edition flag to specify the one required option; this method doesn't require a defintion file.
+    * Use the --snapshot flag to create a scratch org from a snapshot. Snapshots are a point-in-time copy of a scratch org; you create a snapshot with the "sf org create snapshot" command.
+    * Use the --source-org flag to create a scratch org from an org shape. Org shapes mimic the baseline setup of a source org without the extraneous data and metadata; you create an org shape with the "sf org create shape" command.
+
+The --edition, --snapshot, and --source-org flags are mutually exclusive, which means if you specify one, you can't also specify the others.
+
+For any of the methods, you can also use these flags; if you use them with --definition-file, they override their equivalent option in the scratch org definition file:
 
     * --description
     * --name  (equivalent to the "orgName" option)
     * --username
     * --release
-    * --edition
     * --admin-email (equivalent to the "adminEmail" option)
-    * --source-org (equivalent to the "sourceOrg" option)
 
-If you want to set options other than the preceding ones, such as org features or settings, you must use a definition file.
+If you want to set options such as org features or settings, you must use a definition file.
 
 You must specify a Dev Hub to create a scratch org, either with the --target-dev-hub flag or by setting your default Dev Hub with the target-dev-hub configuration variable.
 
@@ -33,6 +38,10 @@ You must specify a Dev Hub to create a scratch org, either with the --target-dev
 - Create a preview Enterprise edition scratch org; for use only during Salesforce release transition periods:
 
   <%= config.bin %> <%= command.id %> --edition enterprise --alias my-scratch-org --target-dev-hub MyHub --release preview
+
+- Create a scratch org from a snapshot called "NightlyBranch"; be sure you specify the same Dev Hub org associated with the snapshot. We recommend you increase the --wait time because creating a scratch org from a snapshot can take a while:
+
+  <%= config.bin %> <%= command.id %> --alias my-scratch-org --target-dev-hub MyHub --snapshot NightlyBranch --wait 10
 
 # flags.target-dev-hub.summary
 
@@ -61,6 +70,14 @@ Don't include second-generation managed package (2GP) ancestors in the scratch o
 # flags.edition.summary
 
 Salesforce edition of the scratch org. Overrides the value of the "edition" option in the definition file, if set.
+
+# flags.snapshot.summary
+
+Name of the snapshot to use when creating this scratch org. Overrides the value of the "snapshot" option in the defintion file, if set.
+
+# flags.snapshot.description
+
+To view the names of the available snapshots for a given Dev Hub org, run the "sf org list snapshot" command.
 
 # flags.async.summary
 
@@ -92,7 +109,11 @@ Email address that will be applied to the org's admin user. Overrides the value 
 
 # flags.source-org.summary
 
-15-character ID of the org whose shape the new scratch org will be based on. Overrides the value of the "sourceOrg" option in the definition file, if set.
+15-character ID of the org shape that the new scratch org is based on. Overrides the value of the "sourceOrg" option in the definition file, if set.
+
+# flags.source-org.description
+
+To view the names of the available org shapes for a given Dev Hub org, run the "sf org list shape" command.
 
 # flags.wait.summary
 
