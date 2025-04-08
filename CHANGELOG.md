@@ -1,3 +1,9 @@
+# [5.6.0](https://github.com/salesforcecli/plugin-org/compare/5.5.8...5.6.0) (2025-04-08)
+
+### Features
+
+- add `--wait` flag to resume scratch org ([#1376](https://github.com/salesforcecli/plugin-org/issues/1376)) ([5dcce40](https://github.com/salesforcecli/plugin-org/commit/5dcce40d236b7c62c396f1dfaccab37dad41de60))
+
 ## [5.5.8](https://github.com/salesforcecli/plugin-org/compare/5.5.7...5.5.8) (2025-04-06)
 
 ### Bug Fixes
