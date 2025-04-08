@@ -46,6 +46,15 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
       summary: messages.getMessage('flags.use-most-recent.summary'),
       exactlyOne: ['use-most-recent', 'job-id'],
     }),
+    wait: Flags.duration({
+      char: 'w',
+      summary: messages.getMessage('flags.wait.summary'),
+      description: messages.getMessage('flags.wait.description'),
+      min: 0,
+      unit: 'minutes',
+      helpValue: '<minutes>',
+      defaultValue: 0,
+    }),
   };
 
   public async run(): Promise<ScratchCreateResponse> {
@@ -105,7 +114,8 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
     });
 
     try {
-      const { username, scratchOrgInfo, authFields, warnings } = await scratchOrgResume(jobId);
+      const { username, scratchOrgInfo, authFields, warnings } = await scratchOrgResume(jobId, flags.wait);
+
       this.log();
       this.logSuccess(messages.getMessage('success'));
       return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
