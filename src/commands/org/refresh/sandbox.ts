@@ -190,6 +190,7 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxCommandRes
 
     let apexId: string | undefined;
     let groupId: string | undefined;
+    let srcId: string | undefined;
 
     if (defFileContent.ApexClassName) {
       apexId = await requestFunctions.getApexClassIdByName(
@@ -206,6 +207,15 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxCommandRes
       );
       delete defFileContent.ActivationUserGroupName;
     }
+
+    if (defFileContent.SourceSandboxName) {
+      srcId = await requestFunctions.getSrcIdByName(
+        this.flags['target-org'].getConnection(),
+        defFileContent.SourceSandboxName
+      );
+      delete defFileContent.SourceSandboxName;
+    }
+
     // Warn if sandbox name is in `--name` and `--definition-file` flags and they differ.
     if (defFileContent?.SandboxName && sbxName && sbxName !== defFileContent?.SandboxName) {
       this.warn(messages.createWarning('warning.ConflictingSandboxNames', [sbxName, defFileContent?.SandboxName]));
@@ -234,6 +244,7 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxCommandRes
       AutoActivate: !this.flags['no-auto-activate'],
       ...(apexId ? { ApexClassId: apexId } : {}),
       ...(groupId ? { ActivationUserGroupId: groupId } : {}),
+      ...(srcId ? { SourceId: srcId } : {}),
     });
 
     return sandboxInfo;
