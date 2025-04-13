@@ -1888,10 +1888,10 @@
     cli-progress "^3.12.0"
     terminal-link "^3.0.0"
 
-"@salesforce/source-deploy-retrieve@^12.18.2":
-  version "12.18.2"
-  resolved "https://registry.yarnpkg.com/@salesforce/source-deploy-retrieve/-/source-deploy-retrieve-12.18.2.tgz#50503248b156d2d24f9db784188853c4736823dd"
-  integrity sha512-TQG1Sw4Xyl3q9C5joBCADlExqsrXMNeUcbqCtjtAr0RYwINQ0dTUBkc37na7w/q5vxXzxvXZESoj24VQttPWag==
+"@salesforce/source-deploy-retrieve@^12.19.0":
+  version "12.19.0"
+  resolved "https://registry.yarnpkg.com/@salesforce/source-deploy-retrieve/-/source-deploy-retrieve-12.19.0.tgz#bd7edd9d8ad7e1784f8e6685ebc939603e6fe8a1"
+  integrity sha512-gaLC+0J7Lr52jBN5ZiGwoVTDqh0xCwfnYo1l9E6uTeFmgc0wRu2vL9XBvO5cJGjWLu/OKCSyJHyv5zi+NjmfyA==
   dependencies:
     "@salesforce/core" "^8.8.7"
     "@salesforce/kit" "^3.2.3"
@@ -1907,7 +1907,7 @@
     mime "2.6.0"
     minimatch "^9.0.5"
     proxy-agent "^6.4.0"
-    yaml "^2.7.0"
+    yaml "^2.7.1"
 
 "@salesforce/ts-sinon@^1.4.30":
   version "1.4.30"
@@ -8426,10 +8426,10 @@ yallist@^4.0.0:
   resolved "https://registry.npmjs.org/yallist/-/yallist-4.0.0.tgz"
   integrity sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==
 
-yaml@^2.4.5, yaml@^2.7.0:
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.7.0.tgz#aef9bb617a64c937a9a748803786ad8d3ffe1e98"
-  integrity sha512-+hSoy/QHluxmC9kCIJyL/uyFmLmc+e5CFR5Wa+bpIhIj85LVb9ZH2nVnqrHoSvKogwODv0ClqZkmiSSaIH5LTA==
+yaml@^2.4.5, yaml@^2.7.1:
+  version "2.7.1"
+  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.7.1.tgz#44a247d1b88523855679ac7fa7cda6ed7e135cf6"
+  integrity sha512-10ULxpnOCQXxJvBgxsn9ptjq6uviG/htZKk9veJGhlqn3w/DxQ631zFF+nlQXLwmImeS5amR2dl2U8sg6U9jsQ==
 
 yargs-parser@^18.1.2:
   version "18.1.3"
