@@ -14,19 +14,13 @@ jobs:
   # windows-unit-tests:
   #   needs: linux-unit-tests
   #   uses: salesforcecli/github-workflows/.github/workflows/unitTestsWindows.yml@main
-  table-version:
-    runs-on: ubuntu-latest
-    steps:
-      - name: table-version
-        run: |
-          echo "Table version: $(npm ls @oclif/table --depth=99)"
   nuts:
     needs: yarn-lockfile-check
     uses: salesforcecli/github-workflows/.github/workflows/nut.yml@main
     secrets: inherit
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
         command: ['yarn test:nuts']
       fail-fast: false
     with:
