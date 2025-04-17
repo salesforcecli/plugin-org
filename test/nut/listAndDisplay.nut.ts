@@ -142,6 +142,9 @@ describe('Org Command NUT', () => {
     });
     it('should list orgs in a human readable form', () => {
       const stdout = execCmd('org:list', { ensureExitCode: 0 }).shellOutput.stdout;
+      console.log("IN TEST");
+      console.log('process.stdout.columns', process.stdout.columns);
+      console.log(stdout);
       let lines = stdout.split(os.EOL);
       if (lines.length === 1) {
         lines = stdout.split('\n');

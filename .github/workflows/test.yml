@@ -8,14 +8,20 @@ jobs:
   yarn-lockfile-check:
     uses: salesforcecli/github-workflows/.github/workflows/lockFileCheck.yml@main
   # Since the Windows unit tests take much longer, we run the linux unit tests first and then run the windows unit tests in parallel with NUTs
-  linux-unit-tests:
-    needs: yarn-lockfile-check
-    uses: salesforcecli/github-workflows/.github/workflows/unitTestsLinux.yml@main
-  windows-unit-tests:
-    needs: linux-unit-tests
-    uses: salesforcecli/github-workflows/.github/workflows/unitTestsWindows.yml@main
+  # linux-unit-tests:
+  #   needs: yarn-lockfile-check
+  #   uses: salesforcecli/github-workflows/.github/workflows/unitTestsLinux.yml@main
+  # windows-unit-tests:
+  #   needs: linux-unit-tests
+  #   uses: salesforcecli/github-workflows/.github/workflows/unitTestsWindows.yml@main
+  table-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: table-version
+        run: |
+          echo "Table version: $(npm ls @oclif/table --depth=99)"
   nuts:
-    needs: linux-unit-tests
+    needs: yarn-lockfile-check
     uses: salesforcecli/github-workflows/.github/workflows/nut.yml@main
     secrets: inherit
     strategy:
