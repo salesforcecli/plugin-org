@@ -6,6 +6,7 @@
   "bugs": "https://github.com/forcedotcom/cli/issues",
   "dependencies": {
     "@oclif/core": "^4.2.10",
+    "@oclif/table": "0.4.7",
     "@oclif/multi-stage-output": "^0.8.12",
     "@salesforce/core": "^8.9.0",
     "@salesforce/kit": "^3.2.3",
@@ -17,6 +18,9 @@
     "is-wsl": "^3.1.0",
     "open": "^10.1.0",
     "terminal-link": "^3.0.0"
+  },
+  "resolutions": {
+    "@oclif/table": "0.4.7"
   },
   "devDependencies": {
     "@oclif/plugin-command-snapshot": "^5.2.38",
