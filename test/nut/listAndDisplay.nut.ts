@@ -32,7 +32,7 @@ const verifyHumanResults = (
   expect(defaultUserLine).to.include(defaultOrgEmoji);
   const aliasUserLine = lines.find((line) => line.includes(aliasedUsername));
   assert(aliasUserLine);
-  expect(aliasUserLine).to.include('anAlias');
+  expect(aliasUserLine).to.include('anAliasThatIsReallyLongToSeeIfICanGetThisTableToWrap');
   // verbose mode should display scratch org Id and dev hub org Id
   if (verbose) {
     expect(defaultUserLine.match(/00D/g)).to.have.lengthOf(2, defaultUserLine);
@@ -61,7 +61,7 @@ describe('Org Command NUT', () => {
         },
         {
           config: join('config', 'project-scratch-def.json'),
-          alias: 'anAlias',
+          alias: 'anAliasThatIsReallyLongToSeeIfICanGetThisTableToWrap',
         },
       ],
     });
@@ -70,7 +70,7 @@ describe('Org Command NUT', () => {
     hubOrgUsername = session.hubOrg?.username;
 
     const defaultOrg = session.orgs.get('default');
-    const aliasOrg = session.orgs.get('anAlias');
+    const aliasOrg = session.orgs.get('anAliasThatIsReallyLongToSeeIfICanGetThisTableToWrap');
 
     assert(defaultOrg?.username);
     assert(defaultOrg?.orgId);
@@ -104,7 +104,7 @@ describe('Org Command NUT', () => {
         namespace: null,
       });
       expect(scratchOrgs.find((org) => org.username === aliasedUsername)).to.include({
-        alias: 'anAlias',
+        alias: 'anAliasThatIsReallyLongToSeeIfICanGetThisTableToWrap',
         namespace: null,
       });
       expect(listResult.nonScratchOrgs[0]).to.include(
