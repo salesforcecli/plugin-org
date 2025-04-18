@@ -106,3 +106,33 @@ The poll interval (%d seconds) can't be larger than the wait period (%d in secon
 # sandboxInfoRefreshFailed
 
 The sandbox org refresh failed with a result of %s.
+
+# flags.source-sandbox-name.summary
+
+Name of the sandbox org to clone.
+
+# flags.source-sandbox-name.description
+
+The value of --source-sandbox-name must be an existing sandbox. The existing sandbox, and the new sandbox specified with the --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
+
+You can specify either --source-sandbox-name or --source-id when cloning an existing sandbox, but not both.
+
+# flags.source-id.summary
+
+ID of the sandbox org to clone.
+
+# flags.source-id.description
+
+The value of --source-id must be an existing sandbox. The existing sandbox, and the new sandbox specified with the --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
+
+# error.bothIdFlagAndDefFilePropertyAreProvided
+
+You can't specify both the --source-id and --definition-file flags, and also include the "SourceId" option in the definition file. Pick one method of cloning a sandbox and try again.
+
+# error.bothNameFlagAndDefFilePropertyAreProvided
+
+You can't specify both the --source-sandbox-name and --definition-file flags, and also include the "SourceSandboxName" option in the definition file. Pick one method of cloning a sandbox and try again.
+
+# error.bothIdFlagAndNameDefFileAreNotAllowed
+
+You can't specify both the --source-sandbox-name and --definition-file flags, and also include the "SourceId" option in the definition file. Same with the --source-id flag and "SourceSandboxName" option. Pick one method of cloning a sandbox and try again.
