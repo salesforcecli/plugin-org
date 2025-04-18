@@ -79,7 +79,6 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxCommandRes
       description: messages.getMessage('flags.source-id.description'),
       exclusive: ['source-sandbox-name'],
       length: 'both',
-      char: undefined,
     }),
     async: Flags.boolean({
       summary: messages.getMessage('flags.async.summary'),
