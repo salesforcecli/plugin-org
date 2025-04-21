@@ -4,7 +4,7 @@ Refresh a sandbox org using the sandbox name.
 
 # description
 
-Refreshing a sandbox copies the metadata, and optionally data, from your source org to the refreshed sandbox org. You can optionally specify a definition file if you want to change the configuration of the refreshed sandbox, such as its license type or template ID.
+Refreshing a sandbox copies the metadata, and optionally data, from your source org to the refreshed sandbox org. You can optionally specify a definition file if you want to change the configuration of the refreshed sandbox, such as its license type or template ID. You can also use the --source-id or --source-sandbox-name flags to change the refreshed sandbox org's original source org to a new org; in this case, the refreshed sandbox org's metadata is updated with the new source org's metadata.
 
 You're not allowed to change the sandbox name when you refresh it with this command. If you want to change the sandbox name, first delete it with the "org delete sandbox" command. And then recreate it with the "org create sandbox" command and give it a new name.
 
@@ -21,6 +21,10 @@ You're not allowed to change the sandbox name when you refresh it with this comm
 - Refresh the sandbox using the name defined in the definition file. The production org that contains the sandbox license has the alias "prodOrg".
 
   <%= config.bin %> <%= command.id %> --definition-file devSbx3-config.json --target-org prodOrg
+
+- Refresh the sandbox named "devSbx2" by changing its original source org to be a sandbox called "devSbx3":
+
+  <%= config.bin %> <%= command.id %> --name devSbx2 --source-sandbox-name devSbx3 --target-org prodOrg
 
 # flags.no-auto-activate.summary
 
@@ -109,30 +113,32 @@ The sandbox org refresh failed with a result of %s.
 
 # flags.source-sandbox-name.summary
 
-Name of the sandbox org to clone.
+Name of the sandbox org that becomes the new source org for the refreshed sandbox.
 
 # flags.source-sandbox-name.description
 
-The value of --source-sandbox-name must be an existing sandbox. The existing sandbox, and the new sandbox specified with the --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
+The value of --source-sandbox-name must be an existing sandbox. The new source sandbox, and the refreshed sandbox specified with the --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
 
-You can specify either --source-sandbox-name or --source-id when cloning an existing sandbox, but not both.
+You can specify either --source-sandbox-name or --source-id when refreshing an existing sandbox, but not both.
 
 # flags.source-id.summary
 
-ID of the sandbox org to clone.
+ID of the sandbox org that becomes the new source org for the refreshed sandbox.
 
 # flags.source-id.description
 
-The value of --source-id must be an existing sandbox. The existing sandbox, and the new sandbox specified with the --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
+The value of --source-id must be an existing sandbox. The new source sandbox, and the refreshed sandbox specified with the --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
+
+You can specify either --source-id or --source-sandbox-name when refreshing an existing sandbox, but not both.
 
 # error.bothIdFlagAndDefFilePropertyAreProvided
 
-You can't specify both the --source-id and --definition-file flags, and also include the "SourceId" option in the definition file. Pick one method of cloning a sandbox and try again.
+You can't specify both the --source-id and --definition-file flags, and also include the "SourceId" option in the definition file. Pick one method of refreshing a sandbox and try again.
 
 # error.bothNameFlagAndDefFilePropertyAreProvided
 
-You can't specify both the --source-sandbox-name and --definition-file flags, and also include the "SourceSandboxName" option in the definition file. Pick one method of cloning a sandbox and try again.
+You can't specify both the --source-sandbox-name and --definition-file flags, and also include the "SourceSandboxName" option in the definition file. Pick one method of refreshing a sandbox and try again.
 
 # error.bothIdFlagAndNameDefFileAreNotAllowed
 
-You can't specify both the --source-sandbox-name and --definition-file flags, and also include the "SourceId" option in the definition file. Same with the --source-id flag and "SourceSandboxName" option. Pick one method of cloning a sandbox and try again.
+You can't specify both the --source-sandbox-name and --definition-file flags, and also include the "SourceId" option in the definition file. Same with the --source-id flag and "SourceSandboxName" option. Pick one method of refreshing a sandbox and try again.
