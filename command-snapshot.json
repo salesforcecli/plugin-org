@@ -159,6 +159,8 @@
       "no-auto-activate",
       "no-prompt",
       "poll-interval",
+      "source-id",
+      "source-sandbox-name",
       "target-org",
       "wait"
     ],

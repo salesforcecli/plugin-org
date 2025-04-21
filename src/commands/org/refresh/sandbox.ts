@@ -9,7 +9,7 @@ import { Duration, omit } from '@salesforce/kit';
 import { Flags } from '@salesforce/sf-plugins-core';
 import { Lifecycle, Messages, SandboxEvents, SandboxInfo, SfError } from '@salesforce/core';
 import { Interfaces } from '@oclif/core';
-import requestFunctions from '../../../shared/sandboxRequest.js';
+import requestFunctions, { readSandboxDefFile } from '../../../shared/sandboxRequest.js';
 import { SandboxCommandBase, SandboxCommandResponse } from '../../../shared/sandboxCommandBase.js';
 
 type SandboxInfoRecord = SandboxInfo & {
@@ -68,6 +68,17 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxCommandRes
       default: Duration.seconds(30),
       helpValue: '<seconds>',
       exclusive: ['async'],
+    }),
+    'source-sandbox-name': Flags.string({
+      summary: messages.getMessage('flags.source-sandbox-name.summary'),
+      description: messages.getMessage('flags.source-sandbox-name.description'),
+      exclusive: ['source-id'],
+    }),
+    'source-id': Flags.salesforceId({
+      summary: messages.getMessage('flags.source-id.summary'),
+      description: messages.getMessage('flags.source-id.description'),
+      exclusive: ['source-sandbox-name'],
+      length: 'both',
     }),
     async: Flags.boolean({
       summary: messages.getMessage('flags.async.summary'),
@@ -190,6 +201,7 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxCommandRes
 
     let apexId: string | undefined;
     let groupId: string | undefined;
+    let srcId: string | undefined;
 
     if (defFileContent.ApexClassName) {
       apexId = await requestFunctions.getApexClassIdByName(
@@ -206,6 +218,15 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxCommandRes
       );
       delete defFileContent.ActivationUserGroupName;
     }
+
+    if (defFileContent.SourceSandboxName) {
+      srcId = await requestFunctions.getSrcIdByName(
+        this.flags['target-org'].getConnection(),
+        defFileContent.SourceSandboxName
+      );
+      delete defFileContent.SourceSandboxName;
+    }
+
     // Warn if sandbox name is in `--name` and `--definition-file` flags and they differ.
     if (defFileContent?.SandboxName && sbxName && sbxName !== defFileContent?.SandboxName) {
       this.warn(messages.createWarning('warning.ConflictingSandboxNames', [sbxName, defFileContent?.SandboxName]));
@@ -232,8 +253,19 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxCommandRes
     sandboxInfo = Object.assign(sandboxInfo, defFileContent, {
       SandboxName: sbxName,
       AutoActivate: !this.flags['no-auto-activate'],
+      ...(this.flags['source-sandbox-name']
+        ? {
+            SourceId: await requestFunctions.getSrcIdByName(
+              this.flags['target-org'].getConnection(),
+              this.flags['source-sandbox-name']
+            ),
+          }
+        : this.flags['source-id']
+        ? { SourceId: this.flags['source-id'] }
+        : {}),
       ...(apexId ? { ApexClassId: apexId } : {}),
       ...(groupId ? { ActivationUserGroupId: groupId } : {}),
+      ...(srcId ? { SourceId: srcId } : {}),
     });
 
     return sandboxInfo;
@@ -249,6 +281,22 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxCommandRes
         this.flags['poll-interval'].seconds,
         this.flags.wait.seconds,
       ]);
+    }
+    if (!this.flags['definition-file']) {
+      return undefined;
+    }
+    const parsedDef = readSandboxDefFile(this.flags['definition-file']);
+    if (this.flags['source-id'] && parsedDef.SourceId) {
+      throw messages.createError('error.bothIdFlagAndDefFilePropertyAreProvided');
+    }
+    if (this.flags['source-sandbox-name'] && parsedDef.SourceSandboxName) {
+      throw messages.createError('error.bothNameFlagAndDefFilePropertyAreProvided');
+    }
+    if (this.flags['source-id'] && parsedDef.SourceSandboxName) {
+      throw messages.createError('error.bothIdFlagAndNameDefFileAreNotAllowed');
+    }
+    if (this.flags['source-sandbox-name'] && parsedDef.SourceId) {
+      throw messages.createError('error.bothIdFlagAndNameDefFileAreNotAllowed');
     }
   }
 
