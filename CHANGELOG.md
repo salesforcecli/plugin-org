@@ -1,3 +1,15 @@
+# [5.7.0](https://github.com/salesforcecli/plugin-org/compare/5.6.3...5.7.0) (2025-04-21)
+
+### Bug Fixes
+
+- edit messages ([5801bc3](https://github.com/salesforcecli/plugin-org/commit/5801bc3f4e367dca382fc5962a09cabd529c8dd0))
+- refresh sandbox with sourceSandboxName ([77d04df](https://github.com/salesforcecli/plugin-org/commit/77d04df6133e566d49c856df9edc731ee1aa0c0c))
+- remove the char ([75d6df6](https://github.com/salesforcecli/plugin-org/commit/75d6df63d66eb14d2030d6d8705b7a2f5e83d4d7))
+
+### Features
+
+- add 'source-id' and 'source-sandbox-name' flags ([b926161](https://github.com/salesforcecli/plugin-org/commit/b926161b070981866f58a03188d9388765c7830f))
+
 ## [5.6.3](https://github.com/salesforcecli/plugin-org/compare/5.6.2...5.6.3) (2025-04-20)
 
 ### Bug Fixes
