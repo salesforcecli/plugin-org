@@ -1,3 +1,9 @@
+## [5.7.3](https://github.com/salesforcecli/plugin-org/compare/5.7.2...5.7.3) (2025-04-28)
+
+### Bug Fixes
+
+- add flag char to avoid collision ([8064fe6](https://github.com/salesforcecli/plugin-org/commit/8064fe61724c517c8c16fd6e3dbeb429d25ff04b))
+
 ## [5.7.2](https://github.com/salesforcecli/plugin-org/compare/5.7.1...5.7.2) (2025-04-27)
 
 ### Bug Fixes
