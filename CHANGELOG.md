@@ -1,3 +1,9 @@
+## [5.7.5](https://github.com/salesforcecli/plugin-org/compare/5.7.4...5.7.5) (2025-05-04)
+
+### Bug Fixes
+
+- **deps:** bump open from 10.1.1 to 10.1.2 ([e7a2a8b](https://github.com/salesforcecli/plugin-org/commit/e7a2a8b0f9f97a6bde344e89c39e0a3ce891e593))
+
 ## [5.7.4](https://github.com/salesforcecli/plugin-org/compare/5.7.3...5.7.4) (2025-05-04)
 
 ### Bug Fixes
