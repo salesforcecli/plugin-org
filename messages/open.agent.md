@@ -16,15 +16,15 @@ firefox". If you don't specify --browser, the org opens in your default browser.
 
 - Open the agent with API name Coral_Cloud_Agent in your default org using your default browser:
 
-  $ <%= config.bin %> <%= command.id %> api-name Coral_Cloud_Agent
+  $ <%= config.bin %> <%= command.id %> --api-name Coral_Cloud_Agent
 
 - Open the agent in an incognito window of your default browser:
 
-  $ <%= config.bin %> <%= command.id %> --private api-name Coral_Cloud_Agent:
+  $ <%= config.bin %> <%= command.id %> --private --api-name Coral_Cloud_Agent:
 
 - Open the agent in an org with alias MyTestOrg1 using the Firefox browser:
 
-  $ <%= config.bin %> <%= command.id %> --target-org MyTestOrg1 --browser firefox api-name Coral_Cloud_Agent
+  $ <%= config.bin %> <%= command.id %> --target-org MyTestOrg1 --browser firefox --api-name Coral_Cloud_Agent
 
 # flags.api-name.summary
 
