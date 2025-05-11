@@ -22,7 +22,7 @@
     "@oclif/plugin-command-snapshot": "^5.2.39",
     "@salesforce/cli-plugins-testkit": "^5.3.39",
     "@salesforce/dev-scripts": "^10.2.12",
-    "@salesforce/plugin-command-reference": "^3.1.50",
+    "@salesforce/plugin-command-reference": "^3.1.52",
     "@salesforce/ts-sinon": "^1.4.30",
     "eslint-plugin-sf-plugin": "^1.20.22",
     "moment": "^2.30.1",
