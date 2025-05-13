@@ -18,15 +18,14 @@ export class OrgOpenAgent extends OrgOpenCommandBase<OrgOpenOutput> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
-  public static readonly state = 'beta';
 
   public static readonly flags = {
     ...OrgOpenCommandBase.flags,
     'target-org': Flags.requiredOrg(),
     'api-version': Flags.orgApiVersion(),
-    name: Flags.string({
+    'api-name': Flags.string({
       char: 'n',
-      summary: messages.getMessage('flags.name.summary'),
+      summary: messages.getMessage('flags.api-name.summary'),
       required: true,
     }),
     private: Flags.boolean({
@@ -54,7 +53,7 @@ export class OrgOpenAgent extends OrgOpenCommandBase<OrgOpenOutput> {
 
     const [frontDoorUrl, retUrl] = await Promise.all([
       buildFrontdoorUrl(this.org, this.connection, true),
-      buildRetUrl(this.connection, flags.name),
+      buildRetUrl(this.connection, flags['api-name']),
     ]);
 
     return this.openOrgUI(flags, frontDoorUrl, encodeURIComponent(retUrl));
