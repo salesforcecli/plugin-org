@@ -1,3 +1,9 @@
+## [5.7.8](https://github.com/salesforcecli/plugin-org/compare/5.7.7...5.7.8) (2025-05-13)
+
+### Bug Fixes
+
+- change --name to --api-name for org open agent W-18459941 ([#1420](https://github.com/salesforcecli/plugin-org/issues/1420)) ([e65e9dd](https://github.com/salesforcecli/plugin-org/commit/e65e9dd86303e3222f1e6c9ceeab6425fda6b277))
+
 ## [5.7.7](https://github.com/salesforcecli/plugin-org/compare/5.7.6...5.7.7) (2025-05-11)
 
 ### Bug Fixes

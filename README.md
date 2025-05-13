@@ -242,7 +242,7 @@ FLAG DESCRIPTIONS
     You can specify either --source-sandbox-name or --source-id when cloning an existing sandbox, but not both.
 ```
 
-_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.7/src/commands/org/create/sandbox.ts)_
+_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.8/src/commands/org/create/sandbox.ts)_
 
 ## `sf org create scratch`
 
@@ -424,7 +424,7 @@ FLAG DESCRIPTIONS
     Omit this flag to have Salesforce generate a unique username for your org.
 ```
 
-_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.7/src/commands/org/create/scratch.ts)_
+_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.8/src/commands/org/create/scratch.ts)_
 
 ## `sf org delete sandbox`
 
@@ -470,7 +470,7 @@ EXAMPLES
     $ sf org delete sandbox --target-org my-sandbox --no-prompt
 ```
 
-_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.7/src/commands/org/delete/sandbox.ts)_
+_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.8/src/commands/org/delete/sandbox.ts)_
 
 ## `sf org delete scratch`
 
@@ -514,7 +514,7 @@ EXAMPLES
     $ sf org delete scratch --target-org my-scratch-org --no-prompt
 ```
 
-_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.7/src/commands/org/delete/scratch.ts)_
+_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.8/src/commands/org/delete/scratch.ts)_
 
 ## `sf org disable tracking`
 
@@ -553,7 +553,7 @@ EXAMPLES
     $ sf org disable tracking
 ```
 
-_See code: [src/commands/org/disable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.7/src/commands/org/disable/tracking.ts)_
+_See code: [src/commands/org/disable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.8/src/commands/org/disable/tracking.ts)_
 
 ## `sf org display`
 
@@ -598,7 +598,7 @@ EXAMPLES
     $ sf org display --target-org TestOrg1 --verbose
 ```
 
-_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.7/src/commands/org/display.ts)_
+_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.8/src/commands/org/display.ts)_
 
 ## `sf org enable tracking`
 
@@ -640,7 +640,7 @@ EXAMPLES
     $ sf org enable tracking
 ```
 
-_See code: [src/commands/org/enable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.7/src/commands/org/enable/tracking.ts)_
+_See code: [src/commands/org/enable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.8/src/commands/org/enable/tracking.ts)_
 
 ## `sf org list`
 
@@ -679,7 +679,7 @@ EXAMPLES
     $ sf org list --clean
 ```
 
-_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.7/src/commands/org/list.ts)_
+_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.8/src/commands/org/list.ts)_
 
 ## `sf org list metadata`
 
@@ -746,7 +746,7 @@ FLAG DESCRIPTIONS
     Examples of metadata types that use folders are Dashboard, Document, EmailTemplate, and Report.
 ```
 
-_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.7/src/commands/org/list/metadata.ts)_
+_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.8/src/commands/org/list/metadata.ts)_
 
 ## `sf org list metadata-types`
 
@@ -801,7 +801,7 @@ FLAG DESCRIPTIONS
     Override the api version used for api requests made by this command
 ```
 
-_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.7/src/commands/org/list/metadata-types.ts)_
+_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.8/src/commands/org/list/metadata-types.ts)_
 
 ## `sf org open`
 
@@ -877,7 +877,7 @@ EXAMPLES
     $ sf org open --source-file force-app/main/default/bots/Coral_Cloud_Agent/Coral_Cloud_Agent.bot-meta.xml
 ```
 
-_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.7/src/commands/org/open.ts)_
+_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.8/src/commands/org/open.ts)_
 
 ## `sf org open agent`
 
@@ -891,7 +891,7 @@ USAGE
 FLAGS
   -b, --browser=<option>     Browser where the org opens.
                              <options: chrome|edge|firefox>
-  -n, --name=<value>         (required) API name, also known as developer name, of the agent you want to open in the
+  -n, --api-name=<value>     (required) API name, also known as developer name, of the agent you want to open in the
                              org's Agent Builder UI.
   -o, --target-org=<value>   (required) Username or alias of the target org. Not required if the `target-org`
                              configuration variable is already set.
@@ -906,8 +906,8 @@ GLOBAL FLAGS
 DESCRIPTION
   Open an agent in your org's Agent Builder UI in a browser.
 
-  Use the --name flag to open an agent using its API name in the Agent Builder UI of your org. To find the agent's API
-  name, go to Setup in your org and navigate to the agent's details page.
+  Use the --api-name flag to open an agent using its API name in the Agent Builder UI of your org. To find the agent's
+  API name, go to Setup in your org and navigate to the agent's details page.
 
   To generate the URL but not launch it in your browser, specify --url-only.
 
@@ -917,18 +917,18 @@ DESCRIPTION
 EXAMPLES
   Open the agent with API name Coral_Cloud_Agent in your default org using your default browser:
 
-    $ sf org open agent --name Coral_Cloud_Agent
+    $ sf org open agent --api-name Coral_Cloud_Agent
 
   Open the agent in an incognito window of your default browser:
 
-    $ sf org open agent --private --name Coral_Cloud_Agent:
+    $ sf org open agent --private --api-name Coral_Cloud_Agent:
 
   Open the agent in an org with alias MyTestOrg1 using the Firefox browser:
 
-    $ sf org open agent --target-org MyTestOrg1 --browser firefox --name Coral_Cloud_Agent
+    $ sf org open agent --target-org MyTestOrg1 --browser firefox --api-name Coral_Cloud_Agent
 ```
 
-_See code: [src/commands/org/open/agent.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.7/src/commands/org/open/agent.ts)_
+_See code: [src/commands/org/open/agent.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.8/src/commands/org/open/agent.ts)_
 
 ## `sf org refresh sandbox`
 
@@ -1031,7 +1031,7 @@ FLAG DESCRIPTIONS
     You can specify either --source-sandbox-name or --source-id when refreshing an existing sandbox, but not both.
 ```
 
-_See code: [src/commands/org/refresh/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.7/src/commands/org/refresh/sandbox.ts)_
+_See code: [src/commands/org/refresh/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.8/src/commands/org/refresh/sandbox.ts)_
 
 ## `sf org resume sandbox`
 
@@ -1094,7 +1094,7 @@ FLAG DESCRIPTIONS
     returns the job ID. To resume checking the sandbox creation, rerun this command.
 ```
 
-_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.7/src/commands/org/resume/sandbox.ts)_
+_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.8/src/commands/org/resume/sandbox.ts)_
 
 ## `sf org resume scratch`
 
@@ -1147,6 +1147,6 @@ FLAG DESCRIPTIONS
     returns the job ID. To resume checking the scratch creation, rerun this command.
 ```
 
-_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.7/src/commands/org/resume/scratch.ts)_
+_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.7.8/src/commands/org/resume/scratch.ts)_
 
 <!-- commandsstop -->
