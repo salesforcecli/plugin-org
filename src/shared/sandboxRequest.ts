@@ -78,7 +78,7 @@ export async function createSandboxRequest(
   definitionFile: string | undefined,
   logger?: Logger | undefined,
   properties?: Record<string, string | undefined>
-): Promise<{ sandboxReq: SandboxRequest; srcSandboxName?: string; srcId?: string }> {
+): Promise<{ sandboxReq: SandboxRequest; srcSandboxName?: string; srcId?: string; Features?: string }> {
   if (!logger) {
     logger = await Logger.child('createSandboxRequest');
   }
@@ -88,7 +88,10 @@ export async function createSandboxRequest(
 
   const capitalizedVarArgs = properties ? lowerToUpper(properties) : {};
   // varargs override file input
-  const sandboxReqWithName: SandboxRequest & { SourceSandboxName?: string; SourceId?: string } = {
+  const sandboxReqWithName: (SandboxRequest & { Features?: string }) & {
+    SourceSandboxName?: string;
+    SourceId?: string;
+  } = {
     ...(sandboxDefFileContents as Record<string, unknown>),
     ...capitalizedVarArgs,
     SandboxName:
@@ -116,6 +119,7 @@ export async function createSandboxRequest(
     return { sandboxReq };
   }
 }
+
 export async function getApexClassIdByName(conn: Connection, className: string): Promise<string | undefined> {
   try {
     const result = (await conn.singleRecordQuery(`SELECT Id FROM ApexClass WHERE Name = '${className}'`)).Id;
@@ -124,6 +128,7 @@ export async function getApexClassIdByName(conn: Connection, className: string):
     throw cloneMessages.createError('error.apexClassQueryFailed', [className], [], err as Error);
   }
 }
+
 export async function getUserGroupIdByName(conn: Connection, groupName: string): Promise<string | undefined> {
   try {
     const result = (await conn.singleRecordQuery(`SELECT id FROM Group WHERE NAME = '${groupName}'`)).Id;
@@ -132,6 +137,7 @@ export async function getUserGroupIdByName(conn: Connection, groupName: string):
     throw cloneMessages.createError('error.userGroupQueryFailed', [groupName], [], err as Error);
   }
 }
+
 export async function getSrcIdByName(conn: Connection, sandboxName: string): Promise<string | undefined> {
   try {
     const result = (
@@ -143,6 +149,62 @@ export async function getSrcIdByName(conn: Connection, sandboxName: string): Pro
   }
 }
 
+export async function querySandboxProcessFeatures(
+  conn: Connection,
+  identifier: string,
+  isId: boolean
+): Promise<string | undefined> {
+  const query = isId
+    ? `SELECT Features FROM SandboxProcess WHERE Id = '${identifier}'`
+    : `SELECT Features FROM SandboxProcess WHERE SandboxName = '${identifier}'`;
+
+  try {
+    const result = await conn.singleRecordQuery<{ Features: string }>(query, { tooling: true });
+    return result.Features;
+  } catch (err) {
+    throw cloneMessages.createError('error.featuresQueryFailed', [identifier], [], err as Error);
+  }
+}
+
+export async function querySandboxInfoFeatures(
+  conn: Connection,
+  identifier: string,
+  isId: boolean
+): Promise<string | undefined> {
+  const query = isId
+    ? `SELECT Features FROM SandboxInfo WHERE Id = '${identifier}'`
+    : `SELECT Features FROM SandboxInfo WHERE SandboxName = '${identifier}'`;
+
+  try {
+    const result = await conn.singleRecordQuery<{ Features: string }>(query, { tooling: true });
+    return result.Features;
+  } catch (err) {
+    throw cloneMessages.createError('error.featuresQueryFailed', [identifier], [], err as Error);
+  }
+}
+
+export async function getFeature(conn: Connection, sandboxName: string): Promise<string | undefined> {
+  try {
+    if (sandboxName.startsWith('0GR')) {
+      return await querySandboxProcessFeatures(conn, sandboxName, true);
+    }
+
+    if (sandboxName.startsWith('0GQ')) {
+      return await querySandboxInfoFeatures(conn, sandboxName, true);
+    }
+
+    // Handle sandbox name - try SandboxProcess first, then SandboxInfo
+    const processFeatures = await querySandboxProcessFeatures(conn, sandboxName, false);
+    if (processFeatures) {
+      return processFeatures;
+    }
+
+    return await querySandboxInfoFeatures(conn, sandboxName, false);
+  } catch (err) {
+    throw cloneMessages.createError('error.featuresQueryFailed', [sandboxName], [], err as Error);
+  }
+}
+
 export default {
   createSandboxRequest,
   generateSboxName,
@@ -150,4 +212,5 @@ export default {
   getApexClassIdByName,
   getUserGroupIdByName,
   getSrcIdByName,
+  getFeature,
 };
