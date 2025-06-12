@@ -175,6 +175,22 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       delete sandboxReq.ActivationUserGroupName;
     }
 
+    // Get source sandbox features if cloning
+    if (srcSandboxName) {
+      const sourceFeatures = await requestFunctions.getFeature(
+        this.flags['target-org'].getConnection(),
+        srcSandboxName
+      );
+      if (sourceFeatures) {
+        (sandboxReq as SandboxRequest & { Features?: string }).Features = sourceFeatures;
+      }
+    } else if (srcId) {
+      const sourceFeatures = await requestFunctions.getFeature(this.flags['target-org'].getConnection(), srcId);
+      if (sourceFeatures) {
+        (sandboxReq as SandboxRequest & { Features?: string }).Features = sourceFeatures;
+      }
+    }
+
     return {
       ...sandboxReq,
       ...(srcSandboxName
