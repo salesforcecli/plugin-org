@@ -78,6 +78,7 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
         : await OrgListUtil.determineConnectedStatusForNonScratchOrg(fields.username),
       sfdxAuthUrl: flags.verbose && fields.refreshToken ? authInfo.getSfdxAuthUrl() : undefined,
       alias: await getAliasByUsername(fields.username),
+      clientApps: fields.clientApps ? Object.keys(fields.clientApps).join(',') : undefined,
     };
     this.warn(sharedMessages.getMessage('SecurityWarning'));
     this.print(returnValue);

@@ -21,6 +21,7 @@ export type OrgDisplayReturn = Partial<ScratchOrgFields> & {
   // non-scratch orgs
   connectedStatus?: string;
   sfdxAuthUrl?: string;
+  clientApps?: string;
 };
 
 export type OrgOpenOutput = {

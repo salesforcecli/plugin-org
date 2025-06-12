@@ -83,6 +83,32 @@
         "string": {
           "type": "string"
         },
+        "clientApps": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "clientId": {
+                "type": "string"
+              },
+              "clientSecret": {
+                "type": "string"
+              },
+              "accessToken": {
+                "type": "string"
+              },
+              "refreshToken": {
+                "type": "string"
+              },
+              "oauthFlow": {
+                "type": "string",
+                "const": "web"
+              }
+            },
+            "required": ["clientId", "accessToken", "refreshToken", "oauthFlow"],
+            "additionalProperties": false
+          }
+        },
         "alias": {
           "type": "string"
         },
@@ -218,6 +244,32 @@
         },
         "string": {
           "type": "string"
+        },
+        "clientApps": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "clientId": {
+                "type": "string"
+              },
+              "clientSecret": {
+                "type": "string"
+              },
+              "accessToken": {
+                "type": "string"
+              },
+              "refreshToken": {
+                "type": "string"
+              },
+              "oauthFlow": {
+                "type": "string",
+                "const": "web"
+              }
+            },
+            "required": ["clientId", "accessToken", "refreshToken", "oauthFlow"],
+            "additionalProperties": false
+          }
         },
         "alias": {
           "type": "string"

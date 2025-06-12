@@ -36,6 +36,9 @@
         "sfdxAuthUrl": {
           "type": "string"
         },
+        "clientApps": {
+          "type": "string"
+        },
         "createdBy": {
           "type": "string"
         },
