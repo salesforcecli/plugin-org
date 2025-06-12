@@ -1,3 +1,189 @@
+## [5.7.14](https://github.com/salesforcecli/plugin-org/compare/5.7.13...5.7.14) (2025-06-08)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 8.11.4 to 8.12.0 ([fead61f](https://github.com/salesforcecli/plugin-org/commit/fead61fe244192655c0f2000ac3c76f861a2ac9f))
+
+## [5.7.13](https://github.com/salesforcecli/plugin-org/compare/5.7.12...5.7.13) (2025-06-01)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 8.11.2 to 8.11.4 ([d456264](https://github.com/salesforcecli/plugin-org/commit/d456264dec6d5d224ce07d0ea371e28e7dc940d7))
+
+## [5.7.12](https://github.com/salesforcecli/plugin-org/compare/5.7.11...5.7.12) (2025-05-25)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve ([751f317](https://github.com/salesforcecli/plugin-org/commit/751f31786bb52b55c0510f585a06cc25256e3c0d))
+
+## [5.7.11](https://github.com/salesforcecli/plugin-org/compare/5.7.10...5.7.11) (2025-05-25)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 8.11.0 to 8.11.1 ([85b8572](https://github.com/salesforcecli/plugin-org/commit/85b85729104bf96b75d21f67f6676811632e3908))
+
+## [5.7.10](https://github.com/salesforcecli/plugin-org/compare/5.7.9...5.7.10) (2025-05-18)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve ([6bbe394](https://github.com/salesforcecli/plugin-org/commit/6bbe394f3b9b31e512d75f030a9df1e31b7599ec))
+
+## [5.7.9](https://github.com/salesforcecli/plugin-org/compare/5.7.8...5.7.9) (2025-05-18)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/sf-plugins-core from 12.2.1 to 12.2.2 ([8782154](https://github.com/salesforcecli/plugin-org/commit/8782154d9389edc650ef71c3c896fca19443bc2f))
+
+## [5.7.8](https://github.com/salesforcecli/plugin-org/compare/5.7.7...5.7.8) (2025-05-13)
+
+### Bug Fixes
+
+- change --name to --api-name for org open agent W-18459941 ([#1420](https://github.com/salesforcecli/plugin-org/issues/1420)) ([e65e9dd](https://github.com/salesforcecli/plugin-org/commit/e65e9dd86303e3222f1e6c9ceeab6425fda6b277))
+
+## [5.7.7](https://github.com/salesforcecli/plugin-org/compare/5.7.6...5.7.7) (2025-05-11)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve ([c47d4e8](https://github.com/salesforcecli/plugin-org/commit/c47d4e86686ca3486b56762a6734b676988a311f))
+
+## [5.7.6](https://github.com/salesforcecli/plugin-org/compare/5.7.5...5.7.6) (2025-05-11)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/multi-stage-output from 0.8.12 to 0.8.13 ([3e15148](https://github.com/salesforcecli/plugin-org/commit/3e15148159f1b3bf5cfaa6177e9257642344ff62))
+
+## [5.7.5](https://github.com/salesforcecli/plugin-org/compare/5.7.4...5.7.5) (2025-05-04)
+
+### Bug Fixes
+
+- **deps:** bump open from 10.1.1 to 10.1.2 ([e7a2a8b](https://github.com/salesforcecli/plugin-org/commit/e7a2a8b0f9f97a6bde344e89c39e0a3ce891e593))
+
+## [5.7.4](https://github.com/salesforcecli/plugin-org/compare/5.7.3...5.7.4) (2025-05-04)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/core from 4.2.10 to 4.3.0 ([fbad528](https://github.com/salesforcecli/plugin-org/commit/fbad5281ac1499946bacc6a0ea3bb99b6fc3fcfe))
+
+## [5.7.3](https://github.com/salesforcecli/plugin-org/compare/5.7.2...5.7.3) (2025-04-28)
+
+### Bug Fixes
+
+- add flag char to avoid collision ([8064fe6](https://github.com/salesforcecli/plugin-org/commit/8064fe61724c517c8c16fd6e3dbeb429d25ff04b))
+
+## [5.7.2](https://github.com/salesforcecli/plugin-org/compare/5.7.1...5.7.2) (2025-04-27)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve ([209aa81](https://github.com/salesforcecli/plugin-org/commit/209aa81d29cf5104a3847c3da8fcd2bcf6129efa))
+
+## [5.7.1](https://github.com/salesforcecli/plugin-org/compare/5.7.0...5.7.1) (2025-04-27)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 8.9.1 to 8.10.0 ([bec0c8d](https://github.com/salesforcecli/plugin-org/commit/bec0c8df22e01f1226089095b9d0bff4c021988b))
+
+# [5.7.0](https://github.com/salesforcecli/plugin-org/compare/5.6.3...5.7.0) (2025-04-21)
+
+### Bug Fixes
+
+- edit messages ([5801bc3](https://github.com/salesforcecli/plugin-org/commit/5801bc3f4e367dca382fc5962a09cabd529c8dd0))
+- refresh sandbox with sourceSandboxName ([77d04df](https://github.com/salesforcecli/plugin-org/commit/77d04df6133e566d49c856df9edc731ee1aa0c0c))
+- remove the char ([75d6df6](https://github.com/salesforcecli/plugin-org/commit/75d6df63d66eb14d2030d6d8705b7a2f5e83d4d7))
+
+### Features
+
+- add 'source-id' and 'source-sandbox-name' flags ([b926161](https://github.com/salesforcecli/plugin-org/commit/b926161b070981866f58a03188d9388765c7830f))
+
+## [5.6.3](https://github.com/salesforcecli/plugin-org/compare/5.6.2...5.6.3) (2025-04-20)
+
+### Bug Fixes
+
+- **deps:** bump open from 10.1.0 to 10.1.1 ([7c891e3](https://github.com/salesforcecli/plugin-org/commit/7c891e31c7cc4bfb1689254ead6e0a35a2f164ba))
+
+## [5.6.2](https://github.com/salesforcecli/plugin-org/compare/5.6.1...5.6.2) (2025-04-20)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 8.9.0 to 8.9.1 ([312e8bf](https://github.com/salesforcecli/plugin-org/commit/312e8bfc4db27e1d357f34778da141e8dc0a62f3))
+
+## [5.6.1](https://github.com/salesforcecli/plugin-org/compare/5.6.0...5.6.1) (2025-04-13)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve ([e00a576](https://github.com/salesforcecli/plugin-org/commit/e00a576ba1a59fcb5d0d5d4cf3661f2167a7e73c))
+
+# [5.6.0](https://github.com/salesforcecli/plugin-org/compare/5.5.8...5.6.0) (2025-04-08)
+
+### Features
+
+- add `--wait` flag to resume scratch org ([#1376](https://github.com/salesforcecli/plugin-org/issues/1376)) ([5dcce40](https://github.com/salesforcecli/plugin-org/commit/5dcce40d236b7c62c396f1dfaccab37dad41de60))
+
+## [5.5.8](https://github.com/salesforcecli/plugin-org/compare/5.5.7...5.5.8) (2025-04-06)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve ([bb86872](https://github.com/salesforcecli/plugin-org/commit/bb868724306d3930e6be121e002fd3b1ceb800ba))
+
+## [5.5.7](https://github.com/salesforcecli/plugin-org/compare/5.5.6...5.5.7) (2025-03-30)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 8.8.6 to 8.8.7 ([d08a2c8](https://github.com/salesforcecli/plugin-org/commit/d08a2c8e45b8a4582950667a0bfd886ec8eb7549))
+
+## [5.5.6](https://github.com/salesforcecli/plugin-org/compare/5.5.5...5.5.6) (2025-03-27)
+
+### Bug Fixes
+
+- correct retURL to startURL for OTP URLs W-18077630 ([#1387](https://github.com/salesforcecli/plugin-org/issues/1387)) ([57376f4](https://github.com/salesforcecli/plugin-org/commit/57376f40c28654fd0290a31117b2f61ab29bdbbf))
+
+## [5.5.5](https://github.com/salesforcecli/plugin-org/compare/5.5.4...5.5.5) (2025-03-24)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 8.8.5 to 8.8.6 ([42e5b28](https://github.com/salesforcecli/plugin-org/commit/42e5b2896c02fd4140569e59793b5d62aaafc257))
+
+## [5.5.4](https://github.com/salesforcecli/plugin-org/compare/5.5.3...5.5.4) (2025-03-23)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve ([18fa0cb](https://github.com/salesforcecli/plugin-org/commit/18fa0cb359bb0fc4bfa6e1651e836b45a371c966))
+
+## [5.5.3](https://github.com/salesforcecli/plugin-org/compare/5.5.2...5.5.3) (2025-03-23)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/sf-plugins-core from 12.2.0 to 12.2.1 ([e18e7e0](https://github.com/salesforcecli/plugin-org/commit/e18e7e0acada146454b6829927cc7023fc80dd8f))
+
+## [5.5.2](https://github.com/salesforcecli/plugin-org/compare/5.5.1...5.5.2) (2025-03-23)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/multi-stage-output from 0.8.9 to 0.8.12 ([a30131c](https://github.com/salesforcecli/plugin-org/commit/a30131c4d6a4784ebd867231145bacc47704ca78))
+
+## [5.5.1](https://github.com/salesforcecli/plugin-org/compare/5.5.0...5.5.1) (2025-03-19)
+
+### Bug Fixes
+
+- update warning msg ([#1381](https://github.com/salesforcecli/plugin-org/issues/1381)) ([0766ad8](https://github.com/salesforcecli/plugin-org/commit/0766ad859e30ed0b36cc4bf1b8218dbc1e4893a3))
+
+# [5.5.0](https://github.com/salesforcecli/plugin-org/compare/5.4.1...5.5.0) (2025-03-18)
+
+### Features
+
+- use UI Bridge API to generate a single-use frontdoor ([#1375](https://github.com/salesforcecli/plugin-org/issues/1375)) ([a9bf347](https://github.com/salesforcecli/plugin-org/commit/a9bf347706e3aecfc72385b1b5730471e63f5b13))
+
+## [5.4.1](https://github.com/salesforcecli/plugin-org/compare/5.4.0...5.4.1) (2025-03-16)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/core from 4.2.8 to 4.2.10 ([7e15eb0](https://github.com/salesforcecli/plugin-org/commit/7e15eb04258d6a591f254056761559477de3cf55))
+
+# [5.4.0](https://github.com/salesforcecli/plugin-org/compare/5.3.0...5.4.0) (2025-03-12)
+
+### Features
+
+- use MSO in sandbox commands ([#1297](https://github.com/salesforcecli/plugin-org/issues/1297)) ([c1e706b](https://github.com/salesforcecli/plugin-org/commit/c1e706b6060b76d5a6c273fd38c022d90449d1fd))
+
 # [5.3.0](https://github.com/salesforcecli/plugin-org/compare/5.2.42...5.3.0) (2025-03-11)
 
 ### Bug Fixes

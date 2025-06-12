@@ -1,11 +1,10 @@
 # sandboxSuccess
 
-The sandbox org %s was successful.
+Your sandbox is ready.
 
 # sandboxSuccess.actions
 
-The username for the sandbox is %s.
-You can open the org by running "%s org open -o %s"
+You can open it by running "%s org open -o %s"
 
 # checkSandboxStatus
 
