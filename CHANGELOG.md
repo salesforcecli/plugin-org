@@ -1,3 +1,9 @@
+# [5.8.0](https://github.com/salesforcecli/plugin-org/compare/5.7.14...5.8.0) (2025-06-12)
+
+### Features
+
+- show client apps W-18394868 ([#1444](https://github.com/salesforcecli/plugin-org/issues/1444)) ([9db9b3b](https://github.com/salesforcecli/plugin-org/commit/9db9b3b51845a4832354a6eafbf357ff2806cebc))
+
 ## [5.7.14](https://github.com/salesforcecli/plugin-org/compare/5.7.13...5.7.14) (2025-06-08)
 
 ### Bug Fixes
