@@ -1,3 +1,9 @@
+## [5.8.1](https://github.com/salesforcecli/plugin-org/compare/5.8.0...5.8.1) (2025-06-15)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve ([b7d29c9](https://github.com/salesforcecli/plugin-org/commit/b7d29c956a37266e33d6906627e9b3c05b3bae50))
+
 # [5.8.0](https://github.com/salesforcecli/plugin-org/compare/5.7.14...5.8.0) (2025-06-12)
 
 ### Features
