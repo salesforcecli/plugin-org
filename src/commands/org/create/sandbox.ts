@@ -137,7 +137,6 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
   }
 
   private async createSandboxRequest(): Promise<SandboxRequest> {
-    // reuse the existing sandbox request generator, with this command's flags as the varargs
     const requestOptions = {
       ...(this.flags.name ? { SandboxName: this.flags.name } : {}),
       ...(this.flags['source-sandbox-name']
@@ -176,16 +175,8 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
     }
 
     // Get source sandbox features if cloning
-    if (srcSandboxName) {
-      const sourceFeatures = await requestFunctions.getFeature(
-        this.flags['target-org'].getConnection(),
-        srcSandboxName
-      );
-      if (sourceFeatures) {
-        (sandboxReq as SandboxRequest & { Features?: string }).Features = sourceFeatures;
-      }
-    } else if (srcId) {
-      const sourceFeatures = await requestFunctions.getFeature(this.flags['target-org'].getConnection(), srcId);
+    if (srcSandboxName ?? srcId) {
+      const sourceFeatures = await this.flags['target-org'].getSandboxFeatures(srcSandboxName ?? srcId);
       if (sourceFeatures) {
         (sandboxReq as SandboxRequest & { Features?: string }).Features = sourceFeatures;
       }
