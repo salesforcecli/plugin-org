@@ -37,7 +37,3 @@ You can't specify both `SourceId` and `LicenseType` in the definition file at th
 # error.bothSourceSandboxNameAndLicenseTypeProvided
 
 You can't specify both `SourceSandboxName` and `LicenseType` in the definition file at the same time.
-
-# error.featuresQueryFailed
-
-Unable to find the ID of the Features "%s" that's defined in the definition file or as a command line argument.
