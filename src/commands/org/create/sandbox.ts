@@ -176,7 +176,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
 
     // Get source sandbox features if cloning
     if (srcSandboxName ?? srcId) {
-      const sourceFeatures = await this.flags['target-org'].getSandboxFeatures(srcSandboxName ?? srcId);
+      const sourceFeatures = await this.getSandboxFeatures(srcSandboxName ?? srcId);
       if (sourceFeatures) {
         (sandboxReq as SandboxRequest & { Features?: string }).Features = sourceFeatures;
       }
@@ -191,6 +191,34 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       ...(apexId ? { ApexClassId: apexId } : {}),
       ...(groupId ? { ActivationUserGroupId: groupId } : {}),
     };
+  }
+
+  private async getSandboxFeatures(sandboxName: string): Promise<string | undefined> {
+    const prodOrg = this.flags['target-org'];
+
+    try {
+      if (sandboxName?.startsWith('0GQ')) {
+        const sbxId = await prodOrg.querySandboxInfo({ id: sandboxName, name: '' });
+        if (sbxId?.Features) {
+          return sbxId.Features;
+        }
+        const sandboxProcess = await prodOrg.querySandboxProcessBySandboxInfoId(sandboxName);
+        return sandboxProcess?.Features;
+      }
+
+      const sbxName = await prodOrg.querySandboxInfo({ id: '', name: sandboxName });
+      if (sbxName?.Features) {
+        return sbxName.Features;
+      }
+
+      const sandboxProcess = await prodOrg.querySandboxProcessBySandboxName(sandboxName);
+      return sandboxProcess?.Features;
+    } catch (err) {
+      if (err instanceof SfError && (err.name.includes('AUTH') ?? err.name.includes('CONNECTION'))) {
+        this.warn(`Warning: Could not retrieve sandbox features due to ${err.name}.`);
+      }
+      throw err;
+    }
   }
 
   private async createSandbox(): Promise<SandboxCommandResponse> {

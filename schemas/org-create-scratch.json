@@ -219,6 +219,32 @@
     "AuthFields": {
       "type": "object",
       "properties": {
+        "clientApps": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "clientId": {
+                "type": "string"
+              },
+              "clientSecret": {
+                "type": "string"
+              },
+              "accessToken": {
+                "type": "string"
+              },
+              "refreshToken": {
+                "type": "string"
+              },
+              "oauthFlow": {
+                "type": "string",
+                "const": "web"
+              }
+            },
+            "required": ["clientId", "accessToken", "refreshToken", "oauthFlow"],
+            "additionalProperties": false
+          }
+        },
         "accessToken": {
           "type": "string"
         },
