@@ -88,7 +88,10 @@ export async function createSandboxRequest(
 
   const capitalizedVarArgs = properties ? lowerToUpper(properties) : {};
   // varargs override file input
-  const sandboxReqWithName: SandboxRequest & { SourceSandboxName?: string; SourceId?: string } = {
+  const sandboxReqWithName: (SandboxRequest & { Features?: string }) & {
+    SourceSandboxName?: string;
+    SourceId?: string;
+  } = {
     ...(sandboxDefFileContents as Record<string, unknown>),
     ...capitalizedVarArgs,
     SandboxName:
@@ -116,6 +119,7 @@ export async function createSandboxRequest(
     return { sandboxReq };
   }
 }
+
 export async function getApexClassIdByName(conn: Connection, className: string): Promise<string | undefined> {
   try {
     const result = (await conn.singleRecordQuery(`SELECT Id FROM ApexClass WHERE Name = '${className}'`)).Id;
@@ -124,6 +128,7 @@ export async function getApexClassIdByName(conn: Connection, className: string):
     throw cloneMessages.createError('error.apexClassQueryFailed', [className], [], err as Error);
   }
 }
+
 export async function getUserGroupIdByName(conn: Connection, groupName: string): Promise<string | undefined> {
   try {
     const result = (await conn.singleRecordQuery(`SELECT id FROM Group WHERE NAME = '${groupName}'`)).Id;
@@ -132,6 +137,7 @@ export async function getUserGroupIdByName(conn: Connection, groupName: string):
     throw cloneMessages.createError('error.userGroupQueryFailed', [groupName], [], err as Error);
   }
 }
+
 export async function getSrcIdByName(conn: Connection, sandboxName: string): Promise<string | undefined> {
   try {
     const result = (
