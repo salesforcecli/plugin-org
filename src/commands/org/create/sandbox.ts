@@ -180,7 +180,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
     if (nameOrId) {
       const sourceFeatures = await this.getSandboxFeatures(nameOrId);
       if (sourceFeatures) {
-        (sandboxReq as SandboxRequest & { Features?: string[] }).Features = sourceFeatures;
+        sandboxReq.Features = sourceFeatures;
       }
     }
 
@@ -195,25 +195,25 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
     };
   }
 
-  private async getSandboxFeatures(sandboxName: string): Promise<string[] | undefined> {
+  private async getSandboxFeatures(sandboxNameOrId: string): Promise<string[] | undefined> {
     const prodOrg = this.flags['target-org'];
 
     try {
-      if (sandboxName?.startsWith('0GQ')) {
-        const sbxId = await prodOrg.querySandboxInfo({ id: sandboxName, name: undefined });
-        if (sbxId?.Features) {
-          return sbxId.Features;
+      if (sandboxNameOrId?.startsWith('0GQ')) {
+        const sbxInfo = await prodOrg.querySandboxInfo({ id: sandboxNameOrId });
+        if (sbxInfo?.Features) {
+          return sbxInfo.Features;
         }
 
-        return (await prodOrg.querySandboxProcessBySandboxInfoId(sandboxName)).Features;
+        return (await prodOrg.querySandboxProcessBySandboxInfoId(sandboxNameOrId)).Features;
       }
 
-      const sbxName = await prodOrg.querySandboxInfo({ id: undefined, name: sandboxName });
-      if (sbxName?.Features) {
-        return sbxName.Features;
+      const sbxInfo = await prodOrg.querySandboxInfo({ name: sandboxNameOrId });
+      if (sbxInfo?.Features) {
+        return sbxInfo.Features;
       }
 
-      return (await prodOrg.querySandboxProcessBySandboxName(sandboxName)).Features;
+      return (await prodOrg.querySandboxProcessBySandboxName(sandboxNameOrId)).Features;
     } catch (err) {
       if (err instanceof SfError && (err.name.includes('AUTH') ?? err.name.includes('CONNECTION'))) {
         this.warn(`Warning: Could not retrieve sandbox features due to ${err.name}.`);

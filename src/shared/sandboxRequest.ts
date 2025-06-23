@@ -88,9 +88,8 @@ export async function createSandboxRequest(
 
   const capitalizedVarArgs = properties ? lowerToUpper(properties) : {};
   // varargs override file input
-  const sandboxReqWithName: (SandboxRequest & { Features?: string[] }) & {
+  const sandboxReqWithName: SandboxRequest & {
     SourceSandboxName?: string;
-    SourceId?: string;
   } = {
     ...(sandboxDefFileContents as Record<string, unknown>),
     ...capitalizedVarArgs,
