@@ -66,6 +66,7 @@ const sandboxProcessFields = [
   'SourceId',
   'Description',
   'EndDate',
+  'Features',
 ];
 
 export const updateSuccessResponse: SaveResult = {
