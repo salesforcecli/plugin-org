@@ -46,7 +46,10 @@
           "type": "string"
         },
         "Features": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": ["CreatedDate", "Id", "LicenseType", "SandboxInfoId", "SandboxName", "Status"]

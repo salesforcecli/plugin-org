@@ -55,7 +55,7 @@ export function readSandboxDefFile(
 export async function createSandboxRequest(
   definitionFile: string | undefined,
   logger?: Logger | undefined,
-  properties?: Record<string, string | undefined>
+  properties?: Record<string, string | undefined | string[]>
 ): Promise<{
   sandboxReq: SandboxRequest & {
     ApexClassName: string | undefined;
@@ -67,7 +67,7 @@ export async function createSandboxRequest(
 export async function createSandboxRequest(
   definitionFile: string | undefined,
   logger?: Logger | undefined,
-  properties?: Record<string, string | undefined>
+  properties?: Record<string, string | undefined | string[]>
 ): Promise<{
   sandboxReq: SandboxRequest & {
     ApexClassName: string | undefined;
@@ -77,7 +77,7 @@ export async function createSandboxRequest(
 export async function createSandboxRequest(
   definitionFile: string | undefined,
   logger?: Logger | undefined,
-  properties?: Record<string, string | undefined>
+  properties?: Record<string, string | undefined | string[]>
 ): Promise<{ sandboxReq: SandboxRequest; srcSandboxName?: string; srcId?: string }> {
   if (!logger) {
     logger = await Logger.child('createSandboxRequest');
@@ -88,7 +88,7 @@ export async function createSandboxRequest(
 
   const capitalizedVarArgs = properties ? lowerToUpper(properties) : {};
   // varargs override file input
-  const sandboxReqWithName: (SandboxRequest & { Features?: string }) & {
+  const sandboxReqWithName: (SandboxRequest & { Features?: string[] }) & {
     SourceSandboxName?: string;
     SourceId?: string;
   } = {

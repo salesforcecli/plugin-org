@@ -101,24 +101,24 @@ describe('sandboxRequest builder', () => {
       const res = await createSandboxRequest(undefined, $$.TEST_LOGGER, {
         SourceSandboxName: 'sbox',
         SandboxName: 'foo',
-        Features: JSON.stringify(['DataStorage']),
+        Features: ['DataStorage'],
       });
       assert(res);
       expect(res.sandboxReq.SandboxName).equals('foo');
       expect(res.srcSandboxName).equals('sbox');
-      expect(res.sandboxReq.Features).equals(JSON.stringify(['DataStorage']));
+      expect(res.sandboxReq.Features).deep.equals(['DataStorage']);
     });
 
     it('srcId with features', async () => {
       const res = await createSandboxRequest(undefined, $$.TEST_LOGGER, {
         SourceId: '0GQ000000000001',
         SandboxName: 'foo',
-        Features: JSON.stringify(['DataStorage']),
+        Features: ['DataStorage'],
       });
       assert(res);
       expect(res.sandboxReq.SandboxName).equals('foo');
       expect(res.srcId).equals('0GQ000000000001');
-      expect(res.sandboxReq.Features).equals(JSON.stringify(['DataStorage']));
+      expect(res.sandboxReq.Features).deep.equals(['DataStorage']);
     });
   });
   describe('not clone', () => {

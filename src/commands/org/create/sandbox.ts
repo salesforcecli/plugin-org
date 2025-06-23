@@ -174,11 +174,13 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       delete sandboxReq.ActivationUserGroupName;
     }
 
+    const nameOrId = srcSandboxName ?? srcId;
+
     // Get source sandbox features if cloning
-    if (srcSandboxName ?? srcId) {
-      const sourceFeatures = await this.getSandboxFeatures(srcSandboxName ?? srcId);
+    if (nameOrId) {
+      const sourceFeatures = await this.getSandboxFeatures(nameOrId);
       if (sourceFeatures) {
-        (sandboxReq as SandboxRequest & { Features?: string }).Features = sourceFeatures;
+        (sandboxReq as SandboxRequest & { Features?: string[] }).Features = sourceFeatures;
       }
     }
 
@@ -193,26 +195,25 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
     };
   }
 
-  private async getSandboxFeatures(sandboxName: string): Promise<string | undefined> {
+  private async getSandboxFeatures(sandboxName: string): Promise<string[] | undefined> {
     const prodOrg = this.flags['target-org'];
 
     try {
       if (sandboxName?.startsWith('0GQ')) {
-        const sbxId = await prodOrg.querySandboxInfo({ id: sandboxName, name: '' });
+        const sbxId = await prodOrg.querySandboxInfo({ id: sandboxName, name: undefined });
         if (sbxId?.Features) {
           return sbxId.Features;
         }
-        const sandboxProcess = await prodOrg.querySandboxProcessBySandboxInfoId(sandboxName);
-        return sandboxProcess?.Features;
+
+        return (await prodOrg.querySandboxProcessBySandboxInfoId(sandboxName)).Features;
       }
 
-      const sbxName = await prodOrg.querySandboxInfo({ id: '', name: sandboxName });
+      const sbxName = await prodOrg.querySandboxInfo({ id: undefined, name: sandboxName });
       if (sbxName?.Features) {
         return sbxName.Features;
       }
 
-      const sandboxProcess = await prodOrg.querySandboxProcessBySandboxName(sandboxName);
-      return sandboxProcess?.Features;
+      return (await prodOrg.querySandboxProcessBySandboxName(sandboxName)).Features;
     } catch (err) {
       if (err instanceof SfError && (err.name.includes('AUTH') ?? err.name.includes('CONNECTION'))) {
         this.warn(`Warning: Could not retrieve sandbox features due to ${err.name}.`);
