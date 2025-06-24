@@ -96,6 +96,30 @@ describe('sandboxRequest builder', () => {
       assert(res);
       expect(res.sandboxReq.SandboxName).equals('realName');
     });
+
+    it('srcSandboxName with features', async () => {
+      const res = await createSandboxRequest(undefined, $$.TEST_LOGGER, {
+        SourceSandboxName: 'sbox',
+        SandboxName: 'foo',
+        Features: ['DataStorage'],
+      });
+      assert(res);
+      expect(res.sandboxReq.SandboxName).equals('foo');
+      expect(res.srcSandboxName).equals('sbox');
+      expect(res.sandboxReq.Features).deep.equals(['DataStorage']);
+    });
+
+    it('srcId with features', async () => {
+      const res = await createSandboxRequest(undefined, $$.TEST_LOGGER, {
+        SourceId: '0GQ000000000001',
+        SandboxName: 'foo',
+        Features: ['DataStorage'],
+      });
+      assert(res);
+      expect(res.sandboxReq.SandboxName).equals('foo');
+      expect(res.srcId).equals('0GQ000000000001');
+      expect(res.sandboxReq.Features).deep.equals(['DataStorage']);
+    });
   });
   describe('not clone', () => {
     it('throws without licenseType', async () => {

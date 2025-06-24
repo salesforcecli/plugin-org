@@ -44,6 +44,12 @@
         },
         "EndDate": {
           "type": "string"
+        },
+        "Features": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": ["CreatedDate", "Id", "LicenseType", "SandboxInfoId", "SandboxName", "Status"]

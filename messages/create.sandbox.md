@@ -22,6 +22,10 @@ You can also use this command to clone an existing sandbox. Use the --source-san
 
   <%= config.bin %> <%= command.id %> --source-sandbox-name ExistingSandbox --name NewClonedSandbox --target-org prodOrg --alias MyDevSandbox --set-default --wait 30
 
+- Clone the existing sandbox with ID "0GQB0000000TVobOAG" and do not wait.
+
+  <%= config.bin %> <%= command.id %> --source-id 0GQB0000000TVobOAG --name SbxClone --target-org prodOrg --async
+
 # flags.setDefault.summary
 
 Set the sandbox org as your default org.
@@ -74,7 +78,7 @@ ID of the sandbox org to clone.
 
 # flags.source-id.description
 
-The value of --source-id must be an existing sandbox. The existing sandbox, and the new sandbox specified with the --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
+The value of --source-id must be an existing sandbox (SandboxInfo.Id). The existing sandbox, and the new sandbox specified with the --name flag, must both be associated with the production org (--target-org) that contains the sandbox licenses.
 
 You can specify either --source-sandbox-name or --source-id when cloning an existing sandbox, but not both.
 

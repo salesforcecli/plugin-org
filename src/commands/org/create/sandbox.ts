@@ -90,8 +90,9 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
     'source-id': Flags.salesforceId({
       summary: messages.getMessage('flags.source-id.summary'),
       description: messages.getMessage('flags.source-id.description'),
-      exclusive: ['license-type'],
+      exclusive: ['license-type', 'source-sandbox-name'],
       length: 'both',
+      startsWith: '0GQ',
       char: undefined,
     }),
     'license-type': Flags.custom<SandboxLicenseType>({
@@ -137,7 +138,6 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
   }
 
   private async createSandboxRequest(): Promise<SandboxRequest> {
-    // reuse the existing sandbox request generator, with this command's flags as the varargs
     const requestOptions = {
       ...(this.flags.name ? { SandboxName: this.flags.name } : {}),
       ...(this.flags['source-sandbox-name']
@@ -175,6 +175,16 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       delete sandboxReq.ActivationUserGroupName;
     }
 
+    const nameOrId = srcSandboxName ?? srcId;
+
+    // Get source sandbox features if cloning
+    if (nameOrId) {
+      const sourceFeatures = await this.getSandboxFeatures(nameOrId);
+      if (sourceFeatures) {
+        sandboxReq.Features = sourceFeatures;
+      }
+    }
+
     return {
       ...sandboxReq,
       ...(srcSandboxName
@@ -184,6 +194,33 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       ...(apexId ? { ApexClassId: apexId } : {}),
       ...(groupId ? { ActivationUserGroupId: groupId } : {}),
     };
+  }
+
+  private async getSandboxFeatures(sandboxNameOrId: string): Promise<string[] | undefined> {
+    const prodOrg = this.flags['target-org'];
+
+    try {
+      if (sandboxNameOrId?.startsWith('0GQ')) {
+        const sbxInfo = await prodOrg.querySandboxInfo({ id: sandboxNameOrId });
+        if (sbxInfo?.Features) {
+          return sbxInfo.Features;
+        }
+
+        return (await prodOrg.querySandboxProcessBySandboxInfoId(sandboxNameOrId)).Features;
+      }
+
+      const sbxInfo = await prodOrg.querySandboxInfo({ name: sandboxNameOrId });
+      if (sbxInfo?.Features) {
+        return sbxInfo.Features;
+      }
+
+      return (await prodOrg.querySandboxProcessBySandboxName(sandboxNameOrId)).Features;
+    } catch (err) {
+      if (err instanceof SfError && (err.name.includes('AUTH') ?? err.name.includes('CONNECTION'))) {
+        this.warn(`Warning: Could not retrieve sandbox features due to ${err.name}.`);
+      }
+      throw err;
+    }
   }
 
   private async createSandbox(): Promise<SandboxCommandResponse> {
