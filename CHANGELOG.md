@@ -1,3 +1,20 @@
+# [5.9.0](https://github.com/salesforcecli/plugin-org/compare/5.8.5...5.9.0) (2025-06-24)
+
+### Bug Fixes
+
+- add source-sandbox-name to exclusive ([f9f555d](https://github.com/salesforcecli/plugin-org/commit/f9f555d891e17fbbf37c9bea07c4437170d480cf))
+- add test for source sandbox with features ([1e3300d](https://github.com/salesforcecli/plugin-org/commit/1e3300debf725c5c11ba664d2058e4852d76a320))
+- remove message ([0b45f63](https://github.com/salesforcecli/plugin-org/commit/0b45f63b7da95406259a95a34f9acadad7de76fd))
+- remove query and move it to the core ([5fdc05a](https://github.com/salesforcecli/plugin-org/commit/5fdc05a87214a7f447e1354d9e3f6c69f0d25dff))
+- update help doc and add SandboxInfo prefix check ([d5aa828](https://github.com/salesforcecli/plugin-org/commit/d5aa82883b752d77f03fcc19b07731a532a28500))
+- update schemas and add feature function ([5ee4928](https://github.com/salesforcecli/plugin-org/commit/5ee4928d53e9c471ce65766c4788c7d0f131869a))
+- update the features to string[] and schemas ([1040142](https://github.com/salesforcecli/plugin-org/commit/1040142b2f814b6b054bc10ad84a03cd5b09a619))
+- update to latest sfdx-core ([5627558](https://github.com/salesforcecli/plugin-org/commit/56275584f1e521e7239fd8cec0be90883f58aafc))
+
+### Features
+
+- add features when cloning sandbox ([635e3a2](https://github.com/salesforcecli/plugin-org/commit/635e3a2a9d373941ceff31b60881259243bc6201))
+
 ## [5.8.5](https://github.com/salesforcecli/plugin-org/compare/5.8.4...5.8.5) (2025-06-22)
 
 ### Bug Fixes
