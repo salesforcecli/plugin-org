@@ -1,3 +1,51 @@
+## [5.8.5](https://github.com/salesforcecli/plugin-org/compare/5.8.4...5.8.5) (2025-06-22)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve ([011e24a](https://github.com/salesforcecli/plugin-org/commit/011e24a7b65b6a76fc2d4adf04d5dfe4f2ea72b8))
+
+## [5.8.4](https://github.com/salesforcecli/plugin-org/compare/5.8.3...5.8.4) (2025-06-22)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/core from 4.3.3 to 4.4.0 ([cc0ef2a](https://github.com/salesforcecli/plugin-org/commit/cc0ef2a1f33b913627849a1119ea5412ad4009ce))
+
+## [5.8.3](https://github.com/salesforcecli/plugin-org/compare/5.8.2...5.8.3) (2025-06-15)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/core from 4.3.2 to 4.3.3 ([5e87675](https://github.com/salesforcecli/plugin-org/commit/5e876753e661d9bc77680e0dcd379ac79f3055a6))
+
+## [5.8.2](https://github.com/salesforcecli/plugin-org/compare/5.8.1...5.8.2) (2025-06-15)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/multi-stage-output from 0.8.13 to 0.8.14 ([f5d00c5](https://github.com/salesforcecli/plugin-org/commit/f5d00c575b752d89347abd2f71eb9a797d3d1ff5))
+
+## [5.8.1](https://github.com/salesforcecli/plugin-org/compare/5.8.0...5.8.1) (2025-06-15)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve ([b7d29c9](https://github.com/salesforcecli/plugin-org/commit/b7d29c956a37266e33d6906627e9b3c05b3bae50))
+
+# [5.8.0](https://github.com/salesforcecli/plugin-org/compare/5.7.14...5.8.0) (2025-06-12)
+
+### Features
+
+- show client apps W-18394868 ([#1444](https://github.com/salesforcecli/plugin-org/issues/1444)) ([9db9b3b](https://github.com/salesforcecli/plugin-org/commit/9db9b3b51845a4832354a6eafbf357ff2806cebc))
+
+## [5.7.14](https://github.com/salesforcecli/plugin-org/compare/5.7.13...5.7.14) (2025-06-08)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 8.11.4 to 8.12.0 ([fead61f](https://github.com/salesforcecli/plugin-org/commit/fead61fe244192655c0f2000ac3c76f861a2ac9f))
+
+## [5.7.13](https://github.com/salesforcecli/plugin-org/compare/5.7.12...5.7.13) (2025-06-01)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 8.11.2 to 8.11.4 ([d456264](https://github.com/salesforcecli/plugin-org/commit/d456264dec6d5d224ce07d0ea371e28e7dc940d7))
+
 ## [5.7.12](https://github.com/salesforcecli/plugin-org/compare/5.7.11...5.7.12) (2025-05-25)
 
 ### Bug Fixes
