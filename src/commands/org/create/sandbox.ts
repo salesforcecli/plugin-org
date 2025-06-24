@@ -92,6 +92,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
       description: messages.getMessage('flags.source-id.description'),
       exclusive: ['license-type'],
       length: 'both',
+      startsWith: '0GQ',
       char: undefined,
     }),
     'license-type': Flags.custom<SandboxLicenseType>({
