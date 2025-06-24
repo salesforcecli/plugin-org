@@ -90,7 +90,7 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
     'source-id': Flags.salesforceId({
       summary: messages.getMessage('flags.source-id.summary'),
       description: messages.getMessage('flags.source-id.description'),
-      exclusive: ['license-type'],
+      exclusive: ['license-type', 'source-sandbox-name'],
       length: 'both',
       startsWith: '0GQ',
       char: undefined,
