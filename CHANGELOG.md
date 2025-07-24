@@ -1,3 +1,9 @@
+## [5.9.14](https://github.com/salesforcecli/plugin-org/compare/5.9.13...5.9.14) (2025-07-24)
+
+### Bug Fixes
+
+- bump dep + add msg W-18895089 ([#1473](https://github.com/salesforcecli/plugin-org/issues/1473)) ([0f47e93](https://github.com/salesforcecli/plugin-org/commit/0f47e93bdd245304eb6110a6bd7072464ac90207))
+
 ## [5.9.13](https://github.com/salesforcecli/plugin-org/compare/5.9.12...5.9.13) (2025-07-22)
 
 ### Bug Fixes
