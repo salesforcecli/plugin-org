@@ -7,7 +7,7 @@
   "dependencies": {
     "@oclif/core": "^4.5.1",
     "@oclif/multi-stage-output": "^0.8.18",
-    "@salesforce/core": "^8.18.1",
+    "@salesforce/core": "^8.18.5",
     "@salesforce/kit": "^3.2.3",
     "@salesforce/sf-plugins-core": "^12.2.3",
     "@salesforce/source-deploy-retrieve": "^12.21.5",
