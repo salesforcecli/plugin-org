@@ -125,6 +125,9 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
       if (cache.keys() && e instanceof Error && e.name === 'CacheMissError') {
         // we have something in the cache, but it didn't match what the user passed in
         throw messages.createError('error.jobIdMismatch', [jobId]);
+      } else if (e instanceof SfError && e.name === 'StillInProgressError') {
+        e.actions = messages.getMessages('StillInProgressError.actions');
+        throw e;
       } else {
         throw SfError.wrap(e);
       }

@@ -51,3 +51,7 @@ There are no recent job IDs (ScratchOrgInfo requests) in your cache that match %
 # success
 
 Your scratch org is ready.
+
+# StillInProgressError.actions
+
+Increase the --wait time because creating a scratch org can take a while.
