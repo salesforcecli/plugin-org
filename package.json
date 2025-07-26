@@ -15,7 +15,7 @@
     "ansis": "^3.16.0",
     "change-case": "^5.4.4",
     "is-wsl": "^3.1.0",
-    "open": "^10.1.2",
+    "open": "^10.2.0",
     "terminal-link": "^3.0.0"
   },
   "devDependencies": {
