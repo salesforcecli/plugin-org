@@ -1,3 +1,9 @@
+## [5.9.16](https://github.com/salesforcecli/plugin-org/compare/5.9.15...5.9.16) (2025-07-28)
+
+### Bug Fixes
+
+- **deps:** bump open from 10.1.2 to 10.2.0 ([906bca0](https://github.com/salesforcecli/plugin-org/commit/906bca0730cf9cb7c1a8034519e3685f64c9199a))
+
 ## [5.9.15](https://github.com/salesforcecli/plugin-org/compare/5.9.14...5.9.15) (2025-07-27)
 
 ### Bug Fixes
