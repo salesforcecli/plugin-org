@@ -8,19 +8,16 @@
 import { rmSync } from 'node:fs';
 import { ChildProcess } from 'node:child_process';
 import open, { Options } from 'open';
-import { Connection, Logger, Messages, Org, SfError } from '@salesforce/core';
+import { Logger, Messages, Org, SfError } from '@salesforce/core';
 import { Duration, Env } from '@salesforce/kit';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
-const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
 
 export const openUrl = async (url: string, options: Options): Promise<ChildProcess> => open(url, options);
 
 export const fileCleanup = (tempFilePath: string): void =>
   rmSync(tempFilePath, { force: true, maxRetries: 3, recursive: true });
-
-type SingleAccessUrlRes = { frontdoor_uri: string | undefined };
 
 /**
  * This method generates and returns a frontdoor url for the given org.
@@ -29,28 +26,8 @@ type SingleAccessUrlRes = { frontdoor_uri: string | undefined };
  * @param conn the Connection for the given Org.
  * @param singleUseUrl if true returns a single-use url frontdoor url.
  */
-export const buildFrontdoorUrl = async (org: Org, conn: Connection, singleUseUrl: boolean): Promise<string> => {
-  await org.refreshAuth(); // we need a live accessToken for the frontdoor url
-  const accessToken = conn.accessToken;
-  if (!accessToken) {
-    throw new SfError('NoAccessToken', 'NoAccessToken');
-  }
-  if (singleUseUrl) {
-    try {
-      const response: SingleAccessUrlRes = await conn.requestGet('/services/oauth2/singleaccess');
-      if (response.frontdoor_uri) return response.frontdoor_uri;
-      throw new SfError(sharedMessages.getMessage('SingleAccessFrontdoorError')).setData(response);
-    } catch (e) {
-      if (e instanceof SfError) throw e;
-      const err = e as Error;
-      throw new SfError(sharedMessages.getMessage('SingleAccessFrontdoorError'), err.message);
-    }
-  } else {
-    // TODO: remove this code path once the org open behavior changes on August 2025 (see W-17661469)
-    const instanceUrlClean = org.getField<string>(Org.Fields.INSTANCE_URL).replace(/\/$/, '');
-    return `${instanceUrlClean}/secur/frontdoor.jsp?sid=${accessToken}`;
-  }
-};
+
+export const buildFrontdoorUrl = async (org: Org): Promise<string> => org.getFrontDoorUrl();
 
 export const handleDomainError = (err: unknown, url: string, env: Env): string => {
   if (err instanceof Error) {

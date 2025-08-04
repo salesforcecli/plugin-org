@@ -177,15 +177,13 @@ describe('org:open', () => {
       expect(spies.get('requestGet').args[0][0]).to.deep.equal('/services/oauth2/singleaccess');
     });
 
-    it('honors SF_SINGLE_USE_ORG_OPEN_URL env var and generates a single-use frontdoor url even if --url-only or --json flag are passed in', async () => {
-      process.env.SF_SINGLE_USE_ORG_OPEN_URL = 'true';
+    it('generates a single-use frontdoor url even if --url-only or --json flag are passed in', async () => {
       spies.set('resolver', stubMethod($$.SANDBOX, SfdcUrl.prototype, 'checkLightningDomain').resolves('1.1.1.1'));
       const response = await OrgOpenCommand.run(['--targetusername', testOrg.username, '--json', '--url-only']);
       expect(response.url).to.equal(expectedDefaultSingleUseUrl);
       // verify we called to the correct endpoint to generate the single-use AT
       expect(spies.get('requestGet').callCount).to.equal(1);
       expect(spies.get('requestGet').args[0][0]).to.deep.equal('/services/oauth2/singleaccess');
-      delete process.env.SF_SINGLE_USE_ORG_OPEN_URL;
     });
 
     it('handles api error', async () => {
@@ -322,7 +320,6 @@ describe('org:open', () => {
         )
       );
       expect(sfCommandUxStubs.warn.calledOnceWith(sharedMessages.getMessage('SecurityWarning')));
-      expect(sfCommandUxStubs.warn.calledOnceWith(sharedMessages.getMessage('BehaviorChangeWarning')));
 
       expect(spies.get('resolver').callCount).to.equal(1);
       expect(spies.get('open').callCount).to.equal(1);
@@ -335,7 +332,6 @@ describe('org:open', () => {
       await OrgOpenCommand.run(['--targetusername', testOrg.username, '--path', testPath, '-b', testBrowser]);
 
       expect(sfCommandUxStubs.warn(sharedMessages.getMessage('SecurityWarning')));
-      expect(sfCommandUxStubs.warn.calledOnceWith(sharedMessages.getMessage('BehaviorChangeWarning')));
       expect(
         sfCommandUxStubs.logSuccess.calledOnceWith(
           messages.getMessage('humanSuccessNoUrl', [testOrg.orgId, testOrg.username])

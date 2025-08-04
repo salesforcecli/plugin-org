@@ -52,7 +52,7 @@ export class OrgOpenAgent extends OrgOpenCommandBase<OrgOpenOutput> {
     this.connection = this.org.getConnection(flags['api-version']);
 
     const [frontDoorUrl, retUrl] = await Promise.all([
-      buildFrontdoorUrl(this.org, this.connection, true),
+      buildFrontdoorUrl(this.org),
       buildRetUrl(this.connection, flags['api-name']),
     ]);
 
