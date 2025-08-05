@@ -13,6 +13,7 @@ import { Duration, Env } from '@salesforce/kit';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
+const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
 
 export const openUrl = async (url: string, options: Options): Promise<ChildProcess> => open(url, options);
 
@@ -23,11 +24,17 @@ export const fileCleanup = (tempFilePath: string): void =>
  * This method generates and returns a frontdoor url for the given org.
  *
  * @param org org for which we generate the frontdoor url.
- * @param conn the Connection for the given Org.
- * @param singleUseUrl if true returns a single-use url frontdoor url.
  */
 
-export const buildFrontdoorUrl = async (org: Org): Promise<string> => org.getFrontDoorUrl();
+export const buildFrontdoorUrl = async (org: Org): Promise<string> => {
+  try {
+    return await org.getFrontDoorUrl();
+  } catch (e) {
+    if (e instanceof SfError) throw e;
+    const err = e as Error;
+    throw new SfError(sharedMessages.getMessage('SingleAccessFrontdoorError'), err.message);
+  }
+};
 
 export const handleDomainError = (err: unknown, url: string, env: Env): string => {
   if (err instanceof Error) {

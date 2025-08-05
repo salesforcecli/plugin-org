@@ -6,4 +6,4 @@ For additional information, please review the authorization section of the https
 
 # SingleAccessFrontdoorError
 
-Failed to generate a single-use frontdoor URL.
+Failed to generate a frontdoor URL.

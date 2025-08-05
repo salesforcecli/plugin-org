@@ -9,7 +9,7 @@ import fs from 'node:fs';
 import { join } from 'node:path';
 import * as process from 'node:process';
 import { assert, expect } from 'chai';
-import { Connection, Messages, SfdcUrl, SfError } from '@salesforce/core';
+import { Connection, Messages, Org, SfdcUrl, SfError } from '@salesforce/core';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { MockTestOrgData, shouldThrow, TestContext } from '@salesforce/core/testSetup';
 import { stubSfCommandUx, stubSpinner, stubUx } from '@salesforce/sf-plugins-core';
@@ -27,10 +27,9 @@ describe('org:open', () => {
 
   const testBrowser = 'firefox';
   const testPath = '/lightning/whatever';
-  const expectedDefaultUrl = `${testOrg.instanceUrl}/secur/frontdoor.jsp?sid=${testOrg.accessToken}`;
-  const expectedUrl = `${expectedDefaultUrl}&retURL=${encodeURIComponent(testPath)}`;
   const singleUseToken = (Math.random() + 1).toString(36).substring(2); // random string to simulate a single-use token
   const expectedDefaultSingleUseUrl = `${testOrg.instanceUrl}/secur/frontdoor.jsp?otp=${singleUseToken}`;
+  const expectedSingleUseUrl = `${expectedDefaultSingleUseUrl}&startURL=${encodeURIComponent(testPath)}`;
 
   let sfCommandUxStubs: ReturnType<typeof stubSfCommandUx>;
 
@@ -66,7 +65,7 @@ describe('org:open', () => {
       const response = await OrgOpenCommand.run(['--json', '--targetusername', testOrg.username, '--urlonly']);
       assert(response);
       testJsonStructure(response);
-      expect(response.url).to.equal(expectedDefaultUrl);
+      expect(response.url).to.equal(expectedDefaultSingleUseUrl);
     });
 
     it('org with a url is built correctly', async () => {
@@ -79,7 +78,7 @@ describe('org:open', () => {
         testPath,
       ]);
       assert(response);
-      expect(response.url).to.equal(expectedUrl);
+      expect(response.url).to.equal(expectedSingleUseUrl);
     });
 
     describe('--source-file', () => {
@@ -109,6 +108,8 @@ describe('org:open', () => {
 
       it('--source-file to flexipage', async () => {
         $$.SANDBOX.stub(Connection.prototype, 'singleRecordQuery').resolves({ Id: '123' });
+        const mockMetadataUrl = 'visualEditor/appBuilder.app?pageId=123';
+        $$.SANDBOX.stub(Org.prototype, 'getMetadataUIURL').resolves(mockMetadataUrl);
 
         const response = await OrgOpenCommand.run([
           '--json',
@@ -118,10 +119,14 @@ describe('org:open', () => {
           '--source-file',
           flexipagePath,
         ]);
+
         expect(response.url).to.include('visualEditor/appBuilder.app?pageId=123');
       });
 
       it('--source-file to an ApexPage', async () => {
+        const mockMetadataUrl = '/apex/test';
+        $$.SANDBOX.stub(Org.prototype, 'getMetadataUIURL').resolves(mockMetadataUrl);
+
         const response = await OrgOpenCommand.run([
           '--json',
           '--targetusername',
@@ -130,31 +135,41 @@ describe('org:open', () => {
           '--source-file',
           apexPath,
         ]);
-        expect(response.url).to.include('&retURL=/apex/test');
+        expect(response.url).to.include('&startURL=/apex/test');
       });
 
       it('--source-file when flexipage query errors', async () => {
-        const response = await OrgOpenCommand.run([
-          '--json',
-          '--targetusername',
-          testOrg.username,
-          '--urlonly',
-          '--source-file',
-          flexipagesDir,
-        ]);
-        expect(response.url).to.include('lightning/setup/FlexiPageList/home');
+        try {
+          await OrgOpenCommand.run([
+            '--json',
+            '--targetusername',
+            testOrg.username,
+            '--urlonly',
+            '--source-file',
+            flexipagesDir,
+          ]);
+          expect.fail('should have thrown an error');
+        } catch (e) {
+          assert(e instanceof Error);
+          expect(e.message).to.include(`Unable to generate metadata URL for file: ${flexipagesDir}`);
+        }
       });
 
       it('--source-file to neither flexipage or apexpage', async () => {
-        const response = await OrgOpenCommand.run([
-          '--json',
-          '--targetusername',
-          testOrg.username,
-          '--urlonly',
-          '--source-file',
-          apexDir,
-        ]);
-        expect(response.url).to.include('lightning/setup/FlexiPageList/home');
+        try {
+          await OrgOpenCommand.run([
+            '--json',
+            '--targetusername',
+            testOrg.username,
+            '--urlonly',
+            '--source-file',
+            apexDir,
+          ]);
+          expect.fail('should have thrown an error');
+        } catch (e) {
+          assert(e instanceof Error);
+          expect(e.message).to.include(`Unable to generate metadata URL for file: ${apexDir}`);
+        }
       });
     });
 
@@ -164,7 +179,8 @@ describe('org:open', () => {
       const response = await OrgOpenCommand.run(['--json', '--targetusername', testOrg.username, '--urlonly']);
       assert(response);
       testJsonStructure(response);
-      expect(response.url).to.equal(expectedUrl);
+      expect(response.url).to.equal(expectedSingleUseUrl);
+      expect(spies.get('requestGet').callCount).to.equal(1);
       delete process.env.FORCE_OPEN_URL;
     });
 
@@ -174,7 +190,7 @@ describe('org:open', () => {
       expect(response.url).to.equal(expectedDefaultSingleUseUrl);
       // verify we called to the correct endpoint to generate the single-use AT
       expect(spies.get('requestGet').callCount).to.equal(1);
-      expect(spies.get('requestGet').args[0][0]).to.deep.equal('/services/oauth2/singleaccess');
+      expect(spies.get('requestGet').args[0][0]).to.deep.equal(`${testOrg.instanceUrl}/services/oauth2/singleaccess`);
     });
 
     it('generates a single-use frontdoor url even if --url-only or --json flag are passed in', async () => {
@@ -183,12 +199,13 @@ describe('org:open', () => {
       expect(response.url).to.equal(expectedDefaultSingleUseUrl);
       // verify we called to the correct endpoint to generate the single-use AT
       expect(spies.get('requestGet').callCount).to.equal(1);
-      expect(spies.get('requestGet').args[0][0]).to.deep.equal('/services/oauth2/singleaccess');
+      expect(spies.get('requestGet').args[0][0]).to.deep.equal(`${testOrg.instanceUrl}/services/oauth2/singleaccess`);
     });
 
     it('handles api error', async () => {
       $$.SANDBOX.restore();
       const mockError = new Error('Invalid_Scope');
+      mockError.name = 'Invalid_Scope';
       $$.SANDBOX.stub(Connection.prototype, 'requestGet').throws(mockError);
       try {
         await OrgOpenCommand.run(['--targetusername', testOrg.username]);
@@ -223,7 +240,7 @@ describe('org:open', () => {
       const response = await OrgOpenCommand.run(['--json', '--targetusername', testOrg.username, '--path', testPath]);
       assert(response);
       testJsonStructure(response);
-      expect(response.url).to.equal(expectedUrl);
+      expect(response.url).to.equal(expectedSingleUseUrl);
 
       expect(spies.get('resolver').callCount).to.equal(1);
     });
@@ -254,7 +271,7 @@ describe('org:open', () => {
       const response = await OrgOpenCommand.run(['--json', '--targetusername', testOrg.username, '--path', testPath]);
       assert(response);
       testJsonStructure(response);
-      expect(response.url).to.equal(expectedUrl);
+      expect(response.url).to.equal(expectedSingleUseUrl);
       expect(spies.get('resolver').callCount).to.equal(0);
       delete process.env.SFDX_CONTAINER_MODE;
     });
@@ -265,6 +282,7 @@ describe('org:open', () => {
       const response = await OrgOpenCommand.run(['--json', '--targetusername', testOrg.username, '--path', testPath]);
       assert(response);
       testJsonStructure(response);
+      expect(response.url).to.equal(expectedSingleUseUrl);
       expect(spies.get('resolver').callCount).to.equal(1);
       delete process.env.SF_DOMAIN_RETRY;
     });
@@ -273,7 +291,7 @@ describe('org:open', () => {
   describe('human output', () => {
     it('calls open and outputs proper success message (no url)', async () => {
       spies.set('resolver', stubMethod($$.SANDBOX, SfdcUrl.prototype, 'checkLightningDomain').resolves('1.1.1.1'));
-      await OrgOpenCommand.run(['--targetusername', testOrg.username, '--path', testPath]);
+      await OrgOpenCommand.run(['--json', '--targetusername', testOrg.username, '--path', testPath]);
 
       expect(sfCommandUxStubs.logSuccess.firstCall.args).to.include(
         messages.getMessage('humanSuccessNoUrl', [testOrg.orgId, testOrg.username])
@@ -288,7 +306,7 @@ describe('org:open', () => {
       await OrgOpenCommand.run(['--targetusername', testOrg.username, '--path', testPath, '--urlonly']);
 
       expect(sfCommandUxStubs.logSuccess.firstCall.args).to.include(
-        messages.getMessage('humanSuccess', [testOrg.orgId, testOrg.username, expectedUrl])
+        messages.getMessage('humanSuccess', [testOrg.orgId, testOrg.username, expectedSingleUseUrl])
       );
     });
 
@@ -313,7 +331,7 @@ describe('org:open', () => {
     it('calls open with no browser argument', async () => {
       spies.set('resolver', stubMethod($$.SANDBOX, SfdcUrl.prototype, 'checkLightningDomain').resolves('1.1.1.1'));
 
-      await OrgOpenCommand.run(['--targetusername', testOrg.username, '--path', testPath]);
+      await OrgOpenCommand.run(['--json', '--targetusername', testOrg.username, '--path', testPath]);
       expect(
         sfCommandUxStubs.logSuccess.calledOnceWith(
           messages.getMessage('humanSuccessNoUrl', [testOrg.orgId, testOrg.username])
@@ -329,9 +347,9 @@ describe('org:open', () => {
     it('calls open with a browser argument', async () => {
       spies.set('resolver', stubMethod($$.SANDBOX, SfdcUrl.prototype, 'checkLightningDomain').resolves('1.1.1.1'));
 
-      await OrgOpenCommand.run(['--targetusername', testOrg.username, '--path', testPath, '-b', testBrowser]);
+      await OrgOpenCommand.run(['--json', '--targetusername', testOrg.username, '--path', testPath, '-b', testBrowser]);
 
-      expect(sfCommandUxStubs.warn(sharedMessages.getMessage('SecurityWarning')));
+      expect(sfCommandUxStubs.warn.calledOnceWith(sharedMessages.getMessage('SecurityWarning')));
       expect(
         sfCommandUxStubs.logSuccess.calledOnceWith(
           messages.getMessage('humanSuccessNoUrl', [testOrg.orgId, testOrg.username])
