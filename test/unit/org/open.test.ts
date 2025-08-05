@@ -139,37 +139,29 @@ describe('org:open', () => {
       });
 
       it('--source-file when flexipage query errors', async () => {
-        try {
-          await OrgOpenCommand.run([
-            '--json',
-            '--targetusername',
-            testOrg.username,
-            '--urlonly',
-            '--source-file',
-            flexipagesDir,
-          ]);
-          expect.fail('should have thrown an error');
-        } catch (e) {
-          assert(e instanceof Error);
-          expect(e.message).to.include(`Unable to generate metadata URL for file: ${flexipagesDir}`);
-        }
+        const response = await OrgOpenCommand.run([
+          '--json',
+          '--targetusername',
+          testOrg.username,
+          '--urlonly',
+          '--source-file',
+          flexipagesDir,
+        ]);
+
+        expect(response.url).to.equal(expectedDefaultSingleUseUrl);
       });
 
       it('--source-file to neither flexipage or apexpage', async () => {
-        try {
-          await OrgOpenCommand.run([
-            '--json',
-            '--targetusername',
-            testOrg.username,
-            '--urlonly',
-            '--source-file',
-            apexDir,
-          ]);
-          expect.fail('should have thrown an error');
-        } catch (e) {
-          assert(e instanceof Error);
-          expect(e.message).to.include(`Unable to generate metadata URL for file: ${apexDir}`);
-        }
+        const response = await OrgOpenCommand.run([
+          '--json',
+          '--targetusername',
+          testOrg.username,
+          '--urlonly',
+          '--source-file',
+          apexDir,
+        ]);
+
+        expect(response.url).to.equal(expectedDefaultSingleUseUrl);
       });
     });
 
