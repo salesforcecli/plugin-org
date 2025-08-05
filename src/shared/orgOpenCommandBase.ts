@@ -42,8 +42,8 @@ export abstract class OrgOpenCommandBase<T> extends SfCommand<T> {
     // NOTE: Deliberate use of `||` here since getBoolean() defaults to false, and we need to consider both env vars.
     const containerMode = env.getBoolean('SF_CONTAINER_MODE') || env.getBoolean('SFDX_CONTAINER_MODE');
 
-    // security warning only for --json OR --url-only OR containerMode
-    if (flags['url-only'] || this.jsonEnabled() || containerMode) {
+    // security warning only for --url-only OR containerMode
+    if (flags['url-only'] || containerMode) {
       const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
       this.warn(sharedMessages.getMessage('SecurityWarning'));
       this.log('');
@@ -72,15 +72,13 @@ export abstract class OrgOpenCommandBase<T> extends SfCommand<T> {
       handleDomainError(err, url, env);
     }
 
-    if (this.jsonEnabled()) {
-      const cp = await utils.openUrl(url, {
-        ...(flags.browser ? { app: { name: apps[flags.browser] } } : {}),
-        ...(flags.private ? { newInstance: platform() === 'darwin', app: { name: apps.browserPrivate } } : {}),
-      });
-      cp.on('error', (err) => {
-        throw SfError.wrap(err);
-      });
-    }
+    const cp = await utils.openUrl(url, {
+      ...(flags.browser ? { app: { name: apps[flags.browser] } } : {}),
+      ...(flags.private ? { newInstance: platform() === 'darwin', app: { name: apps.browserPrivate } } : {}),
+    });
+    cp.on('error', (err) => {
+      throw SfError.wrap(err);
+    });
 
     return output;
   }
