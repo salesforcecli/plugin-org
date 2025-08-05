@@ -98,6 +98,6 @@ const generateFileUrl = async (file: string, org: Org): Promise<string> => {
     ) {
       throw error;
     }
-    throw new Error(`Unable to generate metadata URL for file: ${file}`);
+    return '';
   }
 };
