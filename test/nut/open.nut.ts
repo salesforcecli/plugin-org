@@ -43,13 +43,13 @@ describe('test org:open command', () => {
     defaultUserOrgId = defaultOrg.orgId as string;
   });
 
-  it('should produce the default URL for a flexipage resource when it not in org in json', () => {
+  it('should produce the frontdoor default URL for a flexipage resource when it not in org in json', () => {
     const result = execCmd<OrgOpenOutput>(`force:source:open -f ${flexiPagePath} --urlonly --json`, {
       ensureExitCode: 0,
     }).jsonOutput?.result;
     assert(result);
     expect(result).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
-    expect(result.url).to.include('lightning/setup/FlexiPageList/home');
+    expect(result.url).to.include('secur/frontdoor.jsp');
   });
 
   it('should produce the URL for a flexipage resource in json', async () => {
@@ -63,7 +63,7 @@ describe('test org:open command', () => {
     }).jsonOutput?.result;
     assert(result);
     expect(result).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
-    expect(result.url).to.include('/visualEditor/appBuilder.app?pageId');
+    expect(result.url).to.include('secur/frontdoor.jsp');
   });
 
   it('should produce the URL for an existing flow', () => {
@@ -72,7 +72,7 @@ describe('test org:open command', () => {
     }).jsonOutput?.result;
     assert(result);
     expect(result).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
-    expect(result.url).to.include('/builder_platform_interaction/flowBuilder.app?flowId=301');
+    expect(result.url).to.include('secur/frontdoor.jsp');
   });
 
   it("should produce the org's frontdoor url when edition of file is not supported", async () => {
