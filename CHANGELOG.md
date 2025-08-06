@@ -1,3 +1,14 @@
+## [5.9.20](https://github.com/salesforcecli/plugin-org/compare/5.9.19...5.9.20) (2025-08-06)
+
+### Bug Fixes
+
+- remove the if statement this.jsonEnabled ([a69571f](https://github.com/salesforcecli/plugin-org/commit/a69571f68f61793ef83ffab111f7c3e013733679))
+- remove the warnings and update frontdoorUrl method ([876db34](https://github.com/salesforcecli/plugin-org/commit/876db34a3210a38b20c888cabe317b8fa633a98b))
+- update nuts ([981e694](https://github.com/salesforcecli/plugin-org/commit/981e69421d717a73f35ad359173d25c0aa97ff6c))
+- update NUTS ([477e543](https://github.com/salesforcecli/plugin-org/commit/477e54397365495423d95edfede2a1116a52605a))
+- update unit tests for org open ([7ad363a](https://github.com/salesforcecli/plugin-org/commit/7ad363a866db011d25105949c72fa9ea80824853))
+- update UT using frontdoorURL ([ecc5136](https://github.com/salesforcecli/plugin-org/commit/ecc5136895dde9cd2dbec0afb4fe0bf3334719d1))
+
 ## [5.9.19](https://github.com/salesforcecli/plugin-org/compare/5.9.18...5.9.19) (2025-08-03)
 
 ### Bug Fixes
