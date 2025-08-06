@@ -213,7 +213,7 @@ describe('Org Command NUT', () => {
       expect(result).to.include({ orgId: aliasUserOrgId, username: aliasedUsername });
       expect(result)
         .to.property('url')
-        .to.include(`retURL=${encodeURIComponent(decodeURIComponent('foo/bar/baz'))}`);
+        .to.include(`startURL=${encodeURIComponent(decodeURIComponent('foo/bar/baz'))}`);
     });
   });
 });

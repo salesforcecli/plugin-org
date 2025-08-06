@@ -5,23 +5,20 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import path from 'node:path';
 import {
   Flags,
   loglevel,
   orgApiVersionFlagWithDeprecations,
   requiredOrgFlagWithDeprecations,
 } from '@salesforce/sf-plugins-core';
-import { Connection, Messages } from '@salesforce/core';
+import { Messages, Org } from '@salesforce/core';
 import { MetadataResolver } from '@salesforce/source-deploy-retrieve';
-import { env } from '@salesforce/kit';
 import { buildFrontdoorUrl } from '../../shared/orgOpenUtils.js';
 import { OrgOpenCommandBase } from '../../shared/orgOpenCommandBase.js';
 import { type OrgOpenOutput } from '../../shared/orgTypes.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
-const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
 
 export class OrgOpenCommand extends OrgOpenCommandBase<OrgOpenOutput> {
   public static readonly summary = messages.getMessage('summary');
@@ -68,75 +65,39 @@ export class OrgOpenCommand extends OrgOpenCommandBase<OrgOpenOutput> {
   };
 
   public async run(): Promise<OrgOpenOutput> {
-    this.warn(sharedMessages.getMessage('BehaviorChangeWarning'));
     const { flags } = await this.parse(OrgOpenCommand);
     this.org = flags['target-org'];
     this.connection = this.org.getConnection(flags['api-version']);
 
-    const singleUseEnvVar: boolean = env.getBoolean('SF_SINGLE_USE_ORG_OPEN_URL');
-    const singleUseMode = singleUseEnvVar ? singleUseEnvVar : !(flags['url-only'] || this.jsonEnabled());
     const [frontDoorUrl, retUrl] = await Promise.all([
-      buildFrontdoorUrl(this.org, this.connection, singleUseMode),
-      flags['source-file'] ? generateFileUrl(flags['source-file'], this.connection) : flags.path,
+      buildFrontdoorUrl(this.org),
+      flags['source-file'] ? generateFileUrl(flags['source-file'], this.org) : flags.path,
     ]);
 
     return this.openOrgUI(flags, frontDoorUrl, retUrl);
   }
 }
 
-const generateFileUrl = async (file: string, conn: Connection): Promise<string> => {
+const generateFileUrl = async (file: string, org: Org): Promise<string> => {
   try {
     const metadataResolver = new MetadataResolver();
     const components = metadataResolver.getComponentsFromPath(file);
     const typeName = components[0]?.type?.name;
 
-    switch (typeName) {
-      case 'Bot':
-        return `AiCopilot/copilotStudio.app#/copilot/builder?copilotId=${await botFileNameToId(conn, file)}`;
-      case 'ApexPage':
-        return `/apex/${path.basename(file).replace('.page-meta.xml', '').replace('.page', '')}`;
-      case 'Flow':
-        return `/builder_platform_interaction/flowBuilder.app?flowId=${await flowFileNameToId(conn, file)}`;
-      case 'FlexiPage':
-        return `/visualEditor/appBuilder.app?pageId=${await flexiPageFilenameToId(conn, file)}`;
-      default:
-        return 'lightning/setup/FlexiPageList/home';
+    if (!typeName) {
+      throw new Error(`Unable to determine metadata type for file: ${file}`);
     }
+
+    return await org.getMetadataUIURL(typeName, file);
   } catch (error) {
-    if (error instanceof Error && error.name === 'FlowIdNotFoundError') {
+    if (
+      error instanceof Error &&
+      (error.message.includes('FlowIdNotFound') ||
+        error.message.includes('CustomObjectIdNotFound') ||
+        error.message.includes('ApexClassIdNotFound'))
+    ) {
       throw error;
     }
-    return 'lightning/setup/FlexiPageList/home';
-  }
-};
-
-const botFileNameToId = async (conn: Connection, filePath: string): Promise<string> =>
-  (
-    await conn.singleRecordQuery<{ Id: string }>(
-      `SELECT id FROM BotDefinition WHERE DeveloperName='${path.basename(filePath, '.bot-meta.xml')}'`
-    )
-  ).Id;
-
-/** query flexipage via toolingPAI to get its ID (starts with 0M0) */
-const flexiPageFilenameToId = async (conn: Connection, filePath: string): Promise<string> =>
-  (
-    await conn.singleRecordQuery<{ Id: string }>(
-      `SELECT id FROM flexipage WHERE DeveloperName='${path.basename(filePath, '.flexipage-meta.xml')}'`,
-      { tooling: true }
-    )
-  ).Id;
-
-/** query the rest API to turn a flow's filepath into a FlowId  (starts with 301) */
-const flowFileNameToId = async (conn: Connection, filePath: string): Promise<string> => {
-  try {
-    const flow = await conn.singleRecordQuery<{ DurableId: string }>(
-      `SELECT DurableId FROM FlowVersionView WHERE FlowDefinitionView.ApiName = '${path.basename(
-        filePath,
-        '.flow-meta.xml'
-      )}' ORDER BY VersionNumber DESC LIMIT 1`
-    );
-    return flow.DurableId;
-  } catch (error) {
-    throw messages.createError('FlowIdNotFound', [filePath]);
+    return '';
   }
 };
