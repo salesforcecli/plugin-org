@@ -9,7 +9,7 @@
     "@oclif/multi-stage-output": "^0.8.20",
     "@salesforce/core": "^8.19.1",
     "@salesforce/kit": "^3.2.3",
-    "@salesforce/sf-plugins-core": "^12.2.3",
+    "@salesforce/sf-plugins-core": "^12.2.4",
     "@salesforce/source-deploy-retrieve": "^12.22.2",
     "@salesforce/ts-types": "^2.0.12",
     "ansis": "^3.16.0",
