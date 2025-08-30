@@ -1888,17 +1888,17 @@
   dependencies:
     "@salesforce/ts-types" "^2.0.12"
 
-"@salesforce/plugin-command-reference@^3.1.65":
-  version "3.1.65"
-  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.1.65.tgz#af6cd928b9d4e4abb80caed5f8522a78da80f4b8"
-  integrity sha512-OuUdv7oAfWyVKKeFAua7j5bpQNeBl25I5SDXnF56m4YHnHhEIgsLP3oj7Ukw291ucpLKkeBkyiBv170bAjJHgg==
+"@salesforce/plugin-command-reference@^3.1.66":
+  version "3.1.66"
+  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.1.66.tgz#831c175aa32b4abcbc495946bd130dd132e05548"
+  integrity sha512-PVWX1w4X+EeH/511/oft8X8jB+XgnXhAqDsdVwieGhwE+7joGIUEDQc/U4WCgJ30rH92zjWEaUmXiVAY9h+KbA==
   dependencies:
     "@oclif/core" "^4"
     "@salesforce/core" "^8.19.1"
     "@salesforce/kit" "^3.2.3"
     "@salesforce/sf-plugins-core" "^11.3.12"
     "@salesforce/ts-types" "^2.0.11"
-    chalk "^5.5.0"
+    chalk "^5.6.0"
     debug "^4.4.1"
     handlebars "^4.7.8"
 
@@ -3487,10 +3487,10 @@ chalk@^4.0.0, chalk@^4.0.2, chalk@^4.1.0:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
-chalk@^5.0.0, chalk@^5.3.0, chalk@^5.5.0:
-  version "5.5.0"
-  resolved "https://registry.yarnpkg.com/chalk/-/chalk-5.5.0.tgz#67ada1df5ca809dc84c9b819d76418ddcf128428"
-  integrity sha512-1tm8DTaJhPBG3bIkVeZt1iZM9GfSX2lzOeDVZH9R9ffRHpmHvxZ/QhgQH/aDTkswQVt+YHdXAdS/In/30OjCbg==
+chalk@^5.0.0, chalk@^5.3.0, chalk@^5.6.0:
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/chalk/-/chalk-5.6.0.tgz#a1a8d294ea3526dbb77660f12649a08490e33ab8"
+  integrity sha512-46QrSQFyVSEyYAgQ22hQ+zDa60YHA4fBstHmtSApj1Y5vKtG27fWowW03jCk5KcbXEWPZUIR894aARCA/G1kfQ==
 
 change-case@^4, change-case@^4.1.2:
   version "4.1.2"
