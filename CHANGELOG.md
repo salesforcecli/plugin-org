@@ -1,3 +1,9 @@
+## [5.9.28](https://github.com/salesforcecli/plugin-org/compare/5.9.27...5.9.28) (2025-09-08)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/kit from 3.2.3 to 3.2.4 ([4546efe](https://github.com/salesforcecli/plugin-org/commit/4546efeed1e70c544c647fa0479b52ee8e6fa1c2))
+
 ## [5.9.27](https://github.com/salesforcecli/plugin-org/compare/5.9.26...5.9.27) (2025-08-31)
 
 ### Bug Fixes
