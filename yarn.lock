@@ -1817,10 +1817,10 @@
     "@pnpm/network.ca-file" "^1.0.1"
     config-chain "^1.1.11"
 
-"@salesforce/cli-plugins-testkit@^5.3.39":
-  version "5.3.39"
-  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-5.3.39.tgz#97218016503fc19194509cc603752de4f2baceae"
-  integrity sha512-6cBN7PP3/BN11qv/RGilJdWOkSEGGh6eIzyE+tZI27s2KLf/aOysbZk90v9yhSnuxvPiREHzYCuNSufJlsciQQ==
+"@salesforce/cli-plugins-testkit@^5.3.41":
+  version "5.3.41"
+  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-5.3.41.tgz#16acca933dcd64f0fd2c917c7b22529107f373e6"
+  integrity sha512-K6fZfvzJAb0WFJFlgyIHgLyWLXR7i2SKDZ069kvCmDN0QVfftp/OwYrtosIzxiXdpHOtcoAkt65M1UR1aw0XzA==
   dependencies:
     "@salesforce/core" "^8.8.0"
     "@salesforce/kit" "^3.2.3"
