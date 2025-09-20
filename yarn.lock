@@ -1719,10 +1719,10 @@
     wordwrap "^1.0.0"
     wrap-ansi "^7.0.0"
 
-"@oclif/multi-stage-output@^0.8.20":
-  version "0.8.20"
-  resolved "https://registry.yarnpkg.com/@oclif/multi-stage-output/-/multi-stage-output-0.8.20.tgz#193cef3d9fe323aa85909219ae84bca7fff9f666"
-  integrity sha512-XrzuZ9aNjv+RSc0MsjtnX2nR3w9tJSNfBBg6uoOHZkWndPuPeS70gTseTt2dQJDHQE2ygNuDSPMQBf71bNoVuA==
+"@oclif/multi-stage-output@^0.8.22":
+  version "0.8.22"
+  resolved "https://registry.yarnpkg.com/@oclif/multi-stage-output/-/multi-stage-output-0.8.22.tgz#57b5de282fc462d0dde55c72744ab7f3e3e03df7"
+  integrity sha512-04Wgf84Vr2C4fOtjk3A4b7O9orUOBSIPH2JzLb9nS4IwpYb/6mouxbKyEVGWxDO/qD4vnw+WRb8UQiDKBJQC7w==
   dependencies:
     "@oclif/core" "^4"
     "@types/react" "^18.3.12"
@@ -1730,7 +1730,7 @@
     figures "^6.1.0"
     ink "5.0.1"
     react "^18.3.1"
-    wrap-ansi "^9.0.0"
+    wrap-ansi "^9.0.2"
 
 "@oclif/plugin-command-snapshot@^5.3.6":
   version "5.3.6"
@@ -8862,10 +8862,10 @@ wrap-ansi@^8.1.0:
     string-width "^5.0.1"
     strip-ansi "^7.0.1"
 
-wrap-ansi@^9.0.0:
-  version "9.0.0"
-  resolved "https://registry.npmjs.org/wrap-ansi/-/wrap-ansi-9.0.0.tgz"
-  integrity sha512-G8ura3S+3Z2G+mkgNRq8dqaFZAuxfsxpBB8OCTGRTCtp+l/v9nbFNmCUP1BZMts3G1142MsZfn6eeUKrr4PD1Q==
+wrap-ansi@^9.0.0, wrap-ansi@^9.0.2:
+  version "9.0.2"
+  resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-9.0.2.tgz#956832dea9494306e6d209eb871643bb873d7c98"
+  integrity sha512-42AtmgqjV+X1VpdOfyTGOYRi0/zsoLqtXQckTmqTeybT+BDIbM/Guxo7x3pE2vtpr1ok6xRqM9OpBe+Jyoqyww==
   dependencies:
     ansi-styles "^6.2.1"
     string-width "^7.0.0"
