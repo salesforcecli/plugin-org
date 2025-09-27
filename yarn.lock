@@ -1585,10 +1585,10 @@
   dependencies:
     "@salesforce/ts-types" "^2.0.12"
 
-"@salesforce/plugin-command-reference@^3.1.70":
-  version "3.1.70"
-  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.1.70.tgz#223698ad2be017806381727075ae17740f81ac73"
-  integrity sha512-o2jDAkQAy+nelwACeXLQBQvfFk7QiRvraap04A7NYUnkkDpZ7KhsGPXEOXFDRV/FGQhxuvOCEoQegpxmX7yLqw==
+"@salesforce/plugin-command-reference@^3.1.72":
+  version "3.1.72"
+  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.1.72.tgz#cfd03311c2a0d1dc3083d1ebf59ce9b9175626c3"
+  integrity sha512-/i4F7u16M3IT4oh3w7uYQM6Lk6cGsHldtcz+sV+uNKdFoYK3ikcEt1dX/RSXhm9SHMFGzcbhvDwGFZpGrHvplw==
   dependencies:
     "@oclif/core" "^4"
     "@salesforce/core" "^8.22.0"
@@ -1596,7 +1596,7 @@
     "@salesforce/sf-plugins-core" "^11.3.12"
     "@salesforce/ts-types" "^2.0.11"
     chalk "^5.6.2"
-    debug "^4.4.1"
+    debug "^4.4.3"
     handlebars "^4.7.8"
 
 "@salesforce/prettier-config@^0.0.3":
@@ -3551,10 +3551,10 @@ dateformat@^4.6.3:
   resolved "https://registry.npmjs.org/dateformat/-/dateformat-4.6.3.tgz"
   integrity sha512-2P0p0pFGzHS5EMnhdxQi7aJN+iMheud0UhG4dlE1DLAlvL8JHjJJTX/CSm4JXwV0Ka5nGk3zC5mcb5bUQUxxMA==
 
-debug@4, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2, debug@^4.3.4, debug@^4.3.5, debug@^4.4.0, debug@^4.4.1:
-  version "4.4.1"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-4.4.1.tgz#e5a8bc6cbc4c6cd3e64308b0693a3d4fa550189b"
-  integrity sha512-KcKCqiftBJcZr++7ykoDIEwSa3XWowTfNPo92BYxjXiyYEVrUQh2aLyhxBCwww+heortUFxEJYcRzosstTEBYQ==
+debug@4, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2, debug@^4.3.4, debug@^4.3.5, debug@^4.4.0, debug@^4.4.1, debug@^4.4.3:
+  version "4.4.3"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-4.4.3.tgz#c6ae432d9bd9662582fce08709b038c58e9e3d6a"
+  integrity sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==
   dependencies:
     ms "^2.1.3"
 
