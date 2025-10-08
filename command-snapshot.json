@@ -138,7 +138,7 @@
     "plugin": "@salesforce/plugin-org"
   },
   {
-    "alias": [],
+    "alias": ["org:open:authoring-bundle"],
     "command": "org:open:agent",
     "flagAliases": ["urlonly"],
     "flagChars": ["b", "n", "o", "r"],
