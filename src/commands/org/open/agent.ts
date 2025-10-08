@@ -18,6 +18,7 @@ export class OrgOpenAgent extends OrgOpenCommandBase<OrgOpenOutput> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
+  public static aliases = ['org:open:authoring-bundle'];
 
   public static readonly flags = {
     ...OrgOpenCommandBase.flags,
