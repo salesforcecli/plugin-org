@@ -1623,15 +1623,15 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@jsforce/jsforce-node@^3.10.4":
-  version "3.10.4"
-  resolved "https://registry.yarnpkg.com/@jsforce/jsforce-node/-/jsforce-node-3.10.4.tgz#8241205d03993de8dc3266bda164c7898b17c86e"
-  integrity sha512-do5a2GfvlctifYL4q41WvHiLtVFfk/eUyVsJw0mkyX+mgSg9KXLOrsXK4zpZPcIa+HUJ+ccF6fDs/vwkXlZ3tQ==
+"@jsforce/jsforce-node@^3.10.8":
+  version "3.10.8"
+  resolved "https://registry.yarnpkg.com/@jsforce/jsforce-node/-/jsforce-node-3.10.8.tgz#f13903a0885fa3501a513512984cf9a717aebb9a"
+  integrity sha512-XGD/ivZz+htN5SgctFyEZ+JNG6C8FXzaEwvPbRSdsIy/hpWlexY38XtTpdT5xX3KnYSnOE4zA1M/oIbTm7RD/Q==
   dependencies:
     "@sindresorhus/is" "^4"
     base64url "^3.0.1"
     csv-parse "^5.5.2"
-    csv-stringify "^6.4.4"
+    csv-stringify "^6.6.0"
     faye "^1.4.0"
     form-data "^4.0.4"
     https-proxy-agent "^5.0.0"
@@ -1841,12 +1841,12 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.8.1"
 
-"@salesforce/core@^8.18.7", "@salesforce/core@^8.22.0", "@salesforce/core@^8.23.1", "@salesforce/core@^8.5.1", "@salesforce/core@^8.8.0":
-  version "8.23.1"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-8.23.1.tgz#89e04518d6d4033ef6a248380eb952328068797c"
-  integrity sha512-/mQMu6g0gmkKQsl+G93VkkU+yrLEjnBzdUu0sPlS0WY5jM4M9sxg97LmRXa6dchECU3c/ugamsXaP6j6QmEfsQ==
+"@salesforce/core@^8.18.7", "@salesforce/core@^8.22.0", "@salesforce/core@^8.23.1", "@salesforce/core@^8.23.2", "@salesforce/core@^8.5.1", "@salesforce/core@^8.8.0":
+  version "8.23.2"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-8.23.2.tgz#218152b97e05745cd0499ad2594df4443fa8aa18"
+  integrity sha512-9XUlaI0orvdjDJZsgjt0lVLa5wrFWNaorRbshT/EJ6fIiqcAehOV2bR62NJtRhrOrgu1h34bTmUqMo+yUEES9w==
   dependencies:
-    "@jsforce/jsforce-node" "^3.10.4"
+    "@jsforce/jsforce-node" "^3.10.8"
     "@salesforce/kit" "^3.2.4"
     "@salesforce/schemas" "^1.10.0"
     "@salesforce/ts-types" "^2.0.11"
@@ -4245,10 +4245,10 @@ csv-parse@^5.5.2:
   resolved "https://registry.npmjs.org/csv-parse/-/csv-parse-5.5.6.tgz"
   integrity sha512-uNpm30m/AGSkLxxy7d9yRXpJQFrZzVWLFBkS+6ngPcZkw/5k3L/jjFuj7tVnEpRn+QgmiXr21nDlhCiUK4ij2A==
 
-csv-stringify@^6.4.4:
-  version "6.5.1"
-  resolved "https://registry.npmjs.org/csv-stringify/-/csv-stringify-6.5.1.tgz"
-  integrity sha512-+9lpZfwpLntpTIEpFbwQyWuW/hmI/eHuJZD1XzeZpfZTqkf1fyvBbBLXTJJMsBuuS11uTShMqPwzx4A6ffXgRQ==
+csv-stringify@^6.6.0:
+  version "6.6.0"
+  resolved "https://registry.yarnpkg.com/csv-stringify/-/csv-stringify-6.6.0.tgz#d384859cfb71d0a4a73c5bcc36a4daf5440cb033"
+  integrity sha512-YW32lKOmIBgbxtu3g5SaiqWNwa/9ISQt2EcgOq0+RAIFufFp9is6tqNnKahqE5kuKvrnYAzs28r+s6pXJR8Vcw==
 
 dargs@^7.0.0:
   version "7.0.0"
