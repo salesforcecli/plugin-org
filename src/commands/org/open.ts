@@ -45,7 +45,6 @@ export class OrgOpenCommand extends OrgOpenCommandBase<OrgOpenOutput> {
       summary: messages.getMessage('flags.path.summary'),
       env: 'FORCE_OPEN_URL',
       exclusive: ['source-file'],
-      parse: (input: string): Promise<string> => Promise.resolve(encodeURIComponent(decodeURIComponent(input))),
     }),
     'url-only': Flags.boolean({
       char: 'r',

@@ -11,7 +11,7 @@ import { expect, config, assert } from 'chai';
 import { TestSession } from '@salesforce/cli-plugins-testkit';
 import { execCmd } from '@salesforce/cli-plugins-testkit';
 import { OrgListResult, defaultHubEmoji, defaultOrgEmoji } from '../../src/commands/org/list.js';
-import { OrgDisplayReturn, OrgOpenOutput } from '../../src/shared/orgTypes.js';
+import { OrgDisplayReturn } from '../../src/shared/orgTypes.js';
 
 let hubOrgUsername: string;
 config.truncateThreshold = 0;
@@ -47,8 +47,6 @@ describe('Org Command NUT', () => {
   let session: TestSession;
   let defaultUsername: string;
   let aliasedUsername: string;
-  let defaultUserOrgId: string;
-  let aliasUserOrgId: string;
 
   before(async () => {
     session = await TestSession.create({
@@ -78,10 +76,8 @@ describe('Org Command NUT', () => {
     assert(aliasOrg?.orgId);
 
     defaultUsername = defaultOrg.username;
-    defaultUserOrgId = defaultOrg.orgId;
 
     aliasedUsername = aliasOrg?.username;
-    aliasUserOrgId = aliasOrg?.orgId;
   });
 
   after(async () => {
@@ -190,30 +186,6 @@ describe('Org Command NUT', () => {
       expect(lines.length).to.have.greaterThan(0);
       const usernameLine = lines.find((line) => line.includes('Username'));
       expect(usernameLine).to.include(aliasedUsername);
-    });
-  });
-  describe('Org Open', () => {
-    it('should produce the URL for an org in json', () => {
-      const result = execCmd<OrgOpenOutput>(`org:open -o ${defaultUsername} --url-only --json`, {
-        ensureExitCode: 0,
-      }).jsonOutput?.result;
-      expect(result).to.be.ok;
-      expect(result).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
-    });
-    it('should produce the URL with given path for an org in json', () => {
-      const result = execCmd<OrgOpenOutput>(
-        // see WI W-12694761 for single-quote behavior
-        // eslint-disable-next-line sf-plugin/no-execcmd-double-quotes
-        `force:org:open -o ${aliasedUsername} --urlonly --path "foo/bar/baz" --json`,
-        {
-          ensureExitCode: 0,
-        }
-      ).jsonOutput?.result;
-      expect(result).to.be.ok;
-      expect(result).to.include({ orgId: aliasUserOrgId, username: aliasedUsername });
-      expect(result)
-        .to.property('url')
-        .to.include(`startURL=${encodeURIComponent(decodeURIComponent('foo/bar/baz'))}`);
     });
   });
 });

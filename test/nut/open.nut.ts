@@ -11,11 +11,13 @@ import { TestSession, execCmd } from '@salesforce/cli-plugins-testkit';
 import { expect, config, assert } from 'chai';
 import { AuthFields } from '@salesforce/core';
 import { ComponentSetBuilder } from '@salesforce/source-deploy-retrieve';
+import { ensureString } from '@salesforce/ts-types';
 import { OrgOpenOutput } from '../../src/shared/orgTypes.js';
 
 let session: TestSession;
 let defaultUsername: string;
 let defaultUserOrgId: string;
+let defaultOrgInstanceUrl: string;
 
 config.truncateThreshold = 0;
 
@@ -41,6 +43,7 @@ describe('test org:open command', () => {
     const defaultOrg = session.orgs.get('default') as AuthFields;
     defaultUsername = defaultOrg.username as string;
     defaultUserOrgId = defaultOrg.orgId as string;
+    defaultOrgInstanceUrl = defaultOrg.instanceUrl as string;
   });
 
   it('should produce the frontdoor default URL for a flexipage resource when it not in org in json', () => {
@@ -49,7 +52,7 @@ describe('test org:open command', () => {
     }).jsonOutput?.result;
     assert(result);
     expect(result).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
-    expect(result.url).to.include('secur/frontdoor.jsp');
+    validateFrontdoorUrl(result.url, undefined, defaultOrgInstanceUrl);
   });
 
   it('should produce the URL for a flexipage resource in json', async () => {
@@ -63,7 +66,15 @@ describe('test org:open command', () => {
     }).jsonOutput?.result;
     assert(result);
     expect(result).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
-    expect(result.url).to.include('secur/frontdoor.jsp');
+    validateFrontdoorUrl(
+      result.url,
+      {
+        pattern: /^\/visualEditor\/appBuilder\.app\?pageId=[a-zA-Z0-9]{15,18}$/,
+        shouldContain: ['/visualEditor/appBuilder.app', 'pageId='],
+        idPattern: /pageId=([a-zA-Z0-9]{15,18})/,
+      },
+      defaultOrgInstanceUrl
+    );
   });
 
   it('should produce the URL for an existing flow', () => {
@@ -72,7 +83,15 @@ describe('test org:open command', () => {
     }).jsonOutput?.result;
     assert(result);
     expect(result).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
-    expect(result.url).to.include('secur/frontdoor.jsp');
+    validateFrontdoorUrl(
+      result.url,
+      {
+        pattern: /^\/builder_platform_interaction\/flowBuilder\.app\?flowId=[a-zA-Z0-9]{15,18}$/,
+        shouldContain: ['flowBuilder.app', 'flowId='],
+        idPattern: /flowId=([a-zA-Z0-9]{15,18})/,
+      },
+      defaultOrgInstanceUrl
+    );
   });
 
   it("should produce the org's frontdoor url when edition of file is not supported", async () => {
@@ -87,16 +106,39 @@ describe('test org:open command', () => {
     }).jsonOutput?.result;
     assert(result);
     expect(result).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
-    expect(result.url).to.include('secur/frontdoor.jsp');
+    validateFrontdoorUrl(
+      result.url,
+      {
+        exactMatch: '/lightning/setup/FlexiPageList/home',
+      },
+      defaultOrgInstanceUrl
+    );
   });
 
-  it('org:open command', () => {
+  it('should produce the frontdoor URL to open the setup home', () => {
     const result = execCmd<OrgOpenOutput>('force:org:open --urlonly --json', {
       ensureExitCode: 0,
     }).jsonOutput?.result;
     assert(result);
     expect(result).to.have.keys(['url', 'orgId', 'username']);
-    expect(result?.url).to.include('/secur/frontdoor.jsp');
+    validateFrontdoorUrl(result.url, undefined, defaultOrgInstanceUrl);
+  });
+
+  it('should properly encode path parameters with slashes', () => {
+    const testPath = 'lightning/setup/AsyncApiJobStatus/home';
+    const result = execCmd<OrgOpenOutput>(`force:org:open --path "${testPath}" --urlonly --json`, {
+      ensureExitCode: 0,
+    }).jsonOutput?.result;
+    assert(result);
+    expect(result).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
+    // The path should be single URL encoded (foo%2Fbar%2Fbaz), not double encoded
+    validateFrontdoorUrl(
+      result.url,
+      {
+        exactMatch: 'lightning/setup/AsyncApiJobStatus/home',
+      },
+      defaultOrgInstanceUrl
+    );
   });
 
   after(async () => {
@@ -108,3 +150,78 @@ describe('test org:open command', () => {
     }
   });
 });
+
+type StartUrlValidationOptions = {
+  pattern?: RegExp;
+  exactMatch?: string;
+  shouldContain?: string[];
+  shouldStartWith?: string;
+  shouldEndWith?: string;
+  idPattern?: RegExp; // For extracting and validating Salesforce IDs
+};
+
+// Utility function to escape special regex characters
+function escapeRegExp(string: string): string {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Enhanced helper function to validate frontdoor URLs with flexible start URL validation
+function validateFrontdoorUrl(
+  urlString: string,
+  startUrlOptions?: StartUrlValidationOptions,
+  expectedInstanceUrl?: string
+): void {
+  const url = new URL(urlString);
+
+  // Validate instance URL if provided
+  if (expectedInstanceUrl) {
+    const instanceUrl = new URL(expectedInstanceUrl);
+    expect(url.hostname).to.equal(instanceUrl.hostname);
+  } else {
+    // Validate it's a Salesforce domain
+    expect(url.hostname).to.match(/\.salesforce\.com$/);
+  }
+
+  // Validate it's the frontdoor endpoint
+  expect(url.pathname).to.equal('/secur/frontdoor.jsp');
+
+  // Validate required query parameters
+  expect(url.searchParams.has('otp')).to.be.true;
+  expect(url.searchParams.has('cshc')).to.be.true;
+
+  if (startUrlOptions) {
+    const actualStartUrl = url.searchParams.get('startURL');
+    expect(actualStartUrl).to.not.be.null;
+
+    const decodedStartUrl = decodeURIComponent(ensureString(actualStartUrl));
+
+    if (startUrlOptions.exactMatch) {
+      expect(decodedStartUrl).to.equal(startUrlOptions.exactMatch);
+    }
+
+    if (startUrlOptions.pattern) {
+      expect(decodedStartUrl).to.match(startUrlOptions.pattern);
+    }
+
+    if (startUrlOptions.shouldContain) {
+      startUrlOptions.shouldContain.forEach((substring) => {
+        expect(decodedStartUrl).to.include(substring);
+      });
+    }
+
+    if (startUrlOptions.shouldStartWith) {
+      expect(decodedStartUrl).to.match(new RegExp(`^${escapeRegExp(startUrlOptions.shouldStartWith)}`));
+    }
+
+    if (startUrlOptions.shouldEndWith) {
+      expect(decodedStartUrl).to.match(new RegExp(`${escapeRegExp(startUrlOptions.shouldEndWith)}$`));
+    }
+
+    if (startUrlOptions.idPattern) {
+      expect(decodedStartUrl).to.match(startUrlOptions.idPattern);
+    }
+  } else {
+    // If no startURL options provided, expect no startURL parameter
+    expect(url.searchParams.get('startURL')).to.be.null;
+  }
+}

@@ -29,7 +29,7 @@ describe('org:open', () => {
   const testPath = '/lightning/whatever';
   const singleUseToken = (Math.random() + 1).toString(36).substring(2); // random string to simulate a single-use token
   const expectedDefaultSingleUseUrl = `${testOrg.instanceUrl}/secur/frontdoor.jsp?otp=${singleUseToken}`;
-  const expectedSingleUseUrlWithRedirect = `${expectedDefaultSingleUseUrl}&startURL=${encodeURIComponent(testPath)}`;
+  const expectedSingleUseUrlWithRedirect = `${expectedDefaultSingleUseUrl}&startURL=${testPath}`;
 
   let sfCommandUxStubs: ReturnType<typeof stubSfCommandUx>;
 
