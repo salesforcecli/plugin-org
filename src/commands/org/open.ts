@@ -13,7 +13,6 @@ import {
 } from '@salesforce/sf-plugins-core';
 import { Messages, Org } from '@salesforce/core';
 import { MetadataResolver } from '@salesforce/source-deploy-retrieve';
-import { buildFrontdoorUrl } from '../../shared/orgOpenUtils.js';
 import { OrgOpenCommandBase } from '../../shared/orgOpenCommandBase.js';
 import { type OrgOpenOutput } from '../../shared/orgTypes.js';
 
@@ -46,7 +45,6 @@ export class OrgOpenCommand extends OrgOpenCommandBase<OrgOpenOutput> {
       summary: messages.getMessage('flags.path.summary'),
       env: 'FORCE_OPEN_URL',
       exclusive: ['source-file'],
-      parse: (input: string): Promise<string> => Promise.resolve(encodeURIComponent(decodeURIComponent(input))),
     }),
     'url-only': Flags.boolean({
       char: 'r',
@@ -69,16 +67,16 @@ export class OrgOpenCommand extends OrgOpenCommandBase<OrgOpenOutput> {
     this.org = flags['target-org'];
     this.connection = this.org.getConnection(flags['api-version']);
 
-    const [frontDoorUrl, retUrl] = await Promise.all([
-      buildFrontdoorUrl(this.org),
-      flags['source-file'] ? generateFileUrl(flags['source-file'], this.org) : flags.path,
-    ]);
+    // `org.getMetadataUIURL` already generates a Frontdoor URL
+    if (flags['source-file']) {
+      return this.openOrgUI(flags, await generateFileUrl(flags['source-file'], this.org));
+    }
 
-    return this.openOrgUI(flags, frontDoorUrl, retUrl);
+    return this.openOrgUI(flags, await this.org.getFrontDoorUrl(flags.path));
   }
 }
 
-const generateFileUrl = async (file: string, org: Org): Promise<string> => {
+async function generateFileUrl(file: string, org: Org): Promise<string> {
   try {
     const metadataResolver = new MetadataResolver();
     const components = metadataResolver.getComponentsFromPath(file);
@@ -98,6 +96,7 @@ const generateFileUrl = async (file: string, org: Org): Promise<string> => {
     ) {
       throw error;
     }
-    return '';
+    // fall back to generic frontdoor URL
+    return org.getFrontDoorUrl();
   }
-};
+}
