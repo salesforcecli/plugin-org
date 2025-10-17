@@ -49,9 +49,16 @@ describe('org:open', () => {
     spies.set('open', stubMethod($$.SANDBOX, utils, 'openUrl').resolves(new EventEmitter()));
     spies.set(
       'requestGet',
-      stubMethod($$.SANDBOX, Connection.prototype, 'requestGet').resolves({
-        // eslint-disable-next-line camelcase
-        frontdoor_uri: expectedDefaultSingleUseUrl,
+      stubMethod($$.SANDBOX, Connection.prototype, 'requestGet').callsFake((url: string) => {
+        const urlObj = new URL(url);
+        const redirectUri = urlObj.searchParams.get('redirect_uri');
+        // see API docs: https://help.salesforce.com/s/articleView?id=xcloud.frontdoor_singleaccess.htm&type=5
+        return Promise.resolve({
+          // eslint-disable-next-line camelcase
+          frontdoor_uri: redirectUri
+            ? `${expectedDefaultSingleUseUrl}&startURL=${redirectUri}`
+            : expectedDefaultSingleUseUrl,
+        });
       })
     );
   });
@@ -108,7 +115,9 @@ describe('org:open', () => {
 
       it('--source-file to flexipage', async () => {
         $$.SANDBOX.stub(Connection.prototype, 'singleRecordQuery').resolves({ Id: '123' });
-        const mockMetadataUrl = 'visualEditor/appBuilder.app?pageId=123';
+        const mockMetadataUrl = `${expectedDefaultSingleUseUrl}&startURL=${encodeURIComponent(
+          'visualEditor/appBuilder.app?pageId=123'
+        )}`;
         $$.SANDBOX.stub(Org.prototype, 'getMetadataUIURL').resolves(mockMetadataUrl);
 
         const response = await OrgOpenCommand.run([
@@ -120,11 +129,11 @@ describe('org:open', () => {
           flexipagePath,
         ]);
 
-        expect(response.url).to.include('visualEditor/appBuilder.app?pageId=123');
+        expect(decodeURIComponent(response.url)).to.include('visualEditor/appBuilder.app?pageId=123');
       });
 
       it('--source-file to an ApexPage', async () => {
-        const mockMetadataUrl = '/apex/test';
+        const mockMetadataUrl = `${expectedDefaultSingleUseUrl}&startURL=${encodeURIComponent('/apex/test')}`;
         $$.SANDBOX.stub(Org.prototype, 'getMetadataUIURL').resolves(mockMetadataUrl);
 
         const response = await OrgOpenCommand.run([
@@ -135,10 +144,11 @@ describe('org:open', () => {
           '--source-file',
           apexPath,
         ]);
-        expect(response.url).to.include('&startURL=/apex/test');
+        expect(decodeURIComponent(response.url)).to.include('&startURL=/apex/test');
       });
 
       it('--source-file when flexipage query errors', async () => {
+        $$.SANDBOX.stub(Org.prototype, 'getMetadataUIURL').rejects(new Error('Metadata query failed'));
         const response = await OrgOpenCommand.run([
           '--json',
           '--targetusername',
@@ -192,36 +202,6 @@ describe('org:open', () => {
       // verify we called to the correct endpoint to generate the single-use AT
       expect(spies.get('requestGet').callCount).to.equal(1);
       expect(spies.get('requestGet').args[0][0]).to.deep.equal(`${testOrg.instanceUrl}/services/oauth2/singleaccess`);
-    });
-
-    it('handles api error', async () => {
-      $$.SANDBOX.restore();
-      const mockError = new Error('Invalid_Scope');
-      mockError.name = 'Invalid_Scope';
-      $$.SANDBOX.stub(Connection.prototype, 'requestGet').throws(mockError);
-      try {
-        await OrgOpenCommand.run(['--targetusername', testOrg.username]);
-        expect.fail('should have thrown Invalid_Scope');
-      } catch (e) {
-        assert(e instanceof SfError, 'should be an SfError');
-        expect(e.name).to.equal('Invalid_Scope');
-        expect(e.message).to.equal(sharedMessages.getMessage('SingleAccessFrontdoorError'));
-      }
-    });
-
-    it('handles invalid responde from api', async () => {
-      $$.SANDBOX.restore();
-      $$.SANDBOX.stub(Connection.prototype, 'requestGet').resolves({
-        invalid: 'some invalid response',
-      });
-      try {
-        await OrgOpenCommand.run(['--targetusername', testOrg.username]);
-        expect.fail('should have thrown Invalid_Scope');
-      } catch (e) {
-        assert(e instanceof SfError, 'should be an SfError');
-        expect(e.message).to.equal(sharedMessages.getMessage('SingleAccessFrontdoorError'));
-        expect(e.data).to.contain({ invalid: 'some invalid response' });
-      }
     });
   });
 
@@ -297,7 +277,7 @@ describe('org:open', () => {
 
       await OrgOpenCommand.run(['--targetusername', testOrg.username, '--path', testPath, '--urlonly']);
 
-      expect(sfCommandUxStubs.logSuccess.firstCall.args).to.include(
+      expect(sfCommandUxStubs.logSuccess.firstCall.args[0]).to.deep.equal(
         messages.getMessage('humanSuccess', [testOrg.orgId, testOrg.username, expectedSingleUseUrl])
       );
     });

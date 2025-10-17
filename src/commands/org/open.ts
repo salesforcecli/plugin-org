@@ -77,7 +77,7 @@ export class OrgOpenCommand extends OrgOpenCommandBase<OrgOpenOutput> {
   }
 }
 
-const generateFileUrl = async (file: string, org: Org): Promise<string> => {
+async function generateFileUrl(file: string, org: Org): Promise<string> {
   try {
     const metadataResolver = new MetadataResolver();
     const components = metadataResolver.getComponentsFromPath(file);
@@ -97,6 +97,7 @@ const generateFileUrl = async (file: string, org: Org): Promise<string> => {
     ) {
       throw error;
     }
-    return '';
+    // fall back to generic frontdoor URL
+    return org.getFrontDoorUrl();
   }
-};
+}
