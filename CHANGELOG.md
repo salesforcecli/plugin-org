@@ -1,3 +1,9 @@
+## [5.9.36](https://github.com/salesforcecli/plugin-org/compare/5.9.35...5.9.36) (2025-10-19)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/core from 4.5.5 to 4.5.6 ([7baff55](https://github.com/salesforcecli/plugin-org/commit/7baff556b915b8fdf01cd86123c0d79a868d44b6))
+
 ## [5.9.35](https://github.com/salesforcecli/plugin-org/compare/5.9.34...5.9.35) (2025-10-12)
 
 ### Bug Fixes
