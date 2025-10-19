@@ -1727,10 +1727,10 @@
     wordwrap "^1.0.0"
     wrap-ansi "^7.0.0"
 
-"@oclif/multi-stage-output@^0.8.23":
-  version "0.8.23"
-  resolved "https://registry.yarnpkg.com/@oclif/multi-stage-output/-/multi-stage-output-0.8.23.tgz#e735d01c749a4dc34d38f359730308537c94825c"
-  integrity sha512-6XdEWmxRthNRYOMkKEWPP+OU0WDAr8akO+Kyk356obnsa2f6yo5QAi6CncH+B1cOm7WocmIGhxyinjczx35nUw==
+"@oclif/multi-stage-output@^0.8.25":
+  version "0.8.25"
+  resolved "https://registry.yarnpkg.com/@oclif/multi-stage-output/-/multi-stage-output-0.8.25.tgz#97ea545694045b33607a4f2ad00935efe18c7816"
+  integrity sha512-Tw/EDlk7i4WEGfTtjHzTLBpwqgl0AtBqu9kixxH1cPCpD7qG783Pc5lAk+IwgReNpgZEdrrdeGVePFlsitBIbQ==
   dependencies:
     "@oclif/core" "^4"
     "@types/react" "^18.3.12"
