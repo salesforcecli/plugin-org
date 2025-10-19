@@ -1670,10 +1670,10 @@
     react "^18.3.1"
     wrap-ansi "^9.0.2"
 
-"@oclif/plugin-command-snapshot@^5.3.6":
-  version "5.3.6"
-  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-5.3.6.tgz#fa9786279b532d8a0c6add51717dd8ea9fc520c9"
-  integrity sha512-0uu1KoB5IvS79l7Ao92vUmVHh9eWqP5uWv4oD7aeNFmUnCQrTB8nhdclP2E6MqMoatB6C0Xv+TXWC/ISLqBu3A==
+"@oclif/plugin-command-snapshot@^5.3.7":
+  version "5.3.7"
+  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-5.3.7.tgz#470596787226f879be230ae75c5f18d0a2588a42"
+  integrity sha512-tkM6ixt0pga2cgBKcbotLfH/Owvr/4s5dRSx7zMfpZ3Zj6EIQ1odFN1KxEIlASrFGe8mYj8jjF3sZjJjCTSwLg==
   dependencies:
     "@oclif/core" "^4"
     ansis "^3.17.0"
@@ -1682,7 +1682,7 @@
     lodash.difference "^4.5.0"
     lodash.get "^4.4.2"
     lodash.sortby "^4.7.0"
-    semver "^7.7.2"
+    semver "^7.7.3"
     ts-json-schema-generator "^1.5.1"
 
 "@oclif/plugin-help@^6.2.33":
@@ -7529,7 +7529,7 @@ semver@^6.0.0, semver@^6.3.1:
   resolved "https://registry.npmjs.org/semver/-/semver-6.3.1.tgz"
   integrity sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==
 
-semver@^7.3.4, semver@^7.3.5, semver@^7.5.3, semver@^7.5.4, semver@^7.6.0, semver@^7.6.3, semver@^7.7.2, semver@^7.7.3:
+semver@^7.3.4, semver@^7.3.5, semver@^7.5.3, semver@^7.5.4, semver@^7.6.0, semver@^7.6.3, semver@^7.7.3:
   version "7.7.3"
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.7.3.tgz#4b5f4143d007633a8dc671cd0a6ef9147b8bb946"
   integrity sha512-SdsKMrI9TdgjdweUSR9MweHA4EJ8YxHn8DFaDisvhVlUOe4BF1tLD7GAj0lIqWVl+dPb/rExr0Btby5loQm20Q==
