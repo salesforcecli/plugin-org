@@ -1,3 +1,9 @@
+## [5.9.38](https://github.com/salesforcecli/plugin-org/compare/5.9.37...5.9.38) (2025-10-20)
+
+### Bug Fixes
+
+- improve URL handling of `org open` ([c90ef36](https://github.com/salesforcecli/plugin-org/commit/c90ef361b307d71456f5d7da21a60b87db6bbe96))
+
 ## [5.9.37](https://github.com/salesforcecli/plugin-org/compare/5.9.36...5.9.37) (2025-10-19)
 
 ### Bug Fixes
