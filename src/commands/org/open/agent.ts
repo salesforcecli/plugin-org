@@ -7,7 +7,6 @@
 
 import { Flags } from '@salesforce/sf-plugins-core';
 import { Connection, Messages } from '@salesforce/core';
-import { buildFrontdoorUrl } from '../../../shared/orgOpenUtils.js';
 import { OrgOpenCommandBase } from '../../../shared/orgOpenCommandBase.js';
 import { type OrgOpenOutput } from '../../../shared/orgTypes.js';
 
@@ -51,12 +50,9 @@ export class OrgOpenAgent extends OrgOpenCommandBase<OrgOpenOutput> {
     this.org = flags['target-org'];
     this.connection = this.org.getConnection(flags['api-version']);
 
-    const [frontDoorUrl, retUrl] = await Promise.all([
-      buildFrontdoorUrl(this.org),
-      buildRetUrl(this.connection, flags['api-name']),
-    ]);
+    const agentBuilderRedirect = await buildRetUrl(this.connection, flags['api-name']);
 
-    return this.openOrgUI(flags, frontDoorUrl, encodeURIComponent(retUrl));
+    return this.openOrgUI(flags, await this.org.getFrontDoorUrl(agentBuilderRedirect));
   }
 }
 

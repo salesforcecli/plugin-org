@@ -30,11 +30,8 @@ export abstract class OrgOpenCommandBase<T> extends SfCommand<T> {
   protected org!: Org;
   protected connection!: Connection;
 
-  protected async openOrgUI(flags: OrgOpenFlags, frontDoorUrl: string, retUrl?: string): Promise<OrgOpenOutput> {
+  protected async openOrgUI(flags: OrgOpenFlags, url: string): Promise<OrgOpenOutput> {
     const orgId = this.org.getOrgId();
-    const url = `${frontDoorUrl}${
-      retUrl ? `&${frontDoorUrl.includes('.jsp?otp=') ? `startURL=${retUrl}` : `retURL=${retUrl}`}` : ''
-    }`;
 
     // TODO: better typings in sfdx-core for orgs read from auth files
     const username = this.org.getUsername() as string;
