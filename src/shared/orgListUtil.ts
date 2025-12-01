@@ -142,6 +142,10 @@ export class OrgListUtil {
       filename.match(/^00D.{15}\.json$/g)
     );
 
+    // Get default org configuration to always include it even if it's a secondary user
+    const configAggregator = await ConfigAggregator.create();
+    const defaultOrg = configAggregator.getPropertyValue(OrgConfigProperties.TARGET_ORG);
+
     const allAuths: Array<AuthInfo | undefined> = await Promise.all(
       fileNames.map(async (fileName) => {
         try {
@@ -169,6 +173,13 @@ export class OrgListUtil {
               usernames: string[];
             };
             const usernames = orgFileContent.usernames;
+
+            // Always include the default org, even if it's a secondary user
+            if (defaultOrg === auth.getFields().username) {
+              return auth;
+            }
+
+            // Otherwise, only include primary users (first in the usernames array)
             if (usernames && usernames[0] === auth.getFields().username) {
               return auth;
             }
@@ -181,53 +192,7 @@ export class OrgListUtil {
         }
       })
     );
-
-    const baseAuths = allAuths.filter(isDefined);
-    const includedUsernames = new Set(baseAuths.map((auth) => auth.getUsername()));
-
-    // Include secondary users (created within scratch orgs) with System Administrator profile
-    const extraAuths: AuthInfo[] = [];
-    const logger = await OrgListUtil.retrieveLogger();
-
-    await Promise.all(
-      orgFileNames.map(async (orgFileName) => {
-        try {
-          const orgFileContent = JSON.parse(await fs.readFile(join(Global.SFDX_DIR, orgFileName), 'utf8')) as {
-            usernames: string[];
-          };
-          const usernames = orgFileContent.usernames ?? [];
-
-          await Promise.all(
-            usernames.map(async (username) => {
-              if (includedUsernames.has(username)) return;
-
-              try {
-                const auth = await AuthInfo.create({ username });
-                const userId = auth?.getFields().userId;
-                if (!userId) return;
-
-                const org = await Org.create({ aliasOrUsername: username });
-                const result = await org
-                  .getConnection()
-                  .query<Record & { Profile?: { Name: string } }>(
-                    `SELECT Profile.Name FROM User WHERE Id ='${userId}' LIMIT 1`
-                  );
-
-                if (result.totalSize && result.records?.[0]?.Profile?.Name === 'System Administrator') {
-                  extraAuths.push(auth);
-                  includedUsernames.add(username);
-                }
-              } catch (error) {
-                logger.debug(`Skipping secondary user ${username}: ${(error as Error).message}`);
-              }
-            })
-          );
-        } catch (error) {
-          logger.debug(`Error reading org file ${orgFileName}: ${(error as Error).message}`);
-        }
-      })
-    );
-    return [...baseAuths, ...extraAuths];
+    return allAuths.filter(isDefined);
   }
 
   /**
@@ -287,6 +252,7 @@ export class OrgListUtil {
       'CreatedBy.Username',
       'SignupUsername',
       'LoginUrl',
+      'ScratchOrg',
     ];
 
     try {
@@ -312,8 +278,14 @@ export class OrgListUtil {
   ): Promise<FullyPopulatedScratchOrgFields[]> {
     const contentMap = new Map(updatedContents.map((org) => [org.SignupUsername, org]));
 
+    // Also create map by ScratchOrg (orgId) to handle cases where user authenticated as different user
+    const contentMapByOrgId = new Map(updatedContents.map((org) => [org.ScratchOrg, org]));
+
     const results = orgs.map((scratchOrgInfo): FullyPopulatedScratchOrgFields | string => {
-      const updatedOrgInfo = contentMap.get(scratchOrgInfo.username);
+      // Try to match by username first, then by orgId
+      const updatedOrgInfo =
+        contentMap.get(scratchOrgInfo.username) ?? contentMapByOrgId.get(trimTo15(scratchOrgInfo.orgId));
+
       return updatedOrgInfo
         ? {
             ...scratchOrgInfo,
