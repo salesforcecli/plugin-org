@@ -54,3 +54,11 @@ Ensure the CLI has authenticated with the sandbox's production org.
 # error.missingUsername
 
 Unable to determine the username of the org to delete. Specify the username with the --target-org | -o flag.
+
+# error.insufficientPermissions
+
+You do not have the required permission to delete this sandbox: %s. Contact your administrator to assign you the "DeleteSandbox" PermissionSet.
+
+# warning.couldNotVerifyPermissions
+
+Could not verify permissions in sandbox: %s. The delete operation will proceed, but may fail if you do not have the required permissions.
