@@ -20,9 +20,9 @@ import { OrgOpenCommandBase } from '../../../shared/orgOpenCommandBase.js';
 import { type OrgOpenOutput } from '../../../shared/orgTypes.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
-const messages = Messages.loadMessages('@salesforce/plugin-org', 'open.agent');
+const messages = Messages.loadMessages('@salesforce/plugin-org', 'open.authoring-bundle');
 
-export class OrgOpenAgent extends OrgOpenCommandBase<OrgOpenOutput> {
+export class OrgOpenAuthoringBundle extends OrgOpenCommandBase<OrgOpenOutput> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
@@ -55,19 +55,27 @@ export class OrgOpenAgent extends OrgOpenCommandBase<OrgOpenOutput> {
   };
 
   public async run(): Promise<OrgOpenOutput> {
-    const { flags } = await this.parse(OrgOpenAgent);
+    const { flags } = await this.parse(OrgOpenAuthoringBundle);
     this.org = flags['target-org'];
     this.connection = this.org.getConnection(flags['api-version']);
 
-    const agentBuilderRedirect = await buildRetUrl(this.connection, flags['api-name']);
+    const authoringBundleRedirect = await buildRetUrl(this.connection, flags['api-name']);
 
-    return this.openOrgUI(flags, await this.org.getFrontDoorUrl(agentBuilderRedirect));
+    return this.openOrgUI(flags, await this.org.getFrontDoorUrl(authoringBundleRedirect));
   }
 }
 
-// Build the URL part to the Agent Builder given a Bot API name.
-const buildRetUrl = async (conn: Connection, botName: string): Promise<string> => {
-  const query = `SELECT id FROM BotDefinition WHERE DeveloperName='${botName}'`;
-  const botId = (await conn.singleRecordQuery<{ Id: string }>(query)).Id;
-  return `AiCopilot/copilotStudio.app#/copilot/builder?copilotId=${botId}`;
+// Build the URL part to the Agent Authoring Builder given an Authoring Bundle API name.
+const buildRetUrl = async (conn: Connection, bundleName: string): Promise<string> => {
+  // Query for the authoring bundle project by DeveloperName
+  const projectQuery = `SELECT Id FROM AiAuthoringBundle WHERE DeveloperName='${bundleName}'`;
+  const project = await conn.singleRecordQuery<{ Id: string }>(projectQuery, { tooling: true });
+  const projectId = project.Id;
+
+  // Query for the latest/active version of the project
+  const versionQuery = `SELECT Id FROM AgentAuthoringProjectVersion WHERE ProjectId='${projectId}' ORDER BY CreatedDate DESC LIMIT 1`;
+  const version = await conn.singleRecordQuery<{ Id: string }>(versionQuery);
+  const versionId = version.Id;
+
+  return `AgentAuthoring/agentAuthoringBuilder.app#/project?projectId=${projectId}&projectVersionId=${versionId}`;
 };
