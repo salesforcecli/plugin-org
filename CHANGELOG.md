@@ -1,3 +1,10 @@
+## [5.9.54](https://github.com/salesforcecli/plugin-org/compare/5.9.53...5.9.54) (2026-01-08)
+
+### Bug Fixes
+
+- fixing broken NUT @W-20690643@ ([9e47b25](https://github.com/salesforcecli/plugin-org/commit/9e47b256e9e03afaf02ab3aab3598642779bbcb7))
+- removed inaccessible fields from sandboxinfo query @W-20690643@ ([c3e536c](https://github.com/salesforcecli/plugin-org/commit/c3e536c3f8cfb93d2afc70aef15885e8982dbd95))
+
 ## [5.9.53](https://github.com/salesforcecli/plugin-org/compare/5.9.52...5.9.53) (2025-12-14)
 
 ### Bug Fixes
