@@ -1,3 +1,9 @@
+## [5.9.57](https://github.com/salesforcecli/plugin-org/compare/5.9.56...5.9.57) (2026-01-13)
+
+### Bug Fixes
+
+- bump core to 8.24.1 for sandbox feature fix ([b931252](https://github.com/salesforcecli/plugin-org/commit/b9312529dd4e37e726b75864ff108dcf67c0ac98))
+
 ## [5.9.56](https://github.com/salesforcecli/plugin-org/compare/5.9.55...5.9.56) (2026-01-13)
 
 ### Bug Fixes
