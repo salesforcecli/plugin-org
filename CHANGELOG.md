@@ -1,3 +1,9 @@
+## [5.9.56](https://github.com/salesforcecli/plugin-org/compare/5.9.55...5.9.56) (2026-01-13)
+
+### Bug Fixes
+
+- include user Admin ([4aecc64](https://github.com/salesforcecli/plugin-org/commit/4aecc6486e743ee124b3a727ba683edbe96b4cd9))
+
 ## [5.9.55](https://github.com/salesforcecli/plugin-org/compare/5.9.54...5.9.55) (2026-01-11)
 
 ### Bug Fixes
