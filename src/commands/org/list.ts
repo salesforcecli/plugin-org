@@ -12,6 +12,7 @@ import ansis, { type Ansis } from 'ansis';
 import { OrgListUtil, identifyActiveOrgByStatus } from '../../shared/orgListUtil.js';
 import { getStyledObject } from '../../shared/orgHighlighter.js';
 import { ExtendedAuthFields, FullyPopulatedScratchOrgFields } from '../../shared/orgTypes.js';
+import { EOL } from 'node:os';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'list');
@@ -87,8 +88,8 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
       await this.cleanScratchOrgs(groupedSortedOrgs.expiredScratchOrgs, !flags['no-prompt']);
     }
 
-    if (groupedSortedOrgs.expiredScratchOrgs.length > 10 && !flags.clean) {
-      this.warn(messages.getMessage('deleteOrgs', [groupedSortedOrgs.expiredScratchOrgs.length]));
+    if (groupedSortedOrgs.expiredScratchOrgs.length >= 1 && !flags.clean) {
+      this.warn(messages.getMessage('deleteOrgs', [groupedSortedOrgs.expiredScratchOrgs.length, EOL]));
     }
 
     const result = {
