@@ -5,6 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { EOL } from 'node:os';
 import { Flags, loglevel, SfCommand } from '@salesforce/sf-plugins-core';
 import { AuthInfo, ConfigAggregator, ConfigInfo, Connection, Org, SfError, Messages, Logger } from '@salesforce/core';
 import { Interfaces } from '@oclif/core';
@@ -12,7 +13,6 @@ import ansis, { type Ansis } from 'ansis';
 import { OrgListUtil, identifyActiveOrgByStatus } from '../../shared/orgListUtil.js';
 import { getStyledObject } from '../../shared/orgHighlighter.js';
 import { ExtendedAuthFields, FullyPopulatedScratchOrgFields } from '../../shared/orgTypes.js';
-import { EOL } from 'node:os';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'list');
