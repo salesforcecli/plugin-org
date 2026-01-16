@@ -147,6 +147,14 @@
   },
   {
     "alias": [],
+    "command": "org:open:authoring-bundle",
+    "flagAliases": ["urlonly"],
+    "flagChars": ["b", "o", "r"],
+    "flags": ["api-version", "browser", "flags-dir", "json", "private", "target-org", "url-only"],
+    "plugin": "@salesforce/plugin-org"
+  },
+  {
+    "alias": [],
     "command": "org:refresh:sandbox",
     "flagAliases": [],
     "flagChars": ["f", "i", "n", "o", "w"],
