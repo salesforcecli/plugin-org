@@ -15,7 +15,7 @@
  */
 
 import { Flags } from '@salesforce/sf-plugins-core';
-import { Connection, Messages } from '@salesforce/core';
+import { Messages } from '@salesforce/core';
 import { OrgOpenCommandBase } from '../../../shared/orgOpenCommandBase.js';
 import { type OrgOpenOutput } from '../../../shared/orgTypes.js';
 
@@ -31,11 +31,6 @@ export class OrgOpenAuthoringBundle extends OrgOpenCommandBase<OrgOpenOutput> {
     ...OrgOpenCommandBase.flags,
     'target-org': Flags.requiredOrg(),
     'api-version': Flags.orgApiVersion(),
-    'api-name': Flags.string({
-      char: 'n',
-      summary: messages.getMessage('flags.api-name.summary'),
-      required: true,
-    }),
     private: Flags.boolean({
       summary: messages.getMessage('flags.private.summary'),
       exclusive: ['url-only', 'browser'],
@@ -59,23 +54,6 @@ export class OrgOpenAuthoringBundle extends OrgOpenCommandBase<OrgOpenOutput> {
     this.org = flags['target-org'];
     this.connection = this.org.getConnection(flags['api-version']);
 
-    const authoringBundleRedirect = await buildRetUrl(this.connection, flags['api-name']);
-
-    return this.openOrgUI(flags, await this.org.getFrontDoorUrl(authoringBundleRedirect));
+    return this.openOrgUI(flags, await this.org.getFrontDoorUrl('lightning/n/standard-AgentforceStudio'));
   }
 }
-
-// Build the URL part to the Agent Authoring Builder given an Authoring Bundle API name.
-const buildRetUrl = async (conn: Connection, bundleName: string): Promise<string> => {
-  // Query for the authoring bundle project by DeveloperName
-  const projectQuery = `SELECT Id FROM AiAuthoringBundle WHERE DeveloperName='${bundleName}'`;
-  const project = await conn.singleRecordQuery<{ Id: string }>(projectQuery, { tooling: true });
-  const projectId = project.Id;
-
-  // Query for the latest/active version of the project
-  const versionQuery = `SELECT Id FROM AgentAuthoringProjectVersion WHERE ProjectId='${projectId}' ORDER BY CreatedDate DESC LIMIT 1`;
-  const version = await conn.singleRecordQuery<{ Id: string }>(versionQuery);
-  const versionId = version.Id;
-
-  return `AgentAuthoring/agentAuthoringBuilder.app#/project?projectId=${projectId}&projectVersionId=${versionId}`;
-};

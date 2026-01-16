@@ -149,8 +149,8 @@
     "alias": [],
     "command": "org:open:authoring-bundle",
     "flagAliases": ["urlonly"],
-    "flagChars": ["b", "n", "o", "r"],
-    "flags": ["api-name", "api-version", "browser", "flags-dir", "json", "private", "target-org", "url-only"],
+    "flagChars": ["b", "o", "r"],
+    "flags": ["api-version", "browser", "flags-dir", "json", "private", "target-org", "url-only"],
     "plugin": "@salesforce/plugin-org"
   },
   {
