@@ -1,3 +1,28 @@
+## [5.9.57](https://github.com/salesforcecli/plugin-org/compare/5.9.56...5.9.57) (2026-01-13)
+
+### Bug Fixes
+
+- bump core to 8.24.1 for sandbox feature fix ([b931252](https://github.com/salesforcecli/plugin-org/commit/b9312529dd4e37e726b75864ff108dcf67c0ac98))
+
+## [5.9.56](https://github.com/salesforcecli/plugin-org/compare/5.9.55...5.9.56) (2026-01-13)
+
+### Bug Fixes
+
+- include user Admin ([4aecc64](https://github.com/salesforcecli/plugin-org/commit/4aecc6486e743ee124b3a727ba683edbe96b4cd9))
+
+## [5.9.55](https://github.com/salesforcecli/plugin-org/compare/5.9.54...5.9.55) (2026-01-11)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve ([d280e41](https://github.com/salesforcecli/plugin-org/commit/d280e41e94e4caad3b49d301d55733709b1f623a))
+
+## [5.9.54](https://github.com/salesforcecli/plugin-org/compare/5.9.53...5.9.54) (2026-01-08)
+
+### Bug Fixes
+
+- fixing broken NUT @W-20690643@ ([9e47b25](https://github.com/salesforcecli/plugin-org/commit/9e47b256e9e03afaf02ab3aab3598642779bbcb7))
+- removed inaccessible fields from sandboxinfo query @W-20690643@ ([c3e536c](https://github.com/salesforcecli/plugin-org/commit/c3e536c3f8cfb93d2afc70aef15885e8982dbd95))
+
 ## [5.9.53](https://github.com/salesforcecli/plugin-org/compare/5.9.52...5.9.53) (2025-12-14)
 
 ### Bug Fixes
