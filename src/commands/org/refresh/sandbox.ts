@@ -34,9 +34,11 @@ const fields = [
   'Id',
   'SandboxName', // (string)
   'LicenseType', // (string) DEVELOPER | DEVELOPER PRO | PARTIAL | FULL
+  'TemplateId', // (string) reference to PartitionLevelScheme
   'HistoryDays', // (int)
   'CopyChatter', // (boolean)
   'AutoActivate', // (boolean)
+  'ApexClassId', // (string) apex class ID
   'Description', // (string)
   'SourceId', // (string) SandboxInfoId as the source org used for a clone
   // 'ActivationUserGroupId', // Currently not supported but might be added in API v61.0
