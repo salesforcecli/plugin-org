@@ -1,3 +1,10 @@
+## [5.9.60](https://github.com/salesforcecli/plugin-org/compare/5.9.59...5.9.60) (2026-01-21)
+
+### Bug Fixes
+
+- add org open authoring-bundle to open directly to the Agents list view in the org ([946cf65](https://github.com/salesforcecli/plugin-org/commit/946cf65e692602e7190588fff049eb1d3ca2472b))
+- quick edit of help for new org open AAB command ([7e8b838](https://github.com/salesforcecli/plugin-org/commit/7e8b838be84ff0474e5c4e095720c820d231cc59))
+
 ## [5.9.59](https://github.com/salesforcecli/plugin-org/compare/5.9.58...5.9.59) (2026-01-18)
 
 ### Bug Fixes
