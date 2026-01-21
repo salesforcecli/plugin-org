@@ -61,7 +61,7 @@ describe('test org:open command', () => {
     assert(result);
     expect(result.orgId).to.to.equal(defaultUserOrgId);
     expect(result.username).to.to.equal(defaultUsername);
-    expect(result).to.include('lightning%2Fn%2Fstandard-AgentforceStudio');
+    expect(result.url).to.include('lightning%2Fn%2Fstandard-AgentforceStudio');
   });
 
   it('should produce the frontdoor default URL for a flexipage resource when it not in org in json', () => {
