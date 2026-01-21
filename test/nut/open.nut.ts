@@ -55,7 +55,7 @@ describe('test org:open command', () => {
     defaultOrgInstanceUrl = defaultOrg.instanceUrl as string;
   });
 
-  it('will get the correct url (harccoded)', () => {
+  it('will get the correct url (hardcoded)', () => {
     const result = execCmd<OrgOpenOutput>('org open authoring-bundle --urlonly --json', { ensureExitCode: 0 })
       .jsonOutput!.result;
     assert(result);
