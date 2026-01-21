@@ -66,7 +66,8 @@ describe('test org:open command', () => {
       ensureExitCode: 0,
     }).jsonOutput?.result;
     assert(result);
-    expect(result).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
+    expect(result.orgId).to.to.equal(defaultUserOrgId);
+    expect(result.username).to.to.equal(defaultUsername);
     validateFrontdoorUrl(result.url, undefined, defaultOrgInstanceUrl);
   });
 
