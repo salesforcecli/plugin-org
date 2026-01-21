@@ -19,7 +19,7 @@ import path from 'node:path';
 import { parseJsonMap } from '@salesforce/kit';
 import { execCmd, genUniqueString, TestSession } from '@salesforce/cli-plugins-testkit';
 import { assert, expect } from 'chai';
-import { AuthFields, Messages, Global } from '@salesforce/core';
+import { AuthFields, Global, Messages } from '@salesforce/core';
 import { ScratchCreateResponse } from '../../src/shared/orgTypes.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
@@ -63,11 +63,11 @@ describe('env create scratch NUTs', () => {
     });
     it('prompts for client secret if client id present and times out', () => {
       const error = execCmd('org:create:scratch --edition developer --client-id someConnectedApp', {
-        ensureExitCode: 'nonZero',
+        ensureExitCode: 1,
       }).shellOutput;
       expect(error.stdout).to.include(messages.getMessage('prompt.secret'));
       // this is the message from the prompt library when .cancel is called on timeout
-      expect(error.stderr).to.include('Prompt was canceled');
+      expect(error.stderr).to.include('Prompt timed out.');
     });
   });
 

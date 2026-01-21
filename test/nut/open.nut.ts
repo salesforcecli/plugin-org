@@ -16,8 +16,8 @@
 
 import path from 'node:path';
 import fs from 'node:fs';
-import { TestSession, execCmd } from '@salesforce/cli-plugins-testkit';
-import { expect, config, assert } from 'chai';
+import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
+import { assert, config, expect } from 'chai';
 import { AuthFields } from '@salesforce/core';
 import { ComponentSetBuilder } from '@salesforce/source-deploy-retrieve';
 import { ensureString } from '@salesforce/ts-types';
@@ -53,6 +53,15 @@ describe('test org:open command', () => {
     defaultUsername = defaultOrg.username as string;
     defaultUserOrgId = defaultOrg.orgId as string;
     defaultOrgInstanceUrl = defaultOrg.instanceUrl as string;
+  });
+
+  it('will get the correct url (hardcoded)', () => {
+    const result = execCmd<OrgOpenOutput>('org open authoring-bundle --urlonly --json', { ensureExitCode: 0 })
+      .jsonOutput!.result;
+    assert(result);
+    expect(result.orgId).to.to.equal(defaultUserOrgId);
+    expect(result.username).to.to.equal(defaultUsername);
+    expect(result.url).to.include('lightning%2Fn%2Fstandard-AgentforceStudio');
   });
 
   it('should produce the frontdoor default URL for a flexipage resource when it not in org in json', () => {
