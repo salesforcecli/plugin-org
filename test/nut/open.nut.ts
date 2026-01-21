@@ -56,8 +56,11 @@ describe('test org:open command', () => {
   });
 
   it('will get the correct url (harccoded)', () => {
-    const result = execCmd('org open authoring-bundle --urlonly --json', { ensureExitCode: 0 }).jsonOutput!.result;
-    expect(result).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
+    const result = execCmd<OrgOpenOutput>('org open authoring-bundle --urlonly --json', { ensureExitCode: 0 })
+      .jsonOutput!.result;
+    assert(result);
+    expect(result.orgId).to.to.equal(defaultUserOrgId);
+    expect(result.username).to.to.equal(defaultUsername);
     expect(result).to.include('lightning%2Fn%2Fstandard-AgentforceStudio');
   });
 
@@ -66,8 +69,7 @@ describe('test org:open command', () => {
       ensureExitCode: 0,
     }).jsonOutput?.result;
     assert(result);
-    expect(result.orgId).to.to.equal(defaultUserOrgId);
-    expect(result.username).to.to.equal(defaultUsername);
+    expect(result).to.include({ orgId: defaultUserOrgId, username: defaultUsername });
     validateFrontdoorUrl(result.url, undefined, defaultOrgInstanceUrl);
   });
 
