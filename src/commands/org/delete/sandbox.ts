@@ -70,6 +70,29 @@ export default class DeleteSandbox extends SfCommand<SandboxDeleteResponse> {
       throw messages.createError('error.unknownSandbox', [username]);
     }
 
+    // Check if user has the DeleteSandbox PermissionSet in the sandbox
+    try {
+      const sandboxOrg = await Org.create({ aliasOrUsername: username });
+      const hasDeleteSandboxPermission = await this.hasPermission(sandboxOrg, 'DeleteSandbox');
+      this.debug('hasDeleteSandboxPermission %s ', hasDeleteSandboxPermission);
+      if (!hasDeleteSandboxPermission) {
+        throw messages.createError('error.insufficientPermissions', [username]);
+      }
+    } catch (error) {
+      // If it's a permission error we created, re-throw it
+      if (error instanceof SfError) {
+        const errorMessage = error.message || '';
+        if (errorMessage.includes('required permission') || errorMessage.includes('DeleteSandbox')) {
+          throw error;
+        }
+      }
+      // For other errors (e.g., org connection issues), log a warning but continue
+      // The actual delete operation will fail if permissions are truly insufficient
+      if (error instanceof Error) {
+        this.warn(messages.getMessage('warning.couldNotVerifyPermissions', [username]));
+      }
+    }
+
     if (flags['no-prompt'] || (await this.confirm({ message: messages.getMessage('prompt.confirm', [username]) }))) {
       try {
         const org = await Org.create({ aliasOrUsername: username });
@@ -90,5 +113,45 @@ export default class DeleteSandbox extends SfCommand<SandboxDeleteResponse> {
       }
     }
     return { username, orgId };
+  }
+
+  /**
+   * Checks if the current user has a PermissionSet with the specified name assigned.
+   *
+   * @param org The org to check permissions in
+   * @param permissionSetName The name of the PermissionSet to check (e.g., 'DeleteSandbox')
+   * @returns True if the user has the PermissionSet assigned, false otherwise
+   */
+  // eslint-disable-next-line class-methods-use-this
+  private async hasPermission(org: Org, permissionSetName: string): Promise<boolean> {
+    try {
+      const connection = org.getConnection();
+      await org.refreshAuth();
+      // try to get it from Identity API  
+      const identity = await connection.identity();
+      const userId = identity.user_id;
+
+      if (!userId) {
+        return false;
+      }
+
+      // Check if user has the PermissionSet assigned
+      const permissionSetAssignmentQuery = `
+      SELECT Id
+      FROM PermissionSetAssignment
+      WHERE AssigneeId = '${userId.replace(/'/g, "\\'")}'
+      AND PermissionSet.Name = '${permissionSetName.replace(/'/g, "\\'")}'
+      `;
+
+      try {
+        const permissionSetResult = await connection.query(permissionSetAssignmentQuery);
+        return permissionSetResult.totalSize > 0;
+      } catch {
+        // If query fails, return false
+        return false;
+      }
+    } catch {
+      return false;
+    }
   }
 }
