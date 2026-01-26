@@ -1,3 +1,9 @@
+## [5.9.62](https://github.com/salesforcecli/plugin-org/compare/5.9.61...5.9.62) (2026-01-26)
+
+### Bug Fixes
+
+- always warn on expired/deleted scratch orgs ([1546fd6](https://github.com/salesforcecli/plugin-org/commit/1546fd6b9e81541faf406c791c35685e4519b9c1))
+
 ## [5.9.61](https://github.com/salesforcecli/plugin-org/compare/5.9.60...5.9.61) (2026-01-25)
 
 ### Bug Fixes
