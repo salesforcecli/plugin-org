@@ -46,7 +46,7 @@ No active scratch orgs found. Specify --all to see all scratch orgs.
 
 # deleteOrgs
 
-You have %s expired or deleted local scratch org authorizations. To remove authorizations for inactive orgs, run "org list --clean".
+You have %s expired or deleted local scratch org authorizations. To remove authorizations for inactive orgs, run "sf org list --clean".%s
 
 # noOrgsFound
 

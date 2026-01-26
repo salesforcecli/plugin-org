@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { EOL } from 'node:os';
 import { Flags, loglevel, SfCommand } from '@salesforce/sf-plugins-core';
 import { AuthInfo, ConfigAggregator, ConfigInfo, Connection, Org, SfError, Messages, Logger } from '@salesforce/core';
 import { Interfaces } from '@oclif/core';
@@ -96,8 +97,8 @@ export class OrgListCommand extends SfCommand<OrgListResult> {
       await this.cleanScratchOrgs(groupedSortedOrgs.expiredScratchOrgs, !flags['no-prompt']);
     }
 
-    if (groupedSortedOrgs.expiredScratchOrgs.length > 10 && !flags.clean) {
-      this.warn(messages.getMessage('deleteOrgs', [groupedSortedOrgs.expiredScratchOrgs.length]));
+    if (groupedSortedOrgs.expiredScratchOrgs.length >= 1 && !flags.clean) {
+      this.warn(messages.getMessage('deleteOrgs', [groupedSortedOrgs.expiredScratchOrgs.length, EOL]));
     }
 
     const result = {
