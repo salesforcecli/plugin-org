@@ -1,6 +1,6 @@
 # summary
 
-Open your org in Agentforce Studio, specically in the list view showing the list of agents.
+Open your org in Agentforce Studio, specifically in the list view showing the list of agents.
 
 # description
 
