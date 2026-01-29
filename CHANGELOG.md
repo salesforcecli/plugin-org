@@ -1,3 +1,9 @@
+## [5.9.63](https://github.com/salesforcecli/plugin-org/compare/5.9.62...5.9.63) (2026-01-29)
+
+### Bug Fixes
+
+- typo in help ([86b0abc](https://github.com/salesforcecli/plugin-org/commit/86b0abc74e60344bcaaa936701628f838186d893))
+
 ## [5.9.62](https://github.com/salesforcecli/plugin-org/compare/5.9.61...5.9.62) (2026-01-26)
 
 ### Bug Fixes
