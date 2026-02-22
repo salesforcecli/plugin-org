@@ -1,3 +1,9 @@
+## [5.9.69](https://github.com/salesforcecli/plugin-org/compare/5.9.68...5.9.69) (2026-02-22)
+
+### Bug Fixes
+
+- **deps:** bump is-wsl from 3.1.0 to 3.1.1 ([ef90b05](https://github.com/salesforcecli/plugin-org/commit/ef90b05d3d065f86402be8f10a690d2a49195db3))
+
 ## [5.9.68](https://github.com/salesforcecli/plugin-org/compare/5.9.67...5.9.68) (2026-02-17)
 
 ### Bug Fixes
