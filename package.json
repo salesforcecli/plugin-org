@@ -16,7 +16,7 @@
     "@salesforce/ts-types": "^2.0.12",
     "ansis": "^3.16.0",
     "change-case": "^5.4.4",
-    "is-wsl": "^3.1.0",
+    "is-wsl": "^3.1.1",
     "open": "^10.2.0",
     "terminal-link": "^3.0.0"
   },
