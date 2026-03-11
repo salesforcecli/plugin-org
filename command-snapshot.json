@@ -4,7 +4,7 @@
     "command": "org:create:agent-user",
     "flagAliases": [],
     "flagChars": ["o"],
-    "flags": ["api-version", "base-username", "first-name", "flags-dir", "json", "last-name", "target-org", "username"],
+    "flags": ["api-version", "base-username", "first-name", "flags-dir", "json", "last-name", "target-org"],
     "plugin": "@salesforce/plugin-org"
   },
   {

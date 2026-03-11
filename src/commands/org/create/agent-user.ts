@@ -37,15 +37,9 @@ export default class OrgCreateAgentUser extends SfCommand<AgentUserCreateRespons
   public static readonly flags = {
     'target-org': Flags.requiredOrg(),
     'api-version': Flags.orgApiVersion(),
-    username: Flags.string({
-      summary: messages.getMessage('flags.username.summary'),
-      description: messages.getMessage('flags.username.description'),
-      exclusive: ['base-username'],
-    }),
     'base-username': Flags.string({
       summary: messages.getMessage('flags.base-username.summary'),
       description: messages.getMessage('flags.base-username.description'),
-      exclusive: ['username'],
     }),
     'first-name': Flags.string({
       summary: messages.getMessage('flags.first-name.summary'),
@@ -62,7 +56,7 @@ export default class OrgCreateAgentUser extends SfCommand<AgentUserCreateRespons
     const connection = flags['target-org'].getConnection(flags['api-version']);
 
     // Generate username
-    const username = await this.generateUsername(connection, flags.username, flags['base-username']);
+    const username = this.generateUsername(connection, flags['base-username']);
     this.log(`Generated username: ${username}`);
 
     // Always check for available agent user licenses
@@ -115,24 +109,8 @@ export default class OrgCreateAgentUser extends SfCommand<AgentUserCreateRespons
     };
   }
 
-  private async generateUsername(
-    connection: Connection,
-    username: string | undefined,
-    baseUsername: string | undefined
-  ): Promise<string> {
-    // If explicit username provided, validate it's unique
-    if (username) {
-      const existingUser = await this.checkUsernameExists(connection, username);
-      if (existingUser) {
-        throw new SfError(
-          `Username "${username}" already exists in the Salesforce universe. Usernames must be globally unique.`,
-          'UsernameExistsError',
-          ['Choose a different username', 'Omit --username to auto-generate a unique username']
-        );
-      }
-      return username;
-    }
-
+  // eslint-disable-next-line class-methods-use-this
+  private generateUsername(connection: Connection, baseUsername: string | undefined): string {
     // Generate username with GUID
     const guid = randomUUID().replace(/-/g, '').substring(0, 12);
 
@@ -154,22 +132,11 @@ export default class OrgCreateAgentUser extends SfCommand<AgentUserCreateRespons
     const orgUsername = orgIdentity.username;
     if (!orgUsername) {
       throw new SfError('Unable to determine org username for generating agent user username', 'OrgUsernameError', [
-        'Specify an explicit --username or --base-username',
+        'Specify a --base-username',
       ]);
     }
     const domain = orgUsername.split('@')[1];
     return `agent.user.${guid}@${domain}`;
-  }
-
-  private async checkUsernameExists(connection: Connection, username: string): Promise<boolean> {
-    try {
-      const result = await connection.query<{ Id: string }>(`SELECT Id FROM User WHERE Username = '${username}'`);
-      return result.totalSize > 0;
-    } catch (error) {
-      // If query fails, assume username might exist to be safe
-      this.warn(`Unable to verify username uniqueness: ${error instanceof Error ? error.message : String(error)}`);
-      return false;
-    }
   }
 
   private async checkAgentUserLicenses(connection: Connection): Promise<void> {

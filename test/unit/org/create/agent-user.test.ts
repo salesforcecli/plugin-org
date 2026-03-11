@@ -24,22 +24,9 @@ describe('org:create:agent-user', () => {
     expect(OrgCreateAgentUser.summary).to.exist;
     expect(OrgCreateAgentUser.flags).to.exist;
     expect(OrgCreateAgentUser.flags['target-org']).to.exist;
-    expect(OrgCreateAgentUser.flags.username).to.exist;
     expect(OrgCreateAgentUser.flags['base-username']).to.exist;
     expect(OrgCreateAgentUser.flags['first-name']).to.exist;
     expect(OrgCreateAgentUser.flags['last-name']).to.exist;
-  });
-
-  it('should export AgentUserCreateResponse type', () => {
-    // Type is exported from the module
-    const response: import('../../../../src/commands/org/create/agent-user.js').AgentUserCreateResponse = {
-      userId: '005xx000000000001',
-      username: 'test@example.com',
-      profileId: '00exx0000000001',
-      permissionSetsAssigned: [],
-      permissionSetErrors: [],
-    };
-    expect(response).to.exist;
   });
 
   it('should throw InvalidBaseUsernameError for invalid base username format', () => {
