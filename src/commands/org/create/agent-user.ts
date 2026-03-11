@@ -29,12 +29,6 @@ export type AgentUserCreateResponse = {
   permissionSetErrors: Array<{ permissionSet: string; error: string }>;
 };
 
-type UserLicenseInfo = {
-  totalLicenses: number;
-  usedLicenses: number;
-  availableLicenses: number;
-};
-
 export default class OrgCreateAgentUser extends SfCommand<AgentUserCreateResponse> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
@@ -78,12 +72,8 @@ export default class OrgCreateAgentUser extends SfCommand<AgentUserCreateRespons
     const profileId = await this.getProfileId(connection);
     this.log('Using profile: Einstein Agent User');
 
-    // Infer locale settings from current user
-    const localeSettings = await this.inferLocaleSettings(connection);
-    this.log(`Using locale settings from org: ${localeSettings.locale}`);
-
     // Create the agent user
-    const userId = await this.createAgentUser(connection, username, profileId, localeSettings, {
+    const userId = await this.createAgentUser(connection, username, profileId, {
       firstName: flags['first-name'],
       lastName: flags['last-name'],
     });
@@ -183,69 +173,69 @@ export default class OrgCreateAgentUser extends SfCommand<AgentUserCreateRespons
   }
 
   private async checkAgentUserLicenses(connection: Connection): Promise<void> {
-    try {
-      // Query for Agentforce Service Agent license type
-      const licenseQuery = `
-        SELECT TotalLicenses, UsedLicenses, Name, MasterLabel
-        FROM UserLicense
-        WHERE Name LIKE '%Agent%' OR MasterLabel LIKE '%Agent%'
-      `;
-      const licenseResult = await connection.query<{
-        TotalLicenses: number;
-        UsedLicenses: number;
+    // Query the Einstein Agent User profile to get its associated license
+    const profileResult = await connection.query<{
+      UserLicense: {
+        Id: string;
         Name: string;
         MasterLabel: string;
-      }>(licenseQuery);
+        TotalLicenses: number;
+        UsedLicenses: number;
+      };
+    }>(`
+        SELECT UserLicense.Id, UserLicense.Name, UserLicense.MasterLabel,
+               UserLicense.TotalLicenses, UserLicense.UsedLicenses
+        FROM Profile
+        WHERE Name = 'Einstein Agent User'
+      `);
 
-      if (licenseResult.totalSize === 0) {
-        throw new SfError(
-          'No Agent user licenses found in this org. Agent user licenses are required to create agent users.',
-          'NoAgentLicensesError',
-          [
-            'Contact your Salesforce account team to add Agent user licenses to your org',
-            'Verify that Agentforce is enabled for your org',
-          ]
-        );
-      }
-
-      // Check each license type for availability
-      const licenseInfo: UserLicenseInfo[] = licenseResult.records.map((record) => ({
-        totalLicenses: record.TotalLicenses,
-        usedLicenses: record.UsedLicenses,
-        availableLicenses: record.TotalLicenses - record.UsedLicenses,
-      }));
-
-      const hasAvailableLicense = licenseInfo.some((info) => info.availableLicenses > 0);
-
-      if (!hasAvailableLicense) {
-        const licenseDetails = licenseResult.records
-          .map((r) => `${r.MasterLabel}: ${r.UsedLicenses}/${r.TotalLicenses} used`)
-          .join(', ');
-        throw new SfError(
-          `No available Agent user licenses in this org. License usage: ${licenseDetails}`,
-          'NoAvailableAgentLicensesError',
-          [
-            'Remove an existing agent user to free up a license',
-            'Contact your Salesforce account team to add more Agent user licenses',
-          ]
-        );
-      }
-
-      // Log license availability
-      licenseResult.records.forEach((record) => {
-        const available = record.TotalLicenses - record.UsedLicenses;
-        this.log(`${record.MasterLabel}: ${available} of ${record.TotalLicenses} licenses available`);
-      });
-    } catch (error) {
-      if (error instanceof SfError) {
-        throw error;
-      }
+    if (profileResult.totalSize === 0) {
       throw new SfError(
-        `Failed to check agent user license availability: ${error instanceof Error ? error.message : String(error)}`,
-        'LicenseCheckError',
-        ['Verify your connection to the org', 'Check that you have permission to query UserLicense records']
+        'Einstein Agent User profile not found in this org. This profile is required for agent users.',
+        'ProfileNotFoundError',
+        [
+          'Verify that Agentforce is enabled for your org',
+          'Contact your Salesforce account team to enable Agentforce features',
+        ]
       );
     }
+
+    const license = profileResult.records[0].UserLicense;
+    if (!license) {
+      throw new SfError(
+        'No license information found for Einstein Agent User profile. This may indicate an org configuration issue.',
+        'NoAgentLicensesError',
+        ['Contact your Salesforce account team', 'Verify that Agentforce is properly configured in your org']
+      );
+    }
+
+    // Check if licenses are available
+    const availableLicenses = license.TotalLicenses - license.UsedLicenses;
+
+    if (license.TotalLicenses === 0) {
+      throw new SfError(
+        `No ${license.MasterLabel} licenses are provisioned in this org. These licenses are required to create agent users.`,
+        'NoAgentLicensesError',
+        [
+          `Contact your Salesforce account team to add ${license.MasterLabel} licenses to your org`,
+          'Verify that Agentforce is enabled for your org',
+        ]
+      );
+    }
+
+    if (availableLicenses <= 0) {
+      throw new SfError(
+        `No available ${license.MasterLabel} licenses in this org. License usage: ${license.UsedLicenses}/${license.TotalLicenses} used`,
+        'NoAvailableAgentLicensesError',
+        [
+          'Remove an existing agent user to free up a license',
+          `Contact your Salesforce account team to add more ${license.MasterLabel} licenses`,
+        ]
+      );
+    }
+
+    // Log license availability
+    this.log(`${license.MasterLabel}: ${availableLicenses} of ${license.TotalLicenses} licenses available`);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -272,101 +262,45 @@ export default class OrgCreateAgentUser extends SfCommand<AgentUserCreateRespons
     }
   }
 
-  private async inferLocaleSettings(connection: Connection): Promise<{
-    timeZone: string;
-    locale: string;
-    emailEncoding: string;
-    language: string;
-  }> {
-    try {
-      // Get locale settings from the current user (the one running the command)
-      const userId = connection.getAuthInfoFields().userId;
-      if (!userId) {
-        throw new Error('Unable to determine current user ID');
-      }
-
-      const soql = `SELECT TimeZoneSidKey, LocaleSidKey, EmailEncodingKey, LanguageLocaleKey FROM User WHERE Id = '${userId}'`;
-      const userResult = await connection.singleRecordQuery<{
-        TimeZoneSidKey: string;
-        LocaleSidKey: string;
-        EmailEncodingKey: string;
-        LanguageLocaleKey: string;
-      }>(soql);
-
-      return {
-        timeZone: userResult.TimeZoneSidKey,
-        locale: userResult.LocaleSidKey,
-        emailEncoding: userResult.EmailEncodingKey,
-        language: userResult.LanguageLocaleKey,
-      };
-    } catch (error) {
-      // Fallback to sensible defaults if we can't query the current user
-      this.warn('Unable to infer locale settings from current user, using defaults');
-      return {
-        timeZone: 'America/Los_Angeles',
-        locale: 'en_US',
-        emailEncoding: 'UTF-8',
-        language: 'en_US',
-      };
-    }
-  }
-
   // eslint-disable-next-line class-methods-use-this
   private async createAgentUser(
     connection: Connection,
     username: string,
     profileId: string,
-    localeSettings: {
-      timeZone: string;
-      locale: string;
-      emailEncoding: string;
-      language: string;
-    },
     nameFields: {
       firstName: string;
       lastName: string;
     }
   ): Promise<string> {
-    try {
-      // Generate alias from username (max 8 chars)
-      // Take first part before @ or first 8 chars of username
-      const aliasPart = username.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
-      const alias = aliasPart.substring(0, 8);
+    // Generate alias from username (max 8 chars)
+    // Take first part before @ or first 8 chars of username
+    const aliasPart = username.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
+    const alias = aliasPart.substring(0, 8);
 
-      const userRecord = await connection.sobject('User').create({
-        FirstName: nameFields.firstName,
-        LastName: nameFields.lastName,
-        Alias: alias,
-        Email: username,
-        Username: username,
-        ProfileId: profileId,
-        TimeZoneSidKey: localeSettings.timeZone,
-        LocaleSidKey: localeSettings.locale,
-        EmailEncodingKey: localeSettings.emailEncoding,
-        LanguageLocaleKey: localeSettings.language,
-      });
+    const userRecord = await connection.sobject('User').create({
+      FirstName: nameFields.firstName,
+      LastName: nameFields.lastName,
+      Alias: alias,
+      Email: username,
+      Username: username,
+      ProfileId: profileId,
+      TimeZoneSidKey: 'America/Los_Angeles',
+      LocaleSidKey: 'en_US',
+      EmailEncodingKey: 'UTF-8',
+      LanguageLocaleKey: 'en_US',
+    });
 
-      if (!userRecord.success || !userRecord.id) {
-        const errorMessages = userRecord.errors?.map((e) => e.message).join(', ') ?? 'Unknown error';
-        throw new SfError(`Failed to create agent user: ${errorMessages}`, 'UserCreationError', [
-          'Verify that the username is globally unique',
-          'Ensure the Einstein Agent User profile exists in your org',
-          'Check that Agentforce is enabled for your org',
-          'Verify you have permission to create User records',
-        ]);
-      }
-
-      return userRecord.id;
-    } catch (error) {
-      if (error instanceof SfError) {
-        throw error;
-      }
-      throw new SfError(
-        `Failed to create agent user: ${error instanceof Error ? error.message : String(error)}`,
-        'UserCreationError',
-        ['Verify your connection to the org', 'Check that you have permission to create User records']
-      );
+    if (!userRecord.success || !userRecord.id) {
+      const errorMessages = userRecord.errors?.map((e) => e.message).join(', ') ?? 'Unknown error';
+      throw new SfError(`Failed to create agent user: ${errorMessages}`, 'UserCreationError', [
+        'Verify that the username is globally unique',
+        'Ensure the Einstein Agent User profile exists in your org',
+        'Check that Agentforce is enabled for your org',
+        'Verify you have permission to create User records',
+      ]);
     }
+
+    return userRecord.id;
   }
 
   private async assignPermissionSets(
