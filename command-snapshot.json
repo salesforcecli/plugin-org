@@ -1,5 +1,13 @@
 [
   {
+    "alias": [],
+    "command": "org:create:agent-user",
+    "flagAliases": [],
+    "flagChars": ["o"],
+    "flags": ["api-version", "base-username", "first-name", "flags-dir", "json", "last-name", "target-org", "username"],
+    "plugin": "@salesforce/plugin-org"
+  },
+  {
     "alias": ["env:create:sandbox"],
     "command": "org:create:sandbox",
     "flagAliases": ["c", "clone"],

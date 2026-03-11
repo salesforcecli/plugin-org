@@ -21,7 +21,7 @@ import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create_agent_user');
 
-type AgentUserCreateResponse = {
+export type AgentUserCreateResponse = {
   userId: string;
   username: string;
   profileId: string;
