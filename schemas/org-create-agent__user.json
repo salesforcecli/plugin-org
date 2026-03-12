@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/AgentUserCreateResponse",
+  "definitions": {
+    "AgentUserCreateResponse": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "profileId": {
+          "type": "string"
+        },
+        "permissionSetsAssigned": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "permissionSetErrors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "permissionSet": {
+                "type": "string"
+              },
+              "error": {
+                "type": "string"
+              }
+            },
+            "required": ["permissionSet", "error"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["userId", "username", "profileId", "permissionSetsAssigned", "permissionSetErrors"],
+      "additionalProperties": false
+    }
+  }
+}
