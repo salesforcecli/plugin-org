@@ -241,8 +241,10 @@ export default class OrgCreateAgentUser extends SfCommand<AgentUserCreateRespons
   ): Promise<string> {
     // Generate alias from username (max 8 chars)
     // Take first part before @ or first 8 chars of username
-    const aliasPart = username.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
-    const alias = aliasPart.substring(0, 8);
+    const alias = username
+      .split('@')[0]
+      .replace(/[^a-zA-Z0-9]/g, '')
+      .substring(0, 8);
 
     const userRecord = await connection.sobject('User').create({
       FirstName: nameFields.firstName,
@@ -289,23 +291,12 @@ export default class OrgCreateAgentUser extends SfCommand<AgentUserCreateRespons
         if (psResult.totalSize === 0) {
           errors.push({
             permissionSet: permissionSetName,
-            error: 'Permission set not found in org. It may not be available or the name may be incorrect.',
+            error: 'Permission set not found in org',
           });
           continue;
         }
 
         const permissionSetId = psResult.records[0].Id;
-
-        // Check if already assigned
-        // eslint-disable-next-line no-await-in-loop
-        const existingAssignment = await connection.query<{ Id: string }>(
-          `SELECT Id FROM PermissionSetAssignment WHERE PermissionSetId = '${permissionSetId}' AND AssigneeId = '${userId}' LIMIT 1`
-        );
-
-        if (existingAssignment.totalSize > 0) {
-          assigned.push(permissionSetName);
-          continue;
-        }
 
         // Assign the permission set
         // eslint-disable-next-line no-await-in-loop
