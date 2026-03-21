@@ -1,3 +1,9 @@
+## [5.9.73](https://github.com/salesforcecli/plugin-org/compare/5.9.72...5.9.73) (2026-03-21)
+
+### Bug Fixes
+
+- **deps:** bump flatted from 3.3.3 to 3.4.2 ([3a40e41](https://github.com/salesforcecli/plugin-org/commit/3a40e418e6083894ae637ce8e491de4cf826e4f2))
+
 ## [5.9.72](https://github.com/salesforcecli/plugin-org/compare/5.9.71...5.9.72) (2026-03-15)
 
 ### Bug Fixes
