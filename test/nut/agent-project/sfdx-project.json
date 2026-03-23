@@ -1,0 +1,17 @@
+{
+  "name": "agentsProject",
+  "namespace": "",
+  "packageDirectories": [
+    {
+      "default": true,
+      "path": "force-app"
+    }
+  ],
+  "replacements": [
+    {
+      "filename": "force-app/main/default/aiAuthoringBundles/myBundle/myBundle.agent",
+      "stringToReplace": "MYAGENTUSER",
+      "replaceWithEnv": "AGENT_USER"
+    }
+  ]
+}
