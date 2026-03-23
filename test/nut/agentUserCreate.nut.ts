@@ -13,18 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import path from 'node:path';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import { expect } from 'chai';
-import { AgentUserCreateResponse } from '../../../src/commands/org/create/agent-user.js';
+import { AgentUserCreateResponse } from '../../src/commands/org/create/agent-user.js';
 
 describe('org:create:agent-user NUTs', () => {
   let session: TestSession;
 
   before(async () => {
     session = await TestSession.create({
-      project: { sourceDir: 'agent-project' },
+      project: { sourceDir: path.join('test', 'nut', 'agent-project') },
       devhubAuthStrategy: 'AUTO',
-      scratchOrgs: [{ alias: 'agentOrg' }],
+      scratchOrgs: [
+        {
+          alias: 'agentOrg',
+          config: path.join('config', 'project-scratch-def.json'),
+        },
+      ],
     });
   });
 
@@ -64,8 +70,6 @@ describe('org:create:agent-user NUTs', () => {
       expect(result?.permissionSetErrors).to.be.an('array').that.is.empty;
     });
 
-    it('should deploy metadata, replace, and publish agent with generated default_agent_user', () => {});
-
     it('should create an agent user with custom base username', () => {
       const result = execCmd<AgentUserCreateResponse>(
         'org:create:agent-user --target-org agentOrg --base-username service-agent@test.com --json',
@@ -100,6 +104,7 @@ describe('org:create:agent-user NUTs', () => {
 
       expect(error?.name).to.equal('InvalidBaseUsernameError');
       expect(error?.message).to.include('Must include @ symbol');
+      expect(error?.actions).to.include('Provide a base username in email format, e.g., service-agent@corp.com');
     });
   });
 });

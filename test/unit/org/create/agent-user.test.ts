@@ -253,18 +253,4 @@ describe('org:create:agent-user', () => {
       }
     });
   });
-
-  describe('Input Validation', () => {
-    it('should throw InvalidBaseUsernameError for invalid base username format', () => {
-      const error = new SfError(
-        'Invalid base username format: "invalidformat". Must include @ symbol.',
-        'InvalidBaseUsernameError',
-        ['Provide a base username in email format, e.g., service-agent@corp.com']
-      );
-
-      expect(error.name).to.equal('InvalidBaseUsernameError');
-      expect(error.message).to.include('Must include @ symbol');
-      expect(error.actions).to.include('Provide a base username in email format, e.g., service-agent@corp.com');
-    });
-  });
 });
