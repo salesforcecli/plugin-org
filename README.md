@@ -99,6 +99,7 @@ the [SandboxNuts](https://github.com/salesforcecli/plugin-org/actions/workflows/
 
 <!-- commands -->
 
+- [`sf org create agent-user`](#sf-org-create-agent-user)
 - [`sf org create sandbox`](#sf-org-create-sandbox)
 - [`sf org create scratch`](#sf-org-create-scratch)
 - [`sf org delete sandbox`](#sf-org-delete-sandbox)
@@ -115,6 +116,84 @@ the [SandboxNuts](https://github.com/salesforcecli/plugin-org/actions/workflows/
 - [`sf org refresh sandbox`](#sf-org-refresh-sandbox)
 - [`sf org resume sandbox`](#sf-org-resume-sandbox)
 - [`sf org resume scratch`](#sf-org-resume-scratch)
+
+## `sf org create agent-user`
+
+Create the default Salesforce user that is used to run an agent.
+
+```
+USAGE
+  $ sf org create agent-user -o <value> [--json] [--flags-dir <value>] [--api-version <value>] [--base-username <value>]
+    [--first-name <value>] [--last-name <value>]
+
+FLAGS
+  -o, --target-org=<value>     (required) Username or alias of the target org. Not required if the `target-org`
+                               configuration variable is already set.
+      --api-version=<value>    Override the api version used for api requests made by this command
+      --base-username=<value>  Base username pattern. A unique ID is appended to ensure global uniqueness of the
+                               usename.
+      --first-name=<value>     [default: Agent] First name for the agent user.
+      --last-name=<value>      [default: User] Last name for the agent user.
+
+GLOBAL FLAGS
+  --flags-dir=<value>  Import flag values from a directory.
+  --json               Format output as json.
+
+DESCRIPTION
+  Create the default Salesforce user that is used to run an agent.
+
+  You specify this user in the agent's Agent Script file using the "default_agent_user" parameter in the "config" block.
+
+  By default, this command:
+
+  - Generates a user called "Agent User" with a globally unique username. Use flags to change these default names.
+  - Sets the user's email to the new username.
+  - Assigns the user the "Einstein Agent User" profile.
+  - Assigns the user these required permission sets: AgentforceServiceAgentBase, AgentforceServiceAgentUser,
+  EinsteinGPTPromptTemplateUser
+  - Checks that the user licenses required by the profile and permission sets are available in your org.
+
+  The generated user doesn't have a password. You can’t log into Salesforce using the agent user's username. Only
+  Salesforce users with admin permissions can view or edit an agent user in Setup.
+
+  To assign additional permission sets or licenses after the user was created, use the "org assign permset" or "org
+  assign
+  permsetlicense" commands.
+
+  When the command completes, it displays a summary of what it did, including the new agent user's username and ID, the
+  available licenses associated with the Einstein Agent User profile, and the profile and permission sets assigned to
+  the
+  agent user.
+
+EXAMPLES
+  Create an agent user with an auto-generated username; create the user in the org with alias "myorg":
+
+    $ sf org create agent-user --target-org myorg
+
+  Create an agent user by specifying a base username pattern; to make the username unique, the command appends a unique
+  identifier:
+  $ sf org create agent-user --base-username service-agent@corp.com --target-org myorg
+
+  Create an agent user with an auto-generated username but the custom name "Service Agent"; create the user in your
+  default org:
+  $ sf org create agent-user --first-name Service --last-name Agent
+
+FLAG DESCRIPTIONS
+  --base-username=<value>  Base username pattern. A unique ID is appended to ensure global uniqueness of the usename.
+
+    Specify a base username in email format, such as "service-agent@corp.com". The command then appends a 12-character
+    globally unique ID (GUID) to the name before the "@" sign, which ensures that the username is globally unique across
+    all
+    Salesforce orgs and sandboxes.
+
+    For example, if you specify "service-agent@corp.com", then the username might be
+    "service-agent.a1b2c3d4e5f6@corp.com".
+
+    If not specified, the command auto-generates the username using this pattern:
+    "agent.user.<GUID>@your-org-domain.com".
+```
+
+_See code: [src/commands/org/create/agent-user.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.75/src/commands/org/create/agent-user.ts)_
 
 ## `sf org create sandbox`
 
@@ -248,7 +327,7 @@ FLAG DESCRIPTIONS
     You can specify either --source-sandbox-name or --source-id when cloning an existing sandbox, but not both.
 ```
 
-_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.74/src/commands/org/create/sandbox.ts)_
+_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.75/src/commands/org/create/sandbox.ts)_
 
 ## `sf org create scratch`
 
@@ -430,7 +509,7 @@ FLAG DESCRIPTIONS
     Omit this flag to have Salesforce generate a unique username for your org.
 ```
 
-_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.74/src/commands/org/create/scratch.ts)_
+_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.75/src/commands/org/create/scratch.ts)_
 
 ## `sf org delete sandbox`
 
@@ -476,7 +555,7 @@ EXAMPLES
     $ sf org delete sandbox --target-org my-sandbox --no-prompt
 ```
 
-_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.74/src/commands/org/delete/sandbox.ts)_
+_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.75/src/commands/org/delete/sandbox.ts)_
 
 ## `sf org delete scratch`
 
@@ -520,7 +599,7 @@ EXAMPLES
     $ sf org delete scratch --target-org my-scratch-org --no-prompt
 ```
 
-_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.74/src/commands/org/delete/scratch.ts)_
+_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.75/src/commands/org/delete/scratch.ts)_
 
 ## `sf org disable tracking`
 
@@ -559,7 +638,7 @@ EXAMPLES
     $ sf org disable tracking
 ```
 
-_See code: [src/commands/org/disable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.74/src/commands/org/disable/tracking.ts)_
+_See code: [src/commands/org/disable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.75/src/commands/org/disable/tracking.ts)_
 
 ## `sf org display`
 
@@ -604,7 +683,7 @@ EXAMPLES
     $ sf org display --target-org TestOrg1 --verbose
 ```
 
-_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.74/src/commands/org/display.ts)_
+_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.75/src/commands/org/display.ts)_
 
 ## `sf org enable tracking`
 
@@ -646,7 +725,7 @@ EXAMPLES
     $ sf org enable tracking
 ```
 
-_See code: [src/commands/org/enable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.74/src/commands/org/enable/tracking.ts)_
+_See code: [src/commands/org/enable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.75/src/commands/org/enable/tracking.ts)_
 
 ## `sf org list`
 
@@ -685,7 +764,7 @@ EXAMPLES
     $ sf org list --clean
 ```
 
-_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.74/src/commands/org/list.ts)_
+_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.75/src/commands/org/list.ts)_
 
 ## `sf org list metadata`
 
@@ -752,7 +831,7 @@ FLAG DESCRIPTIONS
     Examples of metadata types that use folders are Dashboard, Document, EmailTemplate, and Report.
 ```
 
-_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.74/src/commands/org/list/metadata.ts)_
+_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.75/src/commands/org/list/metadata.ts)_
 
 ## `sf org list metadata-types`
 
@@ -807,7 +886,7 @@ FLAG DESCRIPTIONS
     Override the api version used for api requests made by this command
 ```
 
-_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.74/src/commands/org/list/metadata-types.ts)_
+_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.75/src/commands/org/list/metadata-types.ts)_
 
 ## `sf org open`
 
@@ -883,7 +962,7 @@ EXAMPLES
     $ sf org open --source-file force-app/main/default/bots/Coral_Cloud_Agent/Coral_Cloud_Agent.bot-meta.xml
 ```
 
-_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.74/src/commands/org/open.ts)_
+_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.75/src/commands/org/open.ts)_
 
 ## `sf org open agent`
 
@@ -934,7 +1013,7 @@ EXAMPLES
     $ sf org open agent --target-org MyTestOrg1 --browser firefox --api-name Coral_Cloud_Agent
 ```
 
-_See code: [src/commands/org/open/agent.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.74/src/commands/org/open/agent.ts)_
+_See code: [src/commands/org/open/agent.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.75/src/commands/org/open/agent.ts)_
 
 ## `sf org open authoring-bundle`
 
@@ -980,7 +1059,7 @@ EXAMPLES
     $ sf org open authoring-bundle --target-org MyTestOrg1 --browser firefox
 ```
 
-_See code: [src/commands/org/open/authoring-bundle.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.74/src/commands/org/open/authoring-bundle.ts)_
+_See code: [src/commands/org/open/authoring-bundle.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.75/src/commands/org/open/authoring-bundle.ts)_
 
 ## `sf org refresh sandbox`
 
@@ -1083,7 +1162,7 @@ FLAG DESCRIPTIONS
     You can specify either --source-sandbox-name or --source-id when refreshing an existing sandbox, but not both.
 ```
 
-_See code: [src/commands/org/refresh/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.74/src/commands/org/refresh/sandbox.ts)_
+_See code: [src/commands/org/refresh/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.75/src/commands/org/refresh/sandbox.ts)_
 
 ## `sf org resume sandbox`
 
@@ -1146,7 +1225,7 @@ FLAG DESCRIPTIONS
     returns the job ID. To resume checking the sandbox creation, rerun this command.
 ```
 
-_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.74/src/commands/org/resume/sandbox.ts)_
+_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.75/src/commands/org/resume/sandbox.ts)_
 
 ## `sf org resume scratch`
 
@@ -1199,6 +1278,6 @@ FLAG DESCRIPTIONS
     returns the job ID. To resume checking the scratch creation, rerun this command.
 ```
 
-_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.74/src/commands/org/resume/scratch.ts)_
+_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.9.75/src/commands/org/resume/scratch.ts)_
 
 <!-- commandsstop -->

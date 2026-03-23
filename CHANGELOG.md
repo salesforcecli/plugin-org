@@ -1,3 +1,12 @@
+## [5.9.75](https://github.com/salesforcecli/plugin-org/compare/5.9.74...5.9.75) (2026-03-23)
+
+### Bug Fixes
+
+- add new command ([392a756](https://github.com/salesforcecli/plugin-org/commit/392a756c5d544788c3b881f6cf5c86180bd039f9))
+- add new command ([b61b0b6](https://github.com/salesforcecli/plugin-org/commit/b61b0b61602a24bfae02204c4aad1f0bb39e0279))
+- edit messages ([1016f61](https://github.com/salesforcecli/plugin-org/commit/1016f61f10c5d690eacefaa9e4cff34cce0ecfea))
+- simplify create command ([97f6b13](https://github.com/salesforcecli/plugin-org/commit/97f6b13d0a56c48024a6b7ed7bd96b5024d511d7))
+
 ## [5.9.74](https://github.com/salesforcecli/plugin-org/compare/5.9.73...5.9.74) (2026-03-22)
 
 ### Bug Fixes
