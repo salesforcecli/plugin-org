@@ -1,3 +1,9 @@
+## [5.9.76](https://github.com/salesforcecli/plugin-org/compare/5.9.75...5.9.76) (2026-03-27)
+
+### Bug Fixes
+
+- **deps:** bump yaml from 2.8.2 to 2.8.3 ([458d82b](https://github.com/salesforcecli/plugin-org/commit/458d82bd1bfa8b836bc526df941791f1aabe15ff))
+
 ## [5.9.75](https://github.com/salesforcecli/plugin-org/compare/5.9.74...5.9.75) (2026-03-23)
 
 ### Bug Fixes
