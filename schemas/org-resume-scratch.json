@@ -296,9 +296,6 @@
         "refreshToken": {
           "type": "string"
         },
-        "scratchAdminUsername": {
-          "type": "string"
-        },
         "snapshot": {
           "type": "string"
         },

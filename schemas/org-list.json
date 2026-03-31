@@ -148,9 +148,6 @@
         "refreshToken": {
           "type": "string"
         },
-        "scratchAdminUsername": {
-          "type": "string"
-        },
         "snapshot": {
           "type": "string"
         },
@@ -305,9 +302,6 @@
           "type": "string"
         },
         "refreshToken": {
-          "type": "string"
-        },
-        "scratchAdminUsername": {
           "type": "string"
         },
         "snapshot": {
