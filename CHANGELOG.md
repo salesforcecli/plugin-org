@@ -1,3 +1,9 @@
+## [5.9.79](https://github.com/salesforcecli/plugin-org/compare/5.9.78...5.9.79) (2026-03-31)
+
+### Bug Fixes
+
+- update the schema ([61e87a4](https://github.com/salesforcecli/plugin-org/commit/61e87a4d72218ebaec93e8f447436e97c44040e7))
+
 ## [5.9.78](https://github.com/salesforcecli/plugin-org/compare/5.9.77...5.9.78) (2026-03-29)
 
 ### Bug Fixes
