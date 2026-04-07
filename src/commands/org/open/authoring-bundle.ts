@@ -33,15 +33,6 @@ export class OrgOpenAuthoringBundle extends OrgOpenCommandBase<OrgOpenOutput> {
     ...OrgOpenCommandBase.flags,
     'target-org': Flags.requiredOrg(),
     'api-version': Flags.orgApiVersion(),
-    'api-name': Flags.string({
-      summary: messages.getMessage('flags.api-name.summary'),
-      description: messages.getMessage('flags.api-name.description'),
-    }),
-    version: Flags.string({
-      summary: messages.getMessage('flags.version.summary'),
-      description: messages.getMessage('flags.version.description'),
-      dependsOn: ['api-name'],
-    }),
     private: Flags.boolean({
       summary: messages.getMessage('flags.private.summary'),
       exclusive: ['url-only', 'browser'],
@@ -65,21 +56,6 @@ export class OrgOpenAuthoringBundle extends OrgOpenCommandBase<OrgOpenOutput> {
     this.org = flags['target-org'];
     this.connection = this.org.getConnection(flags['api-version']);
 
-    // Build the URL based on whether api-name is provided
-    let path: string;
-    if (flags['api-name']) {
-      const queryParams = new URLSearchParams({
-        projectName: flags['api-name'],
-      });
-      if (flags.version) {
-        queryParams.set('projectVersionNumber', flags.version);
-      }
-      path = `AgentAuthoring/agentAuthoringBuilder.app#/project?${queryParams.toString()}`;
-    } else {
-      // Default to the list view
-      path = 'lightning/n/standard-AgentforceStudio';
-    }
-
-    return this.openOrgUI(flags, await this.org.getFrontDoorUrl(path));
+    return this.openOrgUI(flags, await this.org.getFrontDoorUrl('lightning/n/standard-AgentforceStudio'));
   }
 }
