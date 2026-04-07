@@ -26,6 +26,8 @@ export class OrgOpenAuthoringBundle extends OrgOpenCommandBase<OrgOpenOutput> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
+  public static readonly state = 'deprecated';
+  public static readonly deprecationOptions = { to: 'org open agent --authoring-bundle' };
 
   public static readonly flags = {
     ...OrgOpenCommandBase.flags,

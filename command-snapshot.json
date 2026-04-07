@@ -150,7 +150,18 @@
     "command": "org:open:agent",
     "flagAliases": ["urlonly"],
     "flagChars": ["b", "n", "o", "r"],
-    "flags": ["api-name", "api-version", "browser", "flags-dir", "json", "private", "target-org", "url-only"],
+    "flags": [
+      "api-name",
+      "api-version",
+      "authoring-bundle",
+      "browser",
+      "flags-dir",
+      "json",
+      "private",
+      "target-org",
+      "url-only",
+      "version"
+    ],
     "plugin": "@salesforce/plugin-org"
   },
   {

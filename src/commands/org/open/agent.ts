@@ -34,7 +34,7 @@ export class OrgOpenAgent extends OrgOpenCommandBase<OrgOpenOutput> {
     'api-name': Flags.string({
       char: 'n',
       summary: messages.getMessage('flags.api-name.summary'),
-      required: true,
+      exactlyOne: ['api-name', 'authoring-bundle'],
     }),
     private: Flags.boolean({
       summary: messages.getMessage('flags.private.summary'),
@@ -52,6 +52,16 @@ export class OrgOpenAgent extends OrgOpenCommandBase<OrgOpenOutput> {
       aliases: ['urlonly'],
       deprecateAliases: true,
     }),
+    'authoring-bundle': Flags.string({
+      summary: messages.getMessage('flags.authoring-bundle.summary'),
+      description: messages.getMessage('flags.authoring-bundle.description'),
+      exactlyOne: ['api-name', 'authoring-bundle'],
+    }),
+    version: Flags.string({
+      summary: messages.getMessage('flags.version.summary'),
+      description: messages.getMessage('flags.version.description'),
+      dependsOn: ['authoring-bundle'],
+    }),
   };
 
   public async run(): Promise<OrgOpenOutput> {
@@ -59,9 +69,22 @@ export class OrgOpenAgent extends OrgOpenCommandBase<OrgOpenOutput> {
     this.org = flags['target-org'];
     this.connection = this.org.getConnection(flags['api-version']);
 
-    const agentBuilderRedirect = await buildRetUrl(this.connection, flags['api-name']);
+    let path: string;
+    if (flags['api-name']) {
+      path = await buildRetUrl(this.connection, flags['api-name']);
+    } else {
+      // authoring-bundle is provided
+      const queryParams = new URLSearchParams({
+        // flags.authoring-bundle guaranteed by OCLIF definition
+        projectName: flags['authoring-bundle']!,
+      });
+      if (flags.version) {
+        queryParams.set('projectVersionNumber', flags.version);
+      }
+      path = `AgentAuthoring/agentAuthoringBuilder.app#/project?${queryParams.toString()}`;
+    }
 
-    return this.openOrgUI(flags, await this.org.getFrontDoorUrl(agentBuilderRedirect));
+    return this.openOrgUI(flags, await this.org.getFrontDoorUrl(path));
   }
 }
 
