@@ -1,3 +1,9 @@
+## [5.9.84](https://github.com/salesforcecli/plugin-org/compare/5.9.83...5.9.84) (2026-04-12)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve ([43e9dd6](https://github.com/salesforcecli/plugin-org/commit/43e9dd64f16c8e76faa7e39e3d902578416b9163))
+
 ## [5.9.83](https://github.com/salesforcecli/plugin-org/compare/5.9.82...5.9.83) (2026-04-11)
 
 ### Bug Fixes
