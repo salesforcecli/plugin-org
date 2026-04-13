@@ -10,8 +10,7 @@ Alternatively, use the --authoring-bundle flag to open an agent in Agentforce Bu
 
 To generate the URL but not launch it in your browser, specify --url-only.
 
-To open Agent Builder in a specific browser, use the --browser flag. Supported browsers are "chrome", "edge", and "
-firefox". If you don't specify --browser, the org opens in your default browser.
+To open Agent Builder in a specific browser, use the --browser flag. Supported browsers are "chrome", "edge", and "firefox". If you don't specify --browser, the org opens in your default browser.
 
 # examples
 
