@@ -4,11 +4,9 @@ Open an agent in your org's Agent Builder UI in a browser.
 
 # description
 
-Use the --api-name flag to open an agent using its API name in the Agent Builder UI of your org. To find the agent's API
-name, go to Setup in your org and navigate to the agent's details page.
+Use the --api-name flag to open an agent using its API name in the Agent Builder UI of your org. To find the agent's API name, go to Setup in your org and navigate to the agent's details page.
 
-Alternatively, use the --authoring-bundle flag to open an agent in Agentforce Builder. Optionally include --version to
-open a specific version of the agent. You'll specify the api name of the authoring bundle.
+Alternatively, use the --authoring-bundle flag to open an agent in Agentforce Builder. Optionally include --version to open a specific version of the agent. You'll specify the api name of the authoring bundle.
 
 To generate the URL but not launch it in your browser, specify --url-only.
 
