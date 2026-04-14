@@ -36,6 +36,7 @@ const messages = Messages.loadMessages('@salesforce/plugin-org', 'sandboxbase');
 
 export type SandboxCommandResponse = SandboxProcessObject & {
   SandboxUsername?: string;
+  message?: string;
 };
 
 export abstract class SandboxCommandBase<T> extends SfCommand<T> {
