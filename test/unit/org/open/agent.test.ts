@@ -33,6 +33,7 @@ describe('org:open:agent', () => {
 
   const mockBotId = '0Xx1234567890ABCD';
   const mockBotName = 'TestAgent';
+  const mockVersionId = '0X9DD0000000032s0AA';
 
   let sfCommandUxStubs: ReturnType<typeof stubSfCommandUx>;
 
@@ -107,27 +108,6 @@ describe('org:open:agent', () => {
         expect((error as Error).message).to.match(/exactly one|cannot also be provided/i);
       }
     });
-
-    it('requires authoring-bundle when version is provided', async () => {
-      try {
-        await OrgOpenAgent.run([
-          '--json',
-          '--target-org',
-          testOrg.username,
-          '--url-only',
-          '--api-name',
-          mockBotName,
-          '--version',
-          '1',
-        ]);
-        assert.fail('Should have thrown an error');
-      } catch (error) {
-        expect(error).to.exist;
-        expect((error as Error).message).to.include('--version');
-        expect((error as Error).message).to.include('--authoring-bundle');
-        expect((error as Error).message).to.match(/All of the following must be provided|depends on/i);
-      }
-    });
   });
 
   describe('url generation with api-name', () => {
@@ -167,6 +147,45 @@ describe('org:open:agent', () => {
 
       expect(spies.get('singleRecordQuery').callCount).to.equal(1);
       expect(spies.get('singleRecordQuery').firstCall.args[0]).to.include(specialName);
+    });
+
+    it('builds URL with api-name and version using BotVersion query', async () => {
+      const version = '2';
+      // Override the singleRecordQuery stub to return different results for BotDefinition and BotVersion
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const singleRecordQueryStub = spies.get('singleRecordQuery');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      singleRecordQueryStub.onFirstCall().resolves({ Id: mockBotId }); // BotDefinition query
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      singleRecordQueryStub.onSecondCall().resolves({ Id: mockVersionId }); // BotVersion query
+
+      const response = await OrgOpenAgent.run([
+        '--json',
+        '--target-org',
+        testOrg.username,
+        '--url-only',
+        '--api-name',
+        mockBotName,
+        '--version',
+        version,
+      ]);
+      assert(response);
+      testJsonStructure(response);
+
+      // Verify both queries were made
+      expect(singleRecordQueryStub.callCount).to.equal(2);
+
+      // Verify BotDefinition query
+      expect(singleRecordQueryStub.firstCall.args[0]).to.include(mockBotName);
+      expect(singleRecordQueryStub.firstCall.args[0]).to.include('BotDefinition');
+
+      // Verify BotVersion query
+      expect(singleRecordQueryStub.secondCall.args[0]).to.include('BotVersion');
+      expect(singleRecordQueryStub.secondCall.args[0]).to.include(mockBotId);
+      expect(singleRecordQueryStub.secondCall.args[0]).to.include(`VersionNumber=${version}`);
+
+      const expectedPath = `AiCopilot/copilotStudio.app#/copilot/builder?copilotId=${mockBotId}&versionId=${mockVersionId}`;
+      expect(response.url).to.equal(getExpectedUrlWithPath(expectedPath));
     });
   });
 

@@ -60,7 +60,6 @@ export class OrgOpenAgent extends OrgOpenCommandBase<OrgOpenOutput> {
     version: Flags.string({
       summary: messages.getMessage('flags.version.summary'),
       description: messages.getMessage('flags.version.description'),
-      dependsOn: ['authoring-bundle'],
     }),
   };
 
@@ -71,7 +70,7 @@ export class OrgOpenAgent extends OrgOpenCommandBase<OrgOpenOutput> {
 
     let path: string;
     if (flags['api-name']) {
-      path = await buildRetUrl(this.connection, flags['api-name']);
+      path = await buildRetUrl(this.connection, flags['api-name'], flags.version);
     } else {
       // authoring-bundle is provided
       const queryParams = new URLSearchParams({
@@ -89,8 +88,14 @@ export class OrgOpenAgent extends OrgOpenCommandBase<OrgOpenOutput> {
 }
 
 // Build the URL part to the Agent Builder given a Bot API name.
-const buildRetUrl = async (conn: Connection, botName: string): Promise<string> => {
+const buildRetUrl = async (conn: Connection, botName: string, version?: string): Promise<string> => {
   const query = `SELECT id FROM BotDefinition WHERE DeveloperName='${botName}'`;
   const botId = (await conn.singleRecordQuery<{ Id: string }>(query)).Id;
-  return `AiCopilot/copilotStudio.app#/copilot/builder?copilotId=${botId}`;
+  const queryParams = new URLSearchParams({ copilotId: botId });
+  if (version) {
+    const versionQuery = `SELECT Id FROM BotVersion WHERE BotDefinitionId='${botId}' AND VersionNumber=${version}`;
+    const versionId = (await conn.singleRecordQuery<{ Id: string }>(versionQuery)).Id;
+    queryParams.set('versionId', versionId);
+  }
+  return `AiCopilot/copilotStudio.app#/copilot/builder?${queryParams.toString()}`;
 };
