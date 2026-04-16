@@ -337,6 +337,60 @@ describe('org:open:agent', () => {
     });
   });
 
+  describe('error handling', () => {
+    it('throws helpful error when agent API name does not exist', async () => {
+      const nonExistentAgent = 'NonExistent_Agent';
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      spies.get('singleRecordQuery').rejects(new Error('No records found'));
+
+      try {
+        await OrgOpenAgent.run([
+          '--json',
+          '--target-org',
+          testOrg.username,
+          '--url-only',
+          '--api-name',
+          nonExistentAgent,
+        ]);
+        assert.fail('Should have thrown an error');
+      } catch (error) {
+        expect(error).to.exist;
+        expect((error as Error).message).to.include(`No agent found with API name '${nonExistentAgent}'`);
+        expect((error as Error).name).to.equal('AgentNotFound');
+      }
+    });
+
+    it('throws helpful error when agent version does not exist', async () => {
+      const nonExistentVersion = '999';
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const singleRecordQueryStub = spies.get('singleRecordQuery');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      singleRecordQueryStub.onFirstCall().resolves({ Id: mockBotId }); // BotDefinition succeeds
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      singleRecordQueryStub.onSecondCall().rejects(new Error('No records found')); // BotVersion fails
+
+      try {
+        await OrgOpenAgent.run([
+          '--json',
+          '--target-org',
+          testOrg.username,
+          '--url-only',
+          '--api-name',
+          mockBotName,
+          '--version',
+          nonExistentVersion,
+        ]);
+        assert.fail('Should have thrown an error');
+      } catch (error) {
+        expect(error).to.exist;
+        expect((error as Error).message).to.include(
+          `No version '${nonExistentVersion}' found for agent '${mockBotName}'`
+        );
+        expect((error as Error).name).to.equal('AgentVersionNotFound');
+      }
+    });
+  });
+
   describe('api-version flag', () => {
     it('respects api-version flag with api-name', async () => {
       const apiVersion = '59.0';

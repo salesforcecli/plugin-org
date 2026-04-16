@@ -15,7 +15,7 @@
  */
 
 import { Flags } from '@salesforce/sf-plugins-core';
-import { Connection, Messages } from '@salesforce/core';
+import { Connection, Messages, SfError } from '@salesforce/core';
 import { OrgOpenCommandBase } from '../../../shared/orgOpenCommandBase.js';
 import { type OrgOpenOutput } from '../../../shared/orgTypes.js';
 
@@ -90,12 +90,25 @@ export class OrgOpenAgent extends OrgOpenCommandBase<OrgOpenOutput> {
 // Build the URL part to the Agent Builder given a Bot API name.
 const buildRetUrl = async (conn: Connection, botName: string, version?: string): Promise<string> => {
   const query = `SELECT id FROM BotDefinition WHERE DeveloperName='${botName}'`;
-  const botId = (await conn.singleRecordQuery<{ Id: string }>(query)).Id;
+  let botId: string;
+  try {
+    botId = (await conn.singleRecordQuery<{ Id: string }>(query)).Id;
+  } catch (error) {
+    throw new SfError(`No agent found with API name '${botName}' in the target org.`, 'AgentNotFound');
+  }
+
   const queryParams = new URLSearchParams({ copilotId: botId });
   if (version) {
     const versionQuery = `SELECT Id FROM BotVersion WHERE BotDefinitionId='${botId}' AND VersionNumber=${version}`;
-    const versionId = (await conn.singleRecordQuery<{ Id: string }>(versionQuery)).Id;
-    queryParams.set('versionId', versionId);
+    try {
+      const versionId = (await conn.singleRecordQuery<{ Id: string }>(versionQuery)).Id;
+      queryParams.set('versionId', versionId);
+    } catch (error) {
+      throw new SfError(
+        `No version '${version}' found for agent '${botName}' in the target org.`,
+        'AgentVersionNotFound'
+      );
+    }
   }
   return `AiCopilot/copilotStudio.app#/copilot/builder?${queryParams.toString()}`;
 };
