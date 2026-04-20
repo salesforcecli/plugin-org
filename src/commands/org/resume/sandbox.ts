@@ -168,7 +168,7 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxCommandResp
         void lifecycle.emit(SandboxEvents.EVENT_ASYNC_RESULT, undefined);
         process.exitCode = 68;
         const response = this.getSandboxCommandResponse();
-        response.message = errMessage;
+        response.Message = errMessage;
         return response;
       } else if (
         this.latestSandboxProgressObj &&
@@ -179,7 +179,7 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxCommandResp
       ) {
         process.exitCode = 68;
         const response = this.getSandboxCommandResponse();
-        response.message = errMessage;
+        response.Message = errMessage;
         return response;
       }
       throw err;

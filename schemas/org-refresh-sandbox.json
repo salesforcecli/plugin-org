@@ -9,6 +9,9 @@
         "SandboxUsername": {
           "type": "string"
         },
+        "Message": {
+          "type": "string"
+        },
         "Id": {
           "type": "string"
         },
