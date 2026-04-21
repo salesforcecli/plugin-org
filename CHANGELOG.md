@@ -1,3 +1,16 @@
+# [5.10.0](https://github.com/salesforcecli/plugin-org/compare/5.9.86...5.10.0) (2026-04-21)
+
+### Bug Fixes
+
+- deprecate 'org open authoring-bundle' expand 'org open agent' ([fecb66c](https://github.com/salesforcecli/plugin-org/commit/fecb66c37c03f9abf0cbf7fc3436086c5eab3f6c))
+- remove mid-sentence line breaks in open.agent.md ([56e1e7f](https://github.com/salesforcecli/plugin-org/commit/56e1e7fa8c0762ebb647a73a9f2b464fd17459d2))
+
+### Features
+
+- add helpful error messages for agent not found cases ([139bb7a](https://github.com/salesforcecli/plugin-org/commit/139bb7a4269446b280993a02727a0d7ed4c5a555))
+- add new flags to open AAB ([be28860](https://github.com/salesforcecli/plugin-org/commit/be288601f871649144e237e89eb37731a0c115c0))
+- support --version flag with --api-name in org open agent ([62658c9](https://github.com/salesforcecli/plugin-org/commit/62658c93b6ec7793ed523d759d803bb96e87c1f1))
+
 ## [5.9.86](https://github.com/salesforcecli/plugin-org/compare/5.9.85...5.9.86) (2026-04-17)
 
 ### Bug Fixes
