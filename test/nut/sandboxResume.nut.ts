@@ -95,7 +95,8 @@ describe('Sandbox Resume', () => {
 
     const result = await ResumeSandbox.run(['--name', sbxName, '-o', hubOrgUsername, '--json']);
 
-    expect(result).to.deep.equal(sbxProcess);
+    expect(result).to.include(sbxProcess);
+    expect(result.SandboxUsername).to.equal(`${hubOrgUsername}.${sbxName}`);
     expect(toolingQueryStub.calledOnce, 'toolingQueryStub').to.be.true;
 
     // check the sandbox cache entry
@@ -118,7 +119,8 @@ describe('Sandbox Resume', () => {
 
     const result = await ResumeSandbox.run(['--job-id', sbxProcess.Id, '-o', hubOrgUsername, '--json']);
 
-    expect(result).to.deep.equal(sbxProcess);
+    expect(result).to.include(sbxProcess);
+    expect(result.SandboxUsername).to.equal(`${hubOrgUsername}.${sbxName}`);
     expect(toolingQueryStub.calledOnce, 'toolingQueryStub').to.be.true;
 
     // check the sandbox cache entry

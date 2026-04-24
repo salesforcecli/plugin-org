@@ -162,17 +162,25 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxCommandResp
       });
       return this.getSandboxCommandResponse();
     } catch (err) {
+      const errMessage = err instanceof Error ? err.message : String(err);
+
       if (this.latestSandboxProgressObj && this.pollingTimeOut) {
         void lifecycle.emit(SandboxEvents.EVENT_ASYNC_RESULT, undefined);
         process.exitCode = 68;
-        return this.latestSandboxProgressObj;
+        const response = this.getSandboxCommandResponse();
+        response.Message = errMessage;
+        return response;
       } else if (
         this.latestSandboxProgressObj &&
         err instanceof SfError &&
-        err.name === 'SandboxCreateNotCompleteError'
+        ['SandboxCreateNotCompleteError', 'SandboxAuthNotCompleteError', 'SandboxAuthIncompleteError'].includes(
+          err.name
+        )
       ) {
         process.exitCode = 68;
-        return this.latestSandboxProgressObj;
+        const response = this.getSandboxCommandResponse();
+        response.Message = errMessage;
+        return response;
       }
       throw err;
     }
