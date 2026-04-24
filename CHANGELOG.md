@@ -1,3 +1,11 @@
+## [5.10.1](https://github.com/salesforcecli/plugin-org/compare/5.10.0...5.10.1) (2026-04-24)
+
+### Bug Fixes
+
+- add message to response ([ff8e1d4](https://github.com/salesforcecli/plugin-org/commit/ff8e1d4c77634d86c4666ac1fad65fb3ffc0092b))
+- add message to sandbox response ([b4ec86d](https://github.com/salesforcecli/plugin-org/commit/b4ec86d01ab29a62afebb8cb2e0a9d52f0a67869))
+- update nut test ([12848da](https://github.com/salesforcecli/plugin-org/commit/12848dace643f92ec4cf272e6866bf47bf5e42ac))
+
 # [5.10.0](https://github.com/salesforcecli/plugin-org/compare/5.9.86...5.10.0) (2026-04-21)
 
 ### Bug Fixes
