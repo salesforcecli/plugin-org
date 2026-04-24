@@ -1,3 +1,40 @@
+# [5.10.0](https://github.com/salesforcecli/plugin-org/compare/5.9.86...5.10.0) (2026-04-21)
+
+### Bug Fixes
+
+- deprecate 'org open authoring-bundle' expand 'org open agent' ([fecb66c](https://github.com/salesforcecli/plugin-org/commit/fecb66c37c03f9abf0cbf7fc3436086c5eab3f6c))
+- remove mid-sentence line breaks in open.agent.md ([56e1e7f](https://github.com/salesforcecli/plugin-org/commit/56e1e7fa8c0762ebb647a73a9f2b464fd17459d2))
+
+### Features
+
+- add helpful error messages for agent not found cases ([139bb7a](https://github.com/salesforcecli/plugin-org/commit/139bb7a4269446b280993a02727a0d7ed4c5a555))
+- add new flags to open AAB ([be28860](https://github.com/salesforcecli/plugin-org/commit/be288601f871649144e237e89eb37731a0c115c0))
+- support --version flag with --api-name in org open agent ([62658c9](https://github.com/salesforcecli/plugin-org/commit/62658c93b6ec7793ed523d759d803bb96e87c1f1))
+
+## [5.9.86](https://github.com/salesforcecli/plugin-org/compare/5.9.85...5.9.86) (2026-04-17)
+
+### Bug Fixes
+
+- **deps:** bump basic-ftp from 5.2.2 to 5.3.0 ([6d716ff](https://github.com/salesforcecli/plugin-org/commit/6d716ffaa93d9b89b293aa095a37c6ff6cf8f93c))
+
+## [5.9.85](https://github.com/salesforcecli/plugin-org/compare/5.9.84...5.9.85) (2026-04-12)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/multi-stage-output from 0.8.34 to 0.8.36 ([7679519](https://github.com/salesforcecli/plugin-org/commit/767951923752370f847fd11b8d88fa7be5f85de3))
+
+## [5.9.84](https://github.com/salesforcecli/plugin-org/compare/5.9.83...5.9.84) (2026-04-12)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve ([43e9dd6](https://github.com/salesforcecli/plugin-org/commit/43e9dd64f16c8e76faa7e39e3d902578416b9163))
+
+## [5.9.83](https://github.com/salesforcecli/plugin-org/compare/5.9.82...5.9.83) (2026-04-11)
+
+### Bug Fixes
+
+- **deps:** bump basic-ftp from 5.2.1 to 5.2.2 ([07c7350](https://github.com/salesforcecli/plugin-org/commit/07c73500225707eaaeee502da3e8852ca9bc165e))
+
 ## [5.9.82](https://github.com/salesforcecli/plugin-org/compare/5.9.81...5.9.82) (2026-04-09)
 
 ### Bug Fixes
