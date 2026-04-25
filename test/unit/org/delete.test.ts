@@ -5,7 +5,7 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { AuthInfo, Messages, Org, SfError } from '@salesforce/core';
+import { AuthInfo, Connection, Messages, Org, SfError } from '@salesforce/core';
 import { MockTestOrgData, TestContext } from '@salesforce/core/testSetup';
 import { SinonStub } from 'sinon';
 import { config, expect } from 'chai';
@@ -38,6 +38,12 @@ describe('org delete', () => {
   });
 
   describe('sandbox', () => {
+    let sandboxReadStub: SinonStub;
+
+    beforeEach(() => {
+      sandboxReadStub = $$.SANDBOX.stub(SandboxAccessor.prototype, 'read').resolves(null);
+    });
+
     it('will throw an error when no org provided', async () => {
       await $$.stubConfig({});
       try {
@@ -127,6 +133,61 @@ describe('org delete', () => {
         sfCommandUxStubs.logSuccess.getCalls().flatMap((call) => call.args),
         JSON.stringify(sfCommandUxStubs.logSuccess.getCalls().flatMap((call) => call.args))
       ).to.deep.include(sbxOrgMessages.getMessage('success.Idempotent', [testOrg.username]));
+    });
+
+    it('will throw a clean SfError when the user lacks Manage Sandboxes permission', async () => {
+      $$.SANDBOX.stub(SandboxAccessor.prototype, 'hasFile').resolves(true);
+      orgDeleteStub.restore();
+      const insufficientAccessError = Object.assign(new Error('INSUFFICIENT_ACCESS_OR_READONLY'), {
+        errorCode: 'INSUFFICIENT_ACCESS_OR_READONLY',
+      });
+      $$.SANDBOX.stub(Org.prototype, 'delete').throws(insufficientAccessError);
+      try {
+        await DeleteSandbox.run(['--no-prompt', '--target-org', testOrg.username]);
+        expect.fail('should have thrown InsufficientAccessError');
+      } catch (e) {
+        const err = e as SfError;
+        expect(err.name).to.equal('InsufficientAccessError');
+        expect(err.message).to.equal(sbxOrgMessages.getMessage('error.insufficientAccess'));
+      }
+    });
+
+    describe('DeleteSandbox permission check', () => {
+      let identityStub: SinonStub;
+      let queryStub: SinonStub;
+
+      beforeEach(() => {
+        $$.SANDBOX.stub(SandboxAccessor.prototype, 'hasFile').resolves(true);
+        $$.SANDBOX.stub(Org.prototype, 'refreshAuth').resolves();
+        identityStub = $$.SANDBOX.stub(Connection.prototype, 'identity');
+        queryStub = $$.SANDBOX.stub(Connection.prototype, 'query');
+      });
+
+      it('will allow deletion when user has DeleteSandbox permission set', async () => {
+        sandboxReadStub.resolves({ sandboxOrgId: testOrg.orgId, prodOrgUsername: testHub.username });
+        // eslint-disable-next-line camelcase
+        identityStub.resolves({ user_id: '005xx000001X' });
+        queryStub.resolves({ totalSize: 1, records: [{ Id: '0Pa000000000001' }] });
+        const res = await DeleteSandbox.run(['--no-prompt', '--target-org', testOrg.username]);
+        expect(sfCommandUxStubs.logSuccess.callCount).to.equal(1);
+        expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
+      });
+
+      it('will block deletion when user lacks DeleteSandbox permission set', async () => {
+        sandboxReadStub.resolves({ sandboxOrgId: testOrg.orgId, prodOrgUsername: testHub.username });
+        // eslint-disable-next-line camelcase
+        identityStub.resolves({ user_id: '005xx000001X' });
+        queryStub.resolves({ totalSize: 0, records: [] });
+        try {
+          await DeleteSandbox.run(['--no-prompt', '--target-org', testOrg.username]);
+          expect.fail('should have thrown InsufficientPermissionsError');
+        } catch (e) {
+          const err = e as SfError;
+          expect(err.name).to.equal('InsufficientPermissionsError');
+          expect(err.message).to.include(testOrg.username);
+          expect(err.message).to.include('DeleteSandbox');
+        }
+      });
     });
   });
 

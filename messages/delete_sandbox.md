@@ -57,8 +57,13 @@ Unable to determine the username of the org to delete. Specify the username with
 
 # error.insufficientPermissions
 
-You do not have the required permission to delete this sandbox: %s. Contact your administrator to assign you the "DeleteSandbox" PermissionSet.
+You don't have the required "DeleteSandbox" Permission Set assigned in the production org to delete sandbox "%s".
 
-# warning.couldNotVerifyPermissions
+# error.insufficientPermissions.actions
 
-Could not verify permissions in sandbox: %s. The delete operation will proceed, but may fail if you do not have the required permissions.
+- Ask your administrator to create a Permission Set named "DeleteSandbox" in the production org and assign it to your user.
+- Re-authenticate with the production org and try again.
+
+# error.insufficientAccess
+
+You don't have permission to delete this sandbox. Ask your Salesforce admin to grant you the "Manage Sandboxes" system permission on your profile or a permission set in the production org.
