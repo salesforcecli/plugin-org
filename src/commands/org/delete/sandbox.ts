@@ -104,7 +104,7 @@ export default class DeleteSandbox extends SfCommand<SandboxDeleteResponse> {
     const prodOrgUsername = sandboxConfig?.prodOrgUsername;
 
     if (!prodOrgUsername) {
-      return;
+      throw messages.createError('error.missingProdOrg', [sandboxUsername]);
     }
 
     const prodOrg = await Org.create({ aliasOrUsername: prodOrgUsername });

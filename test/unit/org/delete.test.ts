@@ -41,7 +41,15 @@ describe('org delete', () => {
     let sandboxReadStub: SinonStub;
 
     beforeEach(() => {
-      sandboxReadStub = $$.SANDBOX.stub(SandboxAccessor.prototype, 'read').resolves(null);
+      sandboxReadStub = $$.SANDBOX.stub(SandboxAccessor.prototype, 'read').resolves({
+        sandboxOrgId: testOrg.orgId,
+        prodOrgUsername: testHub.username,
+      });
+      $$.SANDBOX.stub(Org.prototype, 'refreshAuth').resolves();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument, camelcase
+      $$.SANDBOX.stub(Connection.prototype, 'identity').resolves({ user_id: '005xx000001X' } as any);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+      $$.SANDBOX.stub(Connection.prototype, 'query').resolves({ totalSize: 1, records: [{ Id: '0Pa000000000001' }] } as any);
     });
 
     it('will throw an error when no org provided', async () => {
@@ -153,31 +161,20 @@ describe('org delete', () => {
     });
 
     describe('DeleteSandbox permission check', () => {
-      let identityStub: SinonStub;
-      let queryStub: SinonStub;
-
       beforeEach(() => {
         $$.SANDBOX.stub(SandboxAccessor.prototype, 'hasFile').resolves(true);
-        $$.SANDBOX.stub(Org.prototype, 'refreshAuth').resolves();
-        identityStub = $$.SANDBOX.stub(Connection.prototype, 'identity');
-        queryStub = $$.SANDBOX.stub(Connection.prototype, 'query');
       });
 
       it('will allow deletion when user has DeleteSandbox permission set', async () => {
-        sandboxReadStub.resolves({ sandboxOrgId: testOrg.orgId, prodOrgUsername: testHub.username });
-        // eslint-disable-next-line camelcase
-        identityStub.resolves({ user_id: '005xx000001X' });
-        queryStub.resolves({ totalSize: 1, records: [{ Id: '0Pa000000000001' }] });
         const res = await DeleteSandbox.run(['--no-prompt', '--target-org', testOrg.username]);
         expect(sfCommandUxStubs.logSuccess.callCount).to.equal(1);
         expect(res).to.deep.equal({ orgId: testOrg.orgId, username: testOrg.username });
       });
 
       it('will block deletion when user lacks DeleteSandbox permission set', async () => {
-        sandboxReadStub.resolves({ sandboxOrgId: testOrg.orgId, prodOrgUsername: testHub.username });
-        // eslint-disable-next-line camelcase
-        identityStub.resolves({ user_id: '005xx000001X' });
-        queryStub.resolves({ totalSize: 0, records: [] });
+        (Connection.prototype.query as SinonStub).restore();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+        $$.SANDBOX.stub(Connection.prototype, 'query').resolves({ totalSize: 0, records: [] } as any);
         try {
           await DeleteSandbox.run(['--no-prompt', '--target-org', testOrg.username]);
           expect.fail('should have thrown InsufficientPermissionsError');
@@ -186,6 +183,18 @@ describe('org delete', () => {
           expect(err.name).to.equal('InsufficientPermissionsError');
           expect(err.message).to.include(testOrg.username);
           expect(err.message).to.include('DeleteSandbox');
+        }
+      });
+
+      it('will throw when prodOrgUsername is missing from sandbox config', async () => {
+        sandboxReadStub.resolves({ sandboxOrgId: testOrg.orgId });
+        try {
+          await DeleteSandbox.run(['--no-prompt', '--target-org', testOrg.username]);
+          expect.fail('should have thrown MissingProdOrgError');
+        } catch (e) {
+          const err = e as SfError;
+          expect(err.name).to.equal('MissingProdOrgError');
+          expect(err.message).to.include(testOrg.username);
         }
       });
     });
