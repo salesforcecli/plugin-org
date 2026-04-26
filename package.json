@@ -21,7 +21,7 @@
     "terminal-link": "^3.0.0"
   },
   "devDependencies": {
-    "@oclif/plugin-command-snapshot": "^5.3.13",
+    "@oclif/plugin-command-snapshot": "^5.3.16",
     "@salesforce/cli-plugins-testkit": "^5.3.53",
     "@salesforce/dev-scripts": "^11.0.4",
     "@salesforce/plugin-command-reference": "^3.1.91",
