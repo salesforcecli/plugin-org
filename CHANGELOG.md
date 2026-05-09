@@ -1,3 +1,9 @@
+## [5.10.10](https://github.com/salesforcecli/plugin-org/compare/5.10.9...5.10.10) (2026-05-09)
+
+### Bug Fixes
+
+- **deps:** bump fast-xml-builder from 1.1.5 to 1.2.0 ([7eb958b](https://github.com/salesforcecli/plugin-org/commit/7eb958b9f5b61356cab7020335a2e8035c945218))
+
 ## [5.10.9](https://github.com/salesforcecli/plugin-org/compare/5.10.8...5.10.9) (2026-05-09)
 
 ### Bug Fixes
