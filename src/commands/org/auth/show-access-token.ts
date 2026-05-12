@@ -54,9 +54,10 @@ export default class OrgAuthShowAccessToken extends SfCommand<OrgAuthShowAccessT
     if (!this.jsonEnabled() && !flags['no-prompt']) {
       const confirmed = await this.confirm({
         message: messages.getMessage('prompt.show-access-token', [username]),
+        ms: 30_000,
       });
       if (!confirmed) {
-        throw new SfError('Show access token confirmation denied.');
+        throw new SfError('Show access token confirmation denied or timed out.');
       }
     } else {
       // Note: We don't show this warning if the user has already been prompted

@@ -47,6 +47,7 @@ describe('org auth show-access-token', () => {
       expect(prompterStubs.confirm.callCount).to.equal(1);
       expect(prompterStubs.confirm.firstCall.args[0]).to.deep.equal({
         message: messages.getMessage('prompt.show-access-token', [testOrg.username]),
+        ms: 30_000,
       });
     });
 
@@ -73,7 +74,7 @@ describe('org auth show-access-token', () => {
         expect.fail('Expected command to throw');
       } catch (e) {
         const err = e as SfError;
-        expect(err.message).to.equal('Show access token confirmation denied.');
+        expect(err.message).to.equal('Show access token confirmation denied or timed out.');
       }
     });
 
