@@ -1,6 +1,14 @@
 [
   {
     "alias": [],
+    "command": "org:auth:show-access-token",
+    "flagAliases": [],
+    "flagChars": ["o", "p"],
+    "flags": ["api-version", "flags-dir", "json", "no-prompt", "target-org"],
+    "plugin": "@salesforce/plugin-org"
+  },
+  {
+    "alias": [],
     "command": "org:create:agent-user",
     "flagAliases": [],
     "flagChars": ["o"],
