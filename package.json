@@ -80,6 +80,9 @@
           },
           "disable": {
             "description": "Disable source tracking in an org."
+          },
+          "auth": {
+            "description": "Commands for printing sensitive auth info."
           }
         },
         "external": true
