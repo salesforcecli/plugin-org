@@ -31,7 +31,6 @@ export default class OrgAuthShowAccessToken extends SfCommand<OrgAuthShowAccessT
 
   public static readonly flags = {
     'target-org': Flags.requiredOrg(),
-    'api-version': Flags.orgApiVersion(),
     'no-prompt': Flags.boolean({
       summary: messages.getMessage('flags.no-prompt.summary'),
       char: 'p',
@@ -44,7 +43,6 @@ export default class OrgAuthShowAccessToken extends SfCommand<OrgAuthShowAccessT
     const { flags } = await this.parse(OrgAuthShowAccessToken);
 
     this.org = flags['target-org'];
-    this.org.getConnection(flags['api-version']);
     try {
       // The auth file can have a stale access token. Refresh it before getting the fields
       await this.org.refreshAuth();
