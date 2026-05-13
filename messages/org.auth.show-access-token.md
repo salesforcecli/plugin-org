@@ -16,7 +16,7 @@ You're about to reveal the access token for "%s". This token grants full access 
 
 # warning.show-access-token
 
-This command exposes a sensitive Access Token that allows for subsequent activity using your current authenticated session. Sharing this information is equivalent to logging someone in under the current credential, resulting in unintended access and escalation of privilege. For additional information about org authorization, please review https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth.htm.
+This command exposes a sensitive Access Token that allows for subsequent activity using your current authenticated session. Sharing this information is equivalent to logging someone in under the current credential, resulting in unintended access and escalation of privilege. For additional information about org authorization, review https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth.htm.
 
 # error.noAccessToken
 
