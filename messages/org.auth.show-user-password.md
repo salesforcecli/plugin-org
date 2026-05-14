@@ -4,7 +4,7 @@ Show the stored password for an org's user.
 
 # description
 
-Passwords are only available for orgs where a password was previously generated using "sf org generate password". Because passwords are sensitive credentials, this command prompts for confirmation before revealing it. Skip confirmation by specifying either the --no-prompt or --json flag.
+Passwords are only available for orgs where a password was previously generated, such as by running "sf org generate password" or "sf org create user". Because passwords are sensitive credentials, this command prompts for confirmation before revealing it. Skip confirmation by specifying either the --no-prompt or --json flag.
 
 # flags.no-prompt.summary
 
@@ -20,7 +20,7 @@ This command exposes a user password. While a password alone is not sufficient t
 
 # error.noPassword
 
-No password found for "%s". A password is only available if one was previously generated using "sf org generate password".
+No password found for "%s". A password is only available if one was previously generated, such as by running "sf org generate password" or "sf org create user".
 
 # examples
 
