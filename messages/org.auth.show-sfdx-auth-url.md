@@ -4,7 +4,7 @@ Show the SFDX Auth URL for an org.
 
 # description
 
-The SFDX Auth URL contains a refresh token that provides persistent access to the org without requiring re-authentication. This URL is only available for orgs authenticated via a web-based OAuth flow. Because this URL is equivalent to a permanent login credential, this command prompts for confirmation before revealing it. Skip confirmation by specifying either the --no-prompt or --json flag.
+Shows the SFDX Auth URL for an org. This URL is only available for orgs authenticated via a web-based OAuth flow. This command prompts for confirmation before revealing it. Skip confirmation by specifying either the --no-prompt or --json flag.
 
 # flags.no-prompt.summary
 
@@ -12,11 +12,11 @@ Skip the security warning and reveal the SFDX Auth URL without confirmation.
 
 # prompt.show-sfdx-auth-url
 
-You're about to reveal the SFDX Auth URL for "%s". This URL contains a refresh token that grants persistent access to the org without re-authentication. Anyone with this URL can authenticate to the org with your permissions. Do you want to continue?
+You're about to reveal the SFDX Auth URL for "%s". This URL contains a refresh token that can be used to authenticate to the org without user interaction. Do you want to continue?
 
 # warning.show-sfdx-auth-url
 
-This command exposes a sensitive SFDX Auth URL containing a refresh token that grants persistent access to the org. Unlike an access token, this credential does not expire and allows re-authentication without user interaction. Sharing this URL is equivalent to giving permanent login access to the org. For additional information about org authorization, review https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_url.htm.
+This command exposes an SFDX Auth URL. Unlike an access token, this credential contains a refresh token that allows extended access to an org. Avoid sharing or logging this URL. For additional information about org authorization, review https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_url.htm.
 
 # error.noRefreshToken
 
