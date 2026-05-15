@@ -4,7 +4,9 @@ Show the stored password for an org's user.
 
 # description
 
-Passwords are only available for orgs where a password was previously generated, such as by running "sf org generate password" or "sf org create user". Because passwords are sensitive credentials, this command prompts for confirmation before revealing it. Skip confirmation by specifying either the --no-prompt or --json flag.
+This command shows only passwords that were generated locally in your DX project with either the "org generate password" or "org create user" CLI command. If you generated a password for a user in Setup in your org, you can't show it with this command.
+
+Because passwords are sensitive credentials, this command prompts for confirmation before revealing it. Skip confirmation by specifying either the --no-prompt or --json flag.
 
 # flags.no-prompt.summary
 
