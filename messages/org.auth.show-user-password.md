@@ -22,7 +22,7 @@ This command exposes a user password. While a password alone is not sufficient t
 
 # error.noPassword
 
-No password found for "%s". A password is only available if one was previously generated, such as by running "sf org generate password" or "sf org create user".
+No password found for "%s". A password is available only if one was previously generated locally in your DX project by running either "sf org generate password" or "sf org create user". If you generated a password in your org using Setup, it's not available to this command.
 
 # examples
 
