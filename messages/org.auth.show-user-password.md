@@ -18,7 +18,7 @@ You're about to reveal the password for "%s". Do you want to continue?
 
 # warning.show-user-password
 
-This command exposes a user password. While a password alone is not sufficient to gain access to an org (additional factors like a security token or an enabled OAuth username-password flow are required), treat it as a sensitive credential and avoid sharing or logging it.
+This command exposes a user password. While a password alone isn't sufficient to gain access to an org (additional factors like a security token or an enabled OAuth username-password flow are required), treat it as a sensitive credential and avoid sharing or logging it.
 
 # error.noPassword
 
