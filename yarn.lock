@@ -901,15 +901,6 @@
     "@inquirer/core" "^10.3.2"
     "@inquirer/type" "^3.0.10"
 
-"@inquirer/password@^2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@inquirer/password/-/password-2.2.0.tgz#0b6f26336c259c8a9e5f5a3f2e1a761564f764ba"
-  integrity sha512-5otqIpgsPYIshqhgtEwSspBQE40etouR8VIxzpJkv9i0dVHIpyhiivbkH9/dGiMLdyamT54YRdGJLfl8TFnLHg==
-  dependencies:
-    "@inquirer/core" "^9.1.0"
-    "@inquirer/type" "^1.5.3"
-    ansi-escapes "^4.3.2"
-
 "@inquirer/password@^4.0.23":
   version "4.0.23"
   resolved "https://registry.yarnpkg.com/@inquirer/password/-/password-4.0.23.tgz#b9f5187c8c92fd7aa9eceb9d8f2ead0d7e7b000d"
@@ -1166,7 +1157,7 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@oclif/core@^4", "@oclif/core@^4.0.27", "@oclif/core@^4.11.2", "@oclif/core@^4.11.3":
+"@oclif/core@^4", "@oclif/core@^4.11.2", "@oclif/core@^4.11.3":
   version "4.11.3"
   resolved "https://registry.yarnpkg.com/@oclif/core/-/core-4.11.3.tgz#87ebe0d3a47d162359482ecf5f5a7220ac709a36"
   integrity sha512-gQCSYAtUhJilGKaSaZhqejH9X1dDu+jWQjLmtGOgN/XcKaAEPPSeT2mu1UvlvtPox1/NNRdlBcUa8KRKo2HnJQ==
@@ -1315,10 +1306,10 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.8.1"
 
-"@salesforce/core@^8.23.1", "@salesforce/core@^8.29.0", "@salesforce/core@^8.29.1", "@salesforce/core@^8.5.1":
-  version "8.29.1"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-8.29.1.tgz#8f867af889a620ff4c456701851794a2de9956dd"
-  integrity sha512-Pdo9yjKU6Lgm3CJOVJPTM4PzUHhTVMX43K5XmClsBEt75fs8mHNFALniHZwnZbVf+TSMfGsUygYAyTX6ShnNQA==
+"@salesforce/core@^8.23.1", "@salesforce/core@^8.29.0", "@salesforce/core@^8.29.1", "@salesforce/core@^8.30.3":
+  version "8.30.4"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-8.30.4.tgz#4a92d25d337a74798414692432bcce144adc42e6"
+  integrity sha512-lMX+X87HbelGU9IA3IOHdP0CDcru1kQG4qDDJXoDYSp8MAcvJpNdOk6P06SutMqKv39XVS3VRfKL5lGiuRcDnA==
   dependencies:
     "@jsforce/jsforce-node" "^3.10.13"
     "@salesforce/kit" "^3.2.4"
@@ -1327,7 +1318,7 @@
     change-case "^4.1.2"
     fast-levenshtein "^3.0.0"
     faye "^1.4.1"
-    form-data "^4.0.4"
+    form-data "^4.0.5"
     js2xmlparser "^4.0.1"
     jsonwebtoken "9.0.3"
     jszip "3.10.1"
@@ -1336,7 +1327,7 @@
     pino-abstract-transport "^1.2.0"
     pino-pretty "^11.3.0"
     proper-lockfile "^4.1.2"
-    semver "^7.7.3"
+    semver "^7.8.0"
     ts-retry-promise "^0.8.1"
     zod "^4.1.12"
 
@@ -1384,15 +1375,15 @@
   dependencies:
     "@salesforce/ts-types" "^2.0.12"
 
-"@salesforce/plugin-command-reference@^3.1.98":
-  version "3.1.98"
-  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.1.98.tgz#77ec041333b46bae5d100c03633759a25e6d5093"
-  integrity sha512-QEF93I4l+Cgfw9fdbT/1J+xuP4s6xglEqh+nfwEW4tAlyDNtY3CrxAc/Nc31E+LtuebGgX7BTVUeqSuTnZN72w==
+"@salesforce/plugin-command-reference@^3.1.102":
+  version "3.1.102"
+  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.1.102.tgz#ecff04d8933abdd867f3f551863bcc248806c52c"
+  integrity sha512-rqzHD452YDPDPqRKicm5ci0+yrsK9zy9Us/1tKIbZBuqJRp6yFDprbyh+4rNrbFEP3qxuyRjSWHRt8QN9ox6dA==
   dependencies:
     "@oclif/core" "^4"
-    "@salesforce/core" "^8.29.1"
+    "@salesforce/core" "^8.30.3"
     "@salesforce/kit" "^3.2.6"
-    "@salesforce/sf-plugins-core" "^11.3.12"
+    "@salesforce/sf-plugins-core" "^12.2.16"
     "@salesforce/ts-types" "^2.0.11"
     chalk "^5.6.2"
     debug "^4.4.3"
@@ -1402,24 +1393,6 @@
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/@salesforce/prettier-config/-/prettier-config-0.0.3.tgz#ba648d4886bb38adabe073dbea0b3a91b3753bb0"
   integrity sha512-hYOhoPTCSYMDYn+U1rlEk16PoBeAJPkrdg4/UtAzupM1mRRJOwEPMG1d7U8DxJFKuXW3DMEYWr2MwAIBDaHmFg==
-
-"@salesforce/sf-plugins-core@^11.3.12":
-  version "11.3.12"
-  resolved "https://registry.yarnpkg.com/@salesforce/sf-plugins-core/-/sf-plugins-core-11.3.12.tgz#18b3a553688428bcffea9d36abc72847497f06ae"
-  integrity sha512-hi8EcSoRHRxj4sm/V5YDtzq9bPr/cKpM4fC6abo/jRzpXygwizinc2gVQkXfVdhjK7NGMskVRQB1N+0TThG7bA==
-  dependencies:
-    "@inquirer/confirm" "^3.1.22"
-    "@inquirer/password" "^2.2.0"
-    "@oclif/core" "^4.0.27"
-    "@salesforce/core" "^8.5.1"
-    "@salesforce/kit" "^3.2.3"
-    "@salesforce/ts-types" "^2.0.12"
-    ansis "^3.3.2"
-    cli-progress "^3.12.0"
-    natural-orderby "^3.0.2"
-    slice-ansi "^7.1.0"
-    string-width "^7.2.0"
-    terminal-link "^3.0.0"
 
 "@salesforce/sf-plugins-core@^12.2.16":
   version "12.2.16"
@@ -3946,7 +3919,7 @@ form-data-encoder@^2.1.2:
   resolved "https://registry.yarnpkg.com/form-data-encoder/-/form-data-encoder-2.1.4.tgz#261ea35d2a70d48d30ec7a9603130fa5515e9cd5"
   integrity sha512-yDYSgNMraqvnxiEXO4hi88+YZxaHC6QKzb5N84iRCTDeRO7ZALpir/lVmf/uXUhnwUr2O4HU8s/n6x+yNjQkHw==
 
-form-data@^4.0.4:
+form-data@^4.0.4, form-data@^4.0.5:
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/form-data/-/form-data-4.0.5.tgz#b49e48858045ff4cbf6b03e1805cebcad3679053"
   integrity sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w==
@@ -6933,7 +6906,7 @@ semver@^6.0.0, semver@^6.3.1:
   resolved "https://registry.yarnpkg.com/semver/-/semver-6.3.1.tgz#556d2ef8689146e46dcea4bfdd095f3434dffcb4"
   integrity sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==
 
-semver@^7.3.4, semver@^7.3.5, semver@^7.5.3, semver@^7.5.4, semver@^7.6.0, semver@^7.7.3, semver@^7.7.4, semver@^7.8.0:
+semver@^7.3.4, semver@^7.3.5, semver@^7.5.3, semver@^7.5.4, semver@^7.6.0, semver@^7.7.4, semver@^7.8.0:
   version "7.8.0"
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.8.0.tgz#ed0661039fcbcda2ce71f01fa6adbefaa77040df"
   integrity sha512-AcM7dV/5ul4EekoQ29Agm5vri8JNqRyj39o0qpX6vDF2GZrtutZl5RwgD1XnZjiTAfncsJhMI48QQH3sN87YNA==
@@ -7345,7 +7318,7 @@ string-width@^5.0.1, string-width@^5.1.2:
     emoji-regex "^9.2.2"
     strip-ansi "^7.0.1"
 
-string-width@^7.0.0, string-width@^7.2.0:
+string-width@^7.0.0:
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-7.2.0.tgz#b5bb8e2165ce275d4d43476dd2700ad9091db6dc"
   integrity sha512-tsaTIkKW9b4N+AEj+SVA+WhJzV7/zMhcSu78mLKWSk7cXMOSHsBKFWUs0fWwq8QyK3MgJBQRX6Gbi4kYbdvGkQ==
