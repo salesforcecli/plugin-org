@@ -1,3 +1,16 @@
+# [5.11.0](https://github.com/salesforcecli/plugin-org/compare/5.10.14...5.11.0) (2026-05-18)
+
+### Bug Fixes
+
+- Apply suggestions from code review ([3a6422d](https://github.com/salesforcecli/plugin-org/commit/3a6422d3c309540cdfc30b3708a1dda87638589b))
+- few more edits ([fa484a5](https://github.com/salesforcecli/plugin-org/commit/fa484a5dfc241b2d8e5d1ee97e9092e44f2c8f51))
+
+### Features
+
+- add show-access-token command ([807853e](https://github.com/salesforcecli/plugin-org/commit/807853edf36de2b519082749c0c5c71e9a471930))
+- add show-sfdx-auth-url command ([9b2c933](https://github.com/salesforcecli/plugin-org/commit/9b2c9330ab105374dfe4db8ea68338a2fcb67876))
+- show-user-password command ([f635aa6](https://github.com/salesforcecli/plugin-org/commit/f635aa61212d585c11f060b671f36127f4128a13))
+
 ## [5.10.14](https://github.com/salesforcecli/plugin-org/compare/5.10.13...5.10.14) (2026-05-17)
 
 ### Bug Fixes

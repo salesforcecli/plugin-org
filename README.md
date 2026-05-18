@@ -99,6 +99,9 @@ the [SandboxNuts](https://github.com/salesforcecli/plugin-org/actions/workflows/
 
 <!-- commands -->
 
+- [`sf org auth show-access-token`](#sf-org-auth-show-access-token)
+- [`sf org auth show-sfdx-auth-url`](#sf-org-auth-show-sfdx-auth-url)
+- [`sf org auth show-user-password`](#sf-org-auth-show-user-password)
 - [`sf org create agent-user`](#sf-org-create-agent-user)
 - [`sf org create sandbox`](#sf-org-create-sandbox)
 - [`sf org create scratch`](#sf-org-create-scratch)
@@ -116,6 +119,140 @@ the [SandboxNuts](https://github.com/salesforcecli/plugin-org/actions/workflows/
 - [`sf org refresh sandbox`](#sf-org-refresh-sandbox)
 - [`sf org resume sandbox`](#sf-org-resume-sandbox)
 - [`sf org resume scratch`](#sf-org-resume-scratch)
+
+## `sf org auth show-access-token`
+
+Show the current access token for an org.
+
+```
+USAGE
+  $ sf org auth show-access-token -o <value> [--json] [--flags-dir <value>] [-p]
+
+FLAGS
+  -o, --target-org=<value>  (required) Username or alias of the target org. Not required if the `target-org`
+                            configuration variable is already set.
+  -p, --no-prompt           Skip the security warning and reveal the access token without confirmation.
+
+GLOBAL FLAGS
+  --flags-dir=<value>  Import flag values from a directory.
+  --json               Format output as json.
+
+DESCRIPTION
+  Show the current access token for an org.
+
+  Because access tokens are sensitive credentials that grant full access to an org, this command prompts for
+  confirmation before revealing the token. Skip confirmation by specifying either the --no-prompt or --json flag.
+
+EXAMPLES
+  Show the access token for the default org:
+
+    $ sf org auth show-access-token
+
+  Show the access token for an org with alias "my-org":
+
+    $ sf org auth show-access-token --target-org my-org
+
+  Show the access token without the confirmation prompt:
+
+    $ sf org auth show-access-token --target-org my-org --no-prompt
+
+  Get the access token as JSON for use in scripts:
+
+    $ sf org auth show-access-token --target-org my-org --json
+```
+
+_See code: [src/commands/org/auth/show-access-token.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.0/src/commands/org/auth/show-access-token.ts)_
+
+## `sf org auth show-sfdx-auth-url`
+
+Show the SFDX Auth URL for an org.
+
+```
+USAGE
+  $ sf org auth show-sfdx-auth-url -o <value> [--json] [--flags-dir <value>] [-p]
+
+FLAGS
+  -o, --target-org=<value>  (required) Username or alias of the target org. Not required if the `target-org`
+                            configuration variable is already set.
+  -p, --no-prompt           Skip the security warning and reveal the SFDX Auth URL without confirmation.
+
+GLOBAL FLAGS
+  --flags-dir=<value>  Import flag values from a directory.
+  --json               Format output as json.
+
+DESCRIPTION
+  Show the SFDX Auth URL for an org.
+
+  Shows the SFDX Auth URL for an org. This URL is only available for orgs authenticated via a web-based OAuth flow. This
+  command prompts for confirmation before revealing it. Skip confirmation by specifying either the --no-prompt or --json
+  flag.
+
+EXAMPLES
+  Show the SFDX Auth URL for the default org:
+
+    $ sf org auth show-sfdx-auth-url
+
+  Show the SFDX Auth URL for an org with alias "my-org":
+
+    $ sf org auth show-sfdx-auth-url --target-org my-org
+
+  Show the SFDX Auth URL without the confirmation prompt:
+
+    $ sf org auth show-sfdx-auth-url --target-org my-org --no-prompt
+
+  Get the SFDX Auth URL as JSON for use in scripts:
+
+    $ sf org auth show-sfdx-auth-url --target-org my-org --json
+```
+
+_See code: [src/commands/org/auth/show-sfdx-auth-url.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.0/src/commands/org/auth/show-sfdx-auth-url.ts)_
+
+## `sf org auth show-user-password`
+
+Show the stored password for an org's user.
+
+```
+USAGE
+  $ sf org auth show-user-password -o <value> [--json] [--flags-dir <value>] [-p]
+
+FLAGS
+  -o, --target-org=<value>  (required) Username or alias of the target org. Not required if the `target-org`
+                            configuration variable is already set.
+  -p, --no-prompt           Skip the security warning and reveal the password without confirmation.
+
+GLOBAL FLAGS
+  --flags-dir=<value>  Import flag values from a directory.
+  --json               Format output as json.
+
+DESCRIPTION
+  Show the stored password for an org's user.
+
+  This command shows only passwords that were generated locally in your DX project with either the "org generate
+  password" or "org create user" CLI command. If you generated a password for a user in Setup in your org, you can't
+  show it with this command.
+
+  Because passwords are sensitive credentials, this command prompts for confirmation before revealing it. Skip
+  confirmation by specifying either the --no-prompt or --json flag.
+
+EXAMPLES
+  Show the password for the default org's user:
+
+    $ sf org auth show-user-password
+
+  Show the password for an org with alias "my-org":
+
+    $ sf org auth show-user-password --target-org my-org
+
+  Show the password without the confirmation prompt:
+
+    $ sf org auth show-user-password --target-org my-org --no-prompt
+
+  Get the password as JSON for use in scripts:
+
+    $ sf org auth show-user-password --target-org my-org --json
+```
+
+_See code: [src/commands/org/auth/show-user-password.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.0/src/commands/org/auth/show-user-password.ts)_
 
 ## `sf org create agent-user`
 
@@ -193,7 +330,7 @@ FLAG DESCRIPTIONS
     "agent.user.<GUID>@your-org-domain.com".
 ```
 
-_See code: [src/commands/org/create/agent-user.ts](https://github.com/salesforcecli/plugin-org/blob/5.10.14/src/commands/org/create/agent-user.ts)_
+_See code: [src/commands/org/create/agent-user.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.0/src/commands/org/create/agent-user.ts)_
 
 ## `sf org create sandbox`
 
@@ -327,7 +464,7 @@ FLAG DESCRIPTIONS
     You can specify either --source-sandbox-name or --source-id when cloning an existing sandbox, but not both.
 ```
 
-_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.10.14/src/commands/org/create/sandbox.ts)_
+_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.0/src/commands/org/create/sandbox.ts)_
 
 ## `sf org create scratch`
 
@@ -509,7 +646,7 @@ FLAG DESCRIPTIONS
     Omit this flag to have Salesforce generate a unique username for your org.
 ```
 
-_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.10.14/src/commands/org/create/scratch.ts)_
+_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.0/src/commands/org/create/scratch.ts)_
 
 ## `sf org delete sandbox`
 
@@ -555,7 +692,7 @@ EXAMPLES
     $ sf org delete sandbox --target-org my-sandbox --no-prompt
 ```
 
-_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.10.14/src/commands/org/delete/sandbox.ts)_
+_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.0/src/commands/org/delete/sandbox.ts)_
 
 ## `sf org delete scratch`
 
@@ -599,7 +736,7 @@ EXAMPLES
     $ sf org delete scratch --target-org my-scratch-org --no-prompt
 ```
 
-_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.10.14/src/commands/org/delete/scratch.ts)_
+_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.0/src/commands/org/delete/scratch.ts)_
 
 ## `sf org disable tracking`
 
@@ -638,7 +775,7 @@ EXAMPLES
     $ sf org disable tracking
 ```
 
-_See code: [src/commands/org/disable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.10.14/src/commands/org/disable/tracking.ts)_
+_See code: [src/commands/org/disable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.0/src/commands/org/disable/tracking.ts)_
 
 ## `sf org display`
 
@@ -683,7 +820,7 @@ EXAMPLES
     $ sf org display --target-org TestOrg1 --verbose
 ```
 
-_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/5.10.14/src/commands/org/display.ts)_
+_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.0/src/commands/org/display.ts)_
 
 ## `sf org enable tracking`
 
@@ -725,7 +862,7 @@ EXAMPLES
     $ sf org enable tracking
 ```
 
-_See code: [src/commands/org/enable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.10.14/src/commands/org/enable/tracking.ts)_
+_See code: [src/commands/org/enable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.0/src/commands/org/enable/tracking.ts)_
 
 ## `sf org list`
 
@@ -764,7 +901,7 @@ EXAMPLES
     $ sf org list --clean
 ```
 
-_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/5.10.14/src/commands/org/list.ts)_
+_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.0/src/commands/org/list.ts)_
 
 ## `sf org list metadata`
 
@@ -831,7 +968,7 @@ FLAG DESCRIPTIONS
     Examples of metadata types that use folders are Dashboard, Document, EmailTemplate, and Report.
 ```
 
-_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/5.10.14/src/commands/org/list/metadata.ts)_
+_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.0/src/commands/org/list/metadata.ts)_
 
 ## `sf org list metadata-types`
 
@@ -886,7 +1023,7 @@ FLAG DESCRIPTIONS
     Override the api version used for api requests made by this command
 ```
 
-_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/5.10.14/src/commands/org/list/metadata-types.ts)_
+_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.0/src/commands/org/list/metadata-types.ts)_
 
 ## `sf org open`
 
@@ -962,7 +1099,7 @@ EXAMPLES
     $ sf org open --source-file force-app/main/default/bots/Coral_Cloud_Agent/Coral_Cloud_Agent.bot-meta.xml
 ```
 
-_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/5.10.14/src/commands/org/open.ts)_
+_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.0/src/commands/org/open.ts)_
 
 ## `sf org open agent`
 
@@ -1037,7 +1174,7 @@ FLAG DESCRIPTIONS
     flag.
 ```
 
-_See code: [src/commands/org/open/agent.ts](https://github.com/salesforcecli/plugin-org/blob/5.10.14/src/commands/org/open/agent.ts)_
+_See code: [src/commands/org/open/agent.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.0/src/commands/org/open/agent.ts)_
 
 ## `sf org open authoring-bundle`
 
@@ -1083,7 +1220,7 @@ EXAMPLES
     $ sf org open authoring-bundle --target-org MyTestOrg1 --browser firefox
 ```
 
-_See code: [src/commands/org/open/authoring-bundle.ts](https://github.com/salesforcecli/plugin-org/blob/5.10.14/src/commands/org/open/authoring-bundle.ts)_
+_See code: [src/commands/org/open/authoring-bundle.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.0/src/commands/org/open/authoring-bundle.ts)_
 
 ## `sf org refresh sandbox`
 
@@ -1186,7 +1323,7 @@ FLAG DESCRIPTIONS
     You can specify either --source-sandbox-name or --source-id when refreshing an existing sandbox, but not both.
 ```
 
-_See code: [src/commands/org/refresh/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.10.14/src/commands/org/refresh/sandbox.ts)_
+_See code: [src/commands/org/refresh/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.0/src/commands/org/refresh/sandbox.ts)_
 
 ## `sf org resume sandbox`
 
@@ -1249,7 +1386,7 @@ FLAG DESCRIPTIONS
     returns the job ID. To resume checking the sandbox creation, rerun this command.
 ```
 
-_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.10.14/src/commands/org/resume/sandbox.ts)_
+_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.0/src/commands/org/resume/sandbox.ts)_
 
 ## `sf org resume scratch`
 
@@ -1302,6 +1439,6 @@ FLAG DESCRIPTIONS
     returns the job ID. To resume checking the scratch creation, rerun this command.
 ```
 
-_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.10.14/src/commands/org/resume/scratch.ts)_
+_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.0/src/commands/org/resume/scratch.ts)_
 
 <!-- commandsstop -->
