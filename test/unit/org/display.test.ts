@@ -37,7 +37,7 @@ describe('org:display', () => {
   const commonAssert = (result: OrgDisplayReturn) => {
     expect(result).to.have.property('username', testOrg.username);
     expect(result).to.have.property('id', testOrg.orgId);
-    expect(result).to.have.property('accessToken', testOrg.accessToken);
+    expect(result.accessToken).to.include('[REDACTED]');
     expect(result).to.have.property('instanceUrl', testOrg.instanceUrl);
     expect(result).to.have.property('clientId', testOrg.clientId);
   };
@@ -63,9 +63,13 @@ describe('org:display', () => {
         value: testOrg.clientId,
       });
 
+      const accessToken = data.find((row) => row.key === 'Access Token');
+      expect(accessToken).to.exist;
+      expect(accessToken?.value).to.include('[REDACTED]');
+
       const authUrl = data.find((row) => row.key === 'Sfdx Auth Url');
       expect(authUrl).to.exist;
-      expect(authUrl?.value).to.include(testOrg.clientId);
+      expect(authUrl?.value).to.include('[REDACTED]');
     });
 
     it('includes correct rows in non-json (table) mode', async () => {
@@ -186,12 +190,13 @@ describe('org:display', () => {
     expect(result.alias).to.equal('nonscratchalias');
   });
 
-  it('displays authUrl when using refresh token AND verbose', async () => {
+  it('redacts authUrl when using refresh token AND verbose', async () => {
     testOrg.refreshToken = refreshToken;
     await $$.stubAuths(testOrg);
 
     const result = await OrgDisplayCommand.run(['--json', '--targetusername', testOrg.username, '--verbose']);
-    expect(result.sfdxAuthUrl).to.include(testOrg.refreshToken);
+    expect(result.sfdxAuthUrl).to.include('[REDACTED]');
+    expect(result.sfdxAuthUrl).to.include('show-sfdx-auth-url');
   });
 
   it('omits authUrl when not using refresh token, despite verbose', async () => {
@@ -220,13 +225,14 @@ describe('org:display', () => {
     expect(result.alias).to.be.undefined;
   });
 
-  it('displays decrypted password if password exists', async () => {
+  it('redacts password if password exists', async () => {
     testOrg.password = 'encrypted';
     await $$.stubAuths(testOrg);
 
     const result = await OrgDisplayCommand.run(['--json', '--targetusername', testOrg.username]);
     expect(commonAssert(result));
-    expect(result.password).to.equal('encrypted');
+    expect(result.password).to.include('[REDACTED]');
+    expect(result.password).to.include('show-user-password');
   });
 
   it('queries server for scratch org info', async () => {
@@ -261,4 +267,43 @@ describe('org:display', () => {
   it('displays good error when org is not connectable due to DNS');
   it('displays scratch-org-only properties for scratch orgs');
   it('displays no scratch-org-only properties for non-scratch orgs');
+
+  describe('secret redaction WITH env var (SF_TEMP_SHOW_SECRETS)', () => {
+    const SHOW_TOKENS_ENV = 'SF_TEMP_SHOW_SECRETS';
+
+    beforeEach(() => {
+      process.env[SHOW_TOKENS_ENV] = 'true';
+    });
+
+    afterEach(() => {
+      delete process.env[SHOW_TOKENS_ENV];
+    });
+
+    it('shows the real access token', async () => {
+      await $$.stubAuths(testOrg);
+      const result = await OrgDisplayCommand.run(['--json', '--targetusername', testOrg.username]);
+      expect(result.accessToken).to.equal(testOrg.accessToken);
+    });
+
+    it('shows the real sfdx auth url when --verbose and refresh token exist', async () => {
+      testOrg.refreshToken = refreshToken;
+      await $$.stubAuths(testOrg);
+      const result = await OrgDisplayCommand.run(['--json', '--targetusername', testOrg.username, '--verbose']);
+      expect(result.sfdxAuthUrl).to.include(refreshToken);
+    });
+
+    it('shows the real password when one exists', async () => {
+      testOrg.password = 'somepassword';
+      await $$.stubAuths(testOrg);
+      const result = await OrgDisplayCommand.run(['--json', '--targetusername', testOrg.username]);
+      expect(result.password).to.equal('somepassword');
+    });
+
+    it('emits the deprecation warning', async () => {
+      await $$.stubAuths(testOrg);
+      await OrgDisplayCommand.run(['--targetusername', testOrg.username]);
+      const warnCalls = sfCommandUxStubs.warn.getCalls().flatMap((c) => c.args);
+      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('will be removed'))).to.be.true;
+    });
+  });
 });
