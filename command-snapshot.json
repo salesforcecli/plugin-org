@@ -1,6 +1,30 @@
 [
   {
     "alias": [],
+    "command": "org:auth:show-access-token",
+    "flagAliases": [],
+    "flagChars": ["o", "p"],
+    "flags": ["flags-dir", "json", "no-prompt", "target-org"],
+    "plugin": "@salesforce/plugin-org"
+  },
+  {
+    "alias": [],
+    "command": "org:auth:show-sfdx-auth-url",
+    "flagAliases": [],
+    "flagChars": ["o", "p"],
+    "flags": ["flags-dir", "json", "no-prompt", "target-org"],
+    "plugin": "@salesforce/plugin-org"
+  },
+  {
+    "alias": [],
+    "command": "org:auth:show-user-password",
+    "flagAliases": [],
+    "flagChars": ["o", "p"],
+    "flags": ["flags-dir", "json", "no-prompt", "target-org"],
+    "plugin": "@salesforce/plugin-org"
+  },
+  {
+    "alias": [],
     "command": "org:create:agent-user",
     "flagAliases": [],
     "flagChars": ["o"],

@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/OrgAuthShowAccessTokenResult",
+  "definitions": {
+    "OrgAuthShowAccessTokenResult": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        }
+      },
+      "required": ["accessToken"],
+      "additionalProperties": false
+    }
+  }
+}
