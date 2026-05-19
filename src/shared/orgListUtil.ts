@@ -410,8 +410,8 @@ const identifyDefaultOrgs = (
  */
 const removeRestrictedInfoFromConfig = (
   config: AuthFieldsFromFS,
-  properties: string[] = ['refreshToken', 'clientSecret', 'privateKey']
-): AuthFieldsFromFS => omit<Omit<AuthFieldsFromFS, 'refreshToken' | 'clientSecret' | 'privateKey'>>(config, properties);
+  properties: string[] = ['refreshToken', 'clientSecret']
+): AuthFieldsFromFS => omit<Omit<AuthFieldsFromFS, 'refreshToken' | 'clientSecret'>>(config, properties);
 
 const sandboxFilter = (org: AuthFieldsFromFS): boolean => Boolean(org.isSandbox);
 const regularOrgFilter = (org: AuthFieldsFromFS): boolean => !org.isSandbox && !org.isDevHub;
@@ -422,7 +422,7 @@ const authErrorHandler = async (err: unknown, username: string): Promise<string>
   const logger = await OrgListUtil.retrieveLogger();
   logger.trace(`error refreshing auth for org: ${username}`);
   logger.trace(error);
-  // Orgs under maintenace return html as the error message.
+  // Orgs under maintenance return html as the error message.
   if (error.message.includes('maintenance')) return 'Down (Maintenance)';
   // handle other potential html responses
   if (error.message.includes('<html>') || error.message.includes('<!DOCTYPE HTML>')) return 'Bad Response';
