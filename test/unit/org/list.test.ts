@@ -107,6 +107,7 @@ describe('org:list', () => {
       await OrgListCommand.run(['--json']);
       const warnCalls = sfCommandUxStubs.warn.getCalls().flatMap((c) => c.args);
       expect(warnCalls.some((w) => typeof w === 'string' && w.includes('sf org list'))).to.be.true;
+      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('SF_TEMP_SHOW_SECRETS'))).to.be.true;
       expect(warnCalls.some((w) => typeof w === 'string' && w.includes('sf org auth show-*'))).to.be.true;
     });
 
@@ -136,6 +137,7 @@ describe('org:list', () => {
       const warnCalls = sfCommandUxStubs.warn.getCalls().flatMap((c) => c.args);
       expect(warnCalls.some((w) => typeof w === 'string' && w.includes('will be removed'))).to.be.true;
       expect(warnCalls.some((w) => typeof w === 'string' && w.includes('sf org list'))).to.be.true;
+      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('sf org auth show-*'))).to.be.true;
     });
   });
 });
