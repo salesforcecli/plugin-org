@@ -16,6 +16,7 @@
 
 import { MultiStageOutput } from '@oclif/multi-stage-output';
 import {
+  envVars,
   Lifecycle,
   Messages,
   Org,
@@ -26,7 +27,7 @@ import {
   SfError,
 } from '@salesforce/core';
 import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
-import { Duration } from '@salesforce/kit';
+import { Duration, omit } from '@salesforce/kit';
 import terminalLink from 'terminal-link';
 import { capitalCase } from 'change-case';
 import { buildScratchOrgRequest } from '../../../shared/scratchOrgRequest.js';
@@ -34,6 +35,7 @@ import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'create_scratch');
+const secretsMessages = Messages.loadMessages('@salesforce/plugin-org', 'secrets-redacted');
 
 const definitionFileHelpGroupName = 'Definition File Override';
 
@@ -251,7 +253,36 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
         this.logSuccess(messages.getMessage('success'));
       }
 
-      return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
+      // TODO: Remove env var workaround
+      const showSecretsEnvVarIsSet = envVars.getBoolean('SF_TEMP_SHOW_SECRETS', false);
+      const accessTokenRedacted = secretsMessages.getMessage('redacted.accessToken');
+
+      const redactedAuthFields = authFields
+        ? {
+            ...authFields,
+            accessToken: showSecretsEnvVarIsSet ? authFields.accessToken : accessTokenRedacted,
+            refreshToken: undefined,
+            clientSecret: undefined,
+          }
+        : undefined;
+
+      const redactedScratchOrgInfo = omit(scratchOrgInfo, ['AuthCode']);
+
+      if (this.jsonEnabled()) {
+        if (showSecretsEnvVarIsSet) {
+          this.warn(secretsMessages.getMessage('temp.envVarIsSet', ['sf org create scratch --json']));
+        } else {
+          this.warn(secretsMessages.getMessage('temp.envVarWorkaround', ['sf org create scratch --json']));
+        }
+      }
+
+      return {
+        username,
+        scratchOrgInfo: redactedScratchOrgInfo,
+        authFields: redactedAuthFields,
+        warnings,
+        orgId: authFields?.orgId,
+      };
     } catch (error) {
       mso.error();
       if (error instanceof SfError && error.name === 'ScratchOrgInfoTimeoutError') {

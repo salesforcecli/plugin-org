@@ -28,10 +28,11 @@ describe('org:list', () => {
   // There is no need to call $$.restore() in afterEach() since that is
   // done automatically by the TestContext.
   const $$ = new TestContext();
+  let sfCommandUxStubs: ReturnType<typeof stubSfCommandUx>;
 
   beforeEach(() => {
     // Stub the ux methods on SfCommand so that you don't get any command output in your tests.
-    stubSfCommandUx($$.SANDBOX);
+    sfCommandUxStubs = stubSfCommandUx($$.SANDBOX);
     stubMethod($$.SANDBOX, AuthInfo, 'listAllAuthorizations').resolves([
       'Jimi Hendrix',
       'SRV',
@@ -92,6 +93,51 @@ describe('org:list', () => {
     it('cleans 2 orgs', async () => {
       await OrgListCommand.run(['--json', '--clean', '--noprompt']);
       expect(spies.get('orgRemove').callCount).to.equal(2); // there are 2 expired scratch orgs
+    });
+  });
+
+  describe('secret redaction warnings', () => {
+    beforeEach(() => {
+      stubMethod($$.SANDBOX, OrgListUtil, 'readLocallyValidatedMetaConfigsGroupedByOrgType').resolves(
+        OrgListMock.AUTH_INFO
+      );
+    });
+
+    it('emits the workaround warning referencing sf org list when --json is used', async () => {
+      await OrgListCommand.run(['--json']);
+      const warnCalls = sfCommandUxStubs.warn.getCalls().flatMap((c) => c.args);
+      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('sf org list'))).to.be.true;
+      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('SF_TEMP_SHOW_SECRETS'))).to.be.true;
+      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('sf org auth'))).to.be.true;
+    });
+
+    it('does not emit the secrets warning without --json', async () => {
+      await OrgListCommand.run([]);
+      const warnCalls = sfCommandUxStubs.warn.getCalls().flatMap((c) => c.args);
+      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('SF_TEMP_SHOW_SECRETS'))).to.be.false;
+    });
+  });
+
+  describe('secret redaction warnings WITH env var (SF_TEMP_SHOW_SECRETS)', () => {
+    const SHOW_TOKENS_ENV = 'SF_TEMP_SHOW_SECRETS';
+
+    beforeEach(() => {
+      process.env[SHOW_TOKENS_ENV] = 'true';
+      stubMethod($$.SANDBOX, OrgListUtil, 'readLocallyValidatedMetaConfigsGroupedByOrgType').resolves(
+        OrgListMock.AUTH_INFO
+      );
+    });
+
+    afterEach(() => {
+      delete process.env[SHOW_TOKENS_ENV];
+    });
+
+    it('emits the deprecation warning referencing sf org list when --json is used', async () => {
+      await OrgListCommand.run(['--json']);
+      const warnCalls = sfCommandUxStubs.warn.getCalls().flatMap((c) => c.args);
+      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('will be removed'))).to.be.true;
+      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('sf org list'))).to.be.true;
+      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('sf org auth'))).to.be.true;
     });
   });
 });

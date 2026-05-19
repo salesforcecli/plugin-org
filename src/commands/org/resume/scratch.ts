@@ -18,6 +18,7 @@ import { strict as assert } from 'node:assert';
 
 import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
 import {
+  envVars,
   Lifecycle,
   Messages,
   ScratchOrgCache,
@@ -30,10 +31,12 @@ import {
 import terminalLink from 'terminal-link';
 import { MultiStageOutput } from '@oclif/multi-stage-output';
 import { capitalCase } from 'change-case';
+import { omit } from '@salesforce/kit';
 import { ScratchCreateResponse } from '../../../shared/orgTypes.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'resume_scratch');
+const secretsMessages = Messages.loadMessages('@salesforce/plugin-org', 'secrets-redacted');
 
 export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
   public static readonly summary = messages.getMessage('summary');
@@ -127,7 +130,37 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
 
       this.log();
       this.logSuccess(messages.getMessage('success'));
-      return { username, scratchOrgInfo, authFields, warnings, orgId: authFields?.orgId };
+
+      // TODO: Remove env var workaround
+      const showSecretsEnvVarIsSet = envVars.getBoolean('SF_TEMP_SHOW_SECRETS', false);
+      const accessTokenRedacted = secretsMessages.getMessage('redacted.accessToken');
+
+      const redactedAuthFields = authFields
+        ? {
+            ...authFields,
+            accessToken: showSecretsEnvVarIsSet ? authFields.accessToken : accessTokenRedacted,
+            refreshToken: undefined,
+            clientSecret: undefined,
+          }
+        : undefined;
+
+      const redactedScratchOrgInfo = scratchOrgInfo ? omit(scratchOrgInfo, ['AuthCode']) : undefined;
+
+      if (this.jsonEnabled()) {
+        if (showSecretsEnvVarIsSet) {
+          this.warn(secretsMessages.getMessage('temp.envVarIsSet', ['sf org resume scratch --json']));
+        } else {
+          this.warn(secretsMessages.getMessage('temp.envVarWorkaround', ['sf org resume scratch --json']));
+        }
+      }
+
+      return {
+        username,
+        scratchOrgInfo: redactedScratchOrgInfo,
+        authFields: redactedAuthFields,
+        warnings,
+        orgId: authFields?.orgId,
+      };
     } catch (e) {
       mso.error();
 

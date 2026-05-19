@@ -20,8 +20,10 @@ import fs from 'node:fs/promises';
 import {
   Org,
   AuthInfo,
+  envVars,
   Global,
   Logger,
+  Messages,
   SfError,
   trimTo15,
   ConfigAggregator,
@@ -37,6 +39,9 @@ import type {
   FullyPopulatedScratchOrgFields,
   AuthFieldsFromFS,
 } from './orgTypes.js';
+
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
+const secretsMessages = Messages.loadMessages('@salesforce/plugin-org', 'secrets-redacted');
 
 type OrgGroups = {
   nonScratchOrgs: ExtendedAuthFields[];
@@ -101,12 +106,27 @@ export class OrgListUtil {
       OrgListUtil.processScratchOrgs(orgs.scratchOrgs),
     ]);
 
+    // TODO: Remove env var workaround
+    const showSecretsEnvVarIsSet = envVars.getBoolean('SF_TEMP_SHOW_SECRETS', false);
+    const redactSecrets = <T extends { accessToken?: string; password?: string }>(org: T): T => ({
+      ...org,
+      accessToken: showSecretsEnvVarIsSet ? org.accessToken : secretsMessages.getMessage('redacted.accessToken'),
+      password: org.password
+        ? showSecretsEnvVarIsSet
+          ? org.password
+          : secretsMessages.getMessage('redacted.userPassword')
+        : undefined,
+    });
+
+    const redactedNonScratchOrgs = nonScratchOrgs.map(redactSecrets);
+    const redactedScratchOrgs = scratchOrgs.map(redactSecrets);
+
     return {
-      nonScratchOrgs,
-      scratchOrgs,
-      sandboxes: nonScratchOrgs.filter(sandboxFilter),
-      other: nonScratchOrgs.filter(regularOrgFilter),
-      devHubs: nonScratchOrgs.filter(devHubFilter),
+      nonScratchOrgs: redactedNonScratchOrgs,
+      scratchOrgs: redactedScratchOrgs,
+      sandboxes: redactedNonScratchOrgs.filter(sandboxFilter),
+      other: redactedNonScratchOrgs.filter(regularOrgFilter),
+      devHubs: redactedNonScratchOrgs.filter(devHubFilter),
     };
   }
 
@@ -404,7 +424,7 @@ const authErrorHandler = async (err: unknown, username: string): Promise<string>
   const logger = await OrgListUtil.retrieveLogger();
   logger.trace(`error refreshing auth for org: ${username}`);
   logger.trace(error);
-  // Orgs under maintenace return html as the error message.
+  // Orgs under maintenance return html as the error message.
   if (error.message.includes('maintenance')) return 'Down (Maintenance)';
   // handle other potential html responses
   if (error.message.includes('<html>') || error.message.includes('<!DOCTYPE HTML>')) return 'Bad Response';
