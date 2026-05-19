@@ -1,3 +1,10 @@
+## [5.11.1](https://github.com/salesforcecli/plugin-org/compare/5.11.0...5.11.1) (2026-05-19)
+
+### Bug Fixes
+
+- remove secrets from org display ([fa0ad3d](https://github.com/salesforcecli/plugin-org/commit/fa0ad3d98fbc73bd284309e208061279d448fdbe))
+- remove sensitive values from output ([8f0a31b](https://github.com/salesforcecli/plugin-org/commit/8f0a31b65eb77343a37aad6860f9d2a5ecdad991))
+
 # [5.11.0](https://github.com/salesforcecli/plugin-org/compare/5.10.14...5.11.0) (2026-05-18)
 
 ### Bug Fixes
