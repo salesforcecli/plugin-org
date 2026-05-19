@@ -12,8 +12,8 @@
 
 # temp.envVarWorkaround
 
-Secrets are now hidden from '%s' command output. Use the 'sf org auth show-\*' commands instead. As a temporary workaround, you can set SF_TEMP_SHOW_SECRETS=true to render these secrets. This workaround will be removed in an upcoming release.
+Secrets are now hidden from '%s' command output. Use the 'sf org auth' commands instead. As a temporary workaround, you can set SF_TEMP_SHOW_SECRETS=true to render these secrets. This workaround will be removed in an upcoming release.
 
 # temp.envVarIsSet
 
-The SF_TEMP_SHOW_SECRETS env var is set. This is a temporary env var to continue to show secrets in the '%s' command output. This workaround will be removed in an upcoming CLI release. Switch to use the 'sf org auth show-\*' commands to avoid future disruption.
+The SF_TEMP_SHOW_SECRETS env var is set. This is a temporary env var to continue to show secrets in the '%s' command output. This workaround will be removed in an upcoming CLI release. Switch to use the 'sf org auth' commands to avoid future disruption.
