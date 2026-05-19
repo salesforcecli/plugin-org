@@ -40,6 +40,9 @@ import type {
   AuthFieldsFromFS,
 } from './orgTypes.js';
 
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
+const secretsMessages = Messages.loadMessages('@salesforce/plugin-org', 'secrets-redacted');
+
 type OrgGroups = {
   nonScratchOrgs: ExtendedAuthFields[];
   scratchOrgs: ExtendedAuthFieldsScratch[];
@@ -105,7 +108,6 @@ export class OrgListUtil {
 
     // TODO: Remove env var workaround
     const showSecretsEnvVarIsSet = envVars.getBoolean('SF_TEMP_SHOW_SECRETS', false);
-    const secretsMessages = Messages.loadMessages('@salesforce/plugin-org', 'secrets-redacted');
     const redactSecrets = <T extends { accessToken?: string; password?: string }>(org: T): T => ({
       ...org,
       accessToken: showSecretsEnvVarIsSet ? org.accessToken : secretsMessages.getMessage('redacted.accessToken'),
