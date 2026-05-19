@@ -277,6 +277,46 @@ describe('orgListUtil tests', () => {
       expect(orgGroups.nonScratchOrgs[0].connectedStatus).to.equal('bad file');
       expect(checkNonScratchOrgIsDevHub.called).to.be.false;
     });
+
+    describe('secret redaction', () => {
+      it('redacts access tokens in nonScratchOrgs', async () => {
+        const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, false);
+        expect(orgs.nonScratchOrgs[0].accessToken).to.include('[REDACTED]');
+      });
+
+      it('redacts access tokens in scratchOrgs', async () => {
+        const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, false);
+        for (const org of orgs.scratchOrgs) {
+          expect(org.accessToken).to.include('[REDACTED]');
+        }
+      });
+
+      it('redacts access tokens in devHubs', async () => {
+        const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, false);
+        for (const org of orgs.devHubs) {
+          expect(org.accessToken).to.include('[REDACTED]');
+        }
+      });
+    });
+
+    describe('secret redaction WITH env var (SF_TEMP_SHOW_SECRETS)', () => {
+      const SHOW_TOKENS_ENV = 'SF_TEMP_SHOW_SECRETS';
+
+      beforeEach(() => {
+        process.env[SHOW_TOKENS_ENV] = 'true';
+      });
+
+      afterEach(() => {
+        delete process.env[SHOW_TOKENS_ENV];
+      });
+
+      it('shows real access tokens in scratchOrgs', async () => {
+        const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, false);
+        for (const org of orgs.scratchOrgs) {
+          expect(org.accessToken).to.not.include('[REDACTED]');
+        }
+      });
+    });
   });
 
   describe('auth file reading tests', () => {

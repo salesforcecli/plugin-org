@@ -262,6 +262,14 @@ describe('org:display', () => {
     expect(result.status).to.equal('Active');
   });
 
+  it('emits the workaround warning referencing sf org display', async () => {
+    await $$.stubAuths(testOrg);
+    await OrgDisplayCommand.run(['--targetusername', testOrg.username]);
+    const warnCalls = sfCommandUxStubs.warn.getCalls().flatMap((c) => c.args);
+    expect(warnCalls.some((w) => typeof w === 'string' && w.includes('sf org display'))).to.be.true;
+    expect(warnCalls.some((w) => typeof w === 'string' && w.includes('SF_TEMP_SHOW_SECRETS'))).to.be.true;
+  });
+
   it('gets non-scratch org connectedStatus');
   it('handles properly when username is an accessToken?');
   it('displays good error when org is not connectable due to DNS');
@@ -299,11 +307,12 @@ describe('org:display', () => {
       expect(result.password).to.equal('somepassword');
     });
 
-    it('emits the deprecation warning', async () => {
+    it('emits the deprecation warning referencing sf org display', async () => {
       await $$.stubAuths(testOrg);
       await OrgDisplayCommand.run(['--targetusername', testOrg.username]);
       const warnCalls = sfCommandUxStubs.warn.getCalls().flatMap((c) => c.args);
       expect(warnCalls.some((w) => typeof w === 'string' && w.includes('will be removed'))).to.be.true;
+      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('sf org display'))).to.be.true;
     });
   });
 });

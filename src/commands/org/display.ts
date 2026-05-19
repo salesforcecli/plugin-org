@@ -31,6 +31,8 @@ import { OrgListUtil } from '../../shared/orgListUtil.js';
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'display');
 const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
+const secretsMessages = Messages.loadMessages('@salesforce/plugin-org', 'secrets-redacted');
+
 export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly description = messages.getMessage('description');
@@ -62,19 +64,13 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
       this.warn('unable to refresh auth for org');
     }
 
-    // New command names
-    const accessTokenCommand = 'sf org auth show-access-token';
-    const sfdxAuthUrlCommand = 'sf org auth show-sfdx-auth-url';
-    const userPasswordCommand = 'sf org auth show-user-password';
+    const accessTokenRedactedMessage = secretsMessages.getMessage('redacted.accessToken');
+    const sfdxAuthUrlRedactedMessage = secretsMessages.getMessage('redacted.sfdxAuthUrl');
+    const passwordRedactedMessage = secretsMessages.getMessage('redacted.userPassword');
 
-    const accessTokenRedactedMessage = `[REDACTED] Use '${accessTokenCommand}' to view`;
-    const sfdxAuthUrlRedactedMessage = `[REDACTED] Use '${sfdxAuthUrlCommand}' to view`;
-    const passwordRedactedMessage = `[REDACTED] Use '${userPasswordCommand}' to view`;
-
-    const SHOW_TOKENS_ENV = 'SF_TEMP_SHOW_SECRETS';
-    const envVarAsATempWorkaroundMessage = `Secrets are now hidden from 'sf org display' output. Use the 'sf org auth show-*' commands instead. As a temporary workaround, you can set ${SHOW_TOKENS_ENV}=true to render these secrets. This workaround will be removed in an upcoming release`;
-    const showSecretsEnvVarIsSet = envVars.getBoolean(SHOW_TOKENS_ENV, false);
-    const envVarIsSetWarning = `The ${SHOW_TOKENS_ENV} env var is set. This is a temporary env var to continue to show secrets in the 'sf org display' command output. This workaround will be removed in an upcoming CLI release. Switch to use the 'sf org auth show-*' commands to avoid future disruption.`;
+    const envVarAsATempWorkaroundMessage = secretsMessages.getMessage('temp.envVarWorkaround', ['sf org display']);
+    const showSecretsEnvVarIsSet = envVars.getBoolean('SF_TEMP_SHOW_SECRETS', false);
+    const envVarIsSetWarning = secretsMessages.getMessage('temp.envVarIsSet', ['sf org display']);
 
     // translate to alias if necessary
     const authInfo = await AuthInfo.create({ username: this.org.getUsername() });
@@ -108,7 +104,6 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
       // TODO: Remove env var workaround
       password: fields.password ? (showSecretsEnvVarIsSet ? fields.password : passwordRedactedMessage) : undefined,
       ...scratchOrgInfo,
-
       // properties with more complex logic
       connectedStatus: isScratchOrg
         ? undefined

@@ -20,8 +20,10 @@ import fs from 'node:fs/promises';
 import {
   Org,
   AuthInfo,
+  envVars,
   Global,
   Logger,
+  Messages,
   SfError,
   trimTo15,
   ConfigAggregator,
@@ -101,12 +103,28 @@ export class OrgListUtil {
       OrgListUtil.processScratchOrgs(orgs.scratchOrgs),
     ]);
 
+    // TODO: Remove env var workaround
+    const showSecretsEnvVarIsSet = envVars.getBoolean('SF_TEMP_SHOW_SECRETS', false);
+    const secretsMessages = Messages.loadMessages('@salesforce/plugin-org', 'secrets-redacted');
+    const redactSecrets = <T extends { accessToken?: string; password?: string }>(org: T): T => ({
+      ...org,
+      accessToken: showSecretsEnvVarIsSet ? org.accessToken : secretsMessages.getMessage('redacted.accessToken'),
+      password: org.password
+        ? showSecretsEnvVarIsSet
+          ? org.password
+          : secretsMessages.getMessage('redacted.userPassword')
+        : undefined,
+    });
+
+    const redactedNonScratchOrgs = nonScratchOrgs.map(redactSecrets);
+    const redactedScratchOrgs = scratchOrgs.map(redactSecrets);
+
     return {
-      nonScratchOrgs,
-      scratchOrgs,
-      sandboxes: nonScratchOrgs.filter(sandboxFilter),
-      other: nonScratchOrgs.filter(regularOrgFilter),
-      devHubs: nonScratchOrgs.filter(devHubFilter),
+      nonScratchOrgs: redactedNonScratchOrgs,
+      scratchOrgs: redactedScratchOrgs,
+      sandboxes: redactedNonScratchOrgs.filter(sandboxFilter),
+      other: redactedNonScratchOrgs.filter(regularOrgFilter),
+      devHubs: redactedNonScratchOrgs.filter(devHubFilter),
     };
   }
 
@@ -392,8 +410,8 @@ const identifyDefaultOrgs = (
  */
 const removeRestrictedInfoFromConfig = (
   config: AuthFieldsFromFS,
-  properties: string[] = ['refreshToken', 'clientSecret']
-): AuthFieldsFromFS => omit<Omit<AuthFieldsFromFS, 'refreshToken' | 'clientSecret'>>(config, properties);
+  properties: string[] = ['refreshToken', 'clientSecret', 'privateKey']
+): AuthFieldsFromFS => omit<Omit<AuthFieldsFromFS, 'refreshToken' | 'clientSecret' | 'privateKey'>>(config, properties);
 
 const sandboxFilter = (org: AuthFieldsFromFS): boolean => Boolean(org.isSandbox);
 const regularOrgFilter = (org: AuthFieldsFromFS): boolean => !org.isSandbox && !org.isDevHub;
