@@ -183,6 +183,9 @@
         },
         "trailExpirationDate": {
           "type": ["string", "null"]
+        },
+        "orgEdition": {
+          "type": "string"
         }
       },
       "required": ["accessToken", "clientId", "instanceUrl", "orgId", "string", "username"]
@@ -339,6 +342,9 @@
         },
         "trailExpirationDate": {
           "type": ["string", "null"]
+        },
+        "orgEdition": {
+          "type": "string"
         },
         "createdBy": {
           "type": "string"

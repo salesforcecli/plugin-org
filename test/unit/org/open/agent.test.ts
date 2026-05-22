@@ -123,10 +123,13 @@ describe('org:open:agent', () => {
       assert(response);
       testJsonStructure(response);
 
-      // Verify the BotDefinition query was made
-      expect(spies.get('singleRecordQuery').callCount).to.equal(1);
-      expect(spies.get('singleRecordQuery').firstCall.args[0]).to.include(mockBotName);
-      expect(spies.get('singleRecordQuery').firstCall.args[0]).to.include('BotDefinition');
+      // Verify the BotDefinition query was made (filter out determineOrg's Organization query)
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+      const botCalls = spies
+        .get('singleRecordQuery')
+        .args.filter((args: string[]) => args[0].includes('BotDefinition'));
+      expect(botCalls).to.have.lengthOf(1);
+      expect(botCalls[0][0]).to.include(mockBotName);
 
       const expectedPath = `AiCopilot/copilotStudio.app#/copilot/builder?copilotId=${mockBotId}`;
       expect(response.url).to.equal(getExpectedUrlWithPath(expectedPath));
@@ -138,26 +141,36 @@ describe('org:open:agent', () => {
       testJsonStructure(response);
       expect(spies.get('requestGet').callCount).to.equal(1);
       expect(spies.get('open').callCount).to.equal(1);
-      expect(spies.get('singleRecordQuery').callCount).to.equal(1);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+      const botCalls = spies
+        .get('singleRecordQuery')
+        .args.filter((args: string[]) => args[0].includes('BotDefinition'));
+      expect(botCalls).to.have.lengthOf(1);
     });
 
     it('properly queries BotDefinition with special characters in api-name', async () => {
       const specialName = 'Test_Agent_01';
       await OrgOpenAgent.run(['--json', '--target-org', testOrg.username, '--url-only', '--api-name', specialName]);
 
-      expect(spies.get('singleRecordQuery').callCount).to.equal(1);
-      expect(spies.get('singleRecordQuery').firstCall.args[0]).to.include(specialName);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+      const botCalls = spies
+        .get('singleRecordQuery')
+        .args.filter((args: string[]) => args[0].includes('BotDefinition'));
+      expect(botCalls).to.have.lengthOf(1);
+      expect(botCalls[0][0]).to.include(specialName);
     });
 
     it('builds URL with api-name and version using BotVersion query', async () => {
       const version = '2';
-      // Override the singleRecordQuery stub to return different results for BotDefinition and BotVersion
+      // Override the singleRecordQuery stub to handle determineOrg, BotDefinition, and BotVersion
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const singleRecordQueryStub = spies.get('singleRecordQuery');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      singleRecordQueryStub.onFirstCall().resolves({ Id: mockBotId }); // BotDefinition query
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      singleRecordQueryStub.onSecondCall().resolves({ Id: mockVersionId }); // BotVersion query
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      singleRecordQueryStub.callsFake((query: string) => {
+        if (query.includes('FROM BotVersion')) return Promise.resolve({ Id: mockVersionId });
+        if (query.includes('FROM BotDefinition')) return Promise.resolve({ Id: mockBotId });
+        return Promise.resolve({});
+      });
 
       const response = await OrgOpenAgent.run([
         '--json',
@@ -172,17 +185,17 @@ describe('org:open:agent', () => {
       assert(response);
       testJsonStructure(response);
 
-      // Verify both queries were made
-      expect(singleRecordQueryStub.callCount).to.equal(2);
+      // Verify BotDefinition and BotVersion queries were made
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      const botDefCalls = singleRecordQueryStub.args.filter((args: string[]) => args[0].includes('FROM BotDefinition'));
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      const botVerCalls = singleRecordQueryStub.args.filter((args: string[]) => args[0].includes('FROM BotVersion'));
+      expect(botDefCalls).to.have.lengthOf(1);
+      expect(botVerCalls).to.have.lengthOf(1);
 
-      // Verify BotDefinition query
-      expect(singleRecordQueryStub.firstCall.args[0]).to.include(mockBotName);
-      expect(singleRecordQueryStub.firstCall.args[0]).to.include('BotDefinition');
-
-      // Verify BotVersion query
-      expect(singleRecordQueryStub.secondCall.args[0]).to.include('BotVersion');
-      expect(singleRecordQueryStub.secondCall.args[0]).to.include(mockBotId);
-      expect(singleRecordQueryStub.secondCall.args[0]).to.include(`VersionNumber=${version}`);
+      expect(botDefCalls[0][0]).to.include(mockBotName);
+      expect(botVerCalls[0][0]).to.include(mockBotId);
+      expect(botVerCalls[0][0]).to.include(`VersionNumber=${version}`);
 
       const expectedPath = `AiCopilot/copilotStudio.app#/copilot/builder?copilotId=${mockBotId}&versionId=${mockVersionId}`;
       expect(response.url).to.equal(getExpectedUrlWithPath(expectedPath));
@@ -203,8 +216,12 @@ describe('org:open:agent', () => {
       assert(response);
       testJsonStructure(response);
 
-      // Verify no BotDefinition query was made
-      expect(spies.get('singleRecordQuery').callCount).to.equal(0);
+      // Verify no BotDefinition query was made (only determineOrg's Organization query may exist)
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+      const botCalls = spies
+        .get('singleRecordQuery')
+        .args.filter((args: string[]) => args[0].includes('BotDefinition'));
+      expect(botCalls).to.have.lengthOf(0);
 
       const expectedPath = `AgentAuthoring/agentAuthoringBuilder.app#/project?projectName=${bundleName}`;
       expect(response.url).to.equal(getExpectedUrlWithPath(expectedPath));
@@ -242,7 +259,11 @@ describe('org:open:agent', () => {
       testJsonStructure(response);
       expect(spies.get('requestGet').callCount).to.equal(1);
       expect(spies.get('open').callCount).to.equal(1);
-      expect(spies.get('singleRecordQuery').callCount).to.equal(0);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+      const botCalls2 = spies
+        .get('singleRecordQuery')
+        .args.filter((args: string[]) => args[0].includes('BotDefinition'));
+      expect(botCalls2).to.have.lengthOf(0);
     });
   });
 
@@ -364,10 +385,12 @@ describe('org:open:agent', () => {
       const nonExistentVersion = '999';
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const singleRecordQueryStub = spies.get('singleRecordQuery');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      singleRecordQueryStub.onFirstCall().resolves({ Id: mockBotId }); // BotDefinition succeeds
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      singleRecordQueryStub.onSecondCall().rejects(new Error('No records found')); // BotVersion fails
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      singleRecordQueryStub.callsFake((query: string) => {
+        if (query.includes('FROM BotVersion')) return Promise.reject(new Error('No records found'));
+        if (query.includes('FROM BotDefinition')) return Promise.resolve({ Id: mockBotId });
+        return Promise.resolve({});
+      });
 
       try {
         await OrgOpenAgent.run([
