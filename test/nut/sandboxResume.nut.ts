@@ -174,8 +174,6 @@ describe('Sandbox Resume', () => {
     });
     // @ts-expect-error stubbing private function
     sinonSandbox.stub(AuthInfo.prototype, 'determineIfDevHub').resolves(false);
-    // @ts-expect-error stubbing private function
-    sinonSandbox.stub(AuthInfo.prototype, 'getNamespacePrefix').resolves();
 
     const result = await ResumeSandbox.run(['--job-id', sbxProcess.Id, '-o', hubOrgUsername, '--wait', '1', '--json']);
 

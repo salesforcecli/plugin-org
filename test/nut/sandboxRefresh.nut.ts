@@ -375,8 +375,6 @@ describe('Sandbox Refresh', () => {
     });
     // @ts-expect-error stubbing private function
     sinonSandbox.stub(AuthInfo.prototype, 'determineIfDevHub').resolves(false);
-    // @ts-expect-error stubbing private function
-    sinonSandbox.stub(AuthInfo.prototype, 'getNamespacePrefix').resolves();
 
     const result: SandboxProcessObject = await RefreshSandbox.run([
       '--name',
