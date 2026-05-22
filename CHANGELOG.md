@@ -1,3 +1,9 @@
+## [5.11.2](https://github.com/salesforcecli/plugin-org/compare/5.11.1...5.11.2) (2026-05-22)
+
+### Bug Fixes
+
+- update agent tests and schemas for sfdx-core 8.31.0 determineOrg ([ec57ee9](https://github.com/salesforcecli/plugin-org/commit/ec57ee935da6c29bc11b7e83030626ba4a021283))
+
 ## [5.11.1](https://github.com/salesforcecli/plugin-org/compare/5.11.0...5.11.1) (2026-05-19)
 
 ### Bug Fixes
