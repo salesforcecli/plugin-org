@@ -1,3 +1,9 @@
+## [5.11.3](https://github.com/salesforcecli/plugin-org/compare/5.11.2...5.11.3) (2026-05-23)
+
+### Bug Fixes
+
+- **deps:** bump ws from 8.20.0 to 8.21.0 ([97c1c3f](https://github.com/salesforcecli/plugin-org/commit/97c1c3ff0b23c0d04ebedd946fa353f1d762b4b2))
+
 ## [5.11.2](https://github.com/salesforcecli/plugin-org/compare/5.11.1...5.11.2) (2026-05-22)
 
 ### Bug Fixes
