@@ -161,7 +161,7 @@ EXAMPLES
     $ sf org auth show-access-token --target-org my-org --json
 ```
 
-_See code: [src/commands/org/auth/show-access-token.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.3/src/commands/org/auth/show-access-token.ts)_
+_See code: [src/commands/org/auth/show-access-token.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.4/src/commands/org/auth/show-access-token.ts)_
 
 ## `sf org auth show-sfdx-auth-url`
 
@@ -205,7 +205,7 @@ EXAMPLES
     $ sf org auth show-sfdx-auth-url --target-org my-org --json
 ```
 
-_See code: [src/commands/org/auth/show-sfdx-auth-url.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.3/src/commands/org/auth/show-sfdx-auth-url.ts)_
+_See code: [src/commands/org/auth/show-sfdx-auth-url.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.4/src/commands/org/auth/show-sfdx-auth-url.ts)_
 
 ## `sf org auth show-user-password`
 
@@ -252,7 +252,7 @@ EXAMPLES
     $ sf org auth show-user-password --target-org my-org --json
 ```
 
-_See code: [src/commands/org/auth/show-user-password.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.3/src/commands/org/auth/show-user-password.ts)_
+_See code: [src/commands/org/auth/show-user-password.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.4/src/commands/org/auth/show-user-password.ts)_
 
 ## `sf org create agent-user`
 
@@ -330,7 +330,7 @@ FLAG DESCRIPTIONS
     "agent.user.<GUID>@your-org-domain.com".
 ```
 
-_See code: [src/commands/org/create/agent-user.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.3/src/commands/org/create/agent-user.ts)_
+_See code: [src/commands/org/create/agent-user.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.4/src/commands/org/create/agent-user.ts)_
 
 ## `sf org create sandbox`
 
@@ -464,7 +464,7 @@ FLAG DESCRIPTIONS
     You can specify either --source-sandbox-name or --source-id when cloning an existing sandbox, but not both.
 ```
 
-_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.3/src/commands/org/create/sandbox.ts)_
+_See code: [src/commands/org/create/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.4/src/commands/org/create/sandbox.ts)_
 
 ## `sf org create scratch`
 
@@ -646,7 +646,7 @@ FLAG DESCRIPTIONS
     Omit this flag to have Salesforce generate a unique username for your org.
 ```
 
-_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.3/src/commands/org/create/scratch.ts)_
+_See code: [src/commands/org/create/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.4/src/commands/org/create/scratch.ts)_
 
 ## `sf org delete sandbox`
 
@@ -692,7 +692,7 @@ EXAMPLES
     $ sf org delete sandbox --target-org my-sandbox --no-prompt
 ```
 
-_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.3/src/commands/org/delete/sandbox.ts)_
+_See code: [src/commands/org/delete/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.4/src/commands/org/delete/sandbox.ts)_
 
 ## `sf org delete scratch`
 
@@ -736,7 +736,7 @@ EXAMPLES
     $ sf org delete scratch --target-org my-scratch-org --no-prompt
 ```
 
-_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.3/src/commands/org/delete/scratch.ts)_
+_See code: [src/commands/org/delete/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.4/src/commands/org/delete/scratch.ts)_
 
 ## `sf org disable tracking`
 
@@ -775,7 +775,7 @@ EXAMPLES
     $ sf org disable tracking
 ```
 
-_See code: [src/commands/org/disable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.3/src/commands/org/disable/tracking.ts)_
+_See code: [src/commands/org/disable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.4/src/commands/org/disable/tracking.ts)_
 
 ## `sf org display`
 
@@ -820,7 +820,7 @@ EXAMPLES
     $ sf org display --target-org TestOrg1 --verbose
 ```
 
-_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.3/src/commands/org/display.ts)_
+_See code: [src/commands/org/display.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.4/src/commands/org/display.ts)_
 
 ## `sf org enable tracking`
 
@@ -862,7 +862,7 @@ EXAMPLES
     $ sf org enable tracking
 ```
 
-_See code: [src/commands/org/enable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.3/src/commands/org/enable/tracking.ts)_
+_See code: [src/commands/org/enable/tracking.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.4/src/commands/org/enable/tracking.ts)_
 
 ## `sf org list`
 
@@ -901,7 +901,7 @@ EXAMPLES
     $ sf org list --clean
 ```
 
-_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.3/src/commands/org/list.ts)_
+_See code: [src/commands/org/list.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.4/src/commands/org/list.ts)_
 
 ## `sf org list metadata`
 
@@ -968,7 +968,7 @@ FLAG DESCRIPTIONS
     Examples of metadata types that use folders are Dashboard, Document, EmailTemplate, and Report.
 ```
 
-_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.3/src/commands/org/list/metadata.ts)_
+_See code: [src/commands/org/list/metadata.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.4/src/commands/org/list/metadata.ts)_
 
 ## `sf org list metadata-types`
 
@@ -1023,7 +1023,7 @@ FLAG DESCRIPTIONS
     Override the api version used for api requests made by this command
 ```
 
-_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.3/src/commands/org/list/metadata-types.ts)_
+_See code: [src/commands/org/list/metadata-types.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.4/src/commands/org/list/metadata-types.ts)_
 
 ## `sf org open`
 
@@ -1099,11 +1099,11 @@ EXAMPLES
     $ sf org open --source-file force-app/main/default/bots/Coral_Cloud_Agent/Coral_Cloud_Agent.bot-meta.xml
 ```
 
-_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.3/src/commands/org/open.ts)_
+_See code: [src/commands/org/open.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.4/src/commands/org/open.ts)_
 
 ## `sf org open agent`
 
-Open an agent in your org's Agent Builder UI in a browser.
+Open an agent in your org's Agentforce Builder UI in a browser.
 
 ```
 USAGE
@@ -1114,35 +1114,35 @@ FLAGS
   -b, --browser=<option>          Browser where the org opens.
                                   <options: chrome|edge|firefox>
   -n, --api-name=<value>          API name, also known as developer name, of the agent you want to open in the org's
-                                  Agent Builder UI.
+                                  Agentforce Builder UI.
   -o, --target-org=<value>        (required) Username or alias of the target org. Not required if the `target-org`
                                   configuration variable is already set.
   -r, --url-only                  Display navigation URL, but don’t launch browser.
       --api-version=<value>       Override the api version used for api requests made by this command
-      --authoring-bundle=<value>  API name of the agent to open in Agentforce Builder.
-      --private                   Open the org in the default browser using private (incognito) mode.
-      --version=<value>           Version number of the agent to open in Agentforce Builder.
+      --authoring-bundle=<value>  API name of the agent's authoring bundle to open in Agentforce Builder.
+      --private                   Open the agent in the default browser using private (incognito) mode.
+      --version=<value>           Version number of the agent to open in Agentforce Builder. If not specified, the
+                                  highest version is opened by default.
 
 GLOBAL FLAGS
   --flags-dir=<value>  Import flag values from a directory.
   --json               Format output as json.
 
 DESCRIPTION
-  Open an agent in your org's Agent Builder UI in a browser.
+  Open an agent in your org's Agentforce Builder UI in a browser.
 
-  Use the --api-name flag to open an agent using its API name in the Agent Builder UI of your org. To find the agent's
-  API name, go to Setup in your org and navigate to the agent's details page.
-
-  Alternatively, use the --authoring-bundle flag to open an agent in Agentforce Builder. Optionally include --version to
-  open a specific version of the agent. You'll specify the api name of the authoring bundle.
+  Use the --api-name flag to open an agent using its API name in the Agentforce Builder UI of your org. Alternatively,
+  use the --authoring-bundle flag to open an agent using the API name of its authoring bundle. The two API names are
+  typically the same for the same agent. Optionally specify the --version flag to open a specific version of the agent.
 
   To generate the URL but not launch it in your browser, specify --url-only.
 
-  To open Agent Builder in a specific browser, use the --browser flag. Supported browsers are "chrome", "edge", and
+  To open Agentforce Builder in a specific browser, use the --browser flag. Supported browsers are "chrome", "edge", and
   "firefox". If you don't specify --browser, the org opens in your default browser.
 
 EXAMPLES
-  Open the agent with API name Coral_Cloud_Agent in your default org using your default browser:
+  Open the agent with API name Coral_Cloud_Agent in your default org using your default browser; opens the highest
+  version:
 
     $ sf org open agent --api-name Coral_Cloud_Agent
 
@@ -1154,27 +1154,16 @@ EXAMPLES
 
     $ sf org open agent --target-org MyTestOrg1 --browser firefox --api-name Coral_Cloud_Agent
 
-  Open an agent in Agentforce Builder using its authoring bundle name:
+  Open an agent in Agentforce Builder using its authoring bundle API name:
 
-    $ sf org open agent --authoring-bundle MyAgent
+    $ sf org open agent --authoring-bundle Coral_Cloud_Agent
 
-  Open a specific version of an agent in Agentforce Builder:
+  Open a version 1 of an agent in Agentforce Builder:
 
-    $ sf org open agent --authoring-bundle MyAgent --version 1
-
-FLAG DESCRIPTIONS
-  --authoring-bundle=<value>  API name of the agent to open in Agentforce Builder.
-
-    The API name of the agent to open directly in Agentforce Builder. Optionally specify --version to open a specific
-    version.
-
-  --version=<value>  Version number of the agent to open in Agentforce Builder.
-
-    The version number of the agent to open directly in Agentforce Builder. Can only be used with the --authoring-bundle
-    flag.
+    $ sf org open agent --authoring-bundle Coral_Cloud_Agent --version 1
 ```
 
-_See code: [src/commands/org/open/agent.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.3/src/commands/org/open/agent.ts)_
+_See code: [src/commands/org/open/agent.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.4/src/commands/org/open/agent.ts)_
 
 ## `sf org open authoring-bundle`
 
@@ -1220,7 +1209,7 @@ EXAMPLES
     $ sf org open authoring-bundle --target-org MyTestOrg1 --browser firefox
 ```
 
-_See code: [src/commands/org/open/authoring-bundle.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.3/src/commands/org/open/authoring-bundle.ts)_
+_See code: [src/commands/org/open/authoring-bundle.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.4/src/commands/org/open/authoring-bundle.ts)_
 
 ## `sf org refresh sandbox`
 
@@ -1323,7 +1312,7 @@ FLAG DESCRIPTIONS
     You can specify either --source-sandbox-name or --source-id when refreshing an existing sandbox, but not both.
 ```
 
-_See code: [src/commands/org/refresh/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.3/src/commands/org/refresh/sandbox.ts)_
+_See code: [src/commands/org/refresh/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.4/src/commands/org/refresh/sandbox.ts)_
 
 ## `sf org resume sandbox`
 
@@ -1386,7 +1375,7 @@ FLAG DESCRIPTIONS
     returns the job ID. To resume checking the sandbox creation, rerun this command.
 ```
 
-_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.3/src/commands/org/resume/sandbox.ts)_
+_See code: [src/commands/org/resume/sandbox.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.4/src/commands/org/resume/sandbox.ts)_
 
 ## `sf org resume scratch`
 
@@ -1439,6 +1428,6 @@ FLAG DESCRIPTIONS
     returns the job ID. To resume checking the scratch creation, rerun this command.
 ```
 
-_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.3/src/commands/org/resume/scratch.ts)_
+_See code: [src/commands/org/resume/scratch.ts](https://github.com/salesforcecli/plugin-org/blob/5.11.4/src/commands/org/resume/scratch.ts)_
 
 <!-- commandsstop -->

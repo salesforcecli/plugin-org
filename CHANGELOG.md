@@ -1,3 +1,9 @@
+## [5.11.4](https://github.com/salesforcecli/plugin-org/compare/5.11.3...5.11.4) (2026-05-26)
+
+### Bug Fixes
+
+- edit the --help for "org open agent" ([ef2d517](https://github.com/salesforcecli/plugin-org/commit/ef2d517c0b55e4f23115ec5441c6be29f0f63187))
+
 ## [5.11.3](https://github.com/salesforcecli/plugin-org/compare/5.11.2...5.11.3) (2026-05-23)
 
 ### Bug Fixes
