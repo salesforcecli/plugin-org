@@ -54,12 +54,10 @@ export class OrgOpenAgent extends OrgOpenCommandBase<OrgOpenOutput> {
     }),
     'authoring-bundle': Flags.string({
       summary: messages.getMessage('flags.authoring-bundle.summary'),
-      description: messages.getMessage('flags.authoring-bundle.description'),
       exactlyOne: ['api-name', 'authoring-bundle'],
     }),
     version: Flags.string({
       summary: messages.getMessage('flags.version.summary'),
-      description: messages.getMessage('flags.version.description'),
     }),
   };
 
