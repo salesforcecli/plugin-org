@@ -1370,10 +1370,10 @@
     react "^18.3.1"
     wrap-ansi "^9.0.2"
 
-"@oclif/plugin-command-snapshot@^5.3.22":
-  version "5.3.22"
-  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-5.3.22.tgz#266853b2e4f327b9051720c444e8d3f15f3058e7"
-  integrity sha512-rbJ8+lTTAPr1CAoqpsRoKBkyMMCwWojSaf+8T8Q7tFltBxCrmNavKTzWKqL7GTTMXKme7jYleZVOxSM2T1A5xg==
+"@oclif/plugin-command-snapshot@^5.3.24":
+  version "5.3.24"
+  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-5.3.24.tgz#c527184dcfadcd31ae9779de7f3594ef8cdbd092"
+  integrity sha512-G7jm2NfCHzCqlWEcrmg6Uo5mii3ETOTD2zZNpBbcXV95IRnRp++FTwd3DaR36YpWSy0LpSYH87+NiLvb9nVZpA==
   dependencies:
     "@oclif/core" "^4"
     ansis "^3.17.0"
@@ -1382,7 +1382,7 @@
     lodash.difference "^4.5.0"
     lodash.get "^4.4.2"
     lodash.sortby "^4.7.0"
-    semver "^7.8.1"
+    semver "^7.8.2"
     ts-json-schema-generator "^1.5.1"
 
 "@oclif/plugin-help@^6.2.49":
@@ -7121,10 +7121,10 @@ semver@^6.0.0, semver@^6.3.1:
   resolved "https://registry.yarnpkg.com/semver/-/semver-6.3.1.tgz#556d2ef8689146e46dcea4bfdd095f3434dffcb4"
   integrity sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==
 
-semver@^7.3.4, semver@^7.3.5, semver@^7.5.3, semver@^7.5.4, semver@^7.6.0, semver@^7.7.4, semver@^7.8.0, semver@^7.8.1:
-  version "7.8.1"
-  resolved "https://registry.yarnpkg.com/semver/-/semver-7.8.1.tgz#bf4970b5e70fda0686363cc18bfe8805d5ed957e"
-  integrity sha512-rkVq3IXh+4FDGch+KwzX3aV9W3kO54GyEgpvBzSyctDA6Xtd7RJQV1xmXbeQp5v7+VzLOfVqiutSE6GICgPFvg==
+semver@^7.3.4, semver@^7.3.5, semver@^7.5.3, semver@^7.5.4, semver@^7.6.0, semver@^7.7.4, semver@^7.8.0, semver@^7.8.1, semver@^7.8.2:
+  version "7.8.2"
+  resolved "https://registry.yarnpkg.com/semver/-/semver-7.8.2.tgz#194bd65723a28cf82542d2bf176b91c26b343be1"
+  integrity sha512-c8jsqUZm3omBOI66G90z1Dyw5z622G8oLG+omfsHBJf3CWQTlOcwOjvOG6wtiNfW6anKm/eA39LMwMtMez2TiQ==
 
 sentence-case@^3.0.4:
   version "3.0.4"
