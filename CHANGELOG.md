@@ -1,3 +1,9 @@
+## [5.11.10](https://github.com/salesforcecli/plugin-org/compare/5.11.9...5.11.10) (2026-06-18)
+
+### Bug Fixes
+
+- **deps:** bump form-data from 4.0.5 to 4.0.6 ([0abe512](https://github.com/salesforcecli/plugin-org/commit/0abe512ac95351937e53bc523d61bb4fc41bac35))
+
 ## [5.11.9](https://github.com/salesforcecli/plugin-org/compare/5.11.8...5.11.9) (2026-06-18)
 
 ### Bug Fixes
