@@ -54,3 +54,7 @@ Ensure the CLI has authenticated with the sandbox's production org.
 # error.missingUsername
 
 Unable to determine the username of the org to delete. Specify the username with the --target-org | -o flag.
+
+# error.insufficientAccess
+
+You don't have permission to delete this sandbox. Ask your Salesforce admin to grant you the "Manage Sandboxes" system permission on your profile or a permission set in the production org.
