@@ -9,10 +9,10 @@
   "dependencies": {
     "@oclif/core": "^4.11.4",
     "@oclif/multi-stage-output": "^0.8.44",
-    "@salesforce/core": "^8.31.1",
+    "@salesforce/core": "^8.31.2",
     "@salesforce/kit": "^3.2.4",
     "@salesforce/sf-plugins-core": "^12.2.16",
-    "@salesforce/source-deploy-retrieve": "^12.36.3",
+    "@salesforce/source-deploy-retrieve": "^12.36.6",
     "@salesforce/ts-types": "^2.0.12",
     "ansis": "^3.16.0",
     "change-case": "^5.4.4",
