@@ -1,3 +1,9 @@
+## [5.11.19](https://github.com/salesforcecli/plugin-org/compare/5.11.18...5.11.19) (2026-07-13)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/sf-plugins-core from 12.2.25 to 12.2.26 ([395c7db](https://github.com/salesforcecli/plugin-org/commit/395c7dbb04638b4ed5a34cd95a8d3209cf5b3978))
+
 ## [5.11.18](https://github.com/salesforcecli/plugin-org/compare/5.11.17...5.11.18) (2026-07-12)
 
 ### Bug Fixes
