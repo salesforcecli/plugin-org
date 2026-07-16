@@ -1,3 +1,9 @@
+## [5.11.20](https://github.com/salesforcecli/plugin-org/compare/5.11.19...5.11.20) (2026-07-16)
+
+### Bug Fixes
+
+- **deps:** bump websocket-driver from 0.7.4 to 0.7.5 ([b898187](https://github.com/salesforcecli/plugin-org/commit/b89818704597bf0ff9c28d8fcff3d7b9056a47ba))
+
 ## [5.11.19](https://github.com/salesforcecli/plugin-org/compare/5.11.18...5.11.19) (2026-07-13)
 
 ### Bug Fixes
