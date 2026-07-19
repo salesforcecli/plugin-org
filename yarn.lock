@@ -1198,7 +1198,7 @@
     strip-ansi "6.0.1"
     ts-retry-promise "^0.8.1"
 
-"@salesforce/core@^8.23.1", "@salesforce/core@^8.31.2", "@salesforce/core@^8.31.4", "@salesforce/core@^8.31.5", "@salesforce/core@^8.32.2", "@salesforce/core@^8.32.4":
+"@salesforce/core@^8.23.1", "@salesforce/core@^8.31.2", "@salesforce/core@^8.31.4", "@salesforce/core@^8.32.2", "@salesforce/core@^8.32.4":
   version "8.32.4"
   resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-8.32.4.tgz#9936ffdeaf528541ff892404d21e6417d574c460"
   integrity sha512-0p/nQ24nfPGD0ERp/NHAccgo+66+rDx6c9M88wItDYAMu9+CHcW+FHOLNDAAUsYwinHHVsqVSL8Eyag7gvitqA==
@@ -1267,15 +1267,15 @@
   dependencies:
     "@salesforce/ts-types" "^2.0.12"
 
-"@salesforce/plugin-command-reference@^3.1.119":
-  version "3.1.119"
-  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.1.119.tgz#221a9207c97193c7a23dbc8b9530fe45f388fa8d"
-  integrity sha512-wxwGZ92X+k7dG6gkUM8roPazU3ejNV1AIfOezbXVA6y/cVsQy66dZAe9kcS5R6kkpXzre5utJjmY/0ASbgHCng==
+"@salesforce/plugin-command-reference@^3.1.123":
+  version "3.1.123"
+  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.1.123.tgz#76ab5630a7a336844df9bea8e57ebe00060e9798"
+  integrity sha512-JS9cGMnnN5LZS1UVnxsza1IcV8RQNa1CPIuex8FjUnZW6D1BfMw0XPHU81hTjQmtWxKk3SofhL8TiFyeZ/gNLw==
   dependencies:
     "@oclif/core" "^4"
-    "@salesforce/core" "^8.31.5"
+    "@salesforce/core" "^8.32.4"
     "@salesforce/kit" "^3.2.6"
-    "@salesforce/sf-plugins-core" "^12.2.25"
+    "@salesforce/sf-plugins-core" "^12.2.26"
     "@salesforce/ts-types" "^2.0.11"
     chalk "^5.6.2"
     debug "^4.4.3"
@@ -1286,7 +1286,7 @@
   resolved "https://registry.yarnpkg.com/@salesforce/prettier-config/-/prettier-config-0.0.3.tgz#ba648d4886bb38adabe073dbea0b3a91b3753bb0"
   integrity sha512-hYOhoPTCSYMDYn+U1rlEk16PoBeAJPkrdg4/UtAzupM1mRRJOwEPMG1d7U8DxJFKuXW3DMEYWr2MwAIBDaHmFg==
 
-"@salesforce/sf-plugins-core@^12.2.25", "@salesforce/sf-plugins-core@^12.2.26":
+"@salesforce/sf-plugins-core@^12.2.26":
   version "12.2.26"
   resolved "https://registry.yarnpkg.com/@salesforce/sf-plugins-core/-/sf-plugins-core-12.2.26.tgz#5a6c71e3abd21c8b241120e8fc8ae9c97df81684"
   integrity sha512-FgGZFwlYIDcD6/8g6+iwv5MNKaCD6r65y+xdX+iqPkIEaEneRVKrcS0tSepmYFi4DG13P0KJwGlCqDOV24g0Bg==
