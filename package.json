@@ -1,7 +1,7 @@
 {
   "name": "@salesforce/plugin-org",
   "description": "Commands to interact with Salesforce orgs",
-  "version": "5.11.22",
+  "version": "5.11.23-eca.2",
   "author": "Salesforce",
   "bugs": "https://github.com/forcedotcom/cli/issues",
   "enableO11y": true,
@@ -9,7 +9,7 @@
   "dependencies": {
     "@oclif/core": "^4.11.14",
     "@oclif/multi-stage-output": "^0.8.44",
-    "@salesforce/core": "^8.32.4",
+    "@salesforce/core": "8.32.6-eca.2",
     "@salesforce/kit": "^3.2.4",
     "@salesforce/sf-plugins-core": "^12.2.26",
     "@salesforce/source-deploy-retrieve": "^12.37.2",
@@ -19,6 +19,9 @@
     "is-wsl": "^3.1.1",
     "open": "^10.2.0",
     "terminal-link": "^3.0.0"
+  },
+  "resolutions": {
+    "@salesforce/core": "8.32.6-eca.2"
   },
   "devDependencies": {
     "@oclif/plugin-command-snapshot": "^5.3.31",
