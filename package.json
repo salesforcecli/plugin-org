@@ -9,7 +9,7 @@
   "dependencies": {
     "@oclif/core": "^4.11.14",
     "@oclif/multi-stage-output": "^0.8.44",
-    "@salesforce/core": "8.32.6-eca.0",
+    "@salesforce/core": "8.32.6-eca.1",
     "@salesforce/kit": "^3.2.4",
     "@salesforce/sf-plugins-core": "^12.2.26",
     "@salesforce/source-deploy-retrieve": "^12.37.2",
@@ -21,7 +21,7 @@
     "terminal-link": "^3.0.0"
   },
   "resolutions": {
-    "@salesforce/core": "8.32.6-eca.0"
+    "@salesforce/core": "8.32.6-eca.1"
   },
   "devDependencies": {
     "@oclif/plugin-command-snapshot": "^5.3.31",
