@@ -9,11 +9,11 @@
   "dependencies": {
     "@oclif/core": "^4.13.0",
     "@oclif/multi-stage-output": "^0.8.44",
-    "@salesforce/core": "^8.32.6",
-    "@salesforce/kit": "^3.2.4",
-    "@salesforce/sf-plugins-core": "^12.2.26",
-    "@salesforce/source-deploy-retrieve": "^12.37.2",
-    "@salesforce/ts-types": "^2.0.12",
+    "@salesforce/core": "^9.0.0",
+    "@salesforce/kit": "^4.0.0",
+    "@salesforce/sf-plugins-core": "^13.0.0",
+    "@salesforce/source-deploy-retrieve": "^13.0.0",
+    "@salesforce/ts-types": "^3.0.0",
     "ansis": "^3.16.0",
     "change-case": "^5.4.4",
     "is-wsl": "^3.1.1",
@@ -33,7 +33,7 @@
     "typescript": "^5.9.3"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.0.0"
   },
   "files": [
     "/lib",
