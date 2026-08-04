@@ -1,3 +1,9 @@
+## [6.0.4](https://github.com/salesforcecli/plugin-org/compare/6.0.3...6.0.4) (2026-08-04)
+
+### Bug Fixes
+
+- **deps:** bump undici from 8.5.0 to 8.10.0 ([873d883](https://github.com/salesforcecli/plugin-org/commit/873d883d3ec72c8908b8df51304d5755d9e50fc2))
+
 ## [6.0.3](https://github.com/salesforcecli/plugin-org/compare/6.0.2...6.0.3) (2026-08-04)
 
 ### Bug Fixes
