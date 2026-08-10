@@ -44,7 +44,7 @@ describe('org:create:agent-user', () => {
         records: [],
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
       const { assigned, errors } = await (command as any).assignPermissionSets(connectionStub, 'userId123', [
         'NonExistentPermSet',
       ]);
@@ -75,7 +75,7 @@ describe('org:create:agent-user', () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
       connectionStub.sobject.returns(sobjectStub as any);
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
       const { assigned, errors } = await (command as any).assignPermissionSets(connectionStub, 'userId123', [
         'TestPermSet',
       ]);
