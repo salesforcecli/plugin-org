@@ -245,7 +245,7 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxCommandResp
         sandboxProcessObj: this.latestSandboxProgressObj,
         sandboxRes: { authUserName: this.sandboxUsername } as Partial<SandboxUserAuthResponse>,
       } as ResultEvent;
-      await lifecycle.emit(SandboxEvents.EVENT_RESULT, resultEvent as Partial<ResultEvent>);
+      await lifecycle.emit(SandboxEvents.EVENT_RESULT, resultEvent);
       return true;
     }
     return false;

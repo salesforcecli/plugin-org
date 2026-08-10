@@ -83,7 +83,7 @@ export const updateSuccessResponse: SaveResult = {
 };
 
 export const readSandboxCacheFile = (cacheFilePath: string): Record<string, CachedOptions> =>
-  JSON.parse(fs.readFileSync(cacheFilePath, 'utf8')) as unknown as Record<string, CachedOptions>;
+  JSON.parse(fs.readFileSync(cacheFilePath, 'utf8'));
 export const deleteSandboxCacheFile = (cacheFilePath: string): void => fs.unlinkSync(cacheFilePath);
 export const readAuthFile = (homeDir: string, username: string): AuthFields => {
   const filePath = path.join(homeDir, Global.STATE_FOLDER, `${username}.json`);

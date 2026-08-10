@@ -48,7 +48,7 @@ export type OrgHooks = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type OrgHook<T> = (this: Hook.Context, options: T extends keyof Interfaces.Hooks ? OrgHooks[T] : T) => any;
 
-// eslint-disable-next-line no-redeclare
+ 
 export declare namespace OrgHook {
   // TODO get rid of the ts-ignore
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
