@@ -242,7 +242,7 @@ export class OrgListUtil {
         try {
           // we're going to assert that these have a username/orgId because they came from the auth files
           currentValue = removeRestrictedInfoFromConfig(authInfo.getFields(true) as AuthFieldsFromFS);
-        } catch (error) {
+        } catch {
           const logger = await OrgListUtil.retrieveLogger();
           logger.warn(`Error decrypting ${authInfo.getUsername()}`);
           currentValue = removeRestrictedInfoFromConfig(authInfo.getFields() as AuthFieldsFromFS);
@@ -294,7 +294,7 @@ export class OrgListUtil {
         ...org,
         devHubOrgId: devHubOrg.getOrgId(),
       }));
-    } catch (err) {
+    } catch {
       const logger = await OrgListUtil.retrieveLogger();
       logger.warn(`Error querying ${devHubUsername} for ${orgIdsToQuery.length} orgIds`);
       return [];
@@ -378,7 +378,7 @@ export class OrgListUtil {
         await org.refreshAuth();
         return 'Connected';
       } catch (err) {
-        return authErrorHandler(err, org.getUsername() as string);
+        return await authErrorHandler(err, org.getUsername() as string);
       }
     } catch (err) {
       return authErrorHandler(err, username);

@@ -88,9 +88,7 @@ export async function createSandboxRequest(
   logger?: Logger  ,
   properties?: Record<string, string | undefined | string[]>
 ): Promise<{ sandboxReq: SandboxRequest; srcSandboxName?: string; srcId?: string }> {
-  if (!logger) {
-    logger = await Logger.child('createSandboxRequest');
-  }
+  logger ??= await Logger.child('createSandboxRequest');
   logger.debug('Varargs: %s ', properties);
 
   const sandboxDefFileContents = definitionFile ? readSandboxDefFile(definitionFile) : {};

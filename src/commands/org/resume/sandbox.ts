@@ -186,6 +186,7 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxCommandResp
     }
   }
 
+  // eslint-disable-next-line complexity
   private buildSandboxRequestCacheEntry(): SandboxRequestCacheEntry {
     let sandboxRequestCacheEntry: SandboxRequestCacheEntry | undefined;
 
@@ -263,7 +264,7 @@ const getSandboxProcessObject = async (
     return await prodOrg.getConnection().singleRecordQuery(queryStr, {
       tooling: true,
     });
-  } catch (err) {
+  } catch {
     throw messages.createError('error.NoSandboxRequestFound');
   }
 };

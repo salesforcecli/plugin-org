@@ -183,7 +183,7 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
   public async run(): Promise<ScratchCreateResponse> {
     const lifecycle = Lifecycle.getInstance();
     const { flags } = await this.parse(OrgCreateScratch);
-    const baseUrl = flags['target-dev-hub'].getField(Org.Fields.INSTANCE_URL)?.toString();
+    const baseUrl = flags['target-dev-hub'].getField<string>(Org.Fields.INSTANCE_URL);
     if (!baseUrl) {
       throw new SfError('No instance URL found for the dev hub');
     }
@@ -204,28 +204,28 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
         {
           label: 'Request Id',
           type: 'dynamic-key-value',
-          get: (data) =>
+          get: (data): string | undefined =>
             data?.scratchOrgInfo?.Id && terminalLink(data.scratchOrgInfo.Id, `${baseUrl}/${data.scratchOrgInfo.Id}`),
           bold: true,
         },
         {
           label: 'OrgId',
           type: 'dynamic-key-value',
-          get: (data) => data?.scratchOrgInfo?.ScratchOrg,
+          get: (data): string | undefined => data?.scratchOrgInfo?.ScratchOrg,
           bold: true,
           color: 'cyan',
         },
         {
           label: 'Username',
           type: 'dynamic-key-value',
-          get: (data) => data?.scratchOrgInfo?.SignupUsername,
+          get: (data): string | undefined => data?.scratchOrgInfo?.SignupUsername,
           bold: true,
           color: 'cyan',
         },
         {
           label: 'Alias',
           type: 'static-key-value',
-          get: (data) => data?.alias,
+          get: (data): string | undefined => data?.alias,
         },
       ],
     });
