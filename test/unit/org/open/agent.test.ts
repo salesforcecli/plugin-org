@@ -124,7 +124,7 @@ describe('org:open:agent', () => {
       testJsonStructure(response);
 
       // Verify the BotDefinition query was made (filter out determineOrg's Organization query)
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const botCalls = spies
         .get('singleRecordQuery')
         .args.filter((args: string[]) => args[0].includes('BotDefinition'));
@@ -141,7 +141,7 @@ describe('org:open:agent', () => {
       testJsonStructure(response);
       expect(spies.get('requestGet').callCount).to.equal(1);
       expect(spies.get('open').callCount).to.equal(1);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const botCalls = spies
         .get('singleRecordQuery')
         .args.filter((args: string[]) => args[0].includes('BotDefinition'));
@@ -152,7 +152,7 @@ describe('org:open:agent', () => {
       const specialName = 'Test_Agent_01';
       await OrgOpenAgent.run(['--json', '--target-org', testOrg.username, '--url-only', '--api-name', specialName]);
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const botCalls = spies
         .get('singleRecordQuery')
         .args.filter((args: string[]) => args[0].includes('BotDefinition'));
@@ -163,7 +163,7 @@ describe('org:open:agent', () => {
     it('builds URL with api-name and version using BotVersion query', async () => {
       const version = '2';
       // Override the singleRecordQuery stub to handle determineOrg, BotDefinition, and BotVersion
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+       
       const singleRecordQueryStub = spies.get('singleRecordQuery');
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       singleRecordQueryStub.callsFake((query: string) => {
@@ -186,9 +186,9 @@ describe('org:open:agent', () => {
       testJsonStructure(response);
 
       // Verify BotDefinition and BotVersion queries were made
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       const botDefCalls = singleRecordQueryStub.args.filter((args: string[]) => args[0].includes('FROM BotDefinition'));
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       const botVerCalls = singleRecordQueryStub.args.filter((args: string[]) => args[0].includes('FROM BotVersion'));
       expect(botDefCalls).to.have.lengthOf(1);
       expect(botVerCalls).to.have.lengthOf(1);
@@ -217,7 +217,7 @@ describe('org:open:agent', () => {
       testJsonStructure(response);
 
       // Verify no BotDefinition query was made (only determineOrg's Organization query may exist)
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const botCalls = spies
         .get('singleRecordQuery')
         .args.filter((args: string[]) => args[0].includes('BotDefinition'));
@@ -259,7 +259,7 @@ describe('org:open:agent', () => {
       testJsonStructure(response);
       expect(spies.get('requestGet').callCount).to.equal(1);
       expect(spies.get('open').callCount).to.equal(1);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const botCalls2 = spies
         .get('singleRecordQuery')
         .args.filter((args: string[]) => args[0].includes('BotDefinition'));
@@ -383,7 +383,7 @@ describe('org:open:agent', () => {
 
     it('throws helpful error when agent version does not exist', async () => {
       const nonExistentVersion = '999';
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+       
       const singleRecordQueryStub = spies.get('singleRecordQuery');
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       singleRecordQueryStub.callsFake((query: string) => {
