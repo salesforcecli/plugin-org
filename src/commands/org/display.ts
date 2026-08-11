@@ -59,7 +59,7 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
       // TODO: Once env var is removed, this refresh could be removed.
       // the auth file might have a stale access token.  We want to refresh it before getting the fields
       await this.org.refreshAuth();
-    } catch (error) {
+    } catch {
       // even if this fails, we want to display the information we can read from the auth file
       this.warn('unable to refresh auth for org');
     }
