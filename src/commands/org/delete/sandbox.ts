@@ -70,25 +70,69 @@ export default class DeleteSandbox extends SfCommand<SandboxDeleteResponse> {
       throw messages.createError('error.unknownSandbox', [username]);
     }
 
+    await this.verifyDeletePermission(stateAggregator, orgId, username);
+
+    const org = await Org.create({ aliasOrUsername: username });
+
     if (flags['no-prompt'] || (await this.confirm({ message: messages.getMessage('prompt.confirm', [username]) }))) {
       try {
-        const org = await Org.create({ aliasOrUsername: username });
         await org.delete();
         this.logSuccess(messages.getMessage('success', [username]));
       } catch (e) {
         if (e instanceof Error && e.name === 'DomainNotFoundError') {
-          // the org has expired, so remote operations won't work
-          // let's clean up the files locally
           const authRemover = await AuthRemover.create();
           await authRemover.removeAuth(username);
           this.logSuccess(messages.getMessage('success.Idempotent', [username]));
         } else if (e instanceof Error && e.name === 'SandboxNotFound') {
           this.logSuccess(messages.getMessage('success.Idempotent', [username]));
+        } else if (
+          e instanceof Error &&
+          'errorCode' in e &&
+          (e as { errorCode: string }).errorCode === 'INSUFFICIENT_ACCESS_OR_READONLY'
+        ) {
+          throw messages.createError('error.insufficientAccess');
         } else {
           throw e;
         }
       }
     }
     return { username, orgId };
+  }
+
+  /**
+   * Verifies the current user has the 'DeleteSandbox' PermissionSet assigned
+   * in the production org that owns the sandbox.
+   */
+  // eslint-disable-next-line class-methods-use-this
+  private async verifyDeletePermission(
+    stateAggregator: StateAggregator,
+    orgId: string,
+    sandboxUsername: string
+  ): Promise<void> {
+    const sandboxConfig = await stateAggregator.sandboxes.read(orgId);
+    const prodOrgUsername = sandboxConfig?.prodOrgUsername;
+
+    if (!prodOrgUsername) {
+      throw messages.createError('error.missingProdOrg', [sandboxUsername]);
+    }
+
+    const prodOrg = await Org.create({ aliasOrUsername: prodOrgUsername });
+    const connection = prodOrg.getConnection();
+    await prodOrg.refreshAuth();
+
+    const identity = await connection.identity();
+    const userId = identity.user_id;
+
+    if (!userId) {
+      throw messages.createError('error.insufficientPermissions', [sandboxUsername]);
+    }
+
+    const result = await connection.query(
+      `SELECT Id FROM PermissionSetAssignment WHERE AssigneeId = '${userId}' AND PermissionSet.Name = 'DeleteSandbox'`
+    );
+
+    if (result.totalSize === 0) {
+      throw messages.createError('error.insufficientPermissions', [sandboxUsername]);
+    }
   }
 }
