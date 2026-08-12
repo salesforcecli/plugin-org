@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unused-vars */
 import fs from 'node:fs';
 import path from 'node:path';
 import { SaveResult } from '@jsforce/jsforce-node';
@@ -83,7 +84,7 @@ export const updateSuccessResponse: SaveResult = {
 };
 
 export const readSandboxCacheFile = (cacheFilePath: string): Record<string, CachedOptions> =>
-  JSON.parse(fs.readFileSync(cacheFilePath, 'utf8')) as unknown as Record<string, CachedOptions>;
+  JSON.parse(fs.readFileSync(cacheFilePath, 'utf8'));
 export const deleteSandboxCacheFile = (cacheFilePath: string): void => fs.unlinkSync(cacheFilePath);
 export const readAuthFile = (homeDir: string, username: string): AuthFields => {
   const filePath = path.join(homeDir, Global.STATE_FOLDER, `${username}.json`);

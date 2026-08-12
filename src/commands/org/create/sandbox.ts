@@ -36,7 +36,6 @@ export default class CreateSandbox extends SandboxCommandBase<SandboxCommandResp
   public static readonly aliases = ['env:create:sandbox'];
   public static readonly deprecateAliases = true;
 
-  // eslint-disable-next-line sf-plugin/spread-base-flags
   public static flags = {
     // needs to change when new flags are available
     'definition-file': Flags.file({

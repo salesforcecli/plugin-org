@@ -45,7 +45,7 @@ export default class OrgAuthShowAccessToken extends SfCommand<OrgAuthShowAccessT
     try {
       // The auth file can have a stale access token. Refresh it before getting the fields
       await org.refreshAuth();
-    } catch (error) {
+    } catch {
       // Even if this fails, we want to display the information we can read from the auth file
       this.warn('Unable to refresh auth for org. Access token may be stale.');
     }
