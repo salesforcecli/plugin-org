@@ -186,6 +186,7 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxCommandResp
     }
   }
 
+  // eslint-disable-next-line complexity
   private buildSandboxRequestCacheEntry(): SandboxRequestCacheEntry {
     let sandboxRequestCacheEntry: SandboxRequestCacheEntry | undefined;
 
@@ -245,7 +246,7 @@ export default class ResumeSandbox extends SandboxCommandBase<SandboxCommandResp
         sandboxProcessObj: this.latestSandboxProgressObj,
         sandboxRes: { authUserName: this.sandboxUsername } as Partial<SandboxUserAuthResponse>,
       } as ResultEvent;
-      await lifecycle.emit(SandboxEvents.EVENT_RESULT, resultEvent as Partial<ResultEvent>);
+      await lifecycle.emit(SandboxEvents.EVENT_RESULT, resultEvent);
       return true;
     }
     return false;
@@ -263,7 +264,7 @@ const getSandboxProcessObject = async (
     return await prodOrg.getConnection().singleRecordQuery(queryStr, {
       tooling: true,
     });
-  } catch (err) {
+  } catch {
     throw messages.createError('error.NoSandboxRequestFound');
   }
 };

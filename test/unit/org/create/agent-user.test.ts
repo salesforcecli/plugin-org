@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unused-vars */
 
 import { expect } from 'chai';
 import { Connection, SfError } from '@salesforce/core';
@@ -44,7 +45,7 @@ describe('org:create:agent-user', () => {
         records: [],
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
       const { assigned, errors } = await (command as any).assignPermissionSets(connectionStub, 'userId123', [
         'NonExistentPermSet',
       ]);
@@ -75,7 +76,7 @@ describe('org:create:agent-user', () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
       connectionStub.sobject.returns(sobjectStub as any);
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
       const { assigned, errors } = await (command as any).assignPermissionSets(connectionStub, 'userId123', [
         'TestPermSet',
       ]);

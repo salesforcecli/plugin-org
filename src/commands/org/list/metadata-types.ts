@@ -67,7 +67,7 @@ export class ListMetadataTypes extends SfCommand<DescribeMetadataResult> {
           // the ones that can't be found.
           registry.getTypeByName(md.xmlName);
           return false;
-        } catch (e) {
+        } catch {
           return true;
         }
       });

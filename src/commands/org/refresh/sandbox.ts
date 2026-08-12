@@ -197,6 +197,7 @@ export default class RefreshSandbox extends SandboxCommandBase<SandboxCommandRes
     }
   }
 
+  // eslint-disable-next-line complexity
   private async resolveConfig(): Promise<SandboxInfo> {
     const defFile = this.flags['definition-file'];
     let sbxName = this.flags['name'];

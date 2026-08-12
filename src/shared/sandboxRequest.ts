@@ -58,12 +58,12 @@ export function readSandboxDefFile(
     throw cloneMessages.createError('error.bothSourceSandboxNameAndLicenseTypeProvided');
   }
 
-  return parsedContent as Partial<SandboxInfo>;
+  return parsedContent;
 }
 
 export async function createSandboxRequest(
   definitionFile: string | undefined,
-  logger?: Logger | undefined,
+  logger?: Logger  ,
   properties?: Record<string, string | undefined | string[]>
 ): Promise<{
   sandboxReq: SandboxRequest & {
@@ -75,7 +75,7 @@ export async function createSandboxRequest(
 }>;
 export async function createSandboxRequest(
   definitionFile: string | undefined,
-  logger?: Logger | undefined,
+  logger?: Logger  ,
   properties?: Record<string, string | undefined | string[]>
 ): Promise<{
   sandboxReq: SandboxRequest & {
@@ -85,12 +85,10 @@ export async function createSandboxRequest(
 }>;
 export async function createSandboxRequest(
   definitionFile: string | undefined,
-  logger?: Logger | undefined,
+  logger?: Logger  ,
   properties?: Record<string, string | undefined | string[]>
 ): Promise<{ sandboxReq: SandboxRequest; srcSandboxName?: string; srcId?: string }> {
-  if (!logger) {
-    logger = await Logger.child('createSandboxRequest');
-  }
+  logger ??= await Logger.child('createSandboxRequest');
   logger.debug('Varargs: %s ', properties);
 
   const sandboxDefFileContents = definitionFile ? readSandboxDefFile(definitionFile) : {};

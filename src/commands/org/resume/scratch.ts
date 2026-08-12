@@ -91,28 +91,28 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
         {
           label: 'Request Id',
           type: 'dynamic-key-value',
-          get: (data) =>
+          get: (data): string | undefined =>
             data?.scratchOrgInfo?.Id && terminalLink(data.scratchOrgInfo.Id, `${hubBaseUrl}/${data.scratchOrgInfo.Id}`),
           bold: true,
         },
         {
           label: 'OrgId',
           type: 'dynamic-key-value',
-          get: (data) => data?.scratchOrgInfo?.ScratchOrg,
+          get: (data): string | undefined => data?.scratchOrgInfo?.ScratchOrg,
           bold: true,
           color: 'cyan',
         },
         {
           label: 'Username',
           type: 'dynamic-key-value',
-          get: (data) => data?.scratchOrgInfo?.SignupUsername,
+          get: (data): string | undefined => data?.scratchOrgInfo?.SignupUsername,
           bold: true,
           color: 'cyan',
         },
         {
           label: 'Alias',
           type: 'static-key-value',
-          get: (data) => data?.alias,
+          get: (data): string | undefined => data?.alias,
         },
       ],
     });

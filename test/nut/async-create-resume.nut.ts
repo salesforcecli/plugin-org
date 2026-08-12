@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unused-vars */
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -33,7 +34,7 @@ describe('env:create:scratch async/resume', () => {
   const completeKeys = [...asyncKeys, 'authFields', 'orgId'];
 
   const readCacheFile = async (): Promise<Record<string, CachedOptions>> =>
-    JSON.parse(await fs.promises.readFile(cacheFilePath, 'utf8')) as unknown as Record<string, CachedOptions>;
+    JSON.parse(await fs.promises.readFile(cacheFilePath, 'utf8'));
 
   const readAuthFile = async (uname: string): Promise<AuthFields> => {
     const filePath = path.join(session.homeDir, Global.STATE_FOLDER, `${uname}.json`);

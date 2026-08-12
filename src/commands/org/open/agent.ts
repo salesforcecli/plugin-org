@@ -91,7 +91,7 @@ const buildRetUrl = async (conn: Connection, botName: string, version?: string):
   let botId: string;
   try {
     botId = (await conn.singleRecordQuery<{ Id: string }>(query)).Id;
-  } catch (error) {
+  } catch {
     throw new SfError(`No agent found with API name '${botName}' in the target org.`, 'AgentNotFound');
   }
 
@@ -101,7 +101,7 @@ const buildRetUrl = async (conn: Connection, botName: string, version?: string):
     try {
       const versionId = (await conn.singleRecordQuery<{ Id: string }>(versionQuery)).Id;
       queryParams.set('versionId', versionId);
-    } catch (error) {
+    } catch {
       throw new SfError(
         `No version '${version}' found for agent '${botName}' in the target org.`,
         'AgentVersionNotFound'
