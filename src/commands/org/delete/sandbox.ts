@@ -84,6 +84,12 @@ export default class DeleteSandbox extends SfCommand<SandboxDeleteResponse> {
           this.logSuccess(messages.getMessage('success.Idempotent', [username]));
         } else if (e instanceof Error && e.name === 'SandboxNotFound') {
           this.logSuccess(messages.getMessage('success.Idempotent', [username]));
+        } else if (
+          e instanceof Error &&
+          'errorCode' in e &&
+          (e as { errorCode: string }).errorCode === 'INSUFFICIENT_ACCESS_OR_READONLY'
+        ) {
+          throw messages.createError('error.insufficientAccess');
         } else {
           throw e;
         }
