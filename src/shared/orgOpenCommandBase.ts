@@ -19,7 +19,7 @@ import { apps } from 'open';
 import { SfCommand } from '@salesforce/sf-plugins-core';
 import { Connection, Messages, Org, SfdcUrl, SfError } from '@salesforce/core';
 import { env } from '@salesforce/kit';
-import utils, { handleDomainError } from './orgOpenUtils.js';
+import utils, { getWindowsPrivateBrowserApp, handleDomainError } from './orgOpenUtils.js';
 import { type OrgOpenOutput } from './orgTypes.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
@@ -78,10 +78,18 @@ export abstract class OrgOpenCommandBase<T> extends SfCommand<T> {
       handleDomainError(err, url, env);
     }
 
-    const cp = await utils.openUrl(url, {
-      ...(flags.browser ? { app: { name: apps[flags.browser] } } : {}),
-      ...(flags.private ? { newInstance: platform() === 'darwin', app: { name: apps.browserPrivate } } : {}),
-    });
+    let openOptions: import('open').Options = {};
+    if (flags.browser) {
+      openOptions = { app: { name: apps[flags.browser] } };
+    } else if (flags.private) {
+      if (platform() === 'win32') {
+        openOptions = { app: await getWindowsPrivateBrowserApp() };
+      } else {
+        openOptions = { newInstance: platform() === 'darwin', app: { name: apps.browserPrivate } };
+      }
+    }
+
+    const cp = await utils.openUrl(url, openOptions);
     cp.on('error', (err) => {
       throw SfError.wrap(err);
     });

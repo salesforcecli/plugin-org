@@ -25,7 +25,7 @@ import { MockTestOrgData, shouldThrow, TestContext } from '@salesforce/core/test
 import { stubSfCommandUx, stubSpinner, stubUx } from '@salesforce/sf-plugins-core';
 import { OrgOpenCommand } from '../../../src/commands/org/open.js';
 import { OrgOpenOutput } from '../../../src/shared/orgTypes.js';
-import utils from '../../../src/shared/orgOpenUtils.js';
+import utils, { getWindowsPrivateBrowserApp } from '../../../src/shared/orgOpenUtils.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'open');
@@ -345,5 +345,89 @@ describe('org:open', () => {
       expect(spies.get('resolver').callCount).to.equal(0);
       expect(spies.get('open').callCount).to.equal(0);
     });
+  });
+});
+
+describe('getWindowsPrivateBrowserApp', () => {
+  const makeExecStub =
+    (stdout: string) =>
+    async (_cmd: string, _args: string[]): Promise<{ stdout: string }> => ({ stdout });
+
+  it('detects Chrome as default browser', async () => {
+    const result = await getWindowsPrivateBrowserApp(
+      makeExecStub('HKEY_CURRENT_USER\\Software\\...\\UserChoice\r\n    ProgId    REG_SZ    ChromeHTML\r\n')
+    );
+    expect(result.arguments).to.deep.equal(['--incognito']);
+  });
+
+  it('detects Firefox as default browser', async () => {
+    const result = await getWindowsPrivateBrowserApp(
+      makeExecStub('HKEY_CURRENT_USER\\Software\\...\\UserChoice\r\n    ProgId    REG_SZ    FirefoxURL\r\n')
+    );
+    expect(result.arguments).to.deep.equal(['--private-window']);
+  });
+
+  it('detects Edge as default browser', async () => {
+    const result = await getWindowsPrivateBrowserApp(
+      makeExecStub('HKEY_CURRENT_USER\\Software\\...\\UserChoice\r\n    ProgId    REG_SZ    MSEdgeHTM\r\n')
+    );
+    expect(result.arguments).to.deep.equal(['--inPrivate']);
+  });
+
+  it('detects Brave as default browser', async () => {
+    const result = await getWindowsPrivateBrowserApp(
+      makeExecStub('HKEY_CURRENT_USER\\Software\\...\\UserChoice\r\n    ProgId    REG_SZ    BraveHTML\r\n')
+    );
+    expect(result.arguments).to.deep.equal(['--incognito']);
+  });
+
+  it('handles hyphen-suffixed ProgIds (e.g. FirefoxURL-6F193CCC56814779)', async () => {
+    const result = await getWindowsPrivateBrowserApp(
+      makeExecStub(
+        'HKEY_CURRENT_USER\\Software\\...\\UserChoice\r\n    ProgId    REG_SZ    FirefoxURL-6F193CCC56814779\r\n'
+      )
+    );
+    expect(result.arguments).to.deep.equal(['--private-window']);
+  });
+
+  it('throws for unsupported browser ProgId', async () => {
+    try {
+      await getWindowsPrivateBrowserApp(
+        makeExecStub('HKEY_CURRENT_USER\\Software\\...\\UserChoice\r\n    ProgId    REG_SZ    UnknownBrowser\r\n')
+      );
+      assert.fail('should have thrown');
+    } catch (e) {
+      assert(e instanceof SfError);
+      expect(e.message).to.include('Unsupported default browser');
+    }
+  });
+
+  it('throws when registry output cannot be parsed', async () => {
+    try {
+      await getWindowsPrivateBrowserApp(makeExecStub('unexpected output'));
+      assert.fail('should have thrown');
+    } catch (e) {
+      assert(e instanceof SfError);
+      expect(e.message).to.include('Unable to detect default browser');
+    }
+  });
+
+  it('uses fully-qualified reg.exe path from SYSTEMROOT', async () => {
+    const originalSystemRoot = process.env.SYSTEMROOT;
+    process.env.SYSTEMROOT = 'D:\\Windows';
+    let capturedCmd = '';
+    const execStub = async (cmd: string, _args: string[]): Promise<{ stdout: string }> => {
+      capturedCmd = cmd;
+      return { stdout: '    ProgId    REG_SZ    ChromeHTML\r\n' };
+    };
+
+    await getWindowsPrivateBrowserApp(execStub);
+    expect(capturedCmd).to.equal('D:\\Windows\\System32\\reg.exe');
+
+    if (originalSystemRoot === undefined) {
+      delete process.env.SYSTEMROOT;
+    } else {
+      process.env.SYSTEMROOT = originalSystemRoot;
+    }
   });
 });
