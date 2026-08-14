@@ -390,6 +390,13 @@ describe('getWindowsPrivateBrowserApp', () => {
     expect(result.arguments).to.deep.equal(['--private-window']);
   });
 
+  it('handles dot-suffixed ProgIds (e.g. ChromeHTML.ABC123)', async () => {
+    const result = await getWindowsPrivateBrowserApp(
+      makeExecStub('HKEY_CURRENT_USER\\Software\\...\\UserChoice\r\n    ProgId    REG_SZ    ChromeHTML.ABC123\r\n')
+    );
+    expect(result.arguments).to.deep.equal(['--incognito']);
+  });
+
   it('throws for unsupported browser ProgId', async () => {
     try {
       await getWindowsPrivateBrowserApp(

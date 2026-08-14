@@ -48,20 +48,25 @@ export const handleDomainError = (err: unknown, url: string, env: Env): string =
 
 const windowsBrowserProgIds: Record<string, { name: string; id: string }> = {
   MSEdgeHTM: { name: 'Edge', id: 'com.microsoft.edge' },
-  MSEdgeBHTML: { name: 'Edge Beta', id: 'com.microsoft.edge.beta' },
+  MSEdgeBHTML: { name: 'Edge Beta', id: 'com.microsoft.edge' },
+  MSEdgeDHTML: { name: 'Edge Dev', id: 'com.microsoft.edge' },
+  AppXq0fevzme2pys62n3e0fbqa7peapykr8v: { name: 'Edge', id: 'com.microsoft.edge' },
   ChromeHTML: { name: 'Chrome', id: 'com.google.chrome' },
-  ChromeBHTML: { name: 'Chrome Beta', id: 'com.google.chrome.beta' },
+  ChromeBHTML: { name: 'Chrome Beta', id: 'com.google.chrome' },
+  ChromeDHTML: { name: 'Chrome Dev', id: 'com.google.chrome' },
+  ChromiumHTM: { name: 'Chromium', id: 'com.google.chrome' },
   BraveHTML: { name: 'Brave', id: 'com.brave.Browser' },
+  BraveBHTML: { name: 'Brave Beta', id: 'com.brave.Browser' },
+  BraveDHTML: { name: 'Brave Dev', id: 'com.brave.Browser' },
+  BraveSSHTM: { name: 'Brave Nightly', id: 'com.brave.Browser' },
   FirefoxURL: { name: 'Firefox', id: 'org.mozilla.firefox' },
 };
 
 const browserIdToAppName: Record<string, 'chrome' | 'firefox' | 'edge' | 'brave'> = {
   'com.google.chrome': 'chrome',
-  'com.google.chrome.beta': 'chrome',
   'com.brave.Browser': 'brave',
   'org.mozilla.firefox': 'firefox',
   'com.microsoft.edge': 'edge',
-  'com.microsoft.edge.beta': 'edge',
 };
 
 const privateFlags: Record<string, string> = {
@@ -90,10 +95,15 @@ export async function getWindowsPrivateBrowserApp(
   }
 
   const { id } = match.groups;
+  const dotIndex = id.lastIndexOf('.');
   const hyphenIndex = id.lastIndexOf('-');
-  const baseId = hyphenIndex === -1 ? undefined : id.slice(0, hyphenIndex);
+  const baseIdByDot = dotIndex === -1 ? undefined : id.slice(0, dotIndex);
+  const baseIdByHyphen = hyphenIndex === -1 ? undefined : id.slice(0, hyphenIndex);
 
-  const browser = windowsBrowserProgIds[id] ?? (baseId ? windowsBrowserProgIds[baseId] : undefined);
+  const browser =
+    windowsBrowserProgIds[id] ??
+    (baseIdByDot ? windowsBrowserProgIds[baseIdByDot] : undefined) ??
+    (baseIdByHyphen ? windowsBrowserProgIds[baseIdByHyphen] : undefined);
   if (!browser) {
     throw new SfError(`Unsupported default browser: ${id}`);
   }
