@@ -1129,10 +1129,10 @@
     react "^18.3.1"
     wrap-ansi "^9.0.2"
 
-"@oclif/plugin-command-snapshot@^5.3.34":
-  version "5.3.34"
-  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-5.3.34.tgz#bc072b4da67cdd7a8c33b22368dc3cbb8df3e75d"
-  integrity sha512-CGIzTASwghLeCL3bn2liBkAA9Ij5U3OE9+c83WEnCxjgbFYoDIsurYvTxeP68tSqVU4mA34H5HjOpS/lDehutQ==
+"@oclif/plugin-command-snapshot@^5.3.35":
+  version "5.3.35"
+  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-5.3.35.tgz#0bb1f3627a4d3209c5bd41089dbfffefbf94a60e"
+  integrity sha512-IIj6zISG1muLLSpPI560n6Q2F4njN+OFTP/PXp+sdGxrB0pT/NtuRQ6DXwo0fvOX2AA6aG7HMLNYRO5h5feGJg==
   dependencies:
     "@oclif/core" "^4"
     ansis "^3.17.0"
