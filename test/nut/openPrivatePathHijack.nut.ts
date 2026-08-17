@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import { platform } from 'node:os';
+import { platform, tmpdir } from 'node:os';
 import fs from 'node:fs';
 import path from 'node:path';
-import { tmpdir } from 'node:os';
 import { expect } from 'chai';
-import { getWindowsPrivateBrowserApp, type ExecFileFn } from '../../src/shared/orgOpenUtils.js';
+import { type ExecFileFn, getWindowsPrivateBrowserApp } from '../../src/shared/orgOpenUtils.js';
 
 describe('W-23807283: reg.exe PATH hijack prevention (Windows only)', () => {
   if (platform() !== 'win32') {
@@ -58,7 +57,7 @@ describe('W-23807283: reg.exe PATH hijack prevention (Windows only)', () => {
     fs.mkdirSync(poisonBin, { recursive: true });
 
     fs.writeFileSync(
-      path.join(poisonBin, 'reg.cmd'),
+      path.join(poisonBin, 'reg.exe'),
       `@echo off\r\necho HIJACKED > "${evidenceFile}"\r\necho     ProgId    REG_SZ    ChromeHTML\r\n`
     );
 
@@ -67,7 +66,7 @@ describe('W-23807283: reg.exe PATH hijack prevention (Windows only)', () => {
 
     try {
       await getWindowsPrivateBrowserApp();
-      expect(fs.existsSync(evidenceFile), 'Malicious reg.cmd should NOT have been executed').to.be.false;
+      expect(fs.existsSync(evidenceFile), 'Malicious reg.exe should NOT have been executed').to.be.false;
     } finally {
       process.env.PATH = originalPath;
       fs.rmSync(poisonDir, { recursive: true, force: true });
