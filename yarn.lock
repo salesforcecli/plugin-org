@@ -1129,7 +1129,7 @@
     react "^18.3.1"
     wrap-ansi "^9.0.2"
 
-"@oclif/plugin-command-snapshot@^5.3.34":
+"@oclif/plugin-command-snapshot@^5.3.35":
   version "5.3.35"
   resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-5.3.35.tgz#0bb1f3627a4d3209c5bd41089dbfffefbf94a60e"
   integrity sha512-IIj6zISG1muLLSpPI560n6Q2F4njN+OFTP/PXp+sdGxrB0pT/NtuRQ6DXwo0fvOX2AA6aG7HMLNYRO5h5feGJg==
@@ -1220,7 +1220,7 @@
     "@pnpm/network.ca-file" "^1.0.1"
     config-chain "^1.1.11"
 
-"@salesforce/cli-plugins-testkit@^5.3.64":
+"@salesforce/cli-plugins-testkit@^5.3.66":
   version "5.3.66"
   resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-5.3.66.tgz#918a61e62092495bb9fadd1dee38e281d4e7b334"
   integrity sha512-xmco8MRlrpPmj2n9LZ8hkp0aWWDXbFDvNzTOC6h/z756PSu+g3ERNsW+HwXiyrirMd7rH7IalKSMcNXgWS/f3w==
@@ -1261,7 +1261,7 @@
     ts-retry-promise "^0.8.1"
     zod "^4.1.12"
 
-"@salesforce/core@^9.0.0":
+"@salesforce/core@^9.0.0", "@salesforce/core@^9.1.2":
   version "9.1.2"
   resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-9.1.2.tgz#c31777c0e74407085557ef8ca15d795d10451a2e"
   integrity sha512-ezAsmwfmUYSinGtJjqRfgioKXQsVdC0bc+KSJgMSLihysG6osjhkvbGtFqHwhoFs2kLu4evJRDERthsmfEW7nA==
@@ -1341,7 +1341,7 @@
   dependencies:
     "@salesforce/ts-types" "^3.0.0"
 
-"@salesforce/plugin-command-reference@^3.1.131":
+"@salesforce/plugin-command-reference@^3.1.132":
   version "3.1.132"
   resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.1.132.tgz#b40af2618d13466728211b7b88b312a2104c5b4f"
   integrity sha512-khxcwV+djsdN7pa2gRQjy3Xvn5RJ4/AqCdvsIfU70bZKo2LqjHK9O+Pkz0F7ci2ao4nyamRlyL9C6rpKPg+N+g==
@@ -5536,7 +5536,7 @@ object-hash@^3.0.0:
   resolved "https://registry.yarnpkg.com/object-hash/-/object-hash-3.0.0.tgz#73f97f753e7baffc0e2cc9d6e079079744ac82e9"
   integrity sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==
 
-oclif@^4.23.29:
+oclif@^4.23.30:
   version "4.23.30"
   resolved "https://registry.yarnpkg.com/oclif/-/oclif-4.23.30.tgz#d353a4eeb8b836214f3eaaa3f33c09c1468b2fd5"
   integrity sha512-x8sMRv606XqZAWEfGh981PP2JM4G2CKt4/z2KDntoNHljD8slfJ5sHaDFUQya9w6W8xOJDMFF3UaLAFFYHo13w==
