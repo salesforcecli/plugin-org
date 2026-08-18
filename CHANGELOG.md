@@ -1,3 +1,9 @@
+## [6.0.9](https://github.com/salesforcecli/plugin-org/compare/6.0.8...6.0.9) (2026-08-18)
+
+### Bug Fixes
+
+- bypass default-browser PATH hijack on Windows for --private @W-23807283@ ([#1748](https://github.com/salesforcecli/plugin-org/issues/1748)) ([56d6e58](https://github.com/salesforcecli/plugin-org/commit/56d6e58c7ec3e98e83e4bc9d3353bca82f529597))
+
 ## [6.0.8](https://github.com/salesforcecli/plugin-org/compare/6.0.7...6.0.8) (2026-08-16)
 
 ### Bug Fixes
