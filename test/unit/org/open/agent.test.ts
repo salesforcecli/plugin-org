@@ -161,7 +161,7 @@ describe('org:open:agent', () => {
     it('builds URL with api-name and version using BotVersion query', async () => {
       const version = '2';
       // Override the singleRecordQuery stub to handle determineOrg, BotDefinition, and BotVersion
-       
+
       const singleRecordQueryStub = spies.get('singleRecordQuery');
       singleRecordQueryStub.callsFake((query: string) => {
         if (query.includes('FROM BotVersion')) return Promise.resolve({ Id: mockVersionId });
@@ -295,7 +295,7 @@ describe('org:open:agent', () => {
       await OrgOpenAgent.run(['--json', '--target-org', testOrg.username, '--api-name', mockBotName, '--private']);
 
       expect(spies.get('open').callCount).to.equal(1);
-      expect(spies.get('open').args[0][1]).to.have.property('newInstance');
+      expect(spies.get('open').args[0][1]).to.have.property('app');
     });
 
     it('opens in private mode with authoring-bundle', async () => {
@@ -309,7 +309,7 @@ describe('org:open:agent', () => {
       ]);
 
       expect(spies.get('open').callCount).to.equal(1);
-      expect(spies.get('open').args[0][1]).to.have.property('newInstance');
+      expect(spies.get('open').args[0][1]).to.have.property('app');
     });
   });
 
@@ -375,7 +375,7 @@ describe('org:open:agent', () => {
 
     it('throws helpful error when agent version does not exist', async () => {
       const nonExistentVersion = '999';
-       
+
       const singleRecordQueryStub = spies.get('singleRecordQuery');
       singleRecordQueryStub.callsFake((query: string) => {
         if (query.includes('FROM BotVersion')) return Promise.reject(new Error('No records found'));
