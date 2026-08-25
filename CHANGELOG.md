@@ -1,3 +1,5 @@
+## [6.0.11](https://github.com/salesforcecli/plugin-org/compare/6.0.10...6.0.11) (2026-08-25)
+
 ## [6.0.10](https://github.com/salesforcecli/plugin-org/compare/6.0.9...6.0.10) (2026-08-20)
 
 ### Bug Fixes
