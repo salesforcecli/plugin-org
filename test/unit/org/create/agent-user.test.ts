@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument */
 
 import { expect } from 'chai';
 import { Connection, SfError } from '@salesforce/core';
@@ -35,7 +35,7 @@ describe('org:create:agent-user', () => {
 
   describe('Permission Set Assignment Errors', () => {
     it('should throw PermissionSetAssignmentError when permission set is not found', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const command = new OrgCreateAgentUser([], {} as any);
 
       // Stub the query to return no permission sets
@@ -45,7 +45,7 @@ describe('org:create:agent-user', () => {
         records: [],
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { assigned, errors } = await (command as any).assignPermissionSets(connectionStub, 'userId123', [
         'NonExistentPermSet',
       ]);
@@ -56,7 +56,7 @@ describe('org:create:agent-user', () => {
     });
 
     it('should throw PermissionSetAssignmentError when assignment fails', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const command = new OrgCreateAgentUser([], {} as any);
 
       // Stub the query to return a permission set
@@ -73,10 +73,10 @@ describe('org:create:agent-user', () => {
           errors: [{ message: 'Assignment failed due to licensing' }],
         }),
       };
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       connectionStub.sobject.returns(sobjectStub as any);
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { assigned, errors } = await (command as any).assignPermissionSets(connectionStub, 'userId123', [
         'TestPermSet',
       ]);
@@ -90,7 +90,7 @@ describe('org:create:agent-user', () => {
 
   describe('Profile Lookup Errors', () => {
     it('should throw ProfileQueryError when profile query fails', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const command = new OrgCreateAgentUser([], {} as any);
 
       // Stub singleRecordQuery to throw an error
@@ -100,7 +100,7 @@ describe('org:create:agent-user', () => {
         .rejects(new Error("INVALID_TYPE: sObject type 'Profile' is not supported"));
 
       try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await (command as any).getProfileId(connectionStub);
         expect.fail('Should have thrown ProfileQueryError');
       } catch (error) {
@@ -114,7 +114,7 @@ describe('org:create:agent-user', () => {
     });
 
     it('should throw ProfileQueryError when profile query fails with generic error', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const command = new OrgCreateAgentUser([], {} as any);
 
       // Stub singleRecordQuery to throw a generic error
@@ -122,7 +122,7 @@ describe('org:create:agent-user', () => {
       (connectionStub as any).singleRecordQuery = sandbox.stub().rejects(new Error('Connection timeout'));
 
       try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await (command as any).getProfileId(connectionStub);
         expect.fail('Should have thrown ProfileQueryError');
       } catch (error) {
@@ -136,7 +136,7 @@ describe('org:create:agent-user', () => {
 
   describe('License Check Query Errors', () => {
     it('should throw ProfileNotFoundError when Einstein Agent User profile does not exist', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const command = new OrgCreateAgentUser([], {} as any);
 
       // Stub query to return no profile
@@ -147,7 +147,7 @@ describe('org:create:agent-user', () => {
       });
 
       try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await (command as any).checkAgentUserLicenses(connectionStub);
         expect.fail('Should have thrown ProfileNotFoundError');
       } catch (error) {
@@ -160,7 +160,7 @@ describe('org:create:agent-user', () => {
     });
 
     it('should throw NoAgentLicensesError when no license information is found', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const command = new OrgCreateAgentUser([], {} as any);
 
       // Stub query to return profile without license info
@@ -171,7 +171,7 @@ describe('org:create:agent-user', () => {
       });
 
       try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await (command as any).checkAgentUserLicenses(connectionStub);
         expect.fail('Should have thrown NoAgentLicensesError');
       } catch (error) {
@@ -184,7 +184,7 @@ describe('org:create:agent-user', () => {
     });
 
     it('should throw NoAgentLicensesError when no licenses are provisioned', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const command = new OrgCreateAgentUser([], {} as any);
 
       // Stub query to return license with 0 total licenses
@@ -205,7 +205,7 @@ describe('org:create:agent-user', () => {
       });
 
       try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await (command as any).checkAgentUserLicenses(connectionStub);
         expect.fail('Should have thrown NoAgentLicensesError');
       } catch (error) {
@@ -220,7 +220,7 @@ describe('org:create:agent-user', () => {
     });
 
     it('should throw NoAvailableAgentLicensesError when all licenses are used', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const command = new OrgCreateAgentUser([], {} as any);
 
       // Stub query to return license with all licenses used
@@ -241,7 +241,7 @@ describe('org:create:agent-user', () => {
       });
 
       try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await (command as any).checkAgentUserLicenses(connectionStub);
         expect.fail('Should have thrown NoAvailableAgentLicensesError');
       } catch (error) {
