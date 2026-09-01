@@ -1,7 +1,7 @@
 {
   "name": "@salesforce/plugin-org",
   "description": "Commands to interact with Salesforce orgs",
-  "version": "6.0.11",
+  "version": "6.0.12",
   "author": "Salesforce",
   "bugs": "https://github.com/forcedotcom/cli/issues",
   "enableO11y": true,
@@ -10,6 +10,7 @@
     "@oclif/core": "^5.0.0",
     "@oclif/multi-stage-output": "^1.0.0",
     "@salesforce/core": "^9.1.7",
+    "@salesforce/core": "^9.1.9",
     "@salesforce/kit": "^4.0.0",
     "@salesforce/sf-plugins-core": "^13.0.4",
     "@salesforce/source-deploy-retrieve": "^13.0.1",
