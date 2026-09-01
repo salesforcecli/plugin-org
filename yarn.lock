@@ -999,25 +999,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@jsforce/jsforce-node@^3.10.17":
-  version "3.10.19"
-  resolved "https://registry.yarnpkg.com/@jsforce/jsforce-node/-/jsforce-node-3.10.19.tgz#ccbc539c12f4f7dff9cfdcc6cfb8f07bd840f731"
-  integrity sha512-k7i2Tntu1fLvkMtRcKDFU64/Fr2M692ECtbwIGX6hcOh5mj+jrMa1tlvcdwffxAMl+lPYCXnY2bjErxWmP84zA==
-  dependencies:
-    "@sindresorhus/is" "^4"
-    base64url "^3.0.1"
-    csv-parse "^5.5.2"
-    csv-stringify "^6.6.0"
-    faye "^1.4.0"
-    form-data "^4.0.4"
-    multistream "^3.1.0"
-    undici "^8.5.0"
-    xml2js "^0.6.2"
-
-"@jsforce/jsforce-node@^3.10.23":
-  version "3.10.23"
-  resolved "https://registry.yarnpkg.com/@jsforce/jsforce-node/-/jsforce-node-3.10.23.tgz#464be5621ee638a29d3bd43d97ade5b16470118f"
-  integrity sha512-sepBNb9Bt0vSdXqZqq97p/EP8NJjjOnDQoRmiH2Lcm/nsznQsrsUttoNmNxfxrRubuJTIL9m4H1I7uOb8HrgRg==
+"@jsforce/jsforce-node@^3.10.17", "@jsforce/jsforce-node@^3.10.24":
+  version "3.10.24"
+  resolved "https://registry.yarnpkg.com/@jsforce/jsforce-node/-/jsforce-node-3.10.24.tgz#e5e7a32dec73373c370c339295f18c7325b991fc"
+  integrity sha512-EejRrqFmn5No4lCiHYPlN5UFRCLo7gEoflNNisxca8AMZFzEO+sdj/aUHGzjzXf4a9K2cbXNZ+4eL4lkiIEsGw==
   dependencies:
     "@sindresorhus/is" "^4"
     base64url "^3.0.1"
@@ -1276,37 +1261,12 @@
     ts-retry-promise "^0.8.1"
     zod "^4.1.12"
 
-"@salesforce/core@^9.0.0":
-  version "9.1.2"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-9.1.2.tgz#c31777c0e74407085557ef8ca15d795d10451a2e"
-  integrity sha512-ezAsmwfmUYSinGtJjqRfgioKXQsVdC0bc+KSJgMSLihysG6osjhkvbGtFqHwhoFs2kLu4evJRDERthsmfEW7nA==
+"@salesforce/core@^9.0.0", "@salesforce/core@^9.1.4", "@salesforce/core@^9.1.9":
+  version "9.1.9"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-9.1.9.tgz#5380067cb372fc7d0a1bde1a816bcac9e99acf1e"
+  integrity sha512-miwUrBMzoNSquTXUsNKoAMnENj6XjSXSUJJgB2NsMf9g/jOeremiDRiSNTtTmo6E7oX3CU1wTq2lsO7r5RP09Q==
   dependencies:
-    "@jsforce/jsforce-node" "^3.10.17"
-    "@salesforce/kit" "^4.0.0"
-    "@salesforce/ts-types" "^3.0.0"
-    ajv "^8.18.0"
-    change-case "^4.1.2"
-    fast-levenshtein "^3.0.0"
-    faye "^1.4.1"
-    form-data "^4.0.5"
-    js2xmlparser "^4.0.1"
-    jsonwebtoken "9.0.3"
-    jszip "3.10.1"
-    memfs "4.38.1"
-    pino "^9.7.0"
-    pino-abstract-transport "^1.2.0"
-    pino-pretty "^11.3.0"
-    proper-lockfile "^4.1.2"
-    semver "^7.8.0"
-    ts-retry-promise "^0.8.1"
-    zod "^4.1.12"
-
-"@salesforce/core@^9.1.4", "@salesforce/core@^9.1.7":
-  version "9.1.7"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-9.1.7.tgz#6084959bfab927d062cf4ef39d261b9a6e655cb0"
-  integrity sha512-6ecm8k3RQ5lLZ8ecv4kuY9ORpdZ5vceQO/QEDkEIfg+XbT3k10lMztX6/Q0lM6EmeNGT8xqwbdHaYvcKhCwyDQ==
-  dependencies:
-    "@jsforce/jsforce-node" "^3.10.23"
+    "@jsforce/jsforce-node" "^3.10.24"
     "@salesforce/kit" "^4.0.0"
     "@salesforce/ts-types" "^3.0.0"
     ajv "^8.18.0"
