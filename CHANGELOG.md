@@ -1,3 +1,10 @@
+## [6.0.12](https://github.com/salesforcecli/plugin-org/compare/6.0.11...6.0.12) (2026-09-01)
+
+### Bug Fixes
+
+- bump @salesforce/core to v9.1.9 ([7e018cf](https://github.com/salesforcecli/plugin-org/commit/7e018cf90e10fae2ff6015a4690fdefc445ef989))
+- dedupe salesforce/core versions in yarn.lock ([f14f96f](https://github.com/salesforcecli/plugin-org/commit/f14f96f2d900d9aeea5947492eca65683c736e43))
+
 ## [6.0.11](https://github.com/salesforcecli/plugin-org/compare/6.0.10...6.0.11) (2026-08-25)
 
 ## [6.0.10](https://github.com/salesforcecli/plugin-org/compare/6.0.9...6.0.10) (2026-08-20)
