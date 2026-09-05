@@ -3248,10 +3248,10 @@ eslint-config-prettier@^10.1.5:
   resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-10.1.8.tgz#15734ce4af8c2778cc32f0b01b37b0b5cd1ecb97"
   integrity sha512-82GZUjRS0p/jganf6q1rEO25VSoHH0hKPCTrgillPjdI/3bgBhAE1QzHrHTizjpRvy6pGAvKjDJtk2pF9NDq8w==
 
-eslint-config-salesforce-typescript@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-salesforce-typescript/-/eslint-config-salesforce-typescript-6.0.0.tgz#4cfcf4385c3c85ac3b4c8402db479b8fc4e3d4a2"
-  integrity sha512-7QMSBDsNs6X1bd5gI5wIZpUQIKurDjSQhgQMmmPU3iLRcWtT2U9ytQgdTfRsg9TlPoRtkrrIEdg2QHMXjs3IPw==
+eslint-config-salesforce-typescript@^6.0.0, eslint-config-salesforce-typescript@^6.0.2:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/eslint-config-salesforce-typescript/-/eslint-config-salesforce-typescript-6.0.2.tgz#661897aa6097237d08357d938020144335f634e8"
+  integrity sha512-Lp7TjqCUSAcT0lkgqHBToq71XOfeh9YxDcRxofoINK0stJHlQ+r2pG34GNoMWhEEzmsuaV8pUaxi3MWfkIX8zw==
   dependencies:
     "@eslint/js" "^10.0.0"
     "@tony.ganchev/eslint-plugin-header" "^3.4.4"
