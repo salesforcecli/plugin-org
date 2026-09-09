@@ -4,7 +4,7 @@
   "compilerOptions": {
     "skipLibCheck": true,
     "strictNullChecks": true,
-    "baseUrl": "../",
-    "sourceMap": true
+    "sourceMap": true,
+    "types": ["mocha"]
   }
 }

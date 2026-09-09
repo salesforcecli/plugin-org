@@ -16,7 +16,7 @@
 
 import { MultiStageOutput } from '@oclif/multi-stage-output';
 import { SandboxProcessObject } from '@salesforce/core';
-import { StageStatus } from 'node_modules/@oclif/multi-stage-output/lib/stage-tracker.js';
+import { StageStatus } from '../../node_modules/@oclif/multi-stage-output/lib/stage-tracker.js';
 
 type Options = {
   title: string;
