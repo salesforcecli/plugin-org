@@ -90,8 +90,25 @@ export abstract class OrgOpenCommandBase<T> extends SfCommand<T> {
     }
 
     const cp = await utils.openUrl(url, openOptions);
-    cp.on('error', (err) => {
-      throw SfError.wrap(err);
+    // Wait for the browser-opener to exit before the CLI tears it down.
+    await new Promise<void>((resolve, reject) => {
+      cp.on('error', (err) => {
+        reject(SfError.wrap(err));
+      });
+
+      const handleExit = (code: number | null): void => {
+        if (code && code > 0) {
+          reject(new SfError(`Failed to open browser (exit code ${code})`));
+        } else {
+          resolve();
+        }
+      };
+
+      if (cp.exitCode !== null) {
+        handleExit(cp.exitCode);
+      } else {
+        cp.on('exit', handleExit);
+      }
     });
 
     return output;

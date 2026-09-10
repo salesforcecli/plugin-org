@@ -56,7 +56,10 @@ describe('org:open', () => {
     stubUx($$.SANDBOX);
     stubSpinner($$.SANDBOX);
     await $$.stubAuths(testOrg);
-    spies.set('open', stubMethod($$.SANDBOX, utils, 'openUrl').resolves(new EventEmitter()));
+    spies.set(
+      'open',
+      stubMethod($$.SANDBOX, utils, 'openUrl').resolves(Object.assign(new EventEmitter(), { exitCode: 0 }))
+    );
     spies.set(
       'requestGet',
       stubMethod($$.SANDBOX, Connection.prototype, 'requestGet').callsFake((url: string) => {
