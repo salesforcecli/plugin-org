@@ -88,7 +88,6 @@ export abstract class OrgOpenCommandBase<T> extends SfCommand<T> {
         openOptions = { newInstance: platform() === 'darwin', app: { name: apps.browserPrivate } };
       }
     }
-
     const cp = await utils.openUrl(url, openOptions);
     cp.on('error', (err) => {
       throw SfError.wrap(err);
