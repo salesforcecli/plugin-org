@@ -88,27 +88,13 @@ export abstract class OrgOpenCommandBase<T> extends SfCommand<T> {
         openOptions = { newInstance: platform() === 'darwin', app: { name: apps.browserPrivate } };
       }
     }
-
+    // open@11 on Windows: wait=true keeps piped stdio so the CLI stays alive until the browser launches.
+    if (platform() === 'win32') {
+      openOptions = { ...openOptions, wait: true };
+    }
     const cp = await utils.openUrl(url, openOptions);
-    // Wait for the browser-opener to exit before the CLI tears it down.
-    await new Promise<void>((resolve, reject) => {
-      cp.on('error', (err) => {
-        reject(SfError.wrap(err));
-      });
-
-      const handleExit = (code: number | null): void => {
-        if (code && code > 0) {
-          reject(new SfError(`Failed to open browser (exit code ${code})`));
-        } else {
-          resolve();
-        }
-      };
-
-      if (cp.exitCode !== null) {
-        handleExit(cp.exitCode);
-      } else {
-        cp.on('exit', handleExit);
-      }
+    cp.on('error', (err) => {
+      throw SfError.wrap(err);
     });
 
     return output;
