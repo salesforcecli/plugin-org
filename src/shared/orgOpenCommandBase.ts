@@ -88,10 +88,6 @@ export abstract class OrgOpenCommandBase<T> extends SfCommand<T> {
         openOptions = { newInstance: platform() === 'darwin', app: { name: apps.browserPrivate } };
       }
     }
-    // open@11 on Windows: wait=true keeps piped stdio so the CLI stays alive until the browser launches.
-    if (platform() === 'win32') {
-      openOptions = { ...openOptions, wait: true };
-    }
     const cp = await utils.openUrl(url, openOptions);
     cp.on('error', (err) => {
       throw SfError.wrap(err);
