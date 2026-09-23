@@ -1,3 +1,10 @@
+## [6.0.15](https://github.com/salesforcecli/plugin-org/compare/6.0.13...6.0.15) (2026-09-23)
+
+### Bug Fixes
+
+- bump open package to latest-W-24154138 ([#1775](https://github.com/salesforcecli/plugin-org/issues/1775)) ([acae199](https://github.com/salesforcecli/plugin-org/commit/acae19944613bb6a0037277841f973ef8928dbce))
+- remove dev tag version ([5fc5eb7](https://github.com/salesforcecli/plugin-org/commit/5fc5eb7822547e783558decad2251f7b87ead670))
+
 ## [6.0.13](https://github.com/salesforcecli/plugin-org/compare/6.0.12...6.0.13) (2026-09-01)
 
 ### Bug Fixes
