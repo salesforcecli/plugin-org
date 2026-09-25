@@ -146,12 +146,8 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
 
       const redactedScratchOrgInfo = scratchOrgInfo ? omit(scratchOrgInfo, ['AuthCode']) : undefined;
 
-      if (this.jsonEnabled()) {
-        if (showSecretsEnvVarIsSet) {
-          this.warn(secretsMessages.getMessage('temp.envVarIsSet', ['sf org resume scratch --json']));
-        } else {
-          this.warn(secretsMessages.getMessage('temp.envVarWorkaround', ['sf org resume scratch --json']));
-        }
+      if (this.jsonEnabled() && showSecretsEnvVarIsSet) {
+        this.warn(secretsMessages.getMessage('temp.envVarIsSet', ['sf org resume scratch --json']));
       }
 
       return {

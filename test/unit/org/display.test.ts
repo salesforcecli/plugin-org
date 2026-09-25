@@ -263,12 +263,11 @@ describe('org:display', () => {
     expect(result.status).to.equal('Active');
   });
 
-  it('emits the workaround warning referencing sf org display', async () => {
+  it('no longer recommends the "SF_TEMP_SHOW_SECRETS" env var workaround, this will be removed on 2027-01-13', async () => {
     await $$.stubAuths(testOrg);
     await OrgDisplayCommand.run(['--targetusername', testOrg.username]);
     const warnCalls = sfCommandUxStubs.warn.getCalls().flatMap((c) => c.args);
-    expect(warnCalls.some((w) => typeof w === 'string' && w.includes('sf org display'))).to.be.true;
-    expect(warnCalls.some((w) => typeof w === 'string' && w.includes('SF_TEMP_SHOW_SECRETS'))).to.be.true;
+    expect(warnCalls.some((w) => typeof w === 'string' && w.includes('SF_TEMP_SHOW_SECRETS'))).to.be.false;
   });
 
   it('gets non-scratch org connectedStatus');
