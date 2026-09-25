@@ -1,3 +1,9 @@
+## [6.0.16](https://github.com/salesforcecli/plugin-org/compare/6.0.15...6.0.16) (2026-09-25)
+
+### Bug Fixes
+
+- hide SF_TEMP_SHOW_SECRETS suggestion, add eol date ([#1782](https://github.com/salesforcecli/plugin-org/issues/1782)) ([72b2854](https://github.com/salesforcecli/plugin-org/commit/72b2854740b37476e8911c9f28102312366e38e1))
+
 ## [6.0.15](https://github.com/salesforcecli/plugin-org/compare/6.0.13...6.0.15) (2026-09-23)
 
 ### Bug Fixes
