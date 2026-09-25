@@ -140,12 +140,8 @@ Legend:  ${defaultHubEmoji}=Default DevHub, ${defaultOrgEmoji}=Default Org ${
     // TODO: Remove after env var workaround is removed
     const showSecretsEnvVarIsSet = envVars.getBoolean('SF_TEMP_SHOW_SECRETS', false);
 
-    if (this.jsonEnabled()) {
-      if (showSecretsEnvVarIsSet) {
-        this.warn(secretsMessages.getMessage('temp.envVarIsSet', ['sf org list']));
-      } else {
-        this.warn(secretsMessages.getMessage('temp.envVarWorkaround', ['sf org list']));
-      }
+    if (this.jsonEnabled() && showSecretsEnvVarIsSet) {
+      this.warn(secretsMessages.getMessage('temp.envVarIsSet', ['sf org list']));
     }
 
     return result;

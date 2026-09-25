@@ -104,12 +104,10 @@ describe('org:list', () => {
       );
     });
 
-    it('emits the workaround warning referencing sf org list when --json is used', async () => {
+    it('no longer recommends the "SF_TEMP_SHOW_SECRETS" env var workaround, this will be removed on 2027-01-13', async () => {
       await OrgListCommand.run(['--json']);
       const warnCalls = sfCommandUxStubs.warn.getCalls().flatMap((c) => c.args);
-      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('sf org list'))).to.be.true;
-      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('SF_TEMP_SHOW_SECRETS'))).to.be.true;
-      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('sf org auth'))).to.be.true;
+      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('SF_TEMP_SHOW_SECRETS'))).to.be.false;
     });
 
     it('does not emit the secrets warning without --json', async () => {

@@ -268,12 +268,8 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
 
       const redactedScratchOrgInfo = omit(scratchOrgInfo, ['AuthCode']);
 
-      if (this.jsonEnabled()) {
-        if (showSecretsEnvVarIsSet) {
-          this.warn(secretsMessages.getMessage('temp.envVarIsSet', ['sf org create scratch --json']));
-        } else {
-          this.warn(secretsMessages.getMessage('temp.envVarWorkaround', ['sf org create scratch --json']));
-        }
+      if (this.jsonEnabled() && showSecretsEnvVarIsSet) {
+        this.warn(secretsMessages.getMessage('temp.envVarIsSet', ['sf org create scratch --json']));
       }
 
       return {

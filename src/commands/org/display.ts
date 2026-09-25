@@ -68,7 +68,6 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
     const sfdxAuthUrlRedactedMessage = secretsMessages.getMessage('redacted.sfdxAuthUrl');
     const passwordRedactedMessage = secretsMessages.getMessage('redacted.userPassword');
 
-    const envVarAsATempWorkaroundMessage = secretsMessages.getMessage('temp.envVarWorkaround', ['sf org display']);
     const showSecretsEnvVarIsSet = envVars.getBoolean('SF_TEMP_SHOW_SECRETS', false);
     const envVarIsSetWarning = secretsMessages.getMessage('temp.envVarIsSet', ['sf org display']);
 
@@ -117,8 +116,6 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
     if (showSecretsEnvVarIsSet) {
       this.warn(envVarIsSetWarning);
       this.warn(sharedMessages.getMessage('SecurityWarning'));
-    } else {
-      this.warn(envVarAsATempWorkaroundMessage);
     }
 
     this.print(returnValue);
