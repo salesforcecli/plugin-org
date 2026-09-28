@@ -263,7 +263,7 @@ describe('org:display', () => {
     expect(result.status).to.equal('Active');
   });
 
-  it('no longer recommends the "SF_TEMP_SHOW_SECRETS" env var workaround, this will be removed on 2027-01-13', async () => {
+  it('no longer recommends the "SF_TEMP_SHOW_SECRETS" env var workaround, this will be removed on 2026-10-28', async () => {
     await $$.stubAuths(testOrg);
     await OrgDisplayCommand.run(['--targetusername', testOrg.username]);
     const warnCalls = sfCommandUxStubs.warn.getCalls().flatMap((c) => c.args);
