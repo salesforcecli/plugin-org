@@ -104,7 +104,7 @@ describe('org:list', () => {
       );
     });
 
-    it('no longer recommends the "SF_TEMP_SHOW_SECRETS" env var workaround, this will be removed on 2027-01-13', async () => {
+    it('no longer recommends the "SF_TEMP_SHOW_SECRETS" env var workaround, this will be removed on 2026-10-28', async () => {
       await OrgListCommand.run(['--json']);
       const warnCalls = sfCommandUxStubs.warn.getCalls().flatMap((c) => c.args);
       expect(warnCalls.some((w) => typeof w === 'string' && w.includes('SF_TEMP_SHOW_SECRETS'))).to.be.false;
