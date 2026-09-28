@@ -1,3 +1,9 @@
+## [6.0.17](https://github.com/salesforcecli/plugin-org/compare/6.0.16...6.0.17) (2026-09-28)
+
+### Bug Fixes
+
+- eol date ([#1783](https://github.com/salesforcecli/plugin-org/issues/1783)) ([0733687](https://github.com/salesforcecli/plugin-org/commit/0733687f2f2bed57e6e0e09afc6afd2e1a6ab699))
+
 ## [6.0.16](https://github.com/salesforcecli/plugin-org/compare/6.0.15...6.0.16) (2026-09-25)
 
 ### Bug Fixes
