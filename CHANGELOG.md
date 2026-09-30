@@ -1,3 +1,9 @@
+## [6.0.18](https://github.com/salesforcecli/plugin-org/compare/6.0.17...6.0.18) (2026-09-30)
+
+### Bug Fixes
+
+- **deps:** bump ip-address from 10.5.0 to 10.7.2 ([ef7105d](https://github.com/salesforcecli/plugin-org/commit/ef7105dcf3bf759ba1b87b14ce27d544146df4a6))
+
 ## [6.0.17](https://github.com/salesforcecli/plugin-org/compare/6.0.16...6.0.17) (2026-09-28)
 
 ### Bug Fixes
