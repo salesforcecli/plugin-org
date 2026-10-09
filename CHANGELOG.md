@@ -1,3 +1,9 @@
+## [6.0.21](https://github.com/salesforcecli/plugin-org/compare/6.0.20...6.0.21) (2026-10-09)
+
+### Bug Fixes
+
+- **deps:** bump source-map-js from 1.2.1 to 1.2.2 ([5e5ca08](https://github.com/salesforcecli/plugin-org/commit/5e5ca08d00ce5ecdb12b72c2455410fedab137a8))
+
 ## [6.0.20](https://github.com/salesforcecli/plugin-org/compare/6.0.19...6.0.20) (2026-10-07)
 
 ### Bug Fixes
