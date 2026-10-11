@@ -1,3 +1,9 @@
+## [6.0.26](https://github.com/salesforcecli/plugin-org/compare/6.0.25...6.0.26) (2026-10-11)
+
+### Bug Fixes
+
+- **deps:** bump open from 11.0.3 to 11.0.4 ([d972123](https://github.com/salesforcecli/plugin-org/commit/d972123fd5d3f6c8a70faabdac9664549def0427))
+
 ## [6.0.25](https://github.com/salesforcecli/plugin-org/compare/6.0.24...6.0.25) (2026-10-11)
 
 ### Bug Fixes
