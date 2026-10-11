@@ -1,3 +1,9 @@
+## [6.0.25](https://github.com/salesforcecli/plugin-org/compare/6.0.24...6.0.25) (2026-10-11)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/sf-plugins-core from 13.0.4 to 13.0.5 ([e4c394b](https://github.com/salesforcecli/plugin-org/commit/e4c394b7796c58807f36d851dc97dbefb742ff37))
+
 ## [6.0.24](https://github.com/salesforcecli/plugin-org/compare/6.0.23...6.0.24) (2026-10-10)
 
 ### Bug Fixes
