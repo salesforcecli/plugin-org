@@ -18,7 +18,6 @@ import { strict as assert } from 'node:assert';
 
 import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
 import {
-  envVars,
   Lifecycle,
   Messages,
   ScratchOrgCache,
@@ -131,24 +130,18 @@ export default class OrgResumeScratch extends SfCommand<ScratchCreateResponse> {
       this.log();
       this.logSuccess(messages.getMessage('success'));
 
-      // TODO: Remove env var workaround
-      const showSecretsEnvVarIsSet = envVars.getBoolean('SF_TEMP_SHOW_SECRETS', false);
       const accessTokenRedacted = secretsMessages.getMessage('redacted.accessToken');
 
       const redactedAuthFields = authFields
         ? {
             ...authFields,
-            accessToken: showSecretsEnvVarIsSet ? authFields.accessToken : accessTokenRedacted,
+            accessToken: accessTokenRedacted,
             refreshToken: undefined,
             clientSecret: undefined,
           }
         : undefined;
 
       const redactedScratchOrgInfo = scratchOrgInfo ? omit(scratchOrgInfo, ['AuthCode']) : undefined;
-
-      if (this.jsonEnabled() && showSecretsEnvVarIsSet) {
-        this.warn(secretsMessages.getMessage('temp.envVarIsSet', ['sf org resume scratch --json']));
-      }
 
       return {
         username,

@@ -16,17 +16,7 @@
 
 import { EOL } from 'node:os';
 import { Flags, loglevel, SfCommand } from '@salesforce/sf-plugins-core';
-import {
-  AuthInfo,
-  ConfigAggregator,
-  ConfigInfo,
-  Connection,
-  envVars,
-  Org,
-  SfError,
-  Messages,
-  Logger,
-} from '@salesforce/core';
+import { AuthInfo, ConfigAggregator, ConfigInfo, Connection, Org, SfError, Messages, Logger } from '@salesforce/core';
 import { Interfaces } from '@oclif/core';
 import ansis, { type Ansis } from 'ansis';
 import { OrgListUtil, identifyActiveOrgByStatus } from '../../shared/orgListUtil.js';
@@ -35,7 +25,6 @@ import { ExtendedAuthFields, FullyPopulatedScratchOrgFields } from '../../shared
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'list');
-const secretsMessages = Messages.loadMessages('@salesforce/plugin-org', 'secrets-redacted');
 
 export const defaultOrgEmoji = '🍁';
 export const defaultHubEmoji = '🌳';
@@ -136,13 +125,6 @@ Legend:  ${defaultHubEmoji}=Default DevHub, ${defaultOrgEmoji}=Default Org ${
         flags.all ? '' : '     Use --all to see expired and deleted scratch orgs'
       }`
     );
-
-    // TODO: Remove after env var workaround is removed
-    const showSecretsEnvVarIsSet = envVars.getBoolean('SF_TEMP_SHOW_SECRETS', false);
-
-    if (this.jsonEnabled() && showSecretsEnvVarIsSet) {
-      this.warn(secretsMessages.getMessage('temp.envVarIsSet', ['sf org list']));
-    }
 
     return result;
   }

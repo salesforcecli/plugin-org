@@ -20,7 +20,6 @@ import fs from 'node:fs/promises';
 import {
   Org,
   AuthInfo,
-  envVars,
   Global,
   Logger,
   Messages,
@@ -106,16 +105,10 @@ export class OrgListUtil {
       OrgListUtil.processScratchOrgs(orgs.scratchOrgs),
     ]);
 
-    // TODO: Remove env var workaround
-    const showSecretsEnvVarIsSet = envVars.getBoolean('SF_TEMP_SHOW_SECRETS', false);
     const redactSecrets = <T extends { accessToken?: string; password?: string }>(org: T): T => ({
       ...org,
-      accessToken: showSecretsEnvVarIsSet ? org.accessToken : secretsMessages.getMessage('redacted.accessToken'),
-      password: org.password
-        ? showSecretsEnvVarIsSet
-          ? org.password
-          : secretsMessages.getMessage('redacted.userPassword')
-        : undefined,
+      accessToken: secretsMessages.getMessage('redacted.accessToken'),
+      password: org.password ? secretsMessages.getMessage('redacted.userPassword') : undefined,
     });
 
     const redactedNonScratchOrgs = nonScratchOrgs.map(redactSecrets);

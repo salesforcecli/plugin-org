@@ -117,7 +117,7 @@ describe('org:list', () => {
     });
   });
 
-  describe('secret redaction warnings WITH env var (SF_TEMP_SHOW_SECRETS)', () => {
+  describe('SF_TEMP_SHOW_SECRETS env var has no effect', () => {
     const SHOW_TOKENS_ENV = 'SF_TEMP_SHOW_SECRETS';
 
     beforeEach(() => {
@@ -131,12 +131,11 @@ describe('org:list', () => {
       delete process.env[SHOW_TOKENS_ENV];
     });
 
-    it('emits the deprecation warning referencing sf org list when --json is used', async () => {
+    it('does not emit any SF_TEMP_SHOW_SECRETS or removal warning when --json is used', async () => {
       await OrgListCommand.run(['--json']);
       const warnCalls = sfCommandUxStubs.warn.getCalls().flatMap((c) => c.args);
-      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('will be removed'))).to.be.true;
-      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('sf org list'))).to.be.true;
-      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('sf org auth'))).to.be.true;
+      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('SF_TEMP_SHOW_SECRETS'))).to.be.false;
+      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('will be removed'))).to.be.false;
     });
   });
 });

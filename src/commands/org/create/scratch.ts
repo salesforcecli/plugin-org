@@ -16,7 +16,6 @@
 
 import { MultiStageOutput } from '@oclif/multi-stage-output';
 import {
-  envVars,
   Lifecycle,
   Messages,
   Org,
@@ -253,24 +252,18 @@ export default class OrgCreateScratch extends SfCommand<ScratchCreateResponse> {
         this.logSuccess(messages.getMessage('success'));
       }
 
-      // TODO: Remove env var workaround
-      const showSecretsEnvVarIsSet = envVars.getBoolean('SF_TEMP_SHOW_SECRETS', false);
       const accessTokenRedacted = secretsMessages.getMessage('redacted.accessToken');
 
       const redactedAuthFields = authFields
         ? {
             ...authFields,
-            accessToken: showSecretsEnvVarIsSet ? authFields.accessToken : accessTokenRedacted,
+            accessToken: accessTokenRedacted,
             refreshToken: undefined,
             clientSecret: undefined,
           }
         : undefined;
 
       const redactedScratchOrgInfo = omit(scratchOrgInfo, ['AuthCode']);
-
-      if (this.jsonEnabled() && showSecretsEnvVarIsSet) {
-        this.warn(secretsMessages.getMessage('temp.envVarIsSet', ['sf org create scratch --json']));
-      }
 
       return {
         username,

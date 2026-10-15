@@ -21,7 +21,7 @@ import {
   loglevel,
   orgApiVersionFlagWithDeprecations,
 } from '@salesforce/sf-plugins-core';
-import { AuthInfo, envVars, Messages, Org, SfError, trimTo15 } from '@salesforce/core';
+import { AuthInfo, Messages, Org, SfError, trimTo15 } from '@salesforce/core';
 import { camelCaseToTitleCase } from '@salesforce/kit';
 import { AuthFieldsFromFS, OrgDisplayReturn, ScratchOrgFields } from '../../shared/orgTypes.js';
 import { getAliasByUsername } from '../../shared/utils.js';
@@ -30,7 +30,6 @@ import { OrgListUtil } from '../../shared/orgListUtil.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('@salesforce/plugin-org', 'display');
-const sharedMessages = Messages.loadMessages('@salesforce/plugin-org', 'messages');
 const secretsMessages = Messages.loadMessages('@salesforce/plugin-org', 'secrets-redacted');
 
 export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
@@ -56,8 +55,6 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
     this.org = flags['target-org'];
     this.org.getConnection(flags['api-version']);
     try {
-      // TODO: Once env var is removed, this refresh could be removed.
-      // the auth file might have a stale access token.  We want to refresh it before getting the fields
       await this.org.refreshAuth();
     } catch {
       // even if this fails, we want to display the information we can read from the auth file
@@ -68,9 +65,6 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
     const sfdxAuthUrlRedactedMessage = secretsMessages.getMessage('redacted.sfdxAuthUrl');
     const passwordRedactedMessage = secretsMessages.getMessage('redacted.userPassword');
 
-    const showSecretsEnvVarIsSet = envVars.getBoolean('SF_TEMP_SHOW_SECRETS', false);
-    const envVarIsSetWarning = secretsMessages.getMessage('temp.envVarIsSet', ['sf org display']);
-
     // translate to alias if necessary
     const authInfo = await AuthInfo.create({ username: this.org.getUsername() });
     const fields = authInfo.getFields(true) as AuthFieldsFromFS;
@@ -80,8 +74,7 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
 
     const getSfdxAuthUrlOutput = (): string | undefined => {
       if (flags.verbose && fields.refreshToken) {
-        // TODO: Remove env var workaround
-        return showSecretsEnvVarIsSet ? authInfo.getSfdxAuthUrl() : sfdxAuthUrlRedactedMessage;
+        return sfdxAuthUrlRedactedMessage;
       }
       return undefined;
     };
@@ -94,14 +87,12 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
       // copied properties
       apiVersion: fields.instanceApiVersion,
       // Access token will always exist, don't check for value first
-      // TODO: Remove env var workaround
-      accessToken: showSecretsEnvVarIsSet ? fields.accessToken : accessTokenRedactedMessage,
+      accessToken: accessTokenRedactedMessage,
       instanceUrl: fields.instanceUrl,
       username: fields.username,
       clientId: fields.clientId,
       // Password only exists if it was generated locally, check for value first
-      // TODO: Remove env var workaround
-      password: fields.password ? (showSecretsEnvVarIsSet ? fields.password : passwordRedactedMessage) : undefined,
+      password: fields.password ? passwordRedactedMessage : undefined,
       ...scratchOrgInfo,
       // properties with more complex logic
       connectedStatus: isScratchOrg
@@ -112,11 +103,6 @@ export class OrgDisplayCommand extends SfCommand<OrgDisplayReturn> {
       // TODO: deprecate these values
       clientApps: fields.clientApps ? Object.keys(fields.clientApps).join(',') : undefined,
     };
-
-    if (showSecretsEnvVarIsSet) {
-      this.warn(envVarIsSetWarning);
-      this.warn(sharedMessages.getMessage('SecurityWarning'));
-    }
 
     this.print(returnValue);
     return returnValue;
