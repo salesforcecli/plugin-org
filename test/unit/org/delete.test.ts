@@ -137,6 +137,23 @@ describe('org delete', () => {
         JSON.stringify(sfCommandUxStubs.logSuccess.getCalls().flatMap((call) => call.args))
       ).to.deep.include(sbxOrgMessages.getMessage('success.Idempotent', [testOrg.username]));
     });
+
+    it('will throw a clean SfError when the user lacks Manage Sandboxes permission', async () => {
+      $$.SANDBOX.stub(SandboxAccessor.prototype, 'hasFile').resolves(true);
+      orgDeleteStub.restore();
+      const insufficientAccessError = Object.assign(new Error('INSUFFICIENT_ACCESS_OR_READONLY'), {
+        errorCode: 'INSUFFICIENT_ACCESS_OR_READONLY',
+      });
+      $$.SANDBOX.stub(Org.prototype, 'delete').throws(insufficientAccessError);
+      try {
+        await DeleteSandbox.run(['--no-prompt', '--target-org', testOrg.username]);
+        expect.fail('should have thrown InsufficientAccessError');
+      } catch (e) {
+        const err = e as SfError;
+        expect(err.name).to.equal('InsufficientAccessError');
+        expect(err.message).to.equal(sbxOrgMessages.getMessage('error.insufficientAccess'));
+      }
+    });
   });
 
   describe('scratch', () => {
