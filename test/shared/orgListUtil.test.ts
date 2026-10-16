@@ -300,7 +300,7 @@ describe('orgListUtil tests', () => {
       });
     });
 
-    describe('secret redaction WITH env var (SF_TEMP_SHOW_SECRETS)', () => {
+    describe('SF_TEMP_SHOW_SECRETS env var has no effect', () => {
       const SHOW_TOKENS_ENV = 'SF_TEMP_SHOW_SECRETS';
 
       beforeEach(() => {
@@ -311,10 +311,10 @@ describe('orgListUtil tests', () => {
         delete process.env[SHOW_TOKENS_ENV];
       });
 
-      it('shows real access tokens in scratchOrgs', async () => {
+      it('still redacts access tokens in scratchOrgs', async () => {
         const orgs = await OrgListUtil.readLocallyValidatedMetaConfigsGroupedByOrgType(fileNames, false);
         for (const org of orgs.scratchOrgs) {
-          expect(org.accessToken).to.not.include('[REDACTED]');
+          expect(org.accessToken).to.include('[REDACTED]');
         }
       });
     });

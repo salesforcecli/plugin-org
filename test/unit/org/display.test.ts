@@ -276,7 +276,7 @@ describe('org:display', () => {
   it('displays scratch-org-only properties for scratch orgs');
   it('displays no scratch-org-only properties for non-scratch orgs');
 
-  describe('secret redaction WITH env var (SF_TEMP_SHOW_SECRETS)', () => {
+  describe('SF_TEMP_SHOW_SECRETS env var has no effect', () => {
     const SHOW_TOKENS_ENV = 'SF_TEMP_SHOW_SECRETS';
 
     beforeEach(() => {
@@ -287,32 +287,34 @@ describe('org:display', () => {
       delete process.env[SHOW_TOKENS_ENV];
     });
 
-    it('shows the real access token', async () => {
+    it('still redacts the access token', async () => {
       await $$.stubAuths(testOrg);
       const result = await OrgDisplayCommand.run(['--json', '--targetusername', testOrg.username]);
-      expect(result.accessToken).to.equal(testOrg.accessToken);
+      expect(result.accessToken).to.include('[REDACTED]');
     });
 
-    it('shows the real sfdx auth url when --verbose and refresh token exist', async () => {
+    it('still redacts the sfdx auth url when --verbose and refresh token exist', async () => {
       testOrg.refreshToken = refreshToken;
       await $$.stubAuths(testOrg);
       const result = await OrgDisplayCommand.run(['--json', '--targetusername', testOrg.username, '--verbose']);
-      expect(result.sfdxAuthUrl).to.include(refreshToken);
+      expect(result.sfdxAuthUrl).to.include('[REDACTED]');
+      expect(result.sfdxAuthUrl).to.not.include(refreshToken);
     });
 
-    it('shows the real password when one exists', async () => {
+    it('still redacts the password when one exists', async () => {
       testOrg.password = 'somepassword';
       await $$.stubAuths(testOrg);
       const result = await OrgDisplayCommand.run(['--json', '--targetusername', testOrg.username]);
-      expect(result.password).to.equal('somepassword');
+      expect(result.password).to.include('[REDACTED]');
+      expect(result.password).to.not.equal('somepassword');
     });
 
-    it('emits the deprecation warning referencing sf org display', async () => {
+    it('does not emit any SF_TEMP_SHOW_SECRETS or removal warning', async () => {
       await $$.stubAuths(testOrg);
       await OrgDisplayCommand.run(['--targetusername', testOrg.username]);
       const warnCalls = sfCommandUxStubs.warn.getCalls().flatMap((c) => c.args);
-      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('will be removed'))).to.be.true;
-      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('sf org display'))).to.be.true;
+      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('SF_TEMP_SHOW_SECRETS'))).to.be.false;
+      expect(warnCalls.some((w) => typeof w === 'string' && w.includes('will be removed'))).to.be.false;
     });
   });
 });
