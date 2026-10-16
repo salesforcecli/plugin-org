@@ -1,3 +1,11 @@
+# [7.0.0](https://github.com/salesforcecli/plugin-org/compare/6.0.26...7.0.0) (2026-10-16)
+
+- feat!: removes SF_TEMP_SHOW_SECRETS workaround (#1798) ([5a63906](https://github.com/salesforcecli/plugin-org/commit/5a63906457057a51a90129e8d27082b318a2d221)), closes [#1798](https://github.com/salesforcecli/plugin-org/issues/1798)
+
+### BREAKING CHANGES
+
+- See https://github.com/forcedotcom/cli/issues/3658
+
 ## [6.0.26](https://github.com/salesforcecli/plugin-org/compare/6.0.25...6.0.26) (2026-10-11)
 
 ### Bug Fixes
