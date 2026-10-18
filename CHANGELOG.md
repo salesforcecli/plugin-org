@@ -1,3 +1,9 @@
+## [7.0.1](https://github.com/salesforcecli/plugin-org/compare/7.0.0...7.0.1) (2026-10-18)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve from 13.3.2 to 13.4.6 ([8217ff0](https://github.com/salesforcecli/plugin-org/commit/8217ff06e622ba71b0bf860cc480c19f15798fde))
+
 # [7.0.0](https://github.com/salesforcecli/plugin-org/compare/6.0.26...7.0.0) (2026-10-16)
 
 - feat!: removes SF_TEMP_SHOW_SECRETS workaround (#1798) ([5a63906](https://github.com/salesforcecli/plugin-org/commit/5a63906457057a51a90129e8d27082b318a2d221)), closes [#1798](https://github.com/salesforcecli/plugin-org/issues/1798)
