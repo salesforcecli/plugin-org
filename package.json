@@ -24,7 +24,7 @@
     "@oclif/plugin-command-snapshot": "^6.0.5",
     "@salesforce/cli-plugins-testkit": "^5.3.75",
     "@salesforce/dev-scripts": "^15.0.0",
-    "@salesforce/plugin-command-reference": "^3.1.141",
+    "@salesforce/plugin-command-reference": "^3.1.142",
     "@salesforce/ts-sinon": "^1.4.36",
     "@types/chai": "^4.3.17",
     "@types/mocha": "^10.0.10",
