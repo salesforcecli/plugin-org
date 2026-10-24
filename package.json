@@ -8,7 +8,7 @@
   "o11yUploadEndpoint": "https://794testsite.my.site.com/byolwr/webruntime/log/metrics",
   "dependencies": {
     "@oclif/core": "^5.0.0",
-    "@oclif/multi-stage-output": "^1.0.0",
+    "@oclif/multi-stage-output": "^1.0.7",
     "@salesforce/core": "^9.1.11",
     "@salesforce/kit": "^4.0.1",
     "@salesforce/sf-plugins-core": "^13.0.5",
