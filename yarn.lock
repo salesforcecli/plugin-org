@@ -1399,16 +1399,16 @@
   dependencies:
     "@salesforce/ts-types" "^3.2.0"
 
-"@salesforce/plugin-command-reference@^3.1.141":
-  version "3.1.141"
-  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.1.141.tgz#41e2719b6e25b452ae730c4e55d9d22d81c9cc6d"
-  integrity sha512-Kb/vwA3qYFAuZv+hGjP2JgEqjCsOoakg+jTV6VypgtJ+b7LG/uKGqqka2Q+M0MihdrS4d1lcaTQgFfSuv9mt3g==
+"@salesforce/plugin-command-reference@^3.1.142":
+  version "3.1.142"
+  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.1.142.tgz#0ba54af178ffb312e3c6717dc8f1a2447d571942"
+  integrity sha512-lG5EFM8jDWcOZNWNEDrOEiRJzBWKQUCae8AHdEMuKnxqxCCGZdHtqpYDQJ436OAL0CTZ0stVBo02ikajDIVBbw==
   dependencies:
     "@oclif/core" "^5.1.2"
     "@salesforce/core" "^9.1.11"
     "@salesforce/kit" "^4.0.0"
     "@salesforce/sf-plugins-core" "^13.0.5"
-    "@salesforce/ts-types" "^3.2.0"
+    "@salesforce/ts-types" "^3.2.2"
     chalk "^5.6.2"
     debug "^4.4.3"
     handlebars "^4.7.10"
@@ -1468,10 +1468,10 @@
   resolved "https://registry.yarnpkg.com/@salesforce/ts-types/-/ts-types-2.0.12.tgz#60420622812a7ec7e46d220667bc29b42dc247ff"
   integrity sha512-BIJyduJC18Kc8z+arUm5AZ9VkPRyw1KKAm+Tk+9LT99eOzhNilyfKzhZ4t+tG2lIGgnJpmytZfVDZ0e2kFul8g==
 
-"@salesforce/ts-types@^3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@salesforce/ts-types/-/ts-types-3.2.0.tgz#9e0393cab10d763b89562f0f94515e3cf1efbbe7"
-  integrity sha512-3xdKt4nlthDC8nCHVWpVDwM5mmPlk8kDyJ1E3dWMk7FLRdQqhLgaHZgS+AMqcowWiKUC1l1d5YIhGhQM7dw3Bw==
+"@salesforce/ts-types@^3.2.0", "@salesforce/ts-types@^3.2.2":
+  version "3.2.3"
+  resolved "https://registry.yarnpkg.com/@salesforce/ts-types/-/ts-types-3.2.3.tgz#ba7055b4f3fbcf546bd7b9b9288f95c3640d1ea6"
+  integrity sha512-re+ceqPAgBXdgml1bTPoetNb6UfDwh54Gi6USRvPLK6/iV5P9rrLp4d7Ee2UDs/rw80V3nCjfASacpARRDaLRw==
 
 "@salesforce/types@^1.6.0":
   version "1.8.0"
