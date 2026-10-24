@@ -12,7 +12,7 @@
     "@salesforce/core": "^9.1.11",
     "@salesforce/kit": "^4.0.1",
     "@salesforce/sf-plugins-core": "^13.0.5",
-    "@salesforce/source-deploy-retrieve": "^13.4.6",
+    "@salesforce/source-deploy-retrieve": "^13.7.0",
     "@salesforce/ts-types": "^3.2.0",
     "ansis": "^3.16.0",
     "change-case": "^5.4.4",
