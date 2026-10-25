@@ -1,3 +1,9 @@
+## [7.0.5](https://github.com/salesforcecli/plugin-org/compare/7.0.4...7.0.5) (2026-10-25)
+
+### Bug Fixes
+
+- **deps:** bump ip-address from 10.7.2 to 10.7.5 ([c84e82b](https://github.com/salesforcecli/plugin-org/commit/c84e82b8b326f4c820b50a72a1f6045b167bfe55))
+
 ## [7.0.4](https://github.com/salesforcecli/plugin-org/compare/7.0.3...7.0.4) (2026-10-25)
 
 ### Bug Fixes
