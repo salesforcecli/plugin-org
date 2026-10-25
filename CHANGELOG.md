@@ -1,3 +1,9 @@
+## [7.0.4](https://github.com/salesforcecli/plugin-org/compare/7.0.3...7.0.4) (2026-10-25)
+
+### Bug Fixes
+
+- **deps:** bump zod from 4.4.3 to 4.6.7 ([318b249](https://github.com/salesforcecli/plugin-org/commit/318b24969ed62e7a9896daa690f7f8ea0f6cf774))
+
 ## [7.0.3](https://github.com/salesforcecli/plugin-org/compare/7.0.2...7.0.3) (2026-10-22)
 
 ### Bug Fixes
