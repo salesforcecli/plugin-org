@@ -1,3 +1,9 @@
+## [7.0.7](https://github.com/salesforcecli/plugin-org/compare/7.0.6...7.0.7) (2026-10-26)
+
+### Bug Fixes
+
+- **deps:** bump fast-uri from 3.1.8 to 3.1.9 ([c367db6](https://github.com/salesforcecli/plugin-org/commit/c367db6468a7718073bf39174728f49f9d42fae4))
+
 ## [7.0.6](https://github.com/salesforcecli/plugin-org/compare/7.0.5...7.0.6) (2026-10-26)
 
 ### Bug Fixes
