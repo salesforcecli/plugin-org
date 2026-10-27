@@ -1,3 +1,9 @@
+## [7.0.10](https://github.com/salesforcecli/plugin-org/compare/7.0.9...7.0.10) (2026-10-27)
+
+### Bug Fixes
+
+- **deps:** bump @oclif/multi-stage-output from 1.0.0 to 1.0.7 ([32e37f8](https://github.com/salesforcecli/plugin-org/commit/32e37f87a4acb627c604bfc5005fc561d2893f99))
+
 ## [7.0.9](https://github.com/salesforcecli/plugin-org/compare/7.0.8...7.0.9) (2026-10-27)
 
 ### Bug Fixes
