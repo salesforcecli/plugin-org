@@ -1,3 +1,9 @@
+## [7.0.11](https://github.com/salesforcecli/plugin-org/compare/7.0.10...7.0.11) (2026-11-01)
+
+### Bug Fixes
+
+- **deps:** bump brace-expansion from 1.1.18 to 1.1.21 ([31e38c6](https://github.com/salesforcecli/plugin-org/commit/31e38c637e2522d8bbd054a118d1ea6918739f50))
+
 ## [7.0.10](https://github.com/salesforcecli/plugin-org/compare/7.0.9...7.0.10) (2026-10-27)
 
 ### Bug Fixes
