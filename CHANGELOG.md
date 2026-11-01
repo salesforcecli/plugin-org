@@ -1,3 +1,9 @@
+## [7.0.13](https://github.com/salesforcecli/plugin-org/compare/7.0.12...7.0.13) (2026-11-01)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/source-deploy-retrieve from 13.7.0 to 13.8.3 ([ded5449](https://github.com/salesforcecli/plugin-org/commit/ded5449b19e38ec38cd6f5c587514fef22f127c7))
+
 ## [7.0.12](https://github.com/salesforcecli/plugin-org/compare/7.0.11...7.0.12) (2026-11-01)
 
 ### Bug Fixes
