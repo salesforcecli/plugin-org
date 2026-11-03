@@ -21,7 +21,7 @@ Additionally, there are some additional tests that the Salesforce CLI will enfor
 the CLI. These test are included by default under the `posttest` script and it is recommended to keep these tests active
 in your plugin, regardless if you plan to have it bundled.
 
-This plugin is bundled with the [Salesforce CLI](https://developer.salesforce.com/tools/sfdxcli). For more information
+This plugin is bundled with the [Salesforce CLI](https://developer.salesforce.com/tools/salesforcecli). For more information
 on the CLI, read
 the [getting started guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm).
 
@@ -51,8 +51,7 @@ To build the plugin locally, make sure to have yarn installed and run the follow
 git clone git@github.com:salesforcecli/plugin-org
 
 # Install the dependencies and compile
-yarn install
-yarn build
+yarn && yarn build
 ```
 
 To use your plugin, run using the local `./bin/dev.js` or `./bin/dev.cmd` file.
