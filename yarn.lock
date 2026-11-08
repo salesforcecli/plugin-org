@@ -1158,7 +1158,7 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@oclif/core@^5.0.0", "@oclif/core@^5.1.2", "@oclif/core@^5.1.8", "@oclif/core@^5.1.9":
+"@oclif/core@^5.0.0", "@oclif/core@^5.1.8", "@oclif/core@^5.1.9":
   version "5.1.10"
   resolved "https://registry.yarnpkg.com/@oclif/core/-/core-5.1.10.tgz#b23c7e4a192313446533d52f32e7d9e4a7cd4aeb"
   integrity sha512-iO+Ga2ve3x0QDeqKVvVEYbb+YPVV7A0rbliCO+ZcUdZ/5Sfv+kHz2G247ExAw5aSAEXn9gX6H4jjON2mcJivqw==
@@ -1400,22 +1400,22 @@
   dependencies:
     "@salesforce/ts-types" "^2.0.12"
 
-"@salesforce/kit@^4.0.0", "@salesforce/kit@^4.0.1", "@salesforce/kit@^4.0.9":
-  version "4.0.9"
-  resolved "https://registry.yarnpkg.com/@salesforce/kit/-/kit-4.0.9.tgz#2f9af0c0a21edff06e35a6e0d04eda7de658ce46"
-  integrity sha512-51uNidO4FDPnAydHSG4LnUV8CGixpUJ5e++XZh3TCR6VFUidxKIQVRrIWIebcD9yLc13DMhkqt74ofZC3Fu1Kg==
+"@salesforce/kit@^4.0.0", "@salesforce/kit@^4.0.1", "@salesforce/kit@^4.0.8", "@salesforce/kit@^4.0.9":
+  version "4.0.10"
+  resolved "https://registry.yarnpkg.com/@salesforce/kit/-/kit-4.0.10.tgz#1d85a4d6733f1e2edc0b7aa158117716dab92a5f"
+  integrity sha512-LXCswafab7AYmpaEvjHmpI3Ueg4dk9c/vFfHSEenVyx/dF1ABlxmf8kpVyox6iRBBh3RvM5/LkQMtXUv7iSd7w==
   dependencies:
-    "@salesforce/ts-types" "^3.2.3"
+    "@salesforce/ts-types" "^3.2.4"
 
-"@salesforce/plugin-command-reference@^3.1.142":
-  version "3.1.142"
-  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.1.142.tgz#0ba54af178ffb312e3c6717dc8f1a2447d571942"
-  integrity sha512-lG5EFM8jDWcOZNWNEDrOEiRJzBWKQUCae8AHdEMuKnxqxCCGZdHtqpYDQJ436OAL0CTZ0stVBo02ikajDIVBbw==
+"@salesforce/plugin-command-reference@^3.1.151":
+  version "3.1.151"
+  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.1.151.tgz#680fdc95fa395364f3a3f5ada688e520890d6f7d"
+  integrity sha512-JrPX4BuO3AW6kc8AsBroe0ZkjqohsBxL6CvT5qtG/h859SvcZ+n3M6aWDu9JNwvkS0o/uqJQLtQ3ui9vm9dN0w==
   dependencies:
-    "@oclif/core" "^5.1.2"
-    "@salesforce/core" "^9.1.11"
-    "@salesforce/kit" "^4.0.0"
-    "@salesforce/sf-plugins-core" "^13.0.5"
+    "@oclif/core" "^5.1.9"
+    "@salesforce/core" "^9.4.1"
+    "@salesforce/kit" "^4.0.8"
+    "@salesforce/sf-plugins-core" "^13.0.7"
     "@salesforce/ts-types" "^3.2.2"
     chalk "^5.6.2"
     debug "^4.4.3"
@@ -1426,10 +1426,10 @@
   resolved "https://registry.yarnpkg.com/@salesforce/prettier-config/-/prettier-config-0.0.4.tgz#fc84ea1585b2eb4bf156514911bac17b7f7e434c"
   integrity sha512-GBjR7f/jv7rcSrTvNgbkWvOykXg/PZqL7TztylKwaogWdrCbypJE8qEfBy9nILkICrwmDbQApOC8TqoO3bQKSw==
 
-"@salesforce/sf-plugins-core@^13.0.5":
-  version "13.0.5"
-  resolved "https://registry.yarnpkg.com/@salesforce/sf-plugins-core/-/sf-plugins-core-13.0.5.tgz#e785e78986e859270a86f3b178a7019536c4c9ce"
-  integrity sha512-jBgsz99Jgmg565gE+FmimQt9mTverxzZowN7dwoyEvCAv7b6MghpYK/qM6Z2mIdXpg2+Q9yxdAqC9vDReYTIgQ==
+"@salesforce/sf-plugins-core@^13.0.5", "@salesforce/sf-plugins-core@^13.0.7":
+  version "13.0.9"
+  resolved "https://registry.yarnpkg.com/@salesforce/sf-plugins-core/-/sf-plugins-core-13.0.9.tgz#8603f2fbd4a4e4294a25c413e8b3787b6225d36f"
+  integrity sha512-gNM70OJSItqNRYxNFlWK8JsoBTukulTj0WvzfdOPVapMRUgq88Rm/gGnrRML3qB3J/B1tgj0qLGwJM9+mGdFPA==
   dependencies:
     "@inquirer/confirm" "^6.1.1"
     "@inquirer/password" "^5.1.1"
@@ -1476,7 +1476,7 @@
   resolved "https://registry.yarnpkg.com/@salesforce/ts-types/-/ts-types-2.0.12.tgz#60420622812a7ec7e46d220667bc29b42dc247ff"
   integrity sha512-BIJyduJC18Kc8z+arUm5AZ9VkPRyw1KKAm+Tk+9LT99eOzhNilyfKzhZ4t+tG2lIGgnJpmytZfVDZ0e2kFul8g==
 
-"@salesforce/ts-types@^3.2.0", "@salesforce/ts-types@^3.2.2", "@salesforce/ts-types@^3.2.3":
+"@salesforce/ts-types@^3.2.0", "@salesforce/ts-types@^3.2.2", "@salesforce/ts-types@^3.2.4":
   version "3.2.4"
   resolved "https://registry.yarnpkg.com/@salesforce/ts-types/-/ts-types-3.2.4.tgz#783db051f0f95a23647934efc521cf1ad31dcdbd"
   integrity sha512-kTzgXQbOdon0gJFwdHQ+A+UvMR/E3zzlj6O1Wyl5//waq7OSNjspB49y9LrZefIyqHV+ACfB9/aWBJ9aSKMrvQ==
