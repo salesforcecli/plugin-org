@@ -1,3 +1,9 @@
+## [7.0.17](https://github.com/salesforcecli/plugin-org/compare/7.0.16...7.0.17) (2026-11-15)
+
+### Bug Fixes
+
+- **deps:** bump @salesforce/core from 9.4.4 to 9.4.6 ([f350461](https://github.com/salesforcecli/plugin-org/commit/f350461a2ff41ff47b9d429ddfa525206c873cf2))
+
 ## [7.0.16](https://github.com/salesforcecli/plugin-org/compare/7.0.15...7.0.16) (2026-11-08)
 
 ### Bug Fixes
