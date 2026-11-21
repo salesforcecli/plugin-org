@@ -1433,7 +1433,7 @@
     ts-retry-promise "^0.8.1"
     zod "^4.1.12"
 
-"@salesforce/core@^9.1.10", "@salesforce/core@^9.3.0", "@salesforce/core@^9.4.1", "@salesforce/core@^9.4.4", "@salesforce/core@^9.4.6":
+"@salesforce/core@^9.1.10", "@salesforce/core@^9.3.0", "@salesforce/core@^9.4.1", "@salesforce/core@^9.4.6":
   version "9.4.6"
   resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-9.4.6.tgz#20a65181d477bffc9e5c0c9c2b5240881b7cd688"
   integrity sha512-ph6zETeGRegICHLbP5OjHqiry7RdWpCf+NihuIEsKYhqgcxkeOSEiuznlLm2F4lmo4/y61ogF5kOBAKwOK+ynQ==
@@ -1506,21 +1506,21 @@
   dependencies:
     "@salesforce/ts-types" "^2.0.12"
 
-"@salesforce/kit@^4.0.0", "@salesforce/kit@^4.0.1", "@salesforce/kit@^4.0.9":
+"@salesforce/kit@^4.0.0", "@salesforce/kit@^4.0.1", "@salesforce/kit@^4.0.10", "@salesforce/kit@^4.0.9":
   version "4.0.10"
   resolved "https://registry.yarnpkg.com/@salesforce/kit/-/kit-4.0.10.tgz#1d85a4d6733f1e2edc0b7aa158117716dab92a5f"
   integrity sha512-LXCswafab7AYmpaEvjHmpI3Ueg4dk9c/vFfHSEenVyx/dF1ABlxmf8kpVyox6iRBBh3RvM5/LkQMtXUv7iSd7w==
   dependencies:
     "@salesforce/ts-types" "^3.2.4"
 
-"@salesforce/plugin-command-reference@^3.1.158":
-  version "3.1.158"
-  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.1.158.tgz#697f762b755a5a2f866edd6d97a6fe8cd07e7e77"
-  integrity sha512-Uc/Nc7UFn3f0GY98QTraqWiC3Mrey7X/PZqw9IePWyRXOeNu5n0sS0CqYxX57paunNnaP0MS8FnhAwy7Kc36kQ==
+"@salesforce/plugin-command-reference@^3.1.160":
+  version "3.1.160"
+  resolved "https://registry.yarnpkg.com/@salesforce/plugin-command-reference/-/plugin-command-reference-3.1.160.tgz#26f6d036fa9b8ec06fd4fd710e0326ef18145976"
+  integrity sha512-Git3sYwk11e+79K9D1KwgB8q/w3Ma5tzYUyy8zwcWbmeC69xLAEl4EClnP4Nhx+Vh/XzpUx5grv3gbh4drCXcw==
   dependencies:
     "@oclif/core" "^5.1.11"
-    "@salesforce/core" "^9.4.4"
-    "@salesforce/kit" "^4.0.9"
+    "@salesforce/core" "^9.4.6"
+    "@salesforce/kit" "^4.0.10"
     "@salesforce/sf-plugins-core" "^13.0.8"
     "@salesforce/ts-types" "^3.2.2"
     chalk "^5.6.2"
