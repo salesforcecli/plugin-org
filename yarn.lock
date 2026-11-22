@@ -1392,14 +1392,14 @@
     "@pnpm/network.ca-file" "^1.0.1"
     config-chain "^1.1.11"
 
-"@salesforce/cli-plugins-testkit@^5.3.75":
-  version "5.3.75"
-  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-5.3.75.tgz#3e7fe316692286c794742840d766502af2cf4565"
-  integrity sha512-dRqqB2sLLw4ygPWSokraqpek+vlJyFPhSLy7r/yszDDcOR4OkhyCW4f9dMdG0Bhsl4+LxDr6yUD6xIWmuLf6ew==
+"@salesforce/cli-plugins-testkit@^5.3.95":
+  version "5.3.95"
+  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-5.3.95.tgz#a9f9102a44a4fbe095c70e224d9ca050cac5b323"
+  integrity sha512-sYCQQexG9mnRmGp/uC/Mxpw1Gzsg/Dd0ybQ3VEh1MW/Xw0VAPDJDJ+vhBbb8RSHCCGrPHAR2nyAvn6STsRcSUQ==
   dependencies:
-    "@salesforce/core" "^9.3.0"
-    "@salesforce/kit" "^4.0.1"
-    "@salesforce/ts-types" "^3.2.0"
+    "@salesforce/core" "^9.4.6"
+    "@salesforce/kit" "^4.0.10"
+    "@salesforce/ts-types" "^3.2.4"
     "@types/shelljs" "^0.10.0"
     debug "^4.4.3"
     jszip "^3.10.2"
@@ -1433,7 +1433,7 @@
     ts-retry-promise "^0.8.1"
     zod "^4.1.12"
 
-"@salesforce/core@^9.1.10", "@salesforce/core@^9.3.0", "@salesforce/core@^9.4.1", "@salesforce/core@^9.4.6":
+"@salesforce/core@^9.1.10", "@salesforce/core@^9.4.1", "@salesforce/core@^9.4.6":
   version "9.4.6"
   resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-9.4.6.tgz#20a65181d477bffc9e5c0c9c2b5240881b7cd688"
   integrity sha512-ph6zETeGRegICHLbP5OjHqiry7RdWpCf+NihuIEsKYhqgcxkeOSEiuznlLm2F4lmo4/y61ogF5kOBAKwOK+ynQ==
@@ -1506,7 +1506,7 @@
   dependencies:
     "@salesforce/ts-types" "^2.0.12"
 
-"@salesforce/kit@^4.0.0", "@salesforce/kit@^4.0.1", "@salesforce/kit@^4.0.10", "@salesforce/kit@^4.0.9":
+"@salesforce/kit@^4.0.0", "@salesforce/kit@^4.0.10", "@salesforce/kit@^4.0.9":
   version "4.0.10"
   resolved "https://registry.yarnpkg.com/@salesforce/kit/-/kit-4.0.10.tgz#1d85a4d6733f1e2edc0b7aa158117716dab92a5f"
   integrity sha512-LXCswafab7AYmpaEvjHmpI3Ueg4dk9c/vFfHSEenVyx/dF1ABlxmf8kpVyox6iRBBh3RvM5/LkQMtXUv7iSd7w==
