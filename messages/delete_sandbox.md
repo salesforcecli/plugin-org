@@ -54,3 +54,24 @@ Ensure the CLI has authenticated with the sandbox's production org.
 # error.missingUsername
 
 Unable to determine the username of the org to delete. Specify the username with the --target-org | -o flag.
+
+# error.insufficientPermissions
+
+You don't have the required "DeleteSandbox" Permission Set assigned in the production org to delete sandbox "%s".
+
+# error.insufficientPermissions.actions
+
+- Ask your administrator to create a Permission Set named "DeleteSandbox" in the production org and assign it to your user.
+- Re-authenticate with the production org and try again.
+
+# error.missingProdOrg
+
+Unable to verify delete permissions for sandbox "%s" because the production org could not be resolved from the sandbox configuration.
+
+# error.missingProdOrg.actions
+
+- Ensure the production org that owns this sandbox is authenticated with the CLI using `sf org login web`.
+
+# error.insufficientAccess
+
+You don't have permission to delete this sandbox. Ask your Salesforce admin to grant you the "Manage Sandboxes" system permission on your profile or a permission set in the production org.
