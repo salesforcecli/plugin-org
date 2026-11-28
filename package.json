@@ -30,7 +30,7 @@
     "@types/mocha": "^10.0.10",
     "@types/node": "^18",
     "@types/sinon": "^10.0.20",
-    "eslint": "^10.14.0",
+    "eslint": "^10.15.0",
     "eslint-config-salesforce-typescript": "^7.0.8",
     "eslint-plugin-sf-plugin": "^3.0.4",
     "moment": "^2.31.0",
